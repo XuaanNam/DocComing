@@ -4,11 +4,11 @@ const ExtractJwt = require("passport-jwt").ExtractJwt;
 const secret_key = require("../configs/token");
 const pool = require("../models/pool");
 
-const sql = "select id, authentication from customerdata where id = ? and username = ?";
+const sql = "select id, Authorization from account where id = ? and Phone = ?";
 const opts = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = secret_key.secret_key;
-opts.iss = "the books umbrella";
+opts.iss = "Doccoming";
 
 module.exports =  passport => {
   passport.use(
@@ -16,7 +16,7 @@ module.exports =  passport => {
       try {
         pool.query(
           sql,
-          [jwt_payload.id, jwt_payload.username],
+          [jwt_payload.id, jwt_payload.Phone],
           function (error, user, fields) {
             if (error)
               throw error;
