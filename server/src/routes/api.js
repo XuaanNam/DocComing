@@ -3,11 +3,17 @@ const api = require("../app/controllers/API");
 const router = express.Router();
 const passport = require("passport");
 const PassportCheck = passport.authenticate("jwt", { session: false });
+const GooglePassport = passport.authenticate("google", { scope:	['email', 'profile']})
 const fileUploader = require("../app/middleware/cloudinary-upload.js");
 //const myOAuth2Client = require("../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 
 // const transport = require('../app/middleware/nodemailer')
+const GoogleCallback= passport.authenticate( 'google', { 
+    successRedirect: process.env.CLIENT_URL, 
+    failureRedirect: '/api/auth/failure'
+})
+
 
 // // guest
 router.post("/register", api.register);
@@ -18,6 +24,15 @@ router.post("/login", api.login);
 
 router.get("/isauth", PassportCheck, api.isAuth);
 // router.post("/email/send", api.sendEmail);
+router.get("/auth/google", GooglePassport);
+router.get("/auth/google/callback", GoogleCallback);
+router.get("/auth/success", api.authSuccess);
+router.get("/auth/failure", api.authFailure);
+
+
+
+
+
 
 // // product
 // router.get("/products", api.getProducts);
