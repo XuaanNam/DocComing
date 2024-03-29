@@ -5,7 +5,13 @@ const route = require('./routes');
 const helmet = require("helmet");
 require('dotenv').config();
 const port = parseInt(process.env.PORT);
+const session = require('express-session');
 
+app.use(session({
+    resave: false,
+    saveUninitialized: true,
+    secret: process.env.SESSION_SECRET
+}));
 
 app.use(
     cors({

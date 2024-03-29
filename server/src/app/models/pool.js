@@ -1,5 +1,4 @@
 const mysql = require('mysql');
-const sql = require('mssql')
 const sqlConfig = require('../configs/db')
 
 
