@@ -7,8 +7,9 @@ const bcrypt = require("bcrypt");
 const saltRound = 9;
 const encodeToken = require("../../util/encodeToken");
 const createError = require("http-errors");
-//const myOAuth2Client = require("../../app/configs/oauth2client");
+const myOAuth2Client = require("../../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
+const twilio = require("twilio");
 
 
 class API {
@@ -17,33 +18,28 @@ class API {
   // [POST] /api/register
   register(req, res, next) {
     const insertSql =
-      "insert into account (LastName, FirstName, Email, PassWord, Phone) value (?,?,?,?,?)";
+      "insert into account (LastName, FirstName, Email) value (?,?,?)";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
     const successMsg = "Tài khoản đã đăng kí thành công!";
     const LastName = req.body.LastName;
     const FirstName = req.body.FirstName;
     const Email = req.body.Email;
-    const PassWord = req.body.PassWord;
-    const Phone = req.body.Phone;
-
-    bcrypt.hash(PassWord, saltRound, (err, hash) => {
-      if (err) {
-        res.status(200).send({ message: errorMsg, checked: false });
-      } else {
-        pool.query(
-          insertSql,
-          [LastName, FirstName, Email, hash, Phone],
-          function (error, results, fields) {
-            if (error) {
-              res.send({ message: errorMsg, checked: false });
-            } else {
-              res.send({ message: successMsg, checked: true });
-            }
-          }
-        );
+    const picture = req.body.picture;
+    
+    
+    pool.query(
+      insertSql,
+      [LastName, FirstName, Email],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: errorMsg, checked: false });
+        } else {
+          res.send({ message: successMsg, checked: true });
+        }
       }
-    });
+    );
   }
+    
   // [GET] /api/isauth
   isAuth(req, res, next) {
     const auth = req.user[0];
@@ -95,6 +91,8 @@ class API {
     });
   }
 
+
+
   // [GET] /api/auth/success
   authSuccess(req, res, next) {
     if(req.user){
@@ -111,7 +109,67 @@ class API {
   
   // [GET] /api/auth/failure
   authFailure(req, res, next) {
-    console.log("false") 
+    res.redirect("http://localhost:3000?auth=false")
+  }
+
+  //[POST] /api/send/otp
+  sendOTP(req, res, next) {
+
+  const client = new twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
+
+  client.messages
+    .create({
+      body: 'Hello from twilio-node',
+      to: '+84337999421', // Text your number
+      from: '+12345678901', // From a valid Twilio number
+    })
+    .then((message) => console.log(message.sid));
+  }
+
+  //[POST] /api/send/mail
+  async sendMail(req, res, next) {
+    try {
+      // Lấy thông tin gửi lên từ client qua body
+      const { email, subject, content } = req.body; 
+      if (!email || !subject || !content) 
+        throw new Error("Please provide email, subject and content!!!");
+      const sms = "+84337999421@SMS-gateway";
+      const myAccessTokenObject = await myOAuth2Client.getAccessToken();
+      /**
+       * Lấy AccessToken từ RefreshToken (bởi vì Access Token cứ một khoảng thời gian ngắn sẽ bị hết hạn)
+       * Vì vậy mỗi lần sử dụng Access Token, chúng ta sẽ generate ra một thằng mới là chắc chắn nhất.
+       **/
+      // Access Token sẽ nằm trong property 'token' trong Object mà chúng ta vừa get được ở trên
+      const myAccessToken = myAccessTokenObject?.token;
+      // Tạo một biến Transport từ Nodemailer với đầy đủ cấu hình, dùng để gọi hành động gửi mail
+      const transport = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          type: "OAuth2",
+          user: process.env.ADMIN_EMAIL_ADDRESS,
+          clientId: process.env.GOOGLE_MAILER_CLIENT_ID,
+          clientSecret: process.env.GOOGLE_MAILER_CLIENT_SECRET,
+          refresh_token: process.env.GOOGLE_MAILER_REFRESH_TOKEN,
+          accessToken: myAccessToken,
+        },
+      });
+      // mailOption là những thông tin gửi từ phía client lên thông qua API
+      const mailOptions = {
+        to: email,
+        subject: subject, // Tiêu đề email
+        html: `<h3>${content}</h3>`, // Nội dung email
+      };
+      // Gọi hành động gửi email
+      await transport.sendMail(mailOptions);
+      // Không có lỗi gì thì trả về success
+      res
+        .status(200)
+        .json({ message: "Đã gửi mail về hộp thư. Vui lòng kiểm tra!" });    
+    } catch (error) {
+      // Có lỗi thì các bạn log ở đây cũng như gửi message lỗi về phía client
+
+      res.status(500).json({ errors: error.message });
+    }
   }
 
 }

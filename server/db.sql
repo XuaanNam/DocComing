@@ -12,17 +12,16 @@ FirstName nvarchar(25) not null CHECK (FirstName !=""),
 BirthDate date,
 Address nvarchar(300),
 Email varchar(50) not null UNIQUE CHECK (Email !=""),
-PassWord nvarchar(100) not null CHECK (PassWord !=""),
-Phone varchar(15) not null,
+Phone varchar(15) null,
 Avt varchar(200),
 Authorization int default 1 
 )
 ;
 ALTER TABLE account AUTO_INCREMENT = 235523484;
-insert into account (LastName, FirstName, Email, PassWord, Phone, Authorization) value 
-('admin', 'admin', 'admin@doccoming.com', '$2b$10$49gaTiDL9JLsckTIXI2cDekBBDBcHQrwf/oS5yLLr/KPVl6P4APJW', 0123456789, 0),
-('Bac', 'Si', 'doctor@doccoming.com', '$2b$10$49gaTiDL9JLsckTIXI2cDekBBDBcHQrwf/oS5yLLr/KPVl6P4APJW', 0123456789, 2),
-('Benh', 'Nhan', 'patient@doccoming.com', '$2b$10$49gaTiDL9JLsckTIXI2cDekBBDBcHQrwf/oS5yLLr/KPVl6P4APJW', 0123456789, 1);
+insert into account (LastName, FirstName, Email, Phone, Authorization) value 
+('admin', 'admin', 'admin@doccoming.com', 0123456789, 0),
+('Bac', 'Si', 'doctor@doccoming.com', 0123456789, 2),
+('Benh', 'Nhan', 'patient@doccoming.com', 0123456789, 1);
 -- drop table account;
 
 create table authorization(
@@ -91,6 +90,42 @@ insert into service (Service, Description) values
 ('Đo khúc xạ', 'Đo khúc xạ ngay tại nhà, và đặt mua kính cận thị, viễn thị thông qua bác sĩ'),
 ('Cắt bao quy đầu', 'Cắt bao quy đầu nhanh chóng, tiện ích, riêng tư ngay tại nhà');
 
+create table categories(
+id int not null primary key AUTO_INCREMENT,
+Categories nvarchar(100) not null CHECK (Categories !="")
+)
+;
+insert into categories (id, Categories) values 
+(1, 'Tiểu đường'),
+(2, 'Bệnh tim mạch'),
+(3, 'Bệnh hô hấp'),
+(4, 'Ung thư - Ung bướu'),
+(5, 'Bệnh tiêu hóa'),
+(6, 'Tâm lí - Tâm thần'),
+(7, 'Da liễu'),
+(8, 'Dị ứng'),
+(9, 'Bệnh cơ xương khớp'),
+(10, 'Bệnh về máu'),
+(11, 'Bệnh truyền nhiễm'),
+(12, 'Sức khỏe mắt'), 
+(13, 'Bệnh về não và Hệ thần kinh'),
+(14, 'Ăn uống lành mạnh'),
+(15, 'Thể dục thể thao'),
+(16, 'Thuốc và thực phẩm chức năng'),
+(17, 'Dược liệu'),
+(18, 'Mang thai'),
+(19, 'Nuôi day con'),
+(20, 'Bệnh tai mũi họng'),
+(21, 'Sức khỏe phụ nữ'),
+(22, 'Sức khỏe'),
+(23, 'Chăm sóc giấc ngủ'),
+(24, 'Thói quen lành mạnh'),
+(25, 'Sức khỏe nam giới'),
+(26, 'Sức khỏe răng miệng'),
+(27, 'Lão hóa lành mạnh'),
+(28, 'Sức khỏe tình dục'),
+(29, 'Bệnh thận và đường tiết niệu') ;
+
 create table post(
 id int not null primary key AUTO_INCREMENT,
 FeaturedImage varchar(300),
@@ -98,43 +133,15 @@ Title nvarchar(200) not null CHECK (Title !=""),
 Brief nvarchar(400) not null CHECK (Brief !=""),
 Content text(4000) not null CHECK (Content !=""),
 Images varchar(300),
-Status int default 0 -- 0 chờ duyệt, 1 hiển thị trên site, 2 ẩn
+Author varchar(100),
+DatePost datetime,
+idCategories int,
+Status int default 0, -- 0 chờ duyệt, 1 hiển thị trên site, 2 ẩn
+foreign key (idCategories) references categories(id) 
 )
 ;-- drop table post;
 
-create table categories(
-id int not null primary key AUTO_INCREMENT,
-Categories nvarchar(100) not null CHECK (Categories !="")
-)
-;
-insert into categories (Categories) values 
-('Tiểu đường'),
-('Bệnh tim mạch'),
-('Bệnh hô hấp'),
-('Ung thư - Ung bướu'),
-('Bệnh tiêu hóa'),
-('Tâm lí - Tâm thần'),
-('Da liễu'),('Sức khỏe tình dục'),
-('Dị ứng'),
-('Bệnh cơ xương khớp'),
-('Bệnh về máu'),
-('Bệnh truyền nhiễm'),
-('Sức khỏe mắt'), ('Bệnh thận và đường tiết niệu'), 
-('Bệnh về não và Hệ thần kinh'),
-('Ăn uống lành mạnh'),
-('Thể dục thể thao'),
-('Thuốc và thực phẩm chức năng'),
-('Dược liệu'),
-('Mang thai'),
-('Nuôi day con'),
-('Bệnh tai mũi họng'),
-('Sức khỏe phụ nữ'),
-('Sức khỏe'),
-('Chăm sóc giấc ngủ'),
-('Thói quen lành mạnh'),
-('Sức khỏe nam giới'),
-('Sức khỏe răng miệng'),
-('Lão hóa lành mạnh') ;
+
 
 create table appointment(
 id int not null primary key AUTO_INCREMENT,
@@ -159,3 +166,5 @@ NotiTime datetime,
 Status int default 0, -- 0 chưa đọc, 1 đọc rồi
 foreign key (idAccount) references account(id)
 );
+
+

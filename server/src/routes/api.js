@@ -16,7 +16,6 @@ const GoogleCallback= passport.authenticate( 'google', {
 
 
 // // guest
-router.post("/register", api.register);
 router.post("/login", api.login);
 // router.post("/check/email", api.emailCheck);
 // router.post("/check/username", api.usernameCheck);
@@ -24,10 +23,17 @@ router.post("/login", api.login);
 
 router.get("/isauth", PassportCheck, api.isAuth);
 // router.post("/email/send", api.sendEmail);
+
 router.get("/auth/google", GooglePassport);
 router.get("/auth/google/callback", GoogleCallback);
 router.get("/auth/success", api.authSuccess);
 router.get("/auth/failure", api.authFailure);
+
+router.post("/register", api.register);
+router.post("/send/otp", api.sendOTP);
+
+router.post("/send/mail", api.sendMail);
+
 
 
 
