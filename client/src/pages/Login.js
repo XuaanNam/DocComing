@@ -3,8 +3,14 @@ import GoogleIcon from "../Images/google.svg";
 import FlagIcon from "../Images/flag.png";
 import { Label, Input, Button } from "@windmill/react-ui";
 import Header from "../Layouts/Header";
+import { useDispatch, useSelector } from "react-redux";
+import { loginGoogle } from "../redux-toolkit/authSlice";
 
 function Login() {
+  const dispatch = useDispatch();
+  const handleLogin = () => {
+    dispatch(loginGoogle);
+  };
   return (
     <div>
       <Header />
@@ -19,8 +25,15 @@ function Login() {
               src={GoogleIcon}
               alt=""
             ></img>
-            <div className="w-full text-center text-lg opacity-70">
-              Tiếp tục với google
+            <div
+              className="w-full text-center text-lg opacity-70"
+              onClick={() => {
+                handleLogin();
+              }}
+            >
+              <a href="http://localhost:5000/api/auth/google">
+                Tiếp tục với google
+              </a>
             </div>
           </div>
           <div className="text-center text-lg opacity-70  my-5">

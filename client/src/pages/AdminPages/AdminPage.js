@@ -7,7 +7,7 @@ const AdminPage = () => {
   const { adminpage } = useParams();
   const [actived, setActived] = useState(false);
   return (
-    <div className="flex ">
+    <div className="flex">
       <aside className="relative bg-white h-screen w-64 sm:block drop-shadow-lg">
         <div className="p-6">
           <a
@@ -85,10 +85,7 @@ const AdminPage = () => {
       <div className="w-full flex flex-col h-screen bg-gradient-to-r from-white to-emerald-50">
         <div className="w-full items-center bg-white py-2 px-6 sm:flex border-b mb-2">
           <div className="w-1/2"></div>
-          <div
-            // x-data="{ isOpen: false }"
-            className="relative w-1/2 flex justify-end"
-          >
+          <div className="relative w-1/2 flex justify-end">
             <button
               onClick={() => setActived(!actived)}
               className="realtive z-10 w-12 h-12 rounded-full overflow-hidden border-4 border-gray-400 hover:border-gray-300 focus:border-gray-300 focus:outline-none"
@@ -99,10 +96,10 @@ const AdminPage = () => {
               />
             </button>
             {actived === true && (
-              <div className="absolute w-32 bg-slate-50 rounded-lg shadow-lg py-2 mt-16 transition-all">
+              <div className="absolute w-32 bg-slate-50 rounded-lg shadow-lg py-2 mt-16 transition-all z-10">
                 <a
                   href="/"
-                  className="block px-4 py-2 account-link hover:text-white"
+                  className="block w-full px-4 py-2 account-link hover:text-white"
                 >
                   Account
                 </a>
@@ -122,7 +119,7 @@ const AdminPage = () => {
             )}
           </div>
         </div>
-        <div className="w-full overflow-auto ">
+        <div className="w-full overflow-auto" onClick={() => setActived(false)}>
           {adminpage === "blog" && <ManagedBlog />}
           {adminpage === "user" && <UserList />}
         </div>

@@ -159,3 +159,4 @@ NotiTime datetime,
 Status int default 0, -- 0 chưa đọc, 1 đọc rồi
 foreign key (idAccount) references account(id)
 );
+  
