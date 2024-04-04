@@ -17,7 +17,6 @@ const GoogleCallback = passport.authenticate("google", {
 });
 
 // // guest
-router.post("/register", api.register);
 router.post("/login", api.login);
 // router.post("/check/email", api.emailCheck);
 // router.post("/check/username", api.usernameCheck);
@@ -25,10 +24,38 @@ router.post("/login", api.login);
 
 router.get("/isauth", PassportCheck, api.isAuth);
 // router.post("/email/send", api.sendEmail);
+
 router.get("/auth/google", GooglePassport);
 router.get("/auth/google/callback", GoogleCallback);
 router.get("/auth/success", api.authSuccess);
 router.get("/auth/failure", api.authFailure);
+
+router.post("/register", api.register);
+router.post("/send/otp", api.sendOTP);
+
+router.post("/send/mail", api.sendMail);
+
+router.post(
+  "/post/create",
+  fileUploader.fields([
+    { name: "FeaturedImage", maxCount: 1 },
+    { name: "Gallery", maxCount: 10 },
+  ]),
+  api.createPost
+);
+router.patch(
+  "/post/update",
+  fileUploader.fields([
+    { name: "FeaturedImage", maxCount: 1 },
+    { name: "Gallery", maxCount: 10 },
+  ]),
+  api.updatePost
+);
+
+//admin
+router.get("/admin/post", api.getAllPost);
+router.patch("/admin/post/accept", api.acceptPost);
+router.patch("/admin/post/status/change", api.changeStatusPost);
 
 // // product
 // router.get("/products", api.getProducts);
