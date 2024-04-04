@@ -166,7 +166,7 @@ class API {
   createPost (req, res) {
 
     let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
-    let Images = "";
+    let Images = ""; 
     if(req.files.Gallery ){
       for(let i=0; i<req.files.Gallery.length; i++){
         Images += req.files.Gallery[i].path;

@@ -3,17 +3,18 @@ const api = require("../app/controllers/API");
 const router = express.Router();
 const passport = require("passport");
 const PassportCheck = passport.authenticate("jwt", { session: false });
-const GooglePassport = passport.authenticate("google", { scope:	['email', 'profile']})
+const GooglePassport = passport.authenticate("google", {
+  scope: ["email", "profile"],
+});
 const fileUploader = require("../app/middleware/cloudinary-upload.js");
 //const myOAuth2Client = require("../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 
 // const transport = require('../app/middleware/nodemailer')
-const GoogleCallback= passport.authenticate( 'google', { 
-    successRedirect: process.env.CLIENT_URL, 
-    failureRedirect: '/api/auth/failure'
-})
-
+const GoogleCallback = passport.authenticate("google", {
+  successRedirect: "http://localhost:3000?true=4",
+  failureRedirect: "/api/auth/failure",
+});
 
 // // guest
 router.post("/login", api.login);
@@ -34,24 +35,27 @@ router.post("/send/otp", api.sendOTP);
 
 router.post("/send/mail", api.sendMail);
 
-router.post("/post/create", fileUploader.fields([
-    { name: "FeaturedImage", maxCount: 1 }, 
-    { name: "Gallery", maxCount: 10 }]),
-    api.createPost);
-router.patch("/post/update", fileUploader.fields([
-    { name: "FeaturedImage", maxCount: 1 }, 
-    { name: "Gallery", maxCount: 10 }]),
-    api.updatePost);
-
+router.post(
+  "/post/create",
+  fileUploader.fields([
+    { name: "FeaturedImage", maxCount: 1 },
+    { name: "Gallery", maxCount: 10 },
+  ]),
+  api.createPost
+);
+router.patch(
+  "/post/update",
+  fileUploader.fields([
+    { name: "FeaturedImage", maxCount: 1 },
+    { name: "Gallery", maxCount: 10 },
+  ]),
+  api.updatePost
+);
 
 //admin
 router.get("/admin/post", api.getAllPost);
 router.patch("/admin/post/accept", api.acceptPost);
 router.patch("/admin/post/status/change", api.changeStatusPost);
-
-
-
-
 
 // // product
 // router.get("/products", api.getProducts);
