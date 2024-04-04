@@ -9,7 +9,6 @@ const encodeToken = require("../../util/encodeToken");
 const createError = require("http-errors");
 const myOAuth2Client = require("../../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
-const twilio = require("twilio");
 
 
 class API {
@@ -114,16 +113,7 @@ class API {
 
   //[POST] /api/send/otp
   sendOTP(req, res, next) {
-
-  const client = new twilio(process.env.TWILIO_SID, process.env.TWILIO_AUTH_TOKEN);
-
-  client.messages
-    .create({
-      body: 'Hello from twilio-node',
-      to: '+84337999421', // Text your number
-      from: '+12345678901', // From a valid Twilio number
-    })
-    .then((message) => console.log(message.sid));
+    
   }
 
   //[POST] /api/send/mail
@@ -170,6 +160,143 @@ class API {
 
       res.status(500).json({ errors: error.message });
     }
+  }
+
+  //[POST] /api/post/create
+  createPost (req, res) {
+
+    let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
+    let Images = "";
+    if(req.files.Gallery ){
+      for(let i=0; i<req.files.Gallery.length; i++){
+        Images += req.files.Gallery[i].path;
+        if(i != req.files.Gallery.length - 1){
+          Images += ";"
+        }
+      }
+    }
+    const {Title, Brief, Content, idAuthor, idCategories} = req.body;
+    const date = new Date();
+    const DatePost = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + 
+                      " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    const insertSql =
+      "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories) values (?,?,?,?,?,?,?,?)";
+
+    pool.query(
+      insertSql,
+      [FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      }
+    );
+  }
+
+  //[PATCH] /api/post/update
+  updatePost(req, res) {
+    let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
+    let Images = "";
+    if(req.files.Gallery ){
+      for(let i=0; i<req.files.Gallery.length; i++){
+        Images += req.files.Gallery[i].path;
+        if(i != req.files.Gallery.length - 1){
+          Images += ";"
+        }
+      }
+    }
+    const {Title, Brief, Content, idCategories, id} = req.body;
+
+    const updateSql =
+      "update post set FeaturedImage = ?, Title = ?, Brief = ?, Content = ?, Images = ?, idCategories = ? where id = ?";
+    const errorMsg = "Cập nhật bài viết không thành công!";
+
+    pool.query(
+      updateSql,
+      [FeaturedImage, Title, Brief, Content, Images, idCategories, id],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      }
+    );
+  }
+
+  //[GET] /api/admin/post
+  getAllPost(req, res) {
+    
+    const selectSql = "select * from AllPost";
+    const errorMsg = "Cập nhật trạng thái bài viết không thành công!"
+
+    pool.query(
+      selectSql, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ data: results, checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      }
+    );
+  }
+  
+  //[PATCH] /api/admin/post/accept
+  acceptPost(req, res) {
+    
+    const {id} = req.body;
+    const updateSql = "update post set Status = 1 where id = ? ";
+    const errorMsg = "Có lỗi bất thường, bài viết không thành công!"
+
+    pool.query(
+      updateSql, id, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      }
+    );
+  }
+
+  //[PATCH] /api/admin/post/status/change
+  changeStatusPost(req, res) {
+    
+    const {id} = req.body;
+    const callSql = "call UpdateStatusPost(?)";
+    const errorMsg = "Cập nhật trạng thái bài viết không thành công!"
+
+    pool.query(
+      callSql, id, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      }
+    );
   }
 
 }

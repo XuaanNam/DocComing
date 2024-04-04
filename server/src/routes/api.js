@@ -34,7 +34,20 @@ router.post("/send/otp", api.sendOTP);
 
 router.post("/send/mail", api.sendMail);
 
+router.post("/post/create", fileUploader.fields([
+    { name: "FeaturedImage", maxCount: 1 }, 
+    { name: "Gallery", maxCount: 10 }]),
+    api.createPost);
+router.patch("/post/update", fileUploader.fields([
+    { name: "FeaturedImage", maxCount: 1 }, 
+    { name: "Gallery", maxCount: 10 }]),
+    api.updatePost);
 
+
+//admin
+router.get("/admin/post", api.getAllPost);
+router.patch("/admin/post/accept", api.acceptPost);
+router.patch("/admin/post/status/change", api.changeStatusPost);
 
 
 

@@ -133,10 +133,11 @@ Title nvarchar(200) not null CHECK (Title !=""),
 Brief nvarchar(400) not null CHECK (Brief !=""),
 Content text(4000) not null CHECK (Content !=""),
 Images varchar(300),
-Author varchar(100),
+idAuthor int,
 DatePost datetime,
 idCategories int,
 Status int default 0, -- 0 chờ duyệt, 1 hiển thị trên site, 2 ẩn
+foreign key (idAuthor) references account(id),
 foreign key (idCategories) references categories(id) 
 )
 ;-- drop table post;
@@ -168,3 +169,37 @@ foreign key (idAccount) references account(id)
 );
 
 
+-- ------------------------------------------------------------------------------------------------------
+delimiter $$
+CREATE TRIGGER TG_DELETE_ACCOUNT before DELETE ON account FOR EACH ROW 
+BEGIN
+    DELETE FROM authorization
+    WHERE idAccount = old.id;
+    DELETE FROM majorDoctor
+    WHERE idAccount = old.id;
+    DELETE FROM post
+    WHERE idAuthor = old.id;
+    DELETE FROM appointment
+    WHERE idPatient = old.id AND idDoctor = old.id;
+    DELETE FROM notification
+    WHERE idAccount = old.id;
+END$$
+
+DELIMITER $$ 
+CREATE PROCEDURE UpdateStatusPost (IN idP int)
+BEGIN
+	
+    DECLARE statusP INT;
+    SET statusP = (SELECT Status
+    FROM post
+    WHERE id = idP);
+    
+	IF statusP = 1
+    THEN 
+    UPDATE post SET Status = 2
+    WHERE id = idP ;
+	ELSE
+	UPDATE post SET Status = 1
+    WHERE id = idP;
+    END IF;
+END$$
