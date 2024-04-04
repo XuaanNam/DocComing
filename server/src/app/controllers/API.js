@@ -10,10 +10,7 @@ const createError = require("http-errors");
 const myOAuth2Client = require("../../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 
-
 class API {
-
-
   // [POST] /api/register
   register(req, res, next) {
     const insertSql =
@@ -24,8 +21,7 @@ class API {
     const FirstName = req.body.FirstName;
     const Email = req.body.Email;
     const picture = req.body.picture;
-    
-    
+
     pool.query(
       insertSql,
       [LastName, FirstName, Email],
@@ -38,7 +34,7 @@ class API {
       }
     );
   }
-    
+
   // [GET] /api/isauth
   isAuth(req, res, next) {
     const auth = req.user[0];
@@ -51,7 +47,8 @@ class API {
 
   // [POST] /api/login
   login(req, res, next) {
-    const sql = "select id, Phone, PassWord, Authorization from account where Phone = ? ";
+    const sql =
+      "select id, Phone, PassWord, Authorization from account where Phone = ? ";
     const message = "Số điện thoại hoặc mật khẩu không chính xác!";
     const Phone = req.body.Phone;
     const PassWord = req.body.PassWord;
@@ -90,38 +87,34 @@ class API {
     });
   }
 
-
-
   // [GET] /api/auth/success
   authSuccess(req, res, next) {
-    if(req.user){
+    if (req.user) {
       res.status(200).json({
         message: "Đăng nhập thành công!",
-        user: req.user
-      })
+        user: req.user,
+      });
     } else {
       res.status(403).json({
-        message: "Đăng nhập thất bại!"
-      })
+        message: "Đăng nhập thất bại!",
+      });
     }
   }
-  
+
   // [GET] /api/auth/failure
   authFailure(req, res, next) {
-    res.redirect("http://localhost:3000?auth=false")
+    res.redirect("http://localhost:3000?auth=false");
   }
 
   //[POST] /api/send/otp
-  sendOTP(req, res, next) {
-    
-  }
+  sendOTP(req, res, next) {}
 
   //[POST] /api/send/mail
   async sendMail(req, res, next) {
     try {
       // Lấy thông tin gửi lên từ client qua body
-      const { email, subject, content } = req.body; 
-      if (!email || !subject || !content) 
+      const { email, subject, content } = req.body;
+      if (!email || !subject || !content)
         throw new Error("Please provide email, subject and content!!!");
       const sms = "+84337999421@SMS-gateway";
       const myAccessTokenObject = await myOAuth2Client.getAccessToken();
@@ -154,7 +147,7 @@ class API {
       // Không có lỗi gì thì trả về success
       res
         .status(200)
-        .json({ message: "Đã gửi mail về hộp thư. Vui lòng kiểm tra!" });    
+        .json({ message: "Đã gửi mail về hộp thư. Vui lòng kiểm tra!" });
     } catch (error) {
       // Có lỗi thì các bạn log ở đây cũng như gửi message lỗi về phía client
 
@@ -163,34 +156,52 @@ class API {
   }
 
   //[POST] /api/post/create
-  createPost (req, res) {
-
+  createPost(req, res) {
     let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
     let Images = "";
-    if(req.files.Gallery ){
-      for(let i=0; i<req.files.Gallery.length; i++){
-        Images += req.files.Gallery[i].path;
-        if(i != req.files.Gallery.length - 1){
-          Images += ";"
-        }
-      }
-    }
-    const {Title, Brief, Content, idAuthor, idCategories} = req.body;
+    // if (req.files.Gallery) {
+    //   for (let i = 0; i < req.files.Gallery.length; i++) {
+    //     Images += req.files.Gallery[i].path;
+    //     if (i != req.files.Gallery.length - 1) {
+    //       Images += ";";
+    //     }
+    //   }
+    // }
+    const { Title, Brief, Content, idAuthor, idCategories } = req.body;
     const date = new Date();
-    const DatePost = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + 
-                      " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    const DatePost =
+      date.getFullYear() +
+      "-" +
+      date.getMonth() +
+      "-" +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
     const insertSql =
       "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories) values (?,?,?,?,?,?,?,?)";
 
     pool.query(
       insertSql,
-      [FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories],
+      [
+        FeaturedImage,
+        Title,
+        Brief,
+        Content,
+        Images,
+        idAuthor,
+        DatePost,
+        idCategories,
+      ],
       function (error, results, fields) {
         if (error) {
           res.send({ message: error, checked: false });
         } else {
           if (results) {
-            res.status(200).send({ checked: true });
+            res.status(200).send({ checked: FeaturedImage });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -203,15 +214,15 @@ class API {
   updatePost(req, res) {
     let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
     let Images = "";
-    if(req.files.Gallery ){
-      for(let i=0; i<req.files.Gallery.length; i++){
+    if (req.files.Gallery) {
+      for (let i = 0; i < req.files.Gallery.length; i++) {
         Images += req.files.Gallery[i].path;
-        if(i != req.files.Gallery.length - 1){
-          Images += ";"
+        if (i != req.files.Gallery.length - 1) {
+          Images += ";";
         }
       }
     }
-    const {Title, Brief, Content, idCategories, id} = req.body;
+    const { Title, Brief, Content, idCategories, id } = req.body;
 
     const updateSql =
       "update post set FeaturedImage = ?, Title = ?, Brief = ?, Content = ?, Images = ?, idCategories = ? where id = ?";
@@ -236,69 +247,59 @@ class API {
 
   //[GET] /api/admin/post
   getAllPost(req, res) {
-    
     const selectSql = "select * from AllPost";
-    const errorMsg = "Cập nhật trạng thái bài viết không thành công!"
+    const errorMsg = "Cập nhật trạng thái bài viết không thành công!";
 
-    pool.query(
-      selectSql, function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false });
+    pool.query(selectSql, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data: results, checked: true });
         } else {
-          if (results) {
-            res.status(200).send({ data: results, checked: true });
-          } else {
-            res.status(200).send({ message: errorMsg, checked: false });
-          }
+          res.status(200).send({ message: errorMsg, checked: false });
         }
       }
-    );
+    });
   }
-  
+
   //[PATCH] /api/admin/post/accept
   acceptPost(req, res) {
-    
-    const {id} = req.body;
+    const { id } = req.body;
     const updateSql = "update post set Status = 1 where id = ? ";
-    const errorMsg = "Có lỗi bất thường, bài viết không thành công!"
+    const errorMsg = "Có lỗi bất thường, bài viết không thành công!";
 
-    pool.query(
-      updateSql, id, function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false });
+    pool.query(updateSql, id, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ checked: true });
         } else {
-          if (results) {
-            res.status(200).send({ checked: true });
-          } else {
-            res.status(200).send({ message: errorMsg, checked: false });
-          }
+          res.status(200).send({ message: errorMsg, checked: false });
         }
       }
-    );
+    });
   }
 
   //[PATCH] /api/admin/post/status/change
   changeStatusPost(req, res) {
-    
-    const {id} = req.body;
+    const { id } = req.body;
     const callSql = "call UpdateStatusPost(?)";
-    const errorMsg = "Cập nhật trạng thái bài viết không thành công!"
+    const errorMsg = "Cập nhật trạng thái bài viết không thành công!";
 
-    pool.query(
-      callSql, id, function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false });
+    pool.query(callSql, id, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ checked: true });
         } else {
-          if (results) {
-            res.status(200).send({ checked: true });
-          } else {
-            res.status(200).send({ message: errorMsg, checked: false });
-          }
+          res.status(200).send({ message: errorMsg, checked: false });
         }
       }
-    );
+    });
   }
-
 }
 
 module.exports = new API();

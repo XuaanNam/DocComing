@@ -4,15 +4,15 @@ const initialState = {
   postId: "",
   loading: false,
   error: "",
-  checked: true,
+  img: "",
+  checked: false,
 };
-export const createPost = createAsyncThunk("createPost", async () => {
+export const createPost = createAsyncThunk("createPost", async (body) => {
   const res = await fetch("http://localhost:5000/api/post/create", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    body,
   });
+  console.log(body);
   return await res.json();
 });
 const postSlice = createSlice({
@@ -25,8 +25,7 @@ const postSlice = createSlice({
         state.loading = true;
       })
       .addCase(createPost.fulfilled, (state, action) => {
-        // state.auth = payload.authentication;
-        state.loading = false;
+        state.checked = action.payload.checked;
       })
       .addCase(createPost.rejected, (state, action) => {
         state.loading = true;
