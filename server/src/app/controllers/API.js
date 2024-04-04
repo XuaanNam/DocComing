@@ -159,14 +159,14 @@ class API {
   createPost(req, res) {
     let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
     let Images = "";
-    // if (req.files.Gallery) {
-    //   for (let i = 0; i < req.files.Gallery.length; i++) {
-    //     Images += req.files.Gallery[i].path;
-    //     if (i != req.files.Gallery.length - 1) {
-    //       Images += ";";
-    //     }
-    //   }
-    // }
+    if (req.files.Gallery) {
+      for (let i = 0; i < req.files.Gallery.length; i++) {
+        Images += req.files.Gallery[i].path;
+        if (i != req.files.Gallery.length - 1) {
+          Images += ";";
+        }
+      }
+    }
     const { Title, Brief, Content, idAuthor, idCategories } = req.body;
     const date = new Date();
     const DatePost =

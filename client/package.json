@@ -8,7 +8,11 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@windmill/react-ui": "^0.6.0",
+<<<<<<< HEAD
     "axios": "^1.6.8",
+=======
+    "firebase": "^10.10.0",
+>>>>>>> 283b469ca88c17f06f850a3baa7f749cde8715b1
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
