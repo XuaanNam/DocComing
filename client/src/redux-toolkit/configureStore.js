@@ -4,10 +4,11 @@ import authReducer from "./authSlice";
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 
+import postReducer from "./postSlice";
 const reducer = combineReducers({
   user: authReducer,
   counter: counterSlice,
-
+  post: postReducer,
   // global: globalSlice,
 });
 const persistConfig = {
@@ -22,5 +23,5 @@ const store = configureStore({
     getDefaultMiddleware({ serializableCheck: false }),
 });
 
-export  default store;
+export default store;
 export const persistor = persistStore(store);

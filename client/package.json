@@ -8,6 +8,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "@windmill/react-ui": "^0.6.0",
+    "axios": "^1.6.8",
     "firebase": "^10.10.0",
     "flowbite-react": "^0.7.8",
     "react": "^18.2.0",
