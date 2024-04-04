@@ -9,6 +9,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@windmill/react-ui": "^0.6.0",
     "firebase": "^10.10.0",
+    "flowbite-react": "^0.7.8",
     "react": "^18.2.0",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.2.0",
@@ -19,6 +20,7 @@
     "react-scripts": "5.0.1",
     "react-slick": "^0.30.2",
     "react-toastify": "^10.0.5",
+    "redux-persist": "^6.0.0",
     "slick-carousel": "^1.8.1",
     "web-vitals": "^2.1.4"
   },

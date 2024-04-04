@@ -25,6 +25,8 @@ router.post("/login", api.login);
 router.get("/isauth", PassportCheck, api.isAuth);
 // router.post("/email/send", api.sendEmail);
 
+router.post("/auth/google/check", api.Google);
+
 router.get("/auth/google", GooglePassport);
 router.get("/auth/google/callback", GoogleCallback);
 router.get("/auth/success", api.authSuccess);

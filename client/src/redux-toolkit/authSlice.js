@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 // import { toast } from "react-toastify";
 
 const initialState = {
+  currentUser: null,
   auth: "",
   username: "",
   loading: false,
@@ -79,6 +80,19 @@ const authSlice = createSlice({
     logout: (state, action) => {
       state.token = null;
       localStorage.clear();
+    },
+    loginPending: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    loginFulfilled: (state, action) => {
+      state.currentUser = action.payload;
+      state.loading = false;
+      state.error = null;
+    },
+    loginRejected: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -199,5 +213,9 @@ const authSlice = createSlice({
     // },
   },
 });
-export const { addToken, addUser, logout } = authSlice.actions;
+export const { addToken, addUser, logout,
+  loginPending,
+  loginFulfilled,
+  loginRejected,} = authSlice.actions;
+
 export default authSlice.reducer;

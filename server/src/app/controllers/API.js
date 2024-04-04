@@ -90,7 +90,68 @@ class API {
     });
   }
 
+  // [POST] /api/auth/google/check
+  Google(req, res) {
+    const { email, name, googlePhotoUrl } = req.body;
+    const sql = "select id, Authorization from account where Email = ? "; 
+    let lastName = name.split(" ");
+    lastName = lastName[lastName.length-1];
+    const firstName = name.split(lastName)[0];
+    let payload = {};
+    let token = "";
 
+    const insertSql = "insert into account (Email, FirstName, LastName, Avt) values (?, ?, ?, ?)"
+    try {
+      pool.query(sql, email, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error });
+        } else {
+          if (results.length > 0) {
+            
+            payload = {
+              iss: "Doccoming",
+              id: results[0].id,
+              Phone: results[0].Phone,
+              authentication: results[0].Authorization,
+            };
+            token = "Bearer " + encodeToken(payload);
+            res.send({
+              checked: true,
+              token,
+              id: results[0].id,
+              name,
+              authentication: results[0].Authorization,
+              googlePhotoUrl,
+            });
+          } else {
+            pool.query(insertSql, [email, firstName, lastName, googlePhotoUrl], function (error, results, fields) {
+              if (error) 
+                res.send({ message: error });
+
+              else if (results) {
+                payload = {
+                  iss: "Doccoming",
+                  id: results.insertId,
+                  authentication: "1",
+                };
+                token = "Bearer " + encodeToken(payload);
+                res.send({
+                  checked: true,
+                  token,
+                  id: results.insertId,
+                  name,
+                  authentication: "1",
+                  googlePhotoUrl,
+                });
+              }
+            })
+          }
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 
   // [GET] /api/auth/success
   authSuccess(req, res, next) {
