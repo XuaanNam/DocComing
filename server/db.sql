@@ -203,3 +203,10 @@ BEGIN
     WHERE id = idP;
     END IF;
 END$$
+
+delimiter $$
+CREATE VIEW AllPost AS
+SELECT FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories
+FROM post
+WHERE Status = 1;
+ $$
