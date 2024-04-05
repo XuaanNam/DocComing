@@ -20,7 +20,6 @@ router.post("/login", api.login);
 // AUTH _ GG
 router.get("/isauth", PassportCheck, api.isAuth);
 router.post("/auth/google/check", api.Google);
-router.post("/email/send", api.sendMail);
 
 router.post("/register", api.register);
 router.post("/send/otp", api.sendOTP);
@@ -36,8 +35,8 @@ router.patch(
 );
 
 // Blog router
-router.post("/post/create", fileUploader.fields(fileConfig), api.createPost);
-router.patch("/post/update", fileUploader.fields(fileConfig), api.updatePost);
+router.post("/post/create", PassportCheck, fileUploader.fields(fileConfig), api.createPost);
+router.patch("/post/update", PassportCheck, fileUploader.fields(fileConfig), api.updatePost);
 router.get("/post", api.getPost);
 router.get("/post/detail/:id", api.getPostById);
 router.get("/post/search/keywords", api.getPostsByKeywords);
@@ -46,10 +45,10 @@ router.get("/post/search/keywords", api.getPostsByKeywords);
 router.get("/service", api.getService);
 
 //admin
-router.get("/admin/post", api.getAllPost);
-router.post("/admin/post/create", fileUploader.fields(fileConfig), api.createPostAdmin);
-router.patch("/admin/post/accept", api.acceptPost);
-router.patch("/admin/post/status/change", api.changeStatusPost);
+router.get("/admin/post", PassportCheck, api.getAllPost);
+router.post("/admin/post/create", PassportCheck, fileUploader.fields(fileConfig), api.createPostAdmin);
+router.patch("/admin/post/accept", PassportCheck, api.acceptPost);
+router.patch("/admin/post/status/change", PassportCheck, api.changeStatusPost);
 
 
 // 

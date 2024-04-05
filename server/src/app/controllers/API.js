@@ -109,7 +109,6 @@ class API {
             payload = {
               iss: "Doccoming",
               id: results[0].id,
-              Phone: results[0].Phone,
               authentication: results[0].Authorization,
             };
             token = "Bearer " + encodeToken(payload);
@@ -206,8 +205,7 @@ class API {
   //[GET] /api/profile
   getProfile(req, res) {
     const id = req.user[0].id;
-
-    const selectSql = "select * from customerdata where id = ?";
+    const selectSql = "select * from account where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể lấy thông tin!";
 
     pool.query(selectSql, id, function (error, results, fields) {
@@ -234,7 +232,7 @@ class API {
     let Avt = req.file ? req.file.path : null;
 
     const updateSql =
-      "update customerdata set FirstName = ?, LastName, BirthDate = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
+      "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin!";
 
     pool.query(
