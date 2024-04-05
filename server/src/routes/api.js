@@ -3,71 +3,63 @@ const api = require("../app/controllers/API");
 const router = express.Router();
 const passport = require("passport");
 const PassportCheck = passport.authenticate("jwt", { session: false });
-const GooglePassport = passport.authenticate("google", {
-  scope: ["email", "profile"],
-});
 const fileUploader = require("../app/middleware/cloudinary-upload.js");
+const fileConfig = require("../app/configs/muter")
 //const myOAuth2Client = require("../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 
 // const transport = require('../app/middleware/nodemailer')
-const GoogleCallback = passport.authenticate("google", {
-  successRedirect: "http://localhost:3000?true=4",
-  failureRedirect: "/api/auth/failure",
-});
 
-// // guest
+
+// guest
 router.post("/login", api.login);
 // router.post("/check/email", api.emailCheck);
 // router.post("/check/username", api.usernameCheck);
 // router.patch("/update/password", PassportCheck, api.updatePassword);
 
+// AUTH _ GG
 router.get("/isauth", PassportCheck, api.isAuth);
-// router.post("/email/send", api.sendEmail);
-
 router.post("/auth/google/check", api.Google);
-
-router.get("/auth/google", GooglePassport);
-router.get("/auth/google/callback", GoogleCallback);
-router.get("/auth/success", api.authSuccess);
-router.get("/auth/failure", api.authFailure);
+router.post("/email/send", api.sendMail);
 
 router.post("/register", api.register);
 router.post("/send/otp", api.sendOTP);
-
 router.post("/send/mail", api.sendMail);
 
-router.post(
-  "/post/create",
-  fileUploader.fields([
-    { name: "FeaturedImage", maxCount: 1 },
-    { name: "Gallery", maxCount: 10 },
-  ]),
-  api.createPost
-);
+// profile
+router.get("/profile", PassportCheck, api.getProfile);
 router.patch(
-  "/post/update",
-  fileUploader.fields([
-    { name: "FeaturedImage", maxCount: 1 },
-    { name: "Gallery", maxCount: 10 },
-  ]),
-  api.updatePost
+  "/profile/update",
+  PassportCheck,
+  fileUploader.single("avatar"),
+  api.updateProfile
 );
+
+// Blog router
+router.post("/post/create", fileUploader.fields(fileConfig), api.createPost);
+router.patch("/post/update", fileUploader.fields(fileConfig), api.updatePost);
+router.get("/post", api.getPost);
+router.get("/post/detail/:id", api.getPostById);
+router.get("/post/search/keywords", api.getPostsByKeywords);
+
+//service
+router.get("/service", api.getService);
 
 //admin
 router.get("/admin/post", api.getAllPost);
+router.post("/admin/post/create", fileUploader.fields(fileConfig), api.createPostAdmin);
 router.patch("/admin/post/accept", api.acceptPost);
 router.patch("/admin/post/status/change", api.changeStatusPost);
 
-// // product
-// router.get("/products", api.getProducts);
-// router.get("/products/detail/:id", api.getProductById);
-// router.get("/products/search/keywords", api.getProductsByKeywords);
-// router.get("/products/search/genre", api.getProductsByGenre);
-// router.get("/products/search/price", api.getProductsByPrice);
-// router.get("/products/search/publisher", api.getProductsByPublisher);
-// router.get("/products/search/age", api.getProductsByAge);
-// router.get("/products/search/form", api.getProductsByForm);
+
+// 
+// 
+// 
+// 
+// router.get("/post/search/price", api.getPostsByPrice);
+// router.get("/post/search/publisher", api.getPostsByPublisher);
+// router.get("/post/search/age", api.getPostsByAge);
+// router.get("/post/search/form", api.getPostsByForm);
 
 // // cart
 // router.get("/cart", PassportCheck, api.getCart);
@@ -76,14 +68,7 @@ router.patch("/admin/post/status/change", api.changeStatusPost);
 // router.patch("/cart/update", PassportCheck, api.updateCart);
 // router.post("/cart/order", PassportCheck, api.createOrder);
 
-// // profile
-// router.get("/profile", PassportCheck, api.getProfile);
-// router.patch(
-//   "/profile/update",
-//   PassportCheck,
-//   fileUploader.single("avatar"),
-//   api.updateProfile
-// );
+
 
 // // payment
 // router.post("/payment/paypal", PassportCheck, api.paymentByPaypal);
