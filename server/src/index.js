@@ -7,11 +7,11 @@ require('dotenv').config();
 const port = parseInt(process.env.PORT);
 const session = require('express-session');
 
-app.use(session({
-    resave: false,
-    saveUninitialized: true,
-    secret: process.env.SESSION_SECRET
-}));
+// app.use(session({
+//     resave: false,
+//     saveUninitialized: true,
+//     secret: process.env.SESSION_SECRET
+// }));
 
 app.use(
     cors({

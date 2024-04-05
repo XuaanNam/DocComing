@@ -185,6 +185,17 @@ BEGIN
     WHERE idAccount = old.id;
 END$$
 
+delimiter $$
+CREATE TRIGGER TG_CHECK_EMAIL BEFORE INSERT ON account FOR EACH ROW 
+BEGIN
+    DECLARE Count int default 0;
+    SET Count = (SELECT COUNT(*) FROM account WHERE Email = new.Email);
+    IF Count > 0
+    THEN SIGNAL sqlstate '45001' set message_text = "Email đã được dùng để đăng kí tài khoản!";
+    END IF;
+END$$
+
+-----------------------------------
 DELIMITER $$ 
 CREATE PROCEDURE UpdateStatusPost (IN idP int)
 BEGIN
@@ -206,7 +217,35 @@ END$$
 
 delimiter $$
 CREATE VIEW AllPost AS
-SELECT FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories
+SELECT *
+FROM post
+WHERE Status != 1;
+ $$
+
+delimiter $$
+CREATE VIEW AvailablePost AS
+SELECT *
 FROM post
 WHERE Status = 1;
  $$
+-------------------------------
+ DELIMITER $$ 
+CREATE PROCEDURE PostDetailById (IN id int)
+BEGIN
+    SELECT * 
+    FROM post 
+    WHERE id = id AND Status !=0;
+END$$ -- drop PROCEDURE PostDetailById
+
+DELIMITER $$
+CREATE PROCEDURE ListSearch(IN search text )
+BEGIN
+    SELECT *
+    FROM  account a, categories c, post p
+    WHERE p.Status = 1 
+    AND p.idCategories = c.id 
+    AND a.id = p.idAuthor 
+    AND (a.LastName like  search  or a.FirstName like search or c.Categories like search or p.Title like search 
+    or  p.Brief like search or p.Content like search) ;
+END$$
+

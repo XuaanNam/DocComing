@@ -109,7 +109,6 @@ class API {
             payload = {
               iss: "Doccoming",
               id: results[0].id,
-              Phone: results[0].Phone,
               authentication: results[0].Authorization,
             };
             token = "Bearer " + encodeToken(payload);
@@ -151,27 +150,10 @@ class API {
     }
   }
 
-  // [GET] /api/auth/success
-  authSuccess(req, res, next) {
-    if (req.user) {
-      res.status(200).json({
-        message: "Đăng nhập thành công!",
-        user: req.user,
-      });
-    } else {
-      res.status(403).json({
-        message: "Đăng nhập thất bại!",
-      });
-    }
-  }
-
-  // [GET] /api/auth/failure
-  authFailure(req, res, next) {
-    res.redirect("http://localhost:3000?auth=false");
-  }
-
   //[POST] /api/send/otp
-  sendOTP(req, res, next) {}
+  sendOTP(req, res, next) {
+
+  }
 
   //[POST] /api/send/mail
   async sendMail(req, res, next) {
@@ -219,10 +201,61 @@ class API {
     }
   }
 
+  // Profile
+  //[GET] /api/profile
+  getProfile(req, res) {
+    const id = req.user[0].id;
+    const selectSql = "select * from account where id = ?";
+    const errorMsg = "Lỗi hệ thống, không thể lấy thông tin!";
+
+    pool.query(selectSql, id, function (error, results, fields) {
+      if (error) {
+        res.send({ message: errorMsg, checked: false });
+      } else {
+        if (results.length > 0) {
+          res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  //[PATCH] /api/profile/update
+  updateProfile(req, res) {
+    const id = req.user[0].id;
+    const FirstName = req.body.FirstName ? req.body.FirstName : null;
+    const LastName = req.body.LastName ? req.body.LastName : null;
+    const BirthDate = req.body.BirthDate ? req.body.BirthDate : null;
+    const Address = req.body.Address ? req.body.Address : null;
+    const Phone = req.body.Phone ? req.body.Phone : null;
+    let Avt = req.file ? req.file.path : null;
+
+    const updateSql =
+      "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
+    const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin!";
+
+    pool.query(
+      updateSql,
+      [FirstName, LastName, BirthDate, Phone, Address, Avt, id],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      }
+    );
+  }
+
   //[POST] /api/post/create
   createPost(req, res) {
     let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
-    let Images = "";
+    let Images = ""; 
     if (req.files.Gallery) {
       for (let i = 0; i < req.files.Gallery.length; i++) {
         Images += req.files.Gallery[i].path;
@@ -265,7 +298,7 @@ class API {
           res.send({ message: error, checked: false });
         } else {
           if (results) {
-            res.status(200).send({ checked: FeaturedImage });
+            res.status(200).send({ checked: true, id : results.insertId});
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -309,10 +342,10 @@ class API {
     );
   }
 
-  //[GET] /api/admin/post
-  getAllPost(req, res) {
-    const selectSql = "select * from AllPost";
-    const errorMsg = "Cập nhật trạng thái bài viết không thành công!";
+  // [GET] /api/post
+  getPost(req, res) {
+    const selectSql = "select * from AvailablePost";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, function (error, results, fields) {
       if (error) {
@@ -327,11 +360,141 @@ class API {
     });
   }
 
+  // [GET] /api/post/detail/:id
+  getPostById(req, res) {
+    const id = req.params.id;
+    const selectSql = "call PostDetailById(?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, id,  function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results[0]) {
+          res.status(200).send({ data: results[0], checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+  
+  // [GET] /api/post/search/keywords
+  getPostsByKeywords(req, res, next) {
+    let {keywords} = req.body;
+    keywords = '%' + keywords  + '%';
+    const selectSql = "call ListSearch(?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, keywords,  function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results[0]) {
+          res.status(200).send({ data: results[0], checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // [GET] /api/service
+  getService(req, res) {
+    
+    const selectSql = "SELECT * FROM service";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // ADMIN API
+
+  //[GET] /api/admin/post
+  getAllPost(req, res) {
+    const selectSql = "select * from AllPost";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  //[POST] /api/admin/post/create
+  createPostAdmin(req, res) {
+    let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
+    let Images = "";  
+    if (req.files.Gallery) {
+      for (let i = 0; i < req.files.Gallery.length; i++) {
+        Images += req.files.Gallery[i].path;
+        if (i != req.files.Gallery.length - 1) {
+          Images += ";";
+        }
+      }
+    }
+    const { Title, Brief, Content, idAuthor, idCategories } = req.body;
+    const date = new Date();
+    const DatePost =
+      date.getFullYear() + "-" +
+      date.getMonth() + "-" +
+      date.getDate() + " " +   
+      date.getHours() + ":" +
+      date.getMinutes() + ":" +
+      date.getSeconds();
+    const insertSql =
+      "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories, Status)" +
+      "values (?,?,?,?,?,?,?,?,?)";
+
+    pool.query(
+      insertSql,
+      [
+        FeaturedImage,
+        Title,
+        Brief,
+        Content,
+        Images,
+        idAuthor,
+        DatePost,
+        idCategories,
+        '1'
+      ],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ checked: true, id : results.insertId});
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      }
+    );
+  }
+
   //[PATCH] /api/admin/post/accept
   acceptPost(req, res) {
     const { id } = req.body;
     const updateSql = "update post set Status = 1 where id = ? ";
-    const errorMsg = "Có lỗi bất thường, bài viết không thành công!";
+    const errorMsg = "Có lỗi bất thường, không thể chấp nhận bài viết!";
 
     pool.query(updateSql, id, function (error, results, fields) {
       if (error) {
@@ -364,6 +527,8 @@ class API {
       }
     });
   }
+
+
 }
 
 module.exports = new API();
