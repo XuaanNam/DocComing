@@ -5,12 +5,13 @@ import { Label, Input, Button } from "@windmill/react-ui";
 import Header from "../Layouts/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { loginGoogle } from "../redux-toolkit/authSlice";
+import OAuth from "../components/OAuth";
 
 function Login() {
   const dispatch = useDispatch();
-  const handleLogin = () => {
-    dispatch(loginGoogle);
-  };
+  // const handleLogin = () => {
+  //   dispatch(loginGoogle);
+  // };
   return (
     <div>
       <Header />
@@ -20,7 +21,7 @@ function Login() {
             Đăng nhập tài khoản bệnh nhân
           </div>
           <div className="relative flex h-12 w-full items-center border rounded-xl py-2 cursor-pointer bg-white hover:drop-shadow-md">
-            <img
+            {/* <img
               className="absolute h-[70%] pl-4"
               src={GoogleIcon}
               alt=""
@@ -31,10 +32,11 @@ function Login() {
                 handleLogin();
               }}
             >
-              <a href="http://localhost:5000/api/auth/google">
+              <a href="#">
                 Tiếp tục với google
               </a>
-            </div>
+            </div> */}
+            <OAuth/>
           </div>
           <div className="text-center text-lg opacity-70  my-5">
             Hoặc tiếp tục với số điện thoại

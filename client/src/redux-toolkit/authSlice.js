@@ -1,19 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { useNavigate } from "react-router-dom";
 // import { toast } from "react-toastify";
 
 const initialState = {
+  currentUser: null,
   auth: "",
   username: "",
   loading: false,
   error: "",
   checked: true,
 };
-export const loginGoogle = createAsyncThunk("loginGoogle", async () => {
-  const res = await fetch("http://localhost:5000/api/auth/google", {
-    method: "GET",
+export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
+
+  const res = await fetch("http://localhost:5000/api/auth/google/check", {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    body: JSON.stringify(body),
   });
   return await res.json();
 });
@@ -80,6 +84,7 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.clear();
     },
+
   },
   extraReducers: (builder) => {
     // [emailChecked.pending]: (state, action) => {
@@ -151,13 +156,16 @@ const authSlice = createSlice({
     builder
       .addCase(loginGoogle.pending, (state, action) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(loginGoogle.fulfilled, (state, action) => {
-        // state.auth = payload.authentication;
+        state.currentUser = action.payload;
         state.loading = false;
+        state.data = action.payload;
       })
       .addCase(loginGoogle.rejected, (state, action) => {
-        state.loading = true;
+        state.loading = false;
+        state.error = action.payload;
       });
     // .addCase(getProfile.pending, (state, action) => {
     //   state.loading = true;
@@ -199,5 +207,6 @@ const authSlice = createSlice({
     // },
   },
 });
-export const { addToken, addUser, logout } = authSlice.actions;
+export const { addToken, addUser, logout} = authSlice.actions;
+
 export default authSlice.reducer;
