@@ -8,13 +8,9 @@ const fileConfig = require("../app/configs/muter");
 //const myOAuth2Client = require("../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 
-// const transport = require('../app/middleware/nodemailer')
-
 // guest
 router.post("/login", api.login);
 // router.post("/check/email", api.emailCheck);
-// router.post("/check/username", api.usernameCheck);
-// router.patch("/update/password", PassportCheck, api.updatePassword);
 
 // AUTH _ GG
 router.get("/isauth", PassportCheck, api.isAuth);
@@ -24,16 +20,17 @@ router.post("/register", api.register);
 router.post("/send/otp", api.sendOTP);
 router.post("/send/mail", api.sendMail);
 
-// profile
+// patient - doctor
 router.get("/profile", PassportCheck, api.getProfile);
 router.patch(
   "/profile/update",
   PassportCheck,
-  fileUploader.single("avatar"),
+  fileUploader.single("avt"),
   api.updateProfile
 );
+router.get("/profile/appointment")
 
-// Blog router
+// Blog 
 router.post(
   "/post/create",
   PassportCheck,
@@ -48,7 +45,7 @@ router.patch(
 );
 router.get("/post", api.getPost);
 router.get("/post/detail/:id", api.getPostById);
-router.get("/post/search/keywords", api.getPostsByKeywords);
+router.get("/search/keywords", api.searchByKeywords);
 
 //service
 router.get("/service", api.getService);
@@ -56,14 +53,10 @@ router.get("/category", api.getCategory);
 
 //admin
 router.get("/admin/post", PassportCheck, api.getAllPost);
-router.post(
-  "/admin/post/create",
-  PassportCheck,
-  fileUploader.fields(fileConfig),
-  api.createPostAdmin
-);
 router.patch("/admin/post/accept", PassportCheck, api.acceptPost);
 router.patch("/admin/post/status/change", PassportCheck, api.changeStatusPost);
+router.get("/admin/account", PassportCheck, api.getAccount);
+
 
 //
 //

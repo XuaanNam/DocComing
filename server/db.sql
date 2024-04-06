@@ -151,7 +151,7 @@ idPatient int  not null CHECK (idPatient !=""),
 idDoctor int  not null CHECK (idDoctor !=""),
 DateBooking date,
 Price double not null,
-Status int default 0, -- 2 cuộc hẹn bị hủy, 1 bác sĩ đã xác nhận, 0 đang chờ bác sĩ chấp nhận
+Status int default 0, -- 0 đang chờ bác sĩ chấp nhận, 1 bác sĩ đã chấp nhận, 2 đã hoàn thành, 3 cuộc hẹn bị hủy 
 Information text(1000),
 foreign key (idPatient) references account(id),
 foreign key (idService) references service(id),
@@ -218,23 +218,37 @@ END$$
 delimiter $$
 CREATE VIEW AllPost AS
 SELECT *
-FROM post
-WHERE Status != 1;
- $$
+FROM post;
+$$
 
 delimiter $$
 CREATE VIEW AvailablePost AS
 SELECT *
 FROM post
 WHERE Status = 1;
- $$
+$$
+
+delimiter $$
+CREATE VIEW AllAccount AS
+SELECT ta.id, ta.FirstName, ta.LastName, ta.BirthDate, ta.Address, ta.Email, ta.Phone, ta.Avt, ta.Role, dm.Major
+FROM
+(SELECT a.id, a.FirstName, a.LastName, a.BirthDate, a.Address, a.Email, a.Phone, a.Avt, t.Role
+FROM account a, authorization t
+WHERE a.id = t.idAccount) as ta
+LEFT JOIN
+(SELECT d.idAccount, m.Major
+FROM  majorDoctor d, major m
+WHERE d.idMajor = m.id) as dm
+ON ta.id = dm.idAccount
+$$ -- drop view AllAccount
+
 -------------------------------
  DELIMITER $$ 
 CREATE PROCEDURE PostDetailById (IN id int)
 BEGIN
     SELECT * 
     FROM post 
-    WHERE id = id AND Status !=0;
+    WHERE id = id AND Status = 1;
 END$$ -- drop PROCEDURE PostDetailById
 
 DELIMITER $$
@@ -248,4 +262,12 @@ BEGIN
     AND (a.LastName like  search  or a.FirstName like search or c.Categories like search or p.Title like search 
     or  p.Brief like search or p.Content like search) ;
 END$$
+
+DELIMITER $$
+CREATE PROCEDURE ListSearchService(IN search text )
+BEGIN
+    SELECT *
+    FROM  service
+    WHERE Service like  search  or Description like  search;
+END$$ -- drop PROCEDURE ListSearchService
 
