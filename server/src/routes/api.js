@@ -10,7 +10,6 @@ const nodemailer = require("nodemailer");
 
 // guest
 router.post("/login", api.login);
-// router.post("/check/email", api.emailCheck);
 
 // AUTH _ GG
 router.get("/isauth", PassportCheck, api.isAuth);
@@ -28,7 +27,14 @@ router.patch(
   fileUploader.single("avt"),
   api.updateProfile
 );
-router.get("/profile/appointment")
+router.get("/appointment", PassportCheck, api.getAppointmentById);
+router.post("/appointment/create", PassportCheck, api.createAppointment);
+router.patch("/appointment/accept", PassportCheck, api.acceptAppointment);
+router.patch("/appointment/complete", PassportCheck, api.completeAppointment);
+router.patch("/appointment/cancel", PassportCheck, api.cancelAppointment);
+router.get("/notification", PassportCheck, api.getNotification);
+
+
 
 // Blog 
 router.post(
@@ -56,6 +62,12 @@ router.get("/admin/post", PassportCheck, api.getAllPost);
 router.patch("/admin/post/accept", PassportCheck, api.acceptPost);
 router.patch("/admin/post/status/change", PassportCheck, api.changeStatusPost);
 router.get("/admin/account", PassportCheck, api.getAccount);
+router.post("/admin/account/create", PassportCheck, api.createAccount);
+router.patch("/admin/account/update", PassportCheck, api.updateAccount);
+router.delete("/admin/account/delete", PassportCheck, api.deleteAccount);
+router.get("/admin/appointment", PassportCheck, api.getAppointment);
+
+
 
 
 //

@@ -25,17 +25,16 @@ insert into account (LastName, FirstName, Email, Phone, Authorization) value
 -- drop table account;
 
 create table authorization(
-id int not null primary key AUTO_INCREMENT,
-idAccount int ,
-Role varchar(20) not null CHECK (Role !=""),
-foreign key (idAccount) references account(id)
+id int not null primary key,
+Role varchar(20) not null CHECK (Role !="")
 )
 ;
 -- drop table authorization;
-insert into authorization (idAccount, Role) values 
-(235523484, 'Admin'),
-(235523486, 'Patient'),
-(235523485, 'doctor');
+insert into authorization (id, Role) values 
+(0, 'Admin'),
+(1, 'Patient'),
+(2, 'doctor');
+
 
 create table major(
 id int not null primary key AUTO_INCREMENT,
@@ -173,8 +172,6 @@ foreign key (idAccount) references account(id)
 delimiter $$
 CREATE TRIGGER TG_DELETE_ACCOUNT before DELETE ON account FOR EACH ROW 
 BEGIN
-    DELETE FROM authorization
-    WHERE idAccount = old.id;
     DELETE FROM majorDoctor
     WHERE idAccount = old.id;
     DELETE FROM post
@@ -183,7 +180,7 @@ BEGIN
     WHERE idPatient = old.id AND idDoctor = old.id;
     DELETE FROM notification
     WHERE idAccount = old.id;
-END$$
+END$$ -- drop TRIGGER TG_DELETE_ACCOUNT
 
 delimiter $$
 CREATE TRIGGER TG_CHECK_EMAIL BEFORE INSERT ON account FOR EACH ROW 
@@ -196,24 +193,7 @@ BEGIN
 END$$
 
 -----------------------------------
-DELIMITER $$ 
-CREATE PROCEDURE UpdateStatusPost (IN idP int)
-BEGIN
-	
-    DECLARE statusP INT;
-    SET statusP = (SELECT Status
-    FROM post
-    WHERE id = idP);
-    
-	IF statusP = 1
-    THEN 
-    UPDATE post SET Status = 2
-    WHERE id = idP ;
-	ELSE
-	UPDATE post SET Status = 1
-    WHERE id = idP;
-    END IF;
-END$$
+
 
 delimiter $$
 CREATE VIEW AllPost AS
@@ -228,20 +208,26 @@ FROM post
 WHERE Status = 1;
 $$
 
-delimiter $$
+ delimiter $$
 CREATE VIEW AllAccount AS
 SELECT ta.id, ta.FirstName, ta.LastName, ta.BirthDate, ta.Address, ta.Email, ta.Phone, ta.Avt, ta.Role, dm.Major
 FROM
 (SELECT a.id, a.FirstName, a.LastName, a.BirthDate, a.Address, a.Email, a.Phone, a.Avt, t.Role
 FROM account a, authorization t
-WHERE a.id = t.idAccount) as ta
+WHERE a.Authorization = t.id) as ta
 LEFT JOIN
 (SELECT d.idAccount, m.Major
 FROM  majorDoctor d, major m
 WHERE d.idMajor = m.id) as dm
 ON ta.id = dm.idAccount
-$$ -- drop view AllAccount
+ $$ -- drop view AllAccount
 
+ delimiter $$
+CREATE VIEW AllAppointment AS
+SELECT *
+FROM appointment;
+ $$
+ ------
 -------------------------------
  DELIMITER $$ 
 CREATE PROCEDURE PostDetailById (IN id int)
@@ -270,4 +256,23 @@ BEGIN
     FROM  service
     WHERE Service like  search  or Description like  search;
 END$$ -- drop PROCEDURE ListSearchService
+
+DELIMITER $$ 
+CREATE PROCEDURE UpdateStatusPost (IN idP int)
+BEGIN
+	
+    DECLARE statusP INT;
+    SET statusP = (SELECT Status
+    FROM post
+    WHERE id = idP);
+    
+	IF statusP = 1
+    THEN 
+    UPDATE post SET Status = 2
+    WHERE id = idP ;
+	ELSE
+	UPDATE post SET Status = 1
+    WHERE id = idP;
+    END IF;
+END$$
 
