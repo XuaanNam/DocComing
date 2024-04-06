@@ -38,7 +38,7 @@ class API {
 
   // [GET] /api/isauth
   isAuth(req, res, next) {
-    const auth = req.user[0];
+    const auth = req.user;
     if (auth) {
       res.status(200).send({ authentication: auth });
     } else {
@@ -109,7 +109,7 @@ class API {
             payload = {
               iss: "Doccoming",
               id: results[0].id,
-              authentication: results[0].Authorization,
+              Authorization: results[0].Authorization,
             };
             token = "Bearer " + encodeToken(payload);
             res.send({
@@ -130,7 +130,7 @@ class API {
                   payload = {
                     iss: "Doccoming",
                     id: results.insertId,
-                    authentication: "1",
+                    Authorization: "1",
                   };
                   token = "Bearer " + encodeToken(payload);
                   res.send({
@@ -204,7 +204,7 @@ class API {
   // Profile
   //[GET] /api/profile
   getProfile(req, res) {
-    const id = req.user[0].id;
+    const id = req.user.id;
     const selectSql = "select * from account where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể lấy thông tin!";
 
@@ -223,7 +223,7 @@ class API {
 
   //[PATCH] /api/profile/update
   updateProfile(req, res) {
-    const id = req.user[0].id;
+    const id = req.user.id;
     const FirstName = req.body.FirstName ? req.body.FirstName : null;
     const LastName = req.body.LastName ? req.body.LastName : null;
     const BirthDate = req.body.BirthDate ? req.body.BirthDate : null;
@@ -264,7 +264,9 @@ class API {
         }
       }
     }
-    const { Title, Brief, Content, idAuthor, idCategories } = req.body;
+    const Status = 0;
+    const idAuthor = req.user.id;
+    const { Title, Brief, Content, idCategories } = req.body;
     const date = new Date();
     const DatePost =
       date.getFullYear() +
@@ -279,8 +281,11 @@ class API {
       ":" +
       date.getSeconds();
     const insertSql =
-      "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories) values (?,?,?,?,?,?,?,?)";
-
+      "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories, Status) values (?,?,?,?,?,?,?,?,?)";
+    
+    if(req.user.Authorization = 2) Status = 0
+    else if(req.user.Authorization = 0) Status = 1
+    else res.send({ message: "Bệnh nhân không thể đăng bài", checked: false });
     pool.query(
       insertSql,
       [
@@ -292,6 +297,7 @@ class API {
         idAuthor,
         DatePost,
         idCategories,
+        Status
       ],
       function (error, results, fields) {
         if (error) {
@@ -309,6 +315,10 @@ class API {
 
   //[PATCH] /api/post/update
   updatePost(req, res) {
+
+    if(req.user.Authorization = 1) {
+      res.send({ message: "Bệnh nhân không thể chỉnh sửa bài", checked: false });
+    }
     let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
     let Images = "";
     if (req.files.Gallery) {
@@ -320,7 +330,6 @@ class API {
       }
     }
     const { Title, Brief, Content, idCategories, id } = req.body;
-
     const updateSql =
       "update post set FeaturedImage = ?, Title = ?, Brief = ?, Content = ?, Images = ?, idCategories = ? where id = ?";
     const errorMsg = "Cập nhật bài viết không thành công!";
@@ -380,7 +389,7 @@ class API {
   }
 
   // [GET] /api/post/search/keywords
-  getPostsByKeywords(req, res, next) {
+  searchByKeywords(req, res, next) {
     let { keywords } = req.body;
     keywords = "%" + keywords + "%";
     const selectSql = "call ListSearch(?)";
@@ -417,6 +426,7 @@ class API {
     });
   }
 
+  // [GET] /api/category
   getCategory(req, res) {
     const selectSql = "SELECT * FROM categories";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
@@ -440,94 +450,46 @@ class API {
   getAllPost(req, res) {
     const selectSql = "select * from AllPost";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-
-    pool.query(selectSql, function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ data: results, checked: true });
-        } else {
-          res.status(200).send({ message: errorMsg, checked: false });
-        }
-      }
-    });
-  }
-
-  //[POST] /api/admin/post/create
-  createPostAdmin(req, res) {
-    let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
-    let Images = "";
-    if (req.files.Gallery) {
-      for (let i = 0; i < req.files.Gallery.length; i++) {
-        Images += req.files.Gallery[i].path;
-        if (i != req.files.Gallery.length - 1) {
-          Images += ";";
-        }
-      }
-    }
-    const { Title, Brief, Content, idAuthor, idCategories } = req.body;
-    const date = new Date();
-    const DatePost =
-      date.getFullYear() +
-      "-" +
-      date.getMonth() +
-      "-" +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
-    const insertSql =
-      "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories, Status)" +
-      "values (?,?,?,?,?,?,?,?,?)";
-
-    pool.query(
-      insertSql,
-      [
-        FeaturedImage,
-        Title,
-        Brief,
-        Content,
-        Images,
-        idAuthor,
-        DatePost,
-        idCategories,
-        "1",
-      ],
-      function (error, results, fields) {
+    
+    if(req.user.Authorization != 0) {
+      res.end("Unauthorized");
+    } else {
+      pool.query(selectSql, function (error, results, fields) {
         if (error) {
           res.send({ message: error, checked: false });
         } else {
           if (results) {
-            res.status(200).send({ checked: true, id: results.insertId });
+            res.status(200).send({ data: results, checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
         }
-      }
-    );
+      });
+    }
   }
 
+  
   //[PATCH] /api/admin/post/accept
   acceptPost(req, res) {
     const { id } = req.body;
     const updateSql = "update post set Status = 1 where id = ? ";
     const errorMsg = "Có lỗi bất thường, không thể chấp nhận bài viết!";
 
-    pool.query(updateSql, id, function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ checked: true });
+    if(req.user.Authorization != 0) {
+      res.end("Unauthorized");
+    } else {
+      pool.query(updateSql, id, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
         } else {
-          res.status(200).send({ message: errorMsg, checked: false });
+          if (results) {
+            res.status(200).send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
         }
-      }
-    });
+      });
+    }
   }
 
   //[PATCH] /api/admin/post/status/change
@@ -536,17 +498,43 @@ class API {
     const callSql = "call UpdateStatusPost(?)";
     const errorMsg = "Cập nhật trạng thái bài viết không thành công!";
 
-    pool.query(callSql, id, function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ checked: true });
+    if(req.user.Authorization != 0) {   
+      res.end("Unauthorized");
+    } else {
+      pool.query(callSql, id, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
         } else {
-          res.status(200).send({ message: errorMsg, checked: false });
+          if (results) {
+            res.status(200).send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
         }
-      }
-    });
+      });
+    }
+  }
+
+  //[GET] /api/admin/account
+  getAccount(req, res) {
+    const selectSql = "select * from AllAccount";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    if(req.user.Authorization != 0) {
+      res.end("Unauthorized");
+    } else {
+      pool.query(selectSql, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ data: results, checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
+      });
+    }
   }
 }
 
