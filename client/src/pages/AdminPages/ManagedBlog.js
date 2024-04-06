@@ -1,23 +1,33 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import Editor from "./Editor";
-import { useDispatch } from "react-redux";
-import { createPost } from "../../redux-toolkit/postSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { createPost, fetchCategories } from "../../redux-toolkit/postSlice";
+import Select from "react-select";
 const ManagedBlog = () => {
   const dispatch = useDispatch();
-
+  const category = useSelector((state) => state.post.data);
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState("");
+  const [categories, setCategories] = useState([{ id: "", Categories: "" }]);
+  const [categoryId, setCategoryId] = useState("");
 
   const data = new FormData();
   data.append("Title", title);
   data.append("Brief", summary);
   data.append("Content", content);
   data.append("idAuthor", "235523485");
-  data.append("idCategories", "1");
+  data.append("idCategories", categoryId);
   data.append("FeaturedImage", files[0]);
+  useEffect(() => {
+    dispatch(fetchCategories());
+    setCategories(category);
+  }, [dispatch]);
+  const handleChange = (event) => {
+    setCategoryId(event.target.value);
+  };
 
   const handleCreatePost = () => {
     console.log(data);
@@ -46,6 +56,22 @@ const ManagedBlog = () => {
             onChange={(e) => setSummary(e.target.value)}
           />
         </div>
+        <select
+          className="flex items-center h-[48px] w-[70%] border rounded-lg mb-3 bg-white p-2 text-slate-800 opacity-60 cursor-pointer"
+          value={categoryId}
+          onChange={handleChange}
+        >
+          <option disabled value="" className="text-white">
+            Chọn chuyên mục
+          </option>
+
+          {categories.map((category) => (
+            <option value={category.id} key={category.id}>
+              {category.Categories}
+            </option>
+          ))}
+        </select>
+
         <div className="flex items-center p-3 h-[48px] w-[70%] border rounded-lg mb-3 bg-white">
           <input
             className="outline-none w-full"

@@ -6,6 +6,7 @@ const AdminPage = () => {
   const Navigate = useNavigate();
   const { adminpage } = useParams();
   const [actived, setActived] = useState(false);
+  const [blogActived, setBlogActived] = useState(false);
   return (
     <div className="flex">
       <aside className="relative bg-white h-screen w-64 sm:block drop-shadow-lg">
@@ -24,34 +25,54 @@ const AdminPage = () => {
             Thêm bài viết
           </button> */}
         </div>
-        <nav className="text-base font-semibold justify-center">
+        <nav className="text-base font-semibold flex-col justify-center">
           <div
             onClick={() => Navigate("/admin/dashboard")}
             className={`${
               adminpage === "dashboard"
                 ? "bg-emerald-400 text-white"
                 : "text-emerald-500 bg-white"
-            } w-[80%] h-[40px] mx-auto flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mb-3 hover:opacity-80`}
+            } w-[80%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md hover:opacity-80`}
           >
             Dashboard
           </div>
           <div
-            onClick={() => Navigate("/admin/blog")}
-            className={`${
-              adminpage === "blog"
-                ? "bg-emerald-500 text-white"
-                : "text-emerald-500 bg-white"
-            } w-[80%] h-[40px] mx-auto flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mb-3 hover:opacity-80`}
+            onClick={() => setBlogActived(!blogActived)}
+            className="text-emerald-500 bg-white w-[80%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mt-4  hover:opacity-80"
           >
             Blog
           </div>
+          {blogActived && (
+            <div className="">
+              <div
+                onClick={() => Navigate("/admin/create-blog")}
+                className={`${
+                  adminpage === "create-blog"
+                    ? "bg-emerald-500 text-white"
+                    : "text-emerald-500 bg-white"
+                } w-[70%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mt-1 hover:opacity-80`}
+              >
+                Tạo Blog
+              </div>
+              <div
+                onClick={() => Navigate("/admin/manage-blog")}
+                className={`${
+                  adminpage === "manage-blog"
+                    ? "bg-emerald-500 text-white"
+                    : "text-emerald-500 bg-white"
+                } w-[70%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mt-1 hover:opacity-80`}
+              >
+                Quản lí Blog
+              </div>
+            </div>
+          )}
           <div
             onClick={() => Navigate("/admin/user")}
             className={`${
               adminpage === "user"
                 ? "bg-emerald-500 text-white"
                 : "text-emerald-500 bg-white"
-            } w-[80%] h-[40px] mx-auto flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mb-3 hover:opacity-80`}
+            } w-[80%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mt-4 hover:opacity-80`}
           >
             User
           </div>
@@ -61,7 +82,7 @@ const AdminPage = () => {
               adminpage === "form"
                 ? "bg-emerald-500 text-white"
                 : "text-emerald-500 bg-white"
-            } w-[80%] h-[40px] mx-auto flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mb-3 hover:opacity-80`}
+            } w-[80%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mt-4 hover:opacity-80`}
           >
             Form
           </div>
@@ -120,7 +141,7 @@ const AdminPage = () => {
           </div>
         </div>
         <div className="w-full overflow-auto" onClick={() => setActived(false)}>
-          {adminpage === "blog" && <ManagedBlog />}
+          {adminpage === "create-blog" && <ManagedBlog />}
           {adminpage === "user" && <UserList />}
         </div>
       </div>
