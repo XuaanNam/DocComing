@@ -264,7 +264,7 @@ class API {
         }
       }
     }
-    const Status = 0;
+    let Status = 0;
     const idAuthor = req.user.id;
     const { Title, Brief, Content, idCategories } = req.body;
     const date = new Date();
@@ -282,9 +282,9 @@ class API {
       date.getSeconds();
     const insertSql =
       "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories, Status) values (?,?,?,?,?,?,?,?,?)";
-    
-    if(req.user.Authorization = 2) Status = 0
-    else if(req.user.Authorization = 0) Status = 1
+
+    if ((req.user.Authorization = 2)) Status = 0;
+    else if ((req.user.Authorization = 0)) Status = 1;
     else res.send({ message: "Bệnh nhân không thể đăng bài", checked: false });
     pool.query(
       insertSql,
@@ -297,7 +297,7 @@ class API {
         idAuthor,
         DatePost,
         idCategories,
-        Status
+        Status,
       ],
       function (error, results, fields) {
         if (error) {
@@ -315,9 +315,11 @@ class API {
 
   //[PATCH] /api/post/update
   updatePost(req, res) {
-
-    if(req.user.Authorization = 1) {
-      res.send({ message: "Bệnh nhân không thể chỉnh sửa bài", checked: false });
+    if ((req.user.Authorization = 1)) {
+      res.send({
+        message: "Bệnh nhân không thể chỉnh sửa bài",
+        checked: false,
+      });
     }
     let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
     let Images = "";
@@ -450,8 +452,8 @@ class API {
   getAllPost(req, res) {
     const selectSql = "select * from AllPost";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    
-    if(req.user.Authorization != 0) {
+
+    if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
       pool.query(selectSql, function (error, results, fields) {
@@ -468,14 +470,13 @@ class API {
     }
   }
 
-  
   //[PATCH] /api/admin/post/accept
   acceptPost(req, res) {
     const { id } = req.body;
     const updateSql = "update post set Status = 1 where id = ? ";
     const errorMsg = "Có lỗi bất thường, không thể chấp nhận bài viết!";
 
-    if(req.user.Authorization != 0) {
+    if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
       pool.query(updateSql, id, function (error, results, fields) {
@@ -498,7 +499,7 @@ class API {
     const callSql = "call UpdateStatusPost(?)";
     const errorMsg = "Cập nhật trạng thái bài viết không thành công!";
 
-    if(req.user.Authorization != 0) {   
+    if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
       pool.query(callSql, id, function (error, results, fields) {
@@ -520,7 +521,7 @@ class API {
     const selectSql = "select * from AllAccount";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
-    if(req.user.Authorization != 0) {
+    if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
       pool.query(selectSql, function (error, results, fields) {

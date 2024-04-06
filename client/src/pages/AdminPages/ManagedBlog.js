@@ -18,7 +18,6 @@ const ManagedBlog = () => {
   data.append("Title", title);
   data.append("Brief", summary);
   data.append("Content", content);
-  data.append("idAuthor", "235523485");
   data.append("idCategories", categoryId);
   data.append("FeaturedImage", files[0]);
   useEffect(() => {

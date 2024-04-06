@@ -11,6 +11,10 @@ const initialState = {
 export const createPost = createAsyncThunk("createPost", async (body) => {
   const res = await fetch("http://localhost:5000/api/post/create", {
     method: "POST",
+    headers: {
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJEb2Njb21pbmciLCJpZCI6MjM1NTIzNDg0LCJBdXRob3JpemF0aW9uIjowLCJpYXQiOjE3MTIzOTExMjYsImV4cCI6MTk3MTU5MTEyNn0.vBtdi41gAY9MYeAT7E83d6RSWg7Eh-0JQxTXTCVkVqA",
+    },
     body,
   });
   console.log(body);
