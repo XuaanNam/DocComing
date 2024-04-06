@@ -283,34 +283,42 @@ class API {
     const insertSql =
       "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories, Status) values (?,?,?,?,?,?,?,?,?)";
 
-    if ((req.user.Authorization = 2)) Status = 0;
-    else if ((req.user.Authorization = 0)) Status = 1;
-    else res.send({ message: "Bệnh nhân không thể đăng bài", checked: false });
-    pool.query(
-      insertSql,
-      [
-        FeaturedImage,
-        Title,
-        Brief,
-        Content,
-        Images,
-        idAuthor,
-        DatePost,
-        idCategories,
-        Status,
-      ],
-      function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false });
-        } else {
-          if (results) {
-            res.status(200).send({ checked: true, id: results.insertId });
+    if (req.user.Authorization == 0) {
+      Status = 1;
+    } else if (req.user.Authorization == 2) {
+      Status = 0;
+    }
+
+    if (req.user.Authorization == 1) {
+      res.end("Unauthorized");
+      c;
+    } else {
+      pool.query(
+        insertSql,
+        [
+          FeaturedImage,
+          Title,
+          Brief,
+          Content,
+          Images,
+          idAuthor,
+          DatePost,
+          idCategories,
+          Status,
+        ],
+        function (error, results, fields) {
+          if (error) {
+            res.send({ message: error, checked: false });
           } else {
-            res.status(200).send({ message: errorMsg, checked: false });
+            if (results) {
+              res.status(200).send({ checked: true, id: results.insertId });
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
           }
         }
-      }
-    );
+      );
+    }
   }
 
   //[PATCH] /api/post/update
