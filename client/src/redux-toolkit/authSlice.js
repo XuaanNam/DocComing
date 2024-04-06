@@ -9,9 +9,9 @@ const initialState = {
   loading: false,
   error: "",
   checked: true,
+  token: "",
 };
 export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
-
   const res = await fetch("http://localhost:5000/api/auth/google/check", {
     method: "POST",
     headers: {
@@ -84,7 +84,6 @@ const authSlice = createSlice({
       state.token = null;
       localStorage.clear();
     },
-
   },
   extraReducers: (builder) => {
     // [emailChecked.pending]: (state, action) => {
@@ -207,6 +206,6 @@ const authSlice = createSlice({
     // },
   },
 });
-export const { addToken, addUser, logout} = authSlice.actions;
+export const { addToken, addUser, logout } = authSlice.actions;
 
 export default authSlice.reducer;

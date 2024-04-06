@@ -8,6 +8,7 @@ import HospitalIcon from "../Images/hospital-icon.svg";
 import SpecialtiesIcon from "../Images/specialties-icon.svg";
 import { IoIosArrowForward } from "react-icons/io";
 import Slider from "react-slick";
+import { useSelector } from "react-redux";
 const HomePage = () => {
   const Navigate = useNavigate();
   const slides = [

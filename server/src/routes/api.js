@@ -4,12 +4,11 @@ const router = express.Router();
 const passport = require("passport");
 const PassportCheck = passport.authenticate("jwt", { session: false });
 const fileUploader = require("../app/middleware/cloudinary-upload.js");
-const fileConfig = require("../app/configs/muter")
+const fileConfig = require("../app/configs/muter");
 //const myOAuth2Client = require("../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 
 // const transport = require('../app/middleware/nodemailer')
-
 
 // guest
 router.post("/login", api.login);
@@ -35,26 +34,41 @@ router.patch(
 );
 
 // Blog router
-router.post("/post/create", PassportCheck, fileUploader.fields(fileConfig), api.createPost);
-router.patch("/post/update", PassportCheck, fileUploader.fields(fileConfig), api.updatePost);
+router.post(
+  "/post/create",
+  PassportCheck,
+  fileUploader.fields(fileConfig),
+  api.createPost
+);
+router.patch(
+  "/post/update",
+  PassportCheck,
+  fileUploader.fields(fileConfig),
+  api.updatePost
+);
 router.get("/post", api.getPost);
 router.get("/post/detail/:id", api.getPostById);
 router.get("/post/search/keywords", api.getPostsByKeywords);
 
 //service
 router.get("/service", api.getService);
+router.get("/category", api.getCategory);
 
 //admin
 router.get("/admin/post", PassportCheck, api.getAllPost);
-router.post("/admin/post/create", PassportCheck, fileUploader.fields(fileConfig), api.createPostAdmin);
+router.post(
+  "/admin/post/create",
+  PassportCheck,
+  fileUploader.fields(fileConfig),
+  api.createPostAdmin
+);
 router.patch("/admin/post/accept", PassportCheck, api.acceptPost);
 router.patch("/admin/post/status/change", PassportCheck, api.changeStatusPost);
 
-
-// 
-// 
-// 
-// 
+//
+//
+//
+//
 // router.get("/post/search/price", api.getPostsByPrice);
 // router.get("/post/search/publisher", api.getPostsByPublisher);
 // router.get("/post/search/age", api.getPostsByAge);
@@ -66,8 +80,6 @@ router.patch("/admin/post/status/change", PassportCheck, api.changeStatusPost);
 // router.delete("/cart/remove", PassportCheck, api.removeFromCart);
 // router.patch("/cart/update", PassportCheck, api.updateCart);
 // router.post("/cart/order", PassportCheck, api.createOrder);
-
-
 
 // // payment
 // router.post("/payment/paypal", PassportCheck, api.paymentByPaypal);

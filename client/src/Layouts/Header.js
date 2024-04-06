@@ -1,6 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { FiSearch } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { PiBell } from "react-icons/pi";
+import { FaRegUserCircle } from "react-icons/fa";
+import { LuCalendarDays } from "react-icons/lu";
+import { FiLogOut } from "react-icons/fi";
+import { logout } from "../redux-toolkit/authSlice";
+import { useNavigate } from "react-router-dom";
+
 const Header = () => {
+  const { currentUser } = useSelector((state) => state.user);
+  const [actived, setActived] = useState(false);
+  const dispatch = useDispatch();
+  const Navigate = useNavigate();
+  const handleLogout = () => {
+    dispatch(logout());
+    Navigate("/");
+  };
   return (
     <div className="h-[70px] fixed w-screen z-50 bg-white">
       <div className="text-sm h-full px-5 text-gray-700 bg-white grid grid-cols-5 drop-shadow-md">
@@ -16,7 +33,7 @@ const Header = () => {
             <input
               className="m-2 h-full w-full outline-none text-base"
               placeholder="Tìm kiếm..."
-            ></input>
+            ></input> 
           </div>
         </div>
         <div className="flex items-center justify-end font-medium cursor-pointer">
@@ -27,20 +44,66 @@ const Header = () => {
             Chuyên mục
           </div>
         </div>
-        <div className="flex gap-4 w-full justify-center items-center">
+        <div className="relative flex gap-4 w-full ml-5 items-center">
           <div className="w-[1px] h-[34px] bg-slate-500"></div>
-          <a
-            href="/login"
-            className="cursor-pointer transition-transform duration-500 hover:scale-110"
-          >
-            Đăng nhập
-          </a>
-          <a
-            href="/register"
-            className="h-[34px] w-[100px] border text-white bg-teal-500 p-1.5  rounded-lg cursor-pointer"
-          >
-            Tạo tài khoản
-          </a>
+          {currentUser ? (
+            <div className="flex gap-2 justify-center items-center">
+              <div
+                className="flex gap-2 justify-center items-center cursor-pointer"
+                onClick={() => setActived(!actived)}
+              >
+                <img
+                  className="rounded-full h-9 w-9"
+                  alt=""
+                  src={currentUser.googlePhotoUrl}
+                ></img>
+                <p className="text-base font-medium">{currentUser.name}</p>
+                <IoMdArrowDropdown className="h-5 w-5"></IoMdArrowDropdown>
+              </div>
+              <PiBell className="ml-3 h-6 w-6 text-yellow-500 cursor-pointer transition-transform duration-500 hover:scale-110" />
+              {actived === true && (
+                <div className="absolute top-[62px] w-44 text-base bg-white rounded-lg shadow-lg drop-shadow-lg py-2 transition-all duration-500 z-10">
+                  <div className="flex gap-3 account-link items-center hover:text-white px-4">
+                    <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
+                    <a href="/" className="block py-2 ">
+                      Tài khoản
+                    </a>
+                  </div>
+                  <div className="flex gap-3 account-link items-center hover:text-white px-4">
+                    <LuCalendarDays className="h-5 w-5"></LuCalendarDays>
+                    <a href="/" className="block py-2">
+                      Lịch khám
+                    </a>
+                  </div>
+
+                  <div
+                    className="flex gap-3 account-link items-center hover:text-white px-4"
+                    onClick={handleLogout}
+                  >
+                    <FiLogOut className="h-5 w-5"></FiLogOut>
+                    <a href="/" className="block py-2">
+                      Đăng xuất
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex gap-4 justify-center items-center">
+              <a
+                href="/login"
+                className="cursor-pointer transition-transform duration-500 hover:scale-110"
+              >
+                Đăng nhập
+              </a>
+              <a
+                href="/register"
+                className="h-[34px] w-[100px] border text-white bg-teal-500 p-1.5  rounded-lg cursor-pointer"
+              >
+                Tạo tài khoản
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>

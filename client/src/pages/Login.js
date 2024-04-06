@@ -1,5 +1,4 @@
 import React from "react";
-import GoogleIcon from "../Images/google.svg";
 import FlagIcon from "../Images/flag.png";
 import { Label, Input, Button } from "@windmill/react-ui";
 import Header from "../Layouts/Header";
@@ -20,24 +19,8 @@ function Login() {
           <div className="text-2xl font-bold text-teal-800 mb-9">
             Đăng nhập tài khoản bệnh nhân
           </div>
-          <div className="relative flex h-12 w-full items-center border rounded-xl py-2 cursor-pointer bg-white hover:drop-shadow-md">
-            {/* <img
-              className="absolute h-[70%] pl-4"
-              src={GoogleIcon}
-              alt=""
-            ></img>
-            <div
-              className="w-full text-center text-lg opacity-70"
-              onClick={() => {
-                handleLogin();
-              }}
-            >
-              <a href="#">
-                Tiếp tục với google
-              </a>
-            </div> */}
-            <OAuth/>
-          </div>
+
+          <OAuth />
           <div className="text-center text-lg opacity-70  my-5">
             Hoặc tiếp tục với số điện thoại
           </div>

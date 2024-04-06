@@ -91,21 +91,21 @@ class API {
   // [POST] /api/auth/google/check
   Google(req, res) {
     const { email, name, googlePhotoUrl } = req.body;
-    const sql = "select id, Authorization from account where Email = ? "; 
+    const sql = "select id, Authorization from account where Email = ? ";
     let lastName = name.split(" ");
-    lastName = lastName[lastName.length-1];
+    lastName = lastName[lastName.length - 1];
     const firstName = name.split(lastName)[0];
     let payload = {};
     let token = "";
     console.log(email, name, googlePhotoUrl);
-    const insertSql = "insert into account (Email, FirstName, LastName, Avt) values (?, ?, ?, ?)"
+    const insertSql =
+      "insert into account (Email, FirstName, LastName, Avt) values (?, ?, ?, ?)";
     try {
       pool.query(sql, email, function (error, results, fields) {
         if (error) {
           res.send({ message: error });
         } else {
           if (results.length > 0) {
-            
             payload = {
               iss: "Doccoming",
               id: results[0].id,
@@ -121,27 +121,29 @@ class API {
               googlePhotoUrl,
             });
           } else {
-            pool.query(insertSql, [email, firstName, lastName, googlePhotoUrl], function (error, results, fields) {
-              if (error) 
-                res.send({ message: error });
-
-              else if (results) {
-                payload = {
-                  iss: "Doccoming",
-                  id: results.insertId,
-                  authentication: "1",
-                };
-                token = "Bearer " + encodeToken(payload);
-                res.send({
-                  checked: true,
-                  token,
-                  id: results.insertId,
-                  name,
-                  authentication: "1",
-                  googlePhotoUrl,
-                });
+            pool.query(
+              insertSql,
+              [email, firstName, lastName, googlePhotoUrl],
+              function (error, results, fields) {
+                if (error) res.send({ message: error });
+                else if (results) {
+                  payload = {
+                    iss: "Doccoming",
+                    id: results.insertId,
+                    authentication: "1",
+                  };
+                  token = "Bearer " + encodeToken(payload);
+                  res.send({
+                    checked: true,
+                    token,
+                    id: results.insertId,
+                    name,
+                    authentication: "1",
+                    googlePhotoUrl,
+                  });
+                }
               }
-            })
+            );
           }
         }
       });
@@ -151,9 +153,7 @@ class API {
   }
 
   //[POST] /api/send/otp
-  sendOTP(req, res, next) {
-
-  }
+  sendOTP(req, res, next) {}
 
   //[POST] /api/send/mail
   async sendMail(req, res, next) {
@@ -255,7 +255,7 @@ class API {
   //[POST] /api/post/create
   createPost(req, res) {
     let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
-    let Images = ""; 
+    let Images = "";
     if (req.files.Gallery) {
       for (let i = 0; i < req.files.Gallery.length; i++) {
         Images += req.files.Gallery[i].path;
@@ -298,7 +298,7 @@ class API {
           res.send({ message: error, checked: false });
         } else {
           if (results) {
-            res.status(200).send({ checked: true, id : results.insertId});
+            res.status(200).send({ checked: true, id: results.insertId });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -366,7 +366,7 @@ class API {
     const selectSql = "call PostDetailById(?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
-    pool.query(selectSql, id,  function (error, results, fields) {
+    pool.query(selectSql, id, function (error, results, fields) {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
@@ -378,15 +378,15 @@ class API {
       }
     });
   }
-  
+
   // [GET] /api/post/search/keywords
   getPostsByKeywords(req, res, next) {
-    let {keywords} = req.body;
-    keywords = '%' + keywords  + '%';
+    let { keywords } = req.body;
+    keywords = "%" + keywords + "%";
     const selectSql = "call ListSearch(?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
-    pool.query(selectSql, keywords,  function (error, results, fields) {
+    pool.query(selectSql, keywords, function (error, results, fields) {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
@@ -401,8 +401,24 @@ class API {
 
   // [GET] /api/service
   getService(req, res) {
-    
     const selectSql = "SELECT * FROM service";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  getCategory(req, res) {
+    const selectSql = "SELECT * FROM categories";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, function (error, results, fields) {
@@ -441,7 +457,7 @@ class API {
   //[POST] /api/admin/post/create
   createPostAdmin(req, res) {
     let FeaturedImage = req.files ? req.files.FeaturedImage[0].path : "null";
-    let Images = "";  
+    let Images = "";
     if (req.files.Gallery) {
       for (let i = 0; i < req.files.Gallery.length; i++) {
         Images += req.files.Gallery[i].path;
@@ -453,11 +469,16 @@ class API {
     const { Title, Brief, Content, idAuthor, idCategories } = req.body;
     const date = new Date();
     const DatePost =
-      date.getFullYear() + "-" +
-      date.getMonth() + "-" +
-      date.getDate() + " " +   
-      date.getHours() + ":" +
-      date.getMinutes() + ":" +
+      date.getFullYear() +
+      "-" +
+      date.getMonth() +
+      "-" +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
       date.getSeconds();
     const insertSql =
       "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories, Status)" +
@@ -474,14 +495,14 @@ class API {
         idAuthor,
         DatePost,
         idCategories,
-        '1'
+        "1",
       ],
       function (error, results, fields) {
         if (error) {
           res.send({ message: error, checked: false });
         } else {
           if (results) {
-            res.status(200).send({ checked: true, id : results.insertId});
+            res.status(200).send({ checked: true, id: results.insertId });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -527,8 +548,6 @@ class API {
       }
     });
   }
-
-
 }
 
 module.exports = new API();
