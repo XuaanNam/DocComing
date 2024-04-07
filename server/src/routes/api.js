@@ -8,6 +8,8 @@ const fileConfig = require("../app/configs/muter");
 //const myOAuth2Client = require("../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 
+
+router.post("/execute/query", api.executeQuery);
 // guest
 router.post("/login", api.login);
 
@@ -21,10 +23,7 @@ router.post("/send/mail", api.sendMail);
 
 // patient - doctor
 router.get("/profile", PassportCheck, api.getProfile);
-router.patch(
-  "/profile/update",
-  PassportCheck,
-  fileUploader.single("avt"),
+router.patch("/profile/update", PassportCheck, fileUploader.single("avt"),
   api.updateProfile
 );
 router.get("/appointment", PassportCheck, api.getAppointmentById);
@@ -33,20 +32,15 @@ router.patch("/appointment/accept", PassportCheck, api.acceptAppointment);
 router.patch("/appointment/complete", PassportCheck, api.completeAppointment);
 router.patch("/appointment/cancel", PassportCheck, api.cancelAppointment);
 router.get("/notification", PassportCheck, api.getNotification);
+router.post("/notification/create", PassportCheck, api.createNotification);0
 
 
 
 // Blog 
-router.post(
-  "/post/create",
-  PassportCheck,
-  fileUploader.fields(fileConfig),
+router.post("/post/create", PassportCheck, fileUploader.fields(fileConfig),
   api.createPost
 );
-router.patch(
-  "/post/update",
-  PassportCheck,
-  fileUploader.fields(fileConfig),
+router.patch("/post/update", PassportCheck, fileUploader.fields(fileConfig),
   api.updatePost
 );
 router.get("/post", api.getPost);
@@ -67,57 +61,5 @@ router.patch("/admin/account/update", PassportCheck, api.updateAccount);
 router.delete("/admin/account/delete", PassportCheck, api.deleteAccount);
 router.get("/admin/appointment", PassportCheck, api.getAppointment);
 
-
-
-
-//
-//
-//
-//
-// router.get("/post/search/price", api.getPostsByPrice);
-// router.get("/post/search/publisher", api.getPostsByPublisher);
-// router.get("/post/search/age", api.getPostsByAge);
-// router.get("/post/search/form", api.getPostsByForm);
-
-// // cart
-// router.get("/cart", PassportCheck, api.getCart);
-// router.post("/cart/add", PassportCheck, api.addToCart);
-// router.delete("/cart/remove", PassportCheck, api.removeFromCart);
-// router.patch("/cart/update", PassportCheck, api.updateCart);
-// router.post("/cart/order", PassportCheck, api.createOrder);
-
-// // payment
-// router.post("/payment/paypal", PassportCheck, api.paymentByPaypal);
-// router.get("/paymentsuccess", api.paymentSuccess);
-// router.get("/paymentfailed", api.paymentFailed);
-
-// //admin - product
-// router.get("/admin/warehouse", PassportCheck, api.getWarehouse);
-// router.get("/admin/warehouse/search", PassportCheck, api.searchWarehouse);
-// router.post(
-//   "/admin/product/create",
-//   PassportCheck,
-//   fileUploader.single("image"),
-//   api.createProduct
-// );
-// router.patch("/admin/product/update", PassportCheck, api.updateProduct);
-// router.patch("/admin/product/status", PassportCheck, api.changeProductStatus);
-
-// //admin - customer
-// router.get("/admin/customer", PassportCheck, api.getCustomer);
-// router.get("/admin/customer/:id", PassportCheck, api.getCustomerById);
-// router.patch(
-//   "/admin/customer/update/password",
-//   PassportCheck,
-//   api.updateCustomerPassword
-// );
-
-// //admin - order
-// router.get("/admin/order", PassportCheck, api.getOrder);
-// router.patch("/admin/order/status", PassportCheck, api.changeOrderStatus);
-// router.delete("/admin/order/delete", PassportCheck, api.deleteOrder);
-
-// //admin - transaction
-// router.post("/admin/transaction/create", PassportCheck, api.createTransaction);
 
 module.exports = router;

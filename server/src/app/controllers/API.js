@@ -12,6 +12,24 @@ const nodemailer = require("nodemailer");
 const { Console } = require("console");
 
 class API {
+
+  // [POST] /api/execute/query 
+  executeQuery(req, res, next) {
+    const { query, data } = req.body; 
+    pool.query(query, data, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ data: results, checked: true });
+          } else {
+            res.status(200).send({ message: "lỗi k xác định", checked: false });
+          }
+        }
+      }
+    );
+  }
+
   // [POST] /api/register
   register(req, res, next) {
     const insertSql =
@@ -372,7 +390,7 @@ class API {
   getNotification(req, res) {
     const id = req.user.id;
    
-    const selectSql = "select * from notification where id = ?";
+    const selectSql = "select * from notification where idAccount = ? order by NotiTime desc";
 
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -388,6 +406,33 @@ class API {
       }
     });
     
+  }
+
+  //[POST] /api/notification/create
+  createNotification(req, res, next) {
+    const {noti } = req.body;
+    const id = req.user.id;
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const insertSql = "insert into notification (idAccount, Notification, NotiTime) values (?,?,?)";
+    const date = new Date();
+    const NotiTime =
+      date.getFullYear() + "-" +
+      date.getMonth() + "-" +
+      date.getDate() + " " +
+      date.getHours() + ":" +
+      date.getMinutes() + ":" +
+      date.getSeconds();
+    pool.query(insertSql, [id, noti, NotiTime], function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
   }
 
   //[POST] /api/post/create
