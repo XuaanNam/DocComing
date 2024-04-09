@@ -390,7 +390,7 @@ class API {
   getNotification(req, res) {
     const id = req.user.id;
    
-    const selectSql = "select * from notification where idAccount = ? order by NotiTime desc";
+    const selectSql = "select * from notification n left join (select count(idAccount) as Unread, idAccount from notification where idAccount = ? and Status = 0) as c on n.idAccount = c.idAccount order by NotiTime desc";
 
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -400,6 +400,27 @@ class API {
       } else {
         if (results) {
           res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+    
+  }
+  
+  //[PATCH] /api/notification/read
+  readNotification(req, res) {
+    const {id} = req.body;
+   
+    const updateSql = "update notification set status = 1 where id = ?"
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(updateSql, id, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }

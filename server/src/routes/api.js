@@ -32,11 +32,11 @@ router.patch("/appointment/accept", PassportCheck, api.acceptAppointment);
 router.patch("/appointment/complete", PassportCheck, api.completeAppointment);
 router.patch("/appointment/cancel", PassportCheck, api.cancelAppointment);
 router.get("/notification", PassportCheck, api.getNotification);
-router.post("/notification/create", PassportCheck, api.createNotification);0
+router.post("/notification/create", PassportCheck, api.createNotification);
+router.patch("/notification/read", PassportCheck, api.readNotification);
 
 
-
-// Blog 
+// Blog && service
 router.post("/post/create", PassportCheck, fileUploader.fields(fileConfig),
   api.createPost
 );
@@ -46,8 +46,6 @@ router.patch("/post/update", PassportCheck, fileUploader.fields(fileConfig),
 router.get("/post", api.getPost);
 router.get("/post/detail/:id", api.getPostById);
 router.get("/search/keywords", api.searchByKeywords);
-
-//service
 router.get("/service", api.getService);
 router.get("/category", api.getCategory);
 
