@@ -1,194 +1,114 @@
-import React from "react";
-
+import { Modal, Table, Button } from "flowbite-react";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { FaCheck, FaTimes } from "react-icons/fa";
+import { fetchUsers } from "../../redux-toolkit/authSlice";
 const UserList = () => {
+  const [users, setUsers] = useState([]);
+  const [showMore, setShowMore] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [userIdToDelete, setUserIdToDelete] = useState("");
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(fetchUsers());
+  }, [dispatch]);
+  const allUsers = useSelector((state) => state.user.data);
+  console.log(allUsers);
+
   return (
-    <div>
-      <div className="w-full flex-grow p-6">
-        <h1 className="text-3xl text-black pb-6">Dashboard</h1>
+    <div className="table-auto md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
+      {/* {currentUser.isAdmin && users.length > 0 ? ( 
+        <>*/}
+      <Table hoverable className="shadow-md">
+        <Table.Head>
+          <Table.HeadCell>Date created</Table.HeadCell>
+          <Table.HeadCell>User image</Table.HeadCell>
+          <Table.HeadCell>Name</Table.HeadCell>
+          <Table.HeadCell>Email</Table.HeadCell>
+          <Table.HeadCell>Phone Number</Table.HeadCell>
+          <Table.HeadCell>Role</Table.HeadCell>
+          <Table.HeadCell>Delete</Table.HeadCell>
+        </Table.Head>
+        {allUsers?.map((user) => (
+          <Table.Body className="divide-y" key={user._id}>
+            <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+              <Table.Cell>
+                {new Date(user.createdAt).toLocaleDateString()}
+              </Table.Cell>
+              <Table.Cell>
+                <img
+                  src={user.Avt}
+                  alt={user.username}
+                  className="w-10 h-10 object-cover bg-gray-500 rounded-full"
+                />
+              </Table.Cell>
+              <Table.Cell>{user.FirstName}</Table.Cell>
+              <Table.Cell>{user.Email}</Table.Cell>
+              <Table.Cell>{user.Phone}</Table.Cell>
 
-        <div className="flex flex-wrap mt-6">
-          <div className="w-full lg:w-1/2 pr-0 lg:pr-2">
-            <p className="text-xl pb-3 flex items-center">
-              <i className="fas fa-plus mr-3"></i> Monthly Reports
-            </p>
-            <div className="p-6 bg-white">
-              <canvas id="chartOne" width="400" height="200"></canvas>
+              <Table.Cell>
+                {/* {user.isAdmin ? (
+                  <FaCheck className="text-green-500" />
+                ) : (
+                  <FaTimes className="text-red-500" />
+                )} */}
+                {user.Role}
+              </Table.Cell>
+              <Table.Cell>
+                <span
+                  onClick={() => {
+                    setShowModal(true);
+                    setUserIdToDelete(user._id);
+                  }}
+                  className="font-medium text-red-500 hover:underline cursor-pointer"
+                >
+                  Delete
+                </span>
+              </Table.Cell>
+            </Table.Row>
+          </Table.Body>
+        ))}
+      </Table>
+      {showMore && (
+        <button
+          // onClick={handleShowMore}
+          className="w-full text-teal-500 self-center text-sm py-7"
+        >
+          Show more
+        </button>
+      )}
+      {/* </>
+      ) : (
+        <p>You have no users yet!</p>
+      )} */}
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size="md"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+              Are you sure you want to delete this user?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                color="failure"
+                // onClick={handleDeleteUser}
+              >
+                Yes, I'm sure
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                No, cancel
+              </Button>
             </div>
           </div>
-          <div className="w-full lg:w-1/2 pl-0 lg:pl-2 mt-12 lg:mt-0">
-            <p className="text-xl pb-3 flex items-center">
-              <i className="fas fa-check mr-3"></i> Resolved Reports
-            </p>
-            <div className="p-6 bg-white">
-              <canvas id="chartTwo" width="400" height="200"></canvas>
-            </div>
-          </div>
-        </div>
-
-        <div className="w-full mt-12">
-          <p className="text-xl pb-3 flex items-center">
-            <i className="fas fa-list mr-3"></i> Latest Reports
-          </p>
-          <div className="bg-white overflow-auto">
-            <table className="min-w-full bg-white">
-              <thead className="bg-gray-800 text-white">
-                <tr>
-                  <th className="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">
-                    Name
-                  </th>
-                  <th className="w-1/3 text-left py-3 px-4 uppercase font-semibold text-sm">
-                    Last name
-                  </th>
-                  <th className="text-left py-3 px-4 uppercase font-semibold text-sm">
-                    Phone
-                  </th>
-                  <th className="text-left py-3 px-4 uppercase font-semibold text-sm">
-                    Email
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-700">
-                <tr>
-                  <td className="w-1/3 text-left py-3 px-4">Lian</td>
-                  <td className="w-1/3 text-left py-3 px-4">Smith</td>
-                  <td className="text-left py-3 px-4">
-                    <a className="hover:text-blue-500" href="tel:622322662">
-                      622322662
-                    </a>
-                  </td>
-                  <td className="text-left py-3 px-4">
-                    <a
-                      className="hover:text-blue-500"
-                      href="mailto:jonsmith@mail.com"
-                    >
-                      jonsmith@mail.com
-                    </a>
-                  </td>
-                </tr>
-                <tr className="bg-gray-200">
-                  <td className="w-1/3 text-left py-3 px-4">Emma</td>
-                  <td className="w-1/3 text-left py-3 px-4">Johnson</td>
-                  <td className="text-left py-3 px-4">
-                    <a className="hover:text-blue-500" href="tel:622322662">
-                      622322662
-                    </a>
-                  </td>
-                  <td className="text-left py-3 px-4">
-                    <a
-                      className="hover:text-blue-500"
-                      href="mailto:jonsmith@mail.com"
-                    >
-                      jonsmith@mail.com
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="w-1/3 text-left py-3 px-4">Oliver</td>
-                  <td className="w-1/3 text-left py-3 px-4">Williams</td>
-                  <td className="text-left py-3 px-4">
-                    <a className="hover:text-blue-500" href="tel:622322662">
-                      622322662
-                    </a>
-                  </td>
-                  <td className="text-left py-3 px-4">
-                    <a
-                      className="hover:text-blue-500"
-                      href="mailto:jonsmith@mail.com"
-                    >
-                      jonsmith@mail.com
-                    </a>
-                  </td>
-                </tr>
-                <tr className="bg-gray-200">
-                  <td className="w-1/3 text-left py-3 px-4">Isabella</td>
-                  <td className="w-1/3 text-left py-3 px-4">Brown</td>
-                  <td className="text-left py-3 px-4">
-                    <a className="hover:text-blue-500" href="tel:622322662">
-                      622322662
-                    </a>
-                  </td>
-                  <td className="text-left py-3 px-4">
-                    <a
-                      className="hover:text-blue-500"
-                      href="mailto:jonsmith@mail.com"
-                    >
-                      jonsmith@mail.com
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="w-1/3 text-left py-3 px-4">Lian</td>
-                  <td className="w-1/3 text-left py-3 px-4">Smith</td>
-                  <td className="text-left py-3 px-4">
-                    <a className="hover:text-blue-500" href="tel:622322662">
-                      622322662
-                    </a>
-                  </td>
-                  <td className="text-left py-3 px-4">
-                    <a
-                      className="hover:text-blue-500"
-                      href="mailto:jonsmith@mail.com"
-                    >
-                      jonsmith@mail.com
-                    </a>
-                  </td>
-                </tr>
-                <tr className="bg-gray-200">
-                  <td className="w-1/3 text-left py-3 px-4">Emma</td>
-                  <td className="w-1/3 text-left py-3 px-4">Johnson</td>
-                  <td className="text-left py-3 px-4">
-                    <a className="hover:text-blue-500" href="tel:622322662">
-                      622322662
-                    </a>
-                  </td>
-                  <td className="text-left py-3 px-4">
-                    <a
-                      className="hover:text-blue-500"
-                      href="mailto:jonsmith@mail.com"
-                    >
-                      jonsmith@mail.com
-                    </a>
-                  </td>
-                </tr>
-                <tr>
-                  <td className="w-1/3 text-left py-3 px-4">Oliver</td>
-                  <td className="w-1/3 text-left py-3 px-4">Williams</td>
-                  <td className="text-left py-3 px-4">
-                    <a className="hover:text-blue-500" href="tel:622322662">
-                      622322662
-                    </a>
-                  </td>
-                  <td className="text-left py-3 px-4">
-                    <a
-                      className="hover:text-blue-500"
-                      href="mailto:jonsmith@mail.com"
-                    >
-                      jonsmith@mail.com
-                    </a>
-                  </td>
-                </tr>
-                <tr className="bg-gray-200">
-                  <td className="w-1/3 text-left py-3 px-4">Isabella</td>
-                  <td className="w-1/3 text-left py-3 px-4">Brown</td>
-                  <td className="text-left py-3 px-4">
-                    <a className="hover:text-blue-500" href="tel:622322662">
-                      622322662
-                    </a>
-                  </td>
-                  <td className="text-left py-3 px-4">
-                    <a
-                      className="hover:text-blue-500"
-                      href="mailto:jonsmith@mail.com"
-                    >
-                      jonsmith@mail.com
-                    </a>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

@@ -1,11 +1,9 @@
 import React from "react";
-import Header from "../Layouts/Header";
 import FlagIcon from "../Images/flag.png";
 
 const Register = () => {
   return (
     <div>
-      <Header />
       <div className="flex items-center justify-center min-h-screen p-6">
         <div className="w-1/3 h-[200px]  rounded-xl">
           <div className="text-2xl font-bold text-teal-800 ">

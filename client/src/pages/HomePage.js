@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../Layouts/Header";
 import { BsChevronCompactRight } from "react-icons/bs";
 import HearIcon from "../Images/heart-icon.svg";
 import ClinicIcon from "../Images/banner-clinic-icon.svg";
@@ -48,7 +47,6 @@ const HomePage = () => {
 
   return (
     <div className="">
-      <Header />
       <div className="max-w-[95%] h-[740px] w-full m-auto pt-[70px] pb-[40px] px-4 relative group drop-shadow-md">
         <div
           style={{ backgroundImage: `url(${slides[currentIndex].url})` }}

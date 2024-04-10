@@ -10,6 +10,7 @@ const initialState = {
   error: "",
   checked: true,
   token: "",
+  data: [],
 };
 export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   const res = await fetch("http://localhost:5000/api/auth/google/check", {
@@ -48,6 +49,17 @@ export const getProfile = createAsyncThunk("getProfile", async () => {
     headers: {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem("token"),
+    },
+  });
+  return await res.json();
+});
+export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
+  const res = await fetch("http://localhost:5000/api/admin/account", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJEb2Njb21pbmciLCJpZCI6MjM1NTIzNDg0LCJBdXRob3JpemF0aW9uIjowLCJpYXQiOjE3MTIzOTExMjYsImV4cCI6MTk3MTU5MTEyNn0.vBtdi41gAY9MYeAT7E83d6RSWg7Eh-0JQxTXTCVkVqA",
     },
   });
   return await res.json();
@@ -163,6 +175,19 @@ const authSlice = createSlice({
         state.data = action.payload;
       })
       .addCase(loginGoogle.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchUsers.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUsers.fulfilled, (state, action) => {
+        state.currentUser = action.payload;
+        state.loading = false;
+        state.data = action.payload.data;
+      })
+      .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

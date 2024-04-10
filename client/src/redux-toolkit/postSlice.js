@@ -20,6 +20,16 @@ export const createPost = createAsyncThunk("createPost", async (body) => {
   console.log(body);
   return await res.json();
 });
+export const fetchPost = createAsyncThunk("fetchPost", async () => {
+  const res = await fetch("http://localhost:5000/api/admin/post", {
+    method: "GET",
+    headers: {
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJEb2Njb21pbmciLCJpZCI6MjM1NTIzNDg0LCJBdXRob3JpemF0aW9uIjowLCJpYXQiOjE3MTIzOTExMjYsImV4cCI6MTk3MTU5MTEyNn0.vBtdi41gAY9MYeAT7E83d6RSWg7Eh-0JQxTXTCVkVqA",
+    },
+  });
+  return await res.json();
+});
 export const fetchCategories = createAsyncThunk("fetchCategories", async () => {
   const res = await fetch("http://localhost:5000/api/category", {
     method: "GET",
@@ -52,6 +62,16 @@ const postSlice = createSlice({
         state.data = action.payload.data;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //fetchPost
+      .addCase(fetchPost.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchPost.fulfilled, (state, action) => {
+        state.data = action.payload.data;
+      })
+      .addCase(fetchPost.rejected, (state, action) => {
         state.loading = true;
       });
   },

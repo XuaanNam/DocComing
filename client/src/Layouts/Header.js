@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { PiBell } from "react-icons/pi";
 import { FaRegUserCircle } from "react-icons/fa";
-import { LuCalendarDays } from "react-icons/lu";
+import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
 import { logout } from "../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +33,7 @@ const Header = () => {
             <input
               className="m-2 h-full w-full outline-none text-base"
               placeholder="Tìm kiếm..."
-            ></input> 
+            ></input>
           </div>
         </div>
         <div className="flex items-center justify-end font-medium cursor-pointer">
@@ -62,22 +62,27 @@ const Header = () => {
               </div>
               <PiBell className="ml-3 h-6 w-6 text-yellow-500 cursor-pointer transition-transform duration-500 hover:scale-110" />
               {actived === true && (
-                <div className="absolute top-[62px] w-44 text-base bg-white rounded-lg shadow-lg drop-shadow-lg py-2 transition-all duration-500 z-10">
-                  <div className="flex gap-3 account-link items-center hover:text-white px-4">
+                <div className="absolute top-[62px] w-56 text-base bg-white rounded-lg shadow-lg drop-shadow-lg py-2 transition-all duration-500 z-10">
+                  <div className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer">
                     <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
-                    <a href="/" className="block py-2 ">
-                      Tài khoản
+                    <a href="/patient/profile" className="block py-2 ">
+                      Hồ sơ
                     </a>
                   </div>
-                  <div className="flex gap-3 account-link items-center hover:text-white px-4">
+                  <div className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer">
                     <LuCalendarDays className="h-5 w-5"></LuCalendarDays>
                     <a href="/" className="block py-2">
-                      Lịch khám
+                      Lịch khám của tôi
                     </a>
                   </div>
-
+                  <div className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer">
+                    <LuCalendarCheck className="h-5 w-5"></LuCalendarCheck>
+                    <a href="/" className="block py-2">
+                      Kết quả khám
+                    </a>
+                  </div>
                   <div
-                    className="flex gap-3 account-link items-center hover:text-white px-4"
+                    className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer"
                     onClick={handleLogout}
                   >
                     <FiLogOut className="h-5 w-5"></FiLogOut>

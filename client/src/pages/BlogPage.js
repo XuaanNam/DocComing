@@ -1,11 +1,8 @@
 import React, { useCallback, useEffect, useState } from "react";
-import Header from "../Layouts/Header";
 
 const BlogPage = () => {
   return (
     <div>
-      <Header />
-
       <div className="mx-[48px] pt-[100px] pl-16">
         <div className="flex gap-7">
           <div>

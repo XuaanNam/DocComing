@@ -1,7 +1,6 @@
 import React from "react";
 import FlagIcon from "../Images/flag.png";
 import { Label, Input, Button } from "@windmill/react-ui";
-import Header from "../Layouts/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { loginGoogle } from "../redux-toolkit/authSlice";
 import OAuth from "../components/OAuth";
@@ -13,7 +12,6 @@ function Login() {
   // };
   return (
     <div>
-      <Header />
       <div className="flex items-center justify-center min-h-screen p-6">
         <div className="w-2/5 h-[400px]  rounded-xl pt-[50px]">
           <div className="text-2xl font-bold text-teal-800 mb-9">

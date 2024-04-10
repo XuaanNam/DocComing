@@ -291,7 +291,6 @@ class API {
 
     if (req.user.Authorization == 1) {
       res.end("Unauthorized");
-      c;
     } else {
       pool.query(
         insertSql,

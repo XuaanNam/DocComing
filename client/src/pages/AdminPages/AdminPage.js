@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import ManagedBlog from "./ManagedBlog";
+import CreateBlog from "./CreateBlog";
 import UserList from "./UserList";
+import DashSidebar from "../../components/DashSidebar";
+import ManageBlog from "./ManageBlog";
 const AdminPage = () => {
   const Navigate = useNavigate();
   const { adminpage } = useParams();
@@ -9,101 +11,8 @@ const AdminPage = () => {
   const [blogActived, setBlogActived] = useState(false);
   return (
     <div className="flex">
-      <aside className="relative bg-white h-screen w-64 sm:block drop-shadow-lg">
-        <div className="p-6">
-          <a
-            href="/admin/dashboard"
-            className="text-3xl font-semibold uppercase text-[#0f766e] hover:text-gray-300"
-          >
-            Doctor Coming
-          </a>
-          {/* <button
-            className="w-full bg-white cta-btn font-semibold py-2 mt-5 rounded-br-lg rounded-bl-lg rounded-tr-lg shadow-lg hover:shadow-xl hover:bg-gray-300 flex items-center justify-center"
-            onClick={() => Navigate("/admin/blog")}
-          >
-            <i className="fas fa-plus mr-3"></i>
-            Thêm bài viết
-          </button> */}
-        </div>
-        <nav className="text-base font-semibold flex-col justify-center">
-          <div
-            onClick={() => Navigate("/admin/dashboard")}
-            className={`${
-              adminpage === "dashboard"
-                ? "bg-emerald-400 text-white"
-                : "text-emerald-500 bg-white"
-            } w-[80%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md hover:opacity-80`}
-          >
-            Dashboard
-          </div>
-          <div
-            onClick={() => setBlogActived(!blogActived)}
-            className="text-emerald-500 bg-white w-[80%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mt-4  hover:opacity-80"
-          >
-            Blog
-          </div>
-          {blogActived && (
-            <div className="">
-              <div
-                onClick={() => Navigate("/admin/create-blog")}
-                className={`${
-                  adminpage === "create-blog"
-                    ? "bg-emerald-500 text-white"
-                    : "text-emerald-500 bg-white"
-                } w-[70%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mt-1 hover:opacity-80`}
-              >
-                Tạo Blog
-              </div>
-              <div
-                onClick={() => Navigate("/admin/manage-blog")}
-                className={`${
-                  adminpage === "manage-blog"
-                    ? "bg-emerald-500 text-white"
-                    : "text-emerald-500 bg-white"
-                } w-[70%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mt-1 hover:opacity-80`}
-              >
-                Quản lí Blog
-              </div>
-            </div>
-          )}
-          <div
-            onClick={() => Navigate("/admin/user")}
-            className={`${
-              adminpage === "user"
-                ? "bg-emerald-500 text-white"
-                : "text-emerald-500 bg-white"
-            } w-[80%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mt-4 hover:opacity-80`}
-          >
-            User
-          </div>
-          <div
-            onClick={() => Navigate("/admin/form")}
-            className={`${
-              adminpage === "form"
-                ? "bg-emerald-500 text-white"
-                : "text-emerald-500 bg-white"
-            } w-[80%] h-[40px] flex items-center justify-center border rounded-xl cursor-pointer drop-shadow-md mt-4 hover:opacity-80`}
-          >
-            Form
-          </div>
-          {/* <a
-            href="tabs.html"
-            className="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item"
-          >
-            <i className="fas fa-tablet-alt mr-3"></i>
-            Tabbed Content
-          </a>
-          <a
-            href="calendar.html"
-            className="flex items-center text-white opacity-75 hover:opacity-100 py-4 pl-6 nav-item"
-          >
-            <i className="fas fa-calendar mr-3"></i>
-            Calendar
-          </a> */}
-        </nav>
-      </aside>
-
-      <div className="w-full flex flex-col h-screen bg-gradient-to-r from-white to-emerald-50">
+      <DashSidebar param={adminpage}></DashSidebar>
+      <div className="w-full flex flex-col h-screen bg-gradient-to-r">
         <div className="w-full items-center bg-white py-2 px-6 sm:flex border-b mb-2">
           <div className="w-1/2"></div>
           <div className="relative w-1/2 flex justify-end">
@@ -140,9 +49,11 @@ const AdminPage = () => {
             )}
           </div>
         </div>
-        <div className="w-full overflow-auto" onClick={() => setActived(false)}>
-          {adminpage === "create-blog" && <ManagedBlog />}
-          {adminpage === "user" && <UserList />}
+        <div className="overflow-auto w-full" onClick={() => setActived(false)}>
+          {adminpage === "create-post" && <CreateBlog />}
+          {adminpage === "manage-post" && <ManageBlog />}
+
+          {adminpage === "users" && <UserList />}
         </div>
       </div>
     </div>
