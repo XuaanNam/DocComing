@@ -46,7 +46,6 @@ export default function Editor({ value, onChange }) {
     const range = editor.getSelection();
     editor.insertEmbed(range.index, 'image', url);
   }
-  const editor = quillRef.current.getEditor();
   const modules = {
     //history: [{ delay: 500 }, { maxStack: 100 }, { userOnly: false }],
     toolbar: {

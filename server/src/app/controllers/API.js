@@ -249,7 +249,7 @@ class API {
     let bd = req.body.BirthDate.split("/");
     const BirthDate = bd[2] + "-" + bd[0] + "-" + bd[1];
     let data = [], updateSql = "";
-    const Avt = req.file ? req.file.path : null;
+    const Avt = req.file ? req.file.path : null; 
 
     if(Avt === null) { console.log("good")
       data = [ FirstName, LastName, BirthDate, Phone, Address, id ]
