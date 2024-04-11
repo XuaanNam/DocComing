@@ -251,7 +251,7 @@ class API {
     let data = [], updateSql = "";
     const Avt = req.file ? req.file.path : null; 
 
-    if(Avt === null) { console.log("good")
+    if(Avt === null) { 
       data = [ FirstName, LastName, BirthDate, Phone, Address, id ]
       updateSql = "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ? where id = ?";
     } else {
@@ -517,8 +517,8 @@ class API {
 
   //[POST] /api/post/image
   addImage(req, res) {
-    let url = req.file ? req.file.path : "null";
-    res.status(200).send({ data: url });
+    let url = req.file ? req.file.path : "null"; console.log(url)
+    res.status(200).send({ data: url }); 
     // if (req.user.Authorization == 1) {
     //   res.end("Unauthorized");
     // } else {

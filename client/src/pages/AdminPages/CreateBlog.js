@@ -17,7 +17,7 @@ const CreateBlog = () => {
   const category = useSelector((state) => state.post.data);
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState(""); 
   const [files, setFiles] = useState("");
   const [categories, setCategories] = useState([{ id: "", Categories: "" }]);
   const [categoryId, setCategoryId] = useState("");
@@ -103,7 +103,7 @@ const CreateBlog = () => {
             onChange={(e) => setFiles(e.target.files[0])}
           />
         </div>
-        <Editor value={content} onChange={(e) => console.log(e)} />
+        <Editor value={content} onChange={setContent} />
         <button
           onClick={handleCreatePost}
           className="h-12 w-[70%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
