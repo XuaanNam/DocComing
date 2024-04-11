@@ -25,7 +25,7 @@ const DashSidebar = ({ param }) => {
             href="/admin/dashboard"
             className="text-3xl font-semibold uppercase text-[#0f766e] hover:text-gray-300"
           >
-            Doctor Coming
+            Doctor Coming 
           </a>
         </div>
         <Sidebar.Items className="">

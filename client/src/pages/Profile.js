@@ -28,30 +28,31 @@ const Profile = () => {
 
   useEffect(() => {
     dispatch(fetchProfile());
-    setEmail(user?.data[0]?.Email);
-    setFullName(user?.data[0]?.FirstName + user?.data[0]?.LastName);
-    setPhone(user?.data[0]?.Phone);
-    setAddress(user?.data[0]?.Address);
-    setBirthDate(user?.data[0]?.BirthDate);
-    setImageFileUrl(user?.data[0]?.Avt);
+    setEmail(user?.data?.Email);
+    setFullName(user?.data?.FirstName + user?.data?.LastName);
+    setPhone(user?.data?.Phone);
+    setAddress(user?.data?.Address);
+    setBirthDate(user?.data?.BirthDate);
+    setImageFileUrl(user?.data?.Avt);
 
     const datepickerEl = document?.getElementById("BirthDate");
     new Datepicker(datepickerEl, {});
   }, [dispatch]);
 
-  console.log(FullName, Phone, Address, BirthDate, imageFile);
+  // console.log(FullName, Phone, Address, BirthDate, imageFile);
+  console.log(user.data);
   const handleEdit = () => {
     setEdit(true);
   };
   const handleCancel = () => {
     setEdit(false);
     setFormData({});
-    setEmail(user?.data[0]?.Email);
-    setFullName(user?.data[0]?.FirstName + user?.data[0]?.LastName);
-    setPhone(user?.data[0]?.Phone);
-    setAddress(user?.data[0]?.Address);
-    setBirthDate(user?.data[0]?.BirthDate);
-    setImageFileUrl(user?.data[0]?.Avt);
+    setEmail(user?.data?.Email);
+    setFullName(user?.data?.FirstName + user?.data?.LastName);
+    setPhone(user?.data?.Phone);
+    setAddress(user?.data?.Address);
+    setBirthDate(user?.data?.BirthDate);
+    setImageFileUrl(user?.data?.Avt);
   };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
@@ -153,7 +154,7 @@ const Profile = () => {
               <CiCamera></CiCamera>
             </div>
             <div className="font-medium text-lg text-center">
-              {user?.data[0]?.FirstName + user?.data[0]?.LastName}
+              {user?.data?.FirstName + user?.data?.LastName}
             </div>
           </div>
           <form className="col-span-4 h-screen">

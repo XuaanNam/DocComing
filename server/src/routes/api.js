@@ -44,6 +44,7 @@ router.post(
   fileUploader.fields(fileConfig),
   api.createPost
 );
+router.post("/post/image", fileUploader.single("image"), api.addImage);
 router.patch(
   "/post/update",
   PassportCheck,
