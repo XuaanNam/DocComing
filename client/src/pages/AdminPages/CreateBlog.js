@@ -25,12 +25,7 @@ const CreateBlog = () => {
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
-  const data = new FormData();
-  data.append("Title", title);
-  data.append("Brief", summary);
-  data.append("Content", content);
-  data.append("idCategories", categoryId);
-  data.append("FeaturedImage", files);
+
   useEffect(() => {
     dispatch(fetchCategories());
     setCategories(category);
@@ -40,7 +35,12 @@ const CreateBlog = () => {
   };
 
   const handleCreatePost = () => {
-    console.log(data);
+    const data = new FormData();
+    data.append("Title", title);
+    data.append("Brief", summary);
+    data.append("Content", content);
+    data.append("idCategories", categoryId);
+    data.append("FeaturedImage", files);
     dispatch(createPost(data));
   };
 
@@ -103,7 +103,7 @@ const CreateBlog = () => {
             onChange={(e) => setFiles(e.target.files[0])}
           />
         </div>
-        <Editor value={content} onChange={setContent} />
+        <Editor value={content} onChange={(e) => console.log(e)} />
         <button
           onClick={handleCreatePost}
           className="h-12 w-[70%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"

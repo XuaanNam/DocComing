@@ -231,7 +231,10 @@ class API {
         res.send({ message: errorMsg, checked: false });
       } else {
         if (results.length > 0) {
-          res.status(200).send({ data: results, checked: true });
+          const bd = results[0].BirthDate.split("-");
+          const birth = bd[1] + "/" + bd[2] + "/" + bd[0];
+          results[0].BirthDate = birth
+          res.status(200).send({ data: results[0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
@@ -471,21 +474,8 @@ class API {
     let Status = 0;
     const idAuthor = req.user.id;
     const { Title, Brief, Content, idCategories } = req.body;
-    const date = new Date();
-    const DatePost =
-      date.getFullYear() +
-      "-" +
-      date.getMonth() +
-      "-" +
-      date.getDate() +
-      " " +
-      date.getHours() +
-      ":" +
-      date.getMinutes() +
-      ":" +
-      date.getSeconds();
     const insertSql =
-      "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories, Status) values (?,?,?,?,?,?,?,?,?)";
+      "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories, Status) values (?,?,?,?,?,?, NOW(),?,?)";
 
     if (req.user.Authorization == 0) {
       Status = 1;
@@ -505,7 +495,6 @@ class API {
           Content,
           Images,
           idAuthor,
-          DatePost,
           idCategories,
           Status,
         ],
@@ -522,6 +511,17 @@ class API {
         }
       );
     }
+  }
+
+  //[POST] /api/post/image
+  addImage(req, res) {
+    let url = req.file ? req.file.path : "null";
+    res.status(200).send({ data: url });
+    // if (req.user.Authorization == 1) {
+    //   res.end("Unauthorized");
+    // } else {
+    //   res.status(200).send({ checked: true, url });
+    // }
   }
 
   //[PATCH] /api/post/update

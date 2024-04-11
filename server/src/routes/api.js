@@ -40,6 +40,9 @@ router.patch("/notification/read", PassportCheck, api.readNotification);
 router.post("/post/create", PassportCheck, fileUploader.fields(fileConfig),
   api.createPost
 );
+router.post("/post/image",  fileUploader.single("image"),
+  api.addImage
+);
 router.patch("/post/update", PassportCheck, fileUploader.fields(fileConfig),
   api.updatePost
 );
