@@ -8,7 +8,6 @@ const fileConfig = require("../app/configs/muter");
 //const myOAuth2Client = require("../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 
-
 router.post("/execute/query", api.executeQuery);
 // guest
 router.post("/login", api.login);
@@ -23,7 +22,10 @@ router.post("/send/mail", api.sendMail);
 
 // patient - doctor
 router.get("/profile", PassportCheck, api.getProfile);
-router.patch("/profile/update", PassportCheck, fileUploader.single("avt"),
+router.post(
+  "/profile/update",
+  PassportCheck,
+  fileUploader.single("avt"),
   api.updateProfile
 );
 router.get("/appointment", PassportCheck, api.getAppointmentById);
@@ -35,12 +37,17 @@ router.get("/notification", PassportCheck, api.getNotification);
 router.post("/notification/create", PassportCheck, api.createNotification);
 router.patch("/notification/read", PassportCheck, api.readNotification);
 
-
 // Blog && service
-router.post("/post/create", PassportCheck, fileUploader.fields(fileConfig),
+router.post(
+  "/post/create",
+  PassportCheck,
+  fileUploader.fields(fileConfig),
   api.createPost
 );
-router.patch("/post/update", PassportCheck, fileUploader.fields(fileConfig),
+router.patch(
+  "/post/update",
+  PassportCheck,
+  fileUploader.fields(fileConfig),
   api.updatePost
 );
 router.get("/post", api.getPost);
@@ -58,6 +65,5 @@ router.post("/admin/account/create", PassportCheck, api.createAccount);
 router.patch("/admin/account/update", PassportCheck, api.updateAccount);
 router.delete("/admin/account/delete", PassportCheck, api.deleteAccount);
 router.get("/admin/appointment", PassportCheck, api.getAppointment);
-
 
 module.exports = router;

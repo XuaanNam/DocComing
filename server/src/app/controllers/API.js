@@ -12,22 +12,20 @@ const nodemailer = require("nodemailer");
 const { Console } = require("console");
 
 class API {
-
-  // [POST] /api/execute/query 
+  // [POST] /api/execute/query
   executeQuery(req, res, next) {
-    const { query, data } = req.body; 
+    const { query, data } = req.body;
     pool.query(query, data, function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false });
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data: results, checked: true });
         } else {
-          if (results) {
-            res.status(200).send({ data: results, checked: true });
-          } else {
-            res.status(200).send({ message: "lỗi k xác định", checked: false });
-          }
+          res.status(200).send({ message: "lỗi k xác định", checked: false });
         }
       }
-    );
+    });
   }
 
   // [POST] /api/register
@@ -242,13 +240,22 @@ class API {
   //[PATCH] /api/profile/update
   updateProfile(req, res) {
     const id = req.user.id;
-    const FirstName = req.body.FirstName ? req.body.FirstName : null;
-    const LastName = req.body.LastName ? req.body.LastName : null;
-    const BirthDate = req.body.BirthDate ? req.body.BirthDate : null;
+    const FullName = req.body.FullName ? req.body.FullName : null;
+    let LastName = FullName.split(" ");
+    LastName = LastName[LastName.length - 1];
+    const FirstName = FullName.split(LastName)[0];
+
+    let BirthDate = req.body.BirthDate ? req.body.BirthDate : null;
+    BirthDate =
+      BirthDate.split("/")[2] +
+      "-" +
+      BirthDate.split("/")[0] +
+      "-" +
+      BirthDate.split("/")[1];
     const Address = req.body.Address ? req.body.Address : null;
     const Phone = req.body.Phone ? req.body.Phone : null;
     let Avt = req.file ? req.file.path : null;
-
+    console.log(FirstName, LastName, BirthDate, Phone, Address, Avt, id);
     const updateSql =
       "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin!";
@@ -276,8 +283,7 @@ class API {
     const id = req.user.id;
     if (req.user.Authorization == 1) {
       sql = "select * from appointment where idPatient = ?";
-    } 
-    else if(req.user.Authorization == 2) {
+    } else if (req.user.Authorization == 2) {
       sql = "select * from appointment where idDoctor = ?";
     }
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
@@ -293,37 +299,42 @@ class API {
         }
       }
     });
-    
   }
 
   //[POST] /api/appointment/create
   createAppointment(req, res) {
     const idPatient = req.user.id;
     const { idService, idDoctor, Price, Information } = req.body;
-    const insertSql = "insert into appointment (idService, idPatient, idDoctor, Price, Information) values(?,?,?,?,?)";
+    const insertSql =
+      "insert into appointment (idService, idPatient, idDoctor, Price, Information) values(?,?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 1) {
       res.end("Unauthorized");
     } else {
-      pool.query(insertSql, [idService, idPatient, idDoctor, Price, Information], function (error, results, fields) {
-        if (error) {
-          res.send({ message: error.sqlMessage, checked: false });
-        } else {
-          if (results) {
-            res.status(200).send({checked: true });
+      pool.query(
+        insertSql,
+        [idService, idPatient, idDoctor, Price, Information],
+        function (error, results, fields) {
+          if (error) {
+            res.send({ message: error.sqlMessage, checked: false });
           } else {
-            res.status(200).send({ message: errorMsg, checked: false });
+            if (results) {
+              res.status(200).send({ checked: true });
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
           }
         }
-      });
+      );
     }
   }
 
   //[PATCH] /api/appointment/accept
   acceptAppointment(req, res) {
     const { id } = req.body;
-    const updateSql = "update appointment set status = 1 where status = 0 and id = ?";
+    const updateSql =
+      "update appointment set status = 1 where status = 0 and id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 2) {
@@ -334,7 +345,7 @@ class API {
           res.send({ message: error.sqlMessage, checked: false });
         } else {
           if (results) {
-            res.status(200).send({checked: true });
+            res.status(200).send({ checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -346,7 +357,8 @@ class API {
   //[PATCH] /api/appointment/complete
   completeAppointment(req, res) {
     const { id } = req.body;
-    const updateSql = "update appointment set status = 2 where status = 1 and id = ?";
+    const updateSql =
+      "update appointment set status = 2 where status = 1 and id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 2) {
@@ -357,7 +369,7 @@ class API {
           res.send({ message: error.sqlMessage, checked: false });
         } else {
           if (results) {
-            res.status(200).send({checked: true });
+            res.status(200).send({ checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -377,20 +389,20 @@ class API {
         res.send({ message: error.sqlMessage, checked: false });
       } else {
         if (results) {
-          res.status(200).send({checked: true });
+          res.status(200).send({ checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
       }
     });
-    
   }
 
   //[GET] /api/notification
   getNotification(req, res) {
     const id = req.user.id;
-   
-    const selectSql = "select * from notification n left join (select count(idAccount) as Unread, idAccount from notification where idAccount = ? and Status = 0) as c on n.idAccount = c.idAccount order by NotiTime desc";
+
+    const selectSql =
+      "select * from notification n left join (select count(idAccount) as Unread, idAccount from notification where idAccount = ? and Status = 0) as c on n.idAccount = c.idAccount order by NotiTime desc";
 
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -405,14 +417,13 @@ class API {
         }
       }
     });
-    
   }
-  
+
   //[PATCH] /api/notification/read
   readNotification(req, res) {
-    const {id} = req.body;
-   
-    const updateSql = "update notification set status = 1 where id = ?"
+    const { id } = req.body;
+
+    const updateSql = "update notification set status = 1 where id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(updateSql, id, function (error, results, fields) {
@@ -426,34 +437,43 @@ class API {
         }
       }
     });
-    
   }
 
   //[POST] /api/notification/create
   createNotification(req, res, next) {
-    const {noti } = req.body;
+    const { noti } = req.body;
     const id = req.user.id;
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    const insertSql = "insert into notification (idAccount, Notification, NotiTime) values (?,?,?)";
+    const insertSql =
+      "insert into notification (idAccount, Notification, NotiTime) values (?,?,?)";
     const date = new Date();
     const NotiTime =
-      date.getFullYear() + "-" +
-      date.getMonth() + "-" +
-      date.getDate() + " " +
-      date.getHours() + ":" +
-      date.getMinutes() + ":" +
+      date.getFullYear() +
+      "-" +
+      date.getMonth() +
+      "-" +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
       date.getSeconds();
-    pool.query(insertSql, [id, noti, NotiTime], function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ data: results, checked: true });
+    pool.query(
+      insertSql,
+      [id, noti, NotiTime],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
         } else {
-          res.status(200).send({ message: errorMsg, checked: false });
+          if (results) {
+            res.status(200).send({ data: results, checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
         }
       }
-    });
+    );
   }
 
   //[POST] /api/post/create
@@ -740,7 +760,7 @@ class API {
           res.send({ message: error, checked: false });
         } else {
           if (results) {
-            res.status(200).send({checked: true });
+            res.status(200).send({ checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -751,53 +771,72 @@ class API {
 
   //[POST] /api/admin/account/create
   createAccount(req, res) {
-    const { FirstName, LastName, BirthDate, Address, Email, Phone, Authorization } = req.body;
-    const insertSql = "insert into account (FirstName, LastName, BirthDate, Address, Email, Phone, Authorization) values(?,?,?,?,?,?,?)";
+    const {
+      FirstName,
+      LastName,
+      BirthDate,
+      Address,
+      Email,
+      Phone,
+      Authorization,
+    } = req.body;
+    const insertSql =
+      "insert into account (FirstName, LastName, BirthDate, Address, Email, Phone, Authorization) values(?,?,?,?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
-      pool.query(insertSql, [FirstName, LastName, BirthDate, Address, Email, Phone, Authorization ], function (error, results, fields) {
-        if (error) {
-          res.send({ message: error.sqlMessage, checked: false });
-        } else {
-          if (results) {
-            res.status(200).send({checked: true });
+      pool.query(
+        insertSql,
+        [FirstName, LastName, BirthDate, Address, Email, Phone, Authorization],
+        function (error, results, fields) {
+          if (error) {
+            res.send({ message: error.sqlMessage, checked: false });
           } else {
-            res.status(200).send({ message: errorMsg, checked: false });
+            if (results) {
+              res.status(200).send({ checked: true });
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
           }
         }
-      });
+      );
     }
   }
 
   //[PATCH] /api/admin/account/update
   updateAccount(req, res) {
-    const { FirstName, LastName, BirthDate, Address, Email, Phone, id } = req.body;
-    const updateSql = "update account set FirstName = ?, LastName = ?, BirthDate = ?, Address = ?, Email = ?, Phone = ? where id = ?";
+    const { FirstName, LastName, BirthDate, Address, Email, Phone, id } =
+      req.body;
+    const updateSql =
+      "update account set FirstName = ?, LastName = ?, BirthDate = ?, Address = ?, Email = ?, Phone = ? where id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
-      pool.query(updateSql, [FirstName, LastName, BirthDate, Address, Email, Phone, id ], function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false });
-        } else {
-          if (results) {
-            res.status(200).send({ data: results, checked: true });
+      pool.query(
+        updateSql,
+        [FirstName, LastName, BirthDate, Address, Email, Phone, id],
+        function (error, results, fields) {
+          if (error) {
+            res.send({ message: error, checked: false });
           } else {
-            res.status(200).send({ message: errorMsg, checked: false });
+            if (results) {
+              res.status(200).send({ data: results, checked: true });
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
           }
         }
-      });
+      );
     }
   }
 
   //[DELETE] /api/admin/account/delete
   deleteAccount(req, res) {
-    const {id } = req.body;
+    const { id } = req.body;
     const insertSql = "delete from account where id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -809,7 +848,7 @@ class API {
           res.send({ message: error.sqlMessage, checked: false });
         } else {
           if (results) {
-            res.status(200).send({checked: true });
+            res.status(200).send({ checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -839,7 +878,6 @@ class API {
       });
     }
   }
-
 }
 
 module.exports = new API();

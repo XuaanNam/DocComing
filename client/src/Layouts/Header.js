@@ -8,7 +8,7 @@ import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
 import { logout } from "../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
-import logo from "../logo.png"
+import logo from "../logo.png";
 
 const Header = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -23,14 +23,8 @@ const Header = () => {
     <div className="h-[70px] fixed w-screen z-50 bg-white">
       <div className="text-sm h-full px-5 text-gray-700 bg-white grid grid-cols-5 drop-shadow-md">
         <div className="col-start-1 col-span-1 pl-5 text-xl flex items-center text-teal-500">
-          <img
-            className="rounded-full h-14 w-14 mr-9"
-            alt=""
-            src={logo}
-          ></img>
-          <a href="/">
-            Doctor Coming
-          </a>
+          <img className="rounded-full h-12 w-12 mr-3" alt="" src={logo}></img>
+          <a href="/">Doctor Coming</a>
         </div>
         <div className="flex items-center col-span-2">
           <div className="flex items-center col-span-2 h-[44px] w-[300px] border rounded-lg hover:ring-1 hover:ring-teal-400">

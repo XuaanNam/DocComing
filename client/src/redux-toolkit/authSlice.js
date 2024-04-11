@@ -11,6 +11,7 @@ const initialState = {
   checked: true,
   token: "",
   data: [],
+  user: {},
 };
 export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   const res = await fetch("http://localhost:5000/api/auth/google/check", {
@@ -48,7 +49,7 @@ export const getProfile = createAsyncThunk("getProfile", async () => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("token"),
+      // Authorization: localStorage.getItem("token"),
     },
   });
   return await res.json();
@@ -64,18 +65,27 @@ export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
   });
   return await res.json();
 });
-// export const changeProfile = createAsyncThunk("changeProfile", async (body) => {
-//   console.log("body", body);
-//   const res = await fetch("http://localhost:5000/api/profile/update", {
-//     method: "PATCH",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("token"),
-//     },
-//     body: JSON.stringify(body),
-//   });
-//   return await res.json();
-// });
+export const fetchProfile = createAsyncThunk("fetchProfile", async () => {
+  const res = await fetch("http://localhost:5000/api/profile", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
+  return await res.json();
+});
+export const updateProfile = createAsyncThunk("updateProfile", async (body) => {
+  console.log("body", body);
+  const res = await fetch("http://localhost:5000/api/profile/update", {
+    method: "POST",
+    headers: {
+      Authorization: localStorage.getItem("token"),
+    },
+    body,
+  });
+  return await res.json();
+});
 // export const emailChecked = createAsyncThunk("emailChecked", async (body) => {
 //   console.log("body", body);
 //   const res = await fetch("http://localhost:5000/api/check/email", {
@@ -173,6 +183,8 @@ const authSlice = createSlice({
         state.currentUser = action.payload;
         state.loading = false;
         state.data = action.payload;
+        state.token = action.payload?.token;
+        localStorage.setItem("token", action.payload?.token);
       })
       .addCase(loginGoogle.rejected, (state, action) => {
         state.loading = false;
@@ -190,28 +202,25 @@ const authSlice = createSlice({
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(updateProfile.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(updateProfile.fulfilled, (state, { payload }) => {
+        state.checked = payload;
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchProfile.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchProfile.fulfilled, (state, { payload }) => {
+        state.user = payload;
+      })
+      .addCase(fetchProfile.rejected, (state, action) => {
+        state.loading = true;
       });
-    // .addCase(getProfile.pending, (state, action) => {
-    //   state.loading = true;
-    // })
-    // .addCase(getProfile.fulfilled, (state, { payload }) => {
-    //   state.auth = payload.authentication;
-    // })
-    // .addCase(getProfile.rejected, (state, action) => {
-    //   state.loading = true;
-    // });
-    // [getProfile.pending]: (state, action) => {
-    //   state.loading = true;
-    // },
-    // [getProfile.fulfilled]: (state, { payload }) => {
-    //   if (payload.results) state.items = { ...payload.results[0] };
-    //   else {
-    //     state.message = payload.message;
-    //   }
-    // },
-    // [getProfile.rejected]: (state, action) => {
-    //   state.loading = true;
-    // },
 
     // [changeProfile.pending]: (state, action) => {
     //   state.loading = true;
