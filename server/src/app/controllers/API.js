@@ -245,32 +245,34 @@ class API {
   //[PATCH] /api/profile/update
   updateProfile(req, res) {
     const id = req.user.id;
-    const FirstName = req.body.FirstName ? req.body.FirstName : null;
-    const LastName = req.body.LastName ? req.body.LastName : null;
-    const BirthDate = req.body.BirthDate ? req.body.BirthDate : null;
-    const Address = req.body.Address ? req.body.Address : null;
-    const Phone = req.body.Phone ? req.body.Phone : null;
-    let Avt = req.file ? req.file.path : null;
+    const {FirstName, LastName, Address, Phone} = req.body;
+    let bd = req.body.BirthDate.split("/");
+    const BirthDate = bd[2] + "-" + bd[0] + "-" + bd[1];
+    let data = [], updateSql = "";
+    const Avt = req.file ? req.file.path : null;
 
-    const updateSql =
-      "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
+    if(Avt === null) { console.log("good")
+      data = [ FirstName, LastName, BirthDate, Phone, Address, id ]
+      updateSql = "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ? where id = ?";
+    } else {
+      data = [ FirstName, LastName, BirthDate, Phone, Address, Avt, id ]
+      updateSql = "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
+    }
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin!";
 
-    pool.query(
-      updateSql,
-      [FirstName, LastName, BirthDate, Phone, Address, Avt, id],
-      function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false });
+
+    pool.query(updateSql, data, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ checked: true });
         } else {
-          if (results) {
-            res.status(200).send({ checked: true });
-          } else {
-            res.status(200).send({ message: errorMsg, checked: false });
-          }
+          res.status(200).send({ message: errorMsg, checked: false });
         }
       }
-    );
+    });
+
   }
 
   //[GET] /api/appointment
