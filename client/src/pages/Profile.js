@@ -16,30 +16,32 @@ const Profile = () => {
   const [Phone, setPhone] = useState("");
   const [Address, setAddress] = useState("");
   const [BirthDate, setBirthDate] = useState("");
-  const { currentUser, user, error, loading } = useSelector(
+  const { currentUser, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
   const [imageFile, setImageFile] = useState(null);
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [formData, setFormData] = useState({});
+  const [update, setUpdate] = useState(false);
   const filePickerRef = useRef();
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchProfile());
-    setEmail(user?.data?.Email);
-    setFullName(user?.data?.FirstName + user?.data?.LastName);
-    setPhone(user?.data?.Phone);
-    setAddress(user?.data?.Address);
-    setBirthDate(user?.data?.BirthDate);
-    setImageFileUrl(user?.data?.Avt);
+    dispatch(fetchProfile()).then(() => {
+      setEmail(user?.data?.Email);
+      setFullName(user?.data?.FirstName + user?.data?.LastName);
+      setPhone(user?.data?.Phone);
+      setAddress(user?.data?.Address);
+      setBirthDate(user?.data?.BirthDate);
+      setImageFileUrl(user?.data?.Avt);
+    });
 
     const datepickerEl = document?.getElementById("BirthDate");
     new Datepicker(datepickerEl, {});
   }, [dispatch]);
 
-  // console.log(FullName, Phone, Address, BirthDate, imageFile);
+  console.log(FullName, Phone, Address, BirthDate, imageFile);
   console.log(user.data);
   const handleEdit = () => {
     setEdit(true);
@@ -78,9 +80,13 @@ const Profile = () => {
     data.append("avt", imageFile);
 
     console.log(data);
-    dispatch(updateProfile(data));
+    dispatch(updateProfile(data)).then(() => {
+      dispatch(fetchProfile());
+    });
     setEdit(false);
+    setFormData({});
   };
+  console.log(update);
 
   return (
     <div className="pt-[70px] mx-20 text-gray-700 flex gap-10">
@@ -215,7 +221,7 @@ const Profile = () => {
                     } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
                     id="Address"
                     placeholder="--"
-                    value={Address || ""}
+                    defaultValue={Address || ""}
                     // value={Address}
                     onChange={(e) => {
                       setAddress(e.target.value);

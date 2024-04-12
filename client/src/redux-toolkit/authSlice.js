@@ -12,6 +12,7 @@ const initialState = {
   token: "",
   data: [],
   user: {},
+  updated: false,
 };
 export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   const res = await fetch("http://localhost:5000/api/auth/google/check", {
@@ -195,14 +196,15 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.currentUser = action.payload;
         state.loading = false;
         state.data = action.payload.data;
+        state.updated = true;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
+
       .addCase(updateProfile.pending, (state, action) => {
         state.loading = true;
       })
