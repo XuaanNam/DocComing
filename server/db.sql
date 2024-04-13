@@ -10,6 +10,7 @@ id int not null primary key AUTO_INCREMENT,
 LastName nvarchar(20) not null CHECK (LastName !=""),
 FirstName nvarchar(25) not null CHECK (FirstName !=""),
 BirthDate date,
+Gender varchar(30),
 Address nvarchar(300),
 Email varchar(50) not null UNIQUE CHECK (Email !=""),
 Phone varchar(15) null,
@@ -34,7 +35,6 @@ insert into authorization (id, Role) values
 (0, 'Admin'),
 (1, 'Patient'),
 (2, 'doctor');
-
 
 create table major(
 id int not null primary key AUTO_INCREMENT,
@@ -149,6 +149,7 @@ idService int  not null CHECK (idService !=""),
 idPatient int  not null CHECK (idPatient !=""),
 idDoctor int  not null CHECK (idDoctor !=""),
 DateBooking date,
+TimeBooking TIME,
 Price double not null,
 Status int default 0, -- 0 đang chờ bác sĩ chấp nhận, 1 bác sĩ đã chấp nhận, 2 đã hoàn thành, 3 cuộc hẹn bị hủy 
 Information text(1000),

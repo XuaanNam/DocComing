@@ -245,18 +245,18 @@ class API {
   //[PATCH] /api/profile/update
   updateProfile(req, res) {
     const id = req.user.id;
-    const {FirstName, LastName, Address, Phone} = req.body;
+    const {FirstName, LastName, Address, Phone, Gender} = req.body;
     let bd = req.body.BirthDate.split("/");
     const BirthDate = bd[2] + "-" + bd[0] + "-" + bd[1];
     let data = [], updateSql = "";
     const Avt = req.file ? req.file.path : null; 
 
     if(Avt === null) { 
-      data = [ FirstName, LastName, BirthDate, Phone, Address, id ]
-      updateSql = "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ? where id = ?";
+      data = [ FirstName, LastName, BirthDate, Gender, Phone, Address, id ]
+      updateSql = "update account set FirstName = ?, LastName = ?, BirthDate = ?, Gender = ?, Phone = ?, Address = ? where id = ?";
     } else {
-      data = [ FirstName, LastName, BirthDate, Phone, Address, Avt, id ]
-      updateSql = "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
+      data = [ FirstName, LastName, BirthDate, Gender, Phone, Address, Avt, id ]
+      updateSql = "update account set FirstName = ?, LastName = ?, BirthDate = ?, Gender = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
     }
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin!";
 
@@ -753,14 +753,14 @@ class API {
 
   //[POST] /api/admin/account/create
   createAccount(req, res) {
-    const { FirstName, LastName, BirthDate, Address, Email, Phone, Authorization } = req.body;
-    const insertSql = "insert into account (FirstName, LastName, BirthDate, Address, Email, Phone, Authorization) values(?,?,?,?,?,?,?)";
+    const { FirstName, LastName, BirthDate, Gender, Address, Email, Phone, Authorization } = req.body;
+    const insertSql = "insert into account (FirstName, LastName, BirthDate, Gender, Address, Email, Phone, Authorization) values(?,?,?,?,?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
-      pool.query(insertSql, [FirstName, LastName, BirthDate, Address, Email, Phone, Authorization ], function (error, results, fields) {
+      pool.query(insertSql, [FirstName, LastName, BirthDate, Gender, Address, Email, Phone, Authorization ], function (error, results, fields) {
         if (error) {
           res.send({ message: error.sqlMessage, checked: false });
         } else {
@@ -776,14 +776,14 @@ class API {
 
   //[PATCH] /api/admin/account/update
   updateAccount(req, res) {
-    const { FirstName, LastName, BirthDate, Address, Email, Phone, id } = req.body;
-    const updateSql = "update account set FirstName = ?, LastName = ?, BirthDate = ?, Address = ?, Email = ?, Phone = ? where id = ?";
+    const { FirstName, LastName, BirthDate, Gender, Address, Email, Phone, id } = req.body;
+    const updateSql = "update account set FirstName = ?, LastName = ?, BirthDate = ?, Gender = ?, Address = ?, Email = ?, Phone = ? where id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
-      pool.query(updateSql, [FirstName, LastName, BirthDate, Address, Email, Phone, id ], function (error, results, fields) {
+      pool.query(updateSql, [FirstName, LastName, BirthDate, Gender, Address, Email, Phone, id ], function (error, results, fields) {
         if (error) {
           res.send({ message: error, checked: false });
         } else {

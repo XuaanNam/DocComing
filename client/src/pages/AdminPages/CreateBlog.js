@@ -45,7 +45,7 @@ const CreateBlog = () => {
   };
 
   return (
-    <div className="p-5 ">
+    <div className="pt-5 pl-16 ">
       <div className="text-2xl font-bold opacity-70 mb-5">Tạo Blog</div>
       <div className="">
         <div className="flex items-center h-[48px] w-[70%] border rounded-lg mb-3 bg-white">
@@ -106,7 +106,7 @@ const CreateBlog = () => {
         <Editor value={content} onChange={setContent} />
         <button
           onClick={handleCreatePost}
-          className="h-12 w-[70%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
+          className="h-12 w-[70%] border rounded-xl mt-16 py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
         >
           Đăng
         </button>

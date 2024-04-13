@@ -57,12 +57,13 @@ export default function Editor({ value, onChange }) {
     <div className="content w-[70%] mb-4 bg-white">
       <input
         ref={inputRef}
-        hidden  // hide
+        hidden  
         type="file"
         onChange={imageHandler}
       />
       <ReactQuill
-        className=" text-lg"
+        style={{height: "38vh"}}
+        className=" text-lg "
         ref={quillRef}
         value={value}
         theme={"snow"}
