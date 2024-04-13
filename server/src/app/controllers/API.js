@@ -113,7 +113,6 @@ class API {
     const firstName = name.split(lastName)[0];
     let payload = {};
     let token = "";
-    console.log(email, name, googlePhotoUrl);
     const insertSql =
       "insert into account (Email, FirstName, LastName, Avt) values (?, ?, ?, ?)";
     try {
@@ -229,9 +228,11 @@ class API {
         res.send({ message: errorMsg, checked: false });
       } else {
         if (results.length > 0) {
-          const bd = results[0].BirthDate.split("-");
-          const birth = bd[1] + "/" + bd[2] + "/" + bd[0];
-          results[0].BirthDate = birth
+          if (results[0].BirthDate) {
+            const bd = results[0].BirthDate.split("-");
+            const birth = bd[1] + "/" + bd[2] + "/" + bd[0];
+            results[0].BirthDate = birth;
+          }
           res.status(200).send({ data: results[0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
@@ -243,41 +244,38 @@ class API {
   //[PATCH] /api/profile/update
   updateProfile(req, res) {
     const id = req.user.id;
-    const FullName = req.body.FullName ? req.body.FullName : null;
+    const { FullName, Address, Phone } = req.body;
+    let bd = req.body.BirthDate.split("/");
+    const BirthDate = bd[2] + "-" + bd[0] + "-" + bd[1];
+    let data = [],
+      updateSql = "";
+    const Avt = req.file ? req.file.path : null;
+
     let LastName = FullName.split(" ");
     LastName = LastName[LastName.length - 1];
     const FirstName = FullName.split(LastName)[0];
-
-    let BirthDate = req.body.BirthDate ? req.body.BirthDate : null;
-    BirthDate =
-      BirthDate.split("/")[2] +
-      "-" +
-      BirthDate.split("/")[0] +
-      "-" +
-      BirthDate.split("/")[1];
-    const Address = req.body.Address ? req.body.Address : null;
-    const Phone = req.body.Phone ? req.body.Phone : null;
-    let Avt = req.file ? req.file.path : null;
-    console.log(FirstName, LastName, BirthDate, Phone, Address, Avt, id);
-    const updateSql =
-      "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
+    if (Avt === null) {
+      data = [FirstName, LastName, BirthDate, Phone, Address, id];
+      updateSql =
+        "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ? where id = ?";
+    } else {
+      data = [FirstName, LastName, BirthDate, Phone, Address, Avt, id];
+      updateSql =
+        "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
+    }
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin!";
 
-    pool.query(
-      updateSql,
-      [FirstName, LastName, BirthDate, Phone, Address, Avt, id],
-      function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false });
+    pool.query(updateSql, data, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ checked: true });
         } else {
-          if (results) {
-            res.status(200).send({ checked: true });
-          } else {
-            res.status(200).send({ message: errorMsg, checked: false });
-          }
+          res.status(200).send({ message: errorMsg, checked: false });
         }
       }
-    );
+    });
   }
 
   //[GET] /api/appointment

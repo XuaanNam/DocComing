@@ -25,7 +25,7 @@ router.get("/profile", PassportCheck, api.getProfile);
 router.post(
   "/profile/update",
   PassportCheck,
-  fileUploader.single("avt"),
+  fileUploader.single("Avt"),
   api.updateProfile
 );
 router.get("/appointment", PassportCheck, api.getAppointmentById);

@@ -9,84 +9,63 @@ import { Button } from "flowbite-react";
 import Datepicker from "flowbite-datepicker/Datepicker";
 import { fetchProfile, updateProfile } from "../redux-toolkit/authSlice";
 const Profile = () => {
-  const [actived, setActived] = useState(1);
-  const [edit, setEdit] = useState(false);
-  const [FullName, setFullName] = useState("");
-  const [Email, setEmail] = useState("");
-  const [Phone, setPhone] = useState("");
-  const [Address, setAddress] = useState("");
-  const [BirthDate, setBirthDate] = useState("");
   const { currentUser, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
+  const [actived, setActived] = useState(1);
+  const [edit, setEdit] = useState(false);
+  const [data, setData] = useState({});
+  const [FullName, setFullName] = useState("");
   const [imageFile, setImageFile] = useState(null);
-  const [imageFileUrl, setImageFileUrl] = useState(null);
   const [formData, setFormData] = useState({});
-  const [update, setUpdate] = useState(false);
   const filePickerRef = useRef();
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchProfile()).then(() => {
-      setEmail(user?.data?.Email);
-      setFullName(user?.data?.FirstName + user?.data?.LastName);
-      setPhone(user?.data?.Phone);
-      setAddress(user?.data?.Address);
-      setBirthDate(user?.data?.BirthDate);
-      setImageFileUrl(user?.data?.Avt);
-    });
-
+    setData(user?.data);
+    setFullName(user?.data?.FirstName + user?.data?.LastName);
     const datepickerEl = document?.getElementById("BirthDate");
     new Datepicker(datepickerEl, {});
-  }, [dispatch]);
+  }, []);
 
-  console.log(FullName, Phone, Address, BirthDate, imageFile);
-  console.log(user.data);
+  console.log(data);
   const handleEdit = () => {
     setEdit(true);
   };
   const handleCancel = () => {
     setEdit(false);
     setFormData({});
-    setEmail(user?.data?.Email);
-    setFullName(user?.data?.FirstName + user?.data?.LastName);
-    setPhone(user?.data?.Phone);
-    setAddress(user?.data?.Address);
-    setBirthDate(user?.data?.BirthDate);
-    setImageFileUrl(user?.data?.Avt);
+    setData(user?.data);
   };
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       setImageFile(file);
-      setImageFileUrl(URL.createObjectURL(file));
+      setData({ ...data, Avt: URL.createObjectURL(file) });
       setFormData({ ...formData, avt: file });
     }
   };
 
-  // const uploadImage = () => {
-  //   console.log("uploading...");
-  // };
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
   const handleUpdate = (e) => {
-    const data = new FormData();
-    data.append("FullName", FullName);
-    data.append("Phone", Phone);
-    data.append("Address", Address);
-    data.append("BirthDate", BirthDate);
-    data.append("avt", imageFile);
+    const body = new FormData();
+    body.append("FullName", FullName);
+    body.append("Phone", data.Phone);
+    body.append("Address", data.Address);
+    body.append("BirthDate", data.BirthDate);
+    body.append("Avt", imageFile);
 
-    console.log(data);
-    dispatch(updateProfile(data)).then(() => {
+    console.log(body);
+    dispatch(updateProfile(body)).then(() => {
       dispatch(fetchProfile());
     });
     setEdit(false);
     setFormData({});
   };
-  console.log(update);
+  // console.log(update);
 
   return (
     <div className="pt-[70px] mx-20 text-gray-700 flex gap-10">
@@ -130,7 +109,7 @@ const Profile = () => {
           {edit === false && (
             <div
               onClick={handleEdit}
-              className="flex gap-1 self-end items-center col-start-5 cursor-pointer"
+              className="flex gap-1 justify-end items-center col-start-5 text-sky-500 cursor-pointer"
             >
               <p className="font-medium">Chỉnh sửa</p>
               <MdEdit />
@@ -148,19 +127,19 @@ const Profile = () => {
             hidden
           />
           <div
-            className="relative w-28 h-28 cursor-pointer shadow-md rounded-full col-span-1"
+            className="relative w-32 h-32 cursor-pointer shadow-md rounded-full col-span-1"
             onClick={() => filePickerRef.current.click()}
           >
             <img
-              src={imageFileUrl || currentUser.googlePhotoUrl}
+              src={data?.Avt || currentUser?.googlePhotoUrl}
               alt="userImage"
               className="rounded-full w-full h-full object-cover border-4 border-[lightgray]"
             />
-            <div className="absolute w-8 h-8 rounded-full bg-slate-200 right-1 bottom-1 z-50 flex justify-center items-center">
+            <div className="absolute w-8 h-8 rounded-full bg-slate-300 right-1 bottom-1  flex justify-center items-center">
               <CiCamera></CiCamera>
             </div>
-            <div className="font-medium text-lg text-center">
-              {user?.data?.FirstName + user?.data?.LastName}
+            <div className="font-medium text-lg text-center w-full">
+              {data?.FirstName + data?.LastName || currentUser?.name}
             </div>
           </div>
           <form className="col-span-4 h-screen">
@@ -174,7 +153,7 @@ const Profile = () => {
                     } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
                     id="name"
                     placeholder="--"
-                    value={FullName ? FullName : currentUser.name}
+                    value={FullName ? FullName : currentUser?.name}
                     onChange={(e) => {
                       setFullName(e.target.value);
                       handleChange(e);
@@ -190,7 +169,7 @@ const Profile = () => {
                     } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
                     id="email"
                     placeholder="--"
-                    value={Email || ""}
+                    value={data?.Email || ""}
                     disabled={true}
                   ></input>
                 </div>
@@ -205,9 +184,9 @@ const Profile = () => {
                     } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
                     id="Phone"
                     placeholder="--"
-                    value={Phone || ""}
+                    value={data?.Phone || ""}
                     onChange={(e) => {
-                      setPhone(e.target.value);
+                      setData({ ...data, [e.target.id]: e.target.value });
                       handleChange(e);
                     }}
                     disabled={!edit}
@@ -221,10 +200,10 @@ const Profile = () => {
                     } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
                     id="Address"
                     placeholder="--"
-                    defaultValue={Address || ""}
+                    value={data?.Address || ""}
                     // value={Address}
                     onChange={(e) => {
-                      setAddress(e.target.value);
+                      setData({ ...data, [e.target.id]: e.target.value });
                       handleChange(e);
                     }}
                     disabled={!edit}
@@ -252,12 +231,12 @@ const Profile = () => {
                       datepicker="true"
                       datepicker-format="dd/mm/yyyy"
                       datepicker-title="Ngày sinh"
-                      value={BirthDate}
+                      value={data?.BirthDate}
                       type="text"
                       className="w-[90%] h-[40px] mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                       placeholder="--"
                       onSelect={(e) => {
-                        setBirthDate(e.target.value);
+                        setData({ ...data, [e.target.id]: e.target.value });
                         handleChange(e);
                       }}
                       title="Ngày sinh"
@@ -273,7 +252,7 @@ const Profile = () => {
                       id="gender"
                       required
                       placeholder="--"
-                      defaultValue={currentUser.gender || null}
+                      // value={currentUser.gender || null}
                       //   onChange={handleChange}
                       disabled={!edit}
                     >

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { IoMdArrowDropdown } from "react-icons/io";
@@ -9,16 +9,18 @@ import { FiLogOut } from "react-icons/fi";
 import { logout } from "../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
 import logo from "../logo.png";
-
+import { fetchProfile } from "../redux-toolkit/authSlice";
 const Header = () => {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser, user } = useSelector((state) => state.user);
+  // const [user, setUser] = useState({});
   const [actived, setActived] = useState(false);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
+
   const handleLogout = () => {
     dispatch(logout());
-    Navigate("/");
   };
+
   return (
     <div className="h-[70px] fixed w-screen z-50 bg-white">
       <div className="text-sm h-full px-5 text-gray-700 bg-white grid grid-cols-5 drop-shadow-md">
@@ -54,9 +56,9 @@ const Header = () => {
                 <img
                   className="rounded-full h-9 w-9"
                   alt=""
-                  src={currentUser.googlePhotoUrl}
+                  src={user?.data?.Avt || currentUser?.googlePhotoUrl}
                 ></img>
-                <p className="text-base font-medium">{currentUser.name}</p>
+                <p className="text-base font-medium">{currentUser?.name}</p>
                 <IoMdArrowDropdown className="h-5 w-5"></IoMdArrowDropdown>
               </div>
               <PiBell className="ml-3 h-6 w-6 text-yellow-500 cursor-pointer transition-transform duration-500 hover:scale-110" />

@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const initialState = {
   currentUser: null,
@@ -105,6 +105,8 @@ const authSlice = createSlice({
     auth: (state, action) => {},
     logout: (state, action) => {
       state.token = null;
+      state.currentUser = null;
+      state.user = {};
       localStorage.clear();
     },
   },
@@ -183,7 +185,6 @@ const authSlice = createSlice({
       .addCase(loginGoogle.fulfilled, (state, action) => {
         state.currentUser = action.payload;
         state.loading = false;
-        state.data = action.payload;
         state.token = action.payload?.token;
         localStorage.setItem("token", action.payload?.token);
       })
@@ -210,6 +211,9 @@ const authSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, { payload }) => {
         state.checked = payload;
+        toast.success("Cập nhật thành công", {
+          position: "top-right",
+        });
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = true;
