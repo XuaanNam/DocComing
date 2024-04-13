@@ -435,51 +435,45 @@ class API {
   }
 
   //[GET] /api/schedule
-  getScheduleById(req, res, next) {
+  getSchedule(req, res, next) {
     const sql = "call ScheduleById(?, ?)";
     const {idDoctor, idService, DateBooking} = req.body;
-    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const errorMsg = "Vui lòng đăng nhập trước khi đặt lịch!";
     let AppointmentData = {};
     let ScheduleData = {};
-    let EstimatedTime = "";
+    let DistantTime = "";
 
     const sql2 = "select id, FreeTimeStart, FreeTimeFinish, SpecificDate from schedule where idDoctor = ?";
     const sql3 = "select EstimatedTime as DistantTime from servicedoctor where idDoctor = ? and idService = ?";
 
-    if (req.user.Authorization != 1) {
-      res.end("Unauthorized");
-    } 
-    else {
-      pool.getConnection(function(err, connection) {
-        if (err) throw err; // not connected!
-       
-        connection.query(sql, [idDoctor, DateBooking], function (error, results, fields) {
-          if (error) {
-            res.send({ message: error, checked: false });
-          }
-          if (results[0]) AppointmentData = results[0];
-        });
-
-        connection.query(sql2, idDoctor, function (error, results, fields) {
-          if (error) {
-            res.send({ message: error, checked: false });
-          }
-          if (results) ScheduleData = results;
-        });
-
-        connection.query(sql3, [idDoctor, idService], function (error, results, fields) {
-          connection.destroy();
-          if (error) {
-            res.send({ message: error, checked: false });
-          }
-          if (results) {
-            EstimatedTime = results;
-            res.status(200).send({ AppointmentData, ScheduleData, EstimatedTime }); 
-          }
-        });
+    pool.getConnection(function(err, connection) {
+      if (err) throw err; // not connected!
+      
+      connection.query(sql, [idDoctor, DateBooking], function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        }
+        if (results[0]) AppointmentData = results[0];
       });
 
-    }    
+      connection.query(sql2, idDoctor, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
+        }
+        if (results) ScheduleData = results;
+      });
+
+      connection.query(sql3, [idDoctor, idService], function (error, results, fields) {
+        connection.destroy();
+        if (error) {
+          res.send({ message: error, checked: false });
+        }
+        if (results) {
+          DistantTime = results[0].DistantTime;
+          res.status(200).send({ AppointmentData, ScheduleData, DistantTime }); 
+        }
+      });
+    });
   }
 
   //[POST] /api/notification/create

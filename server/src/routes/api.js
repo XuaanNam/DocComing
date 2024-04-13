@@ -34,7 +34,7 @@ router.patch("/appointment/cancel", PassportCheck, api.cancelAppointment);
 router.get("/notification", PassportCheck, api.getNotification);
 router.post("/notification/create", PassportCheck, api.createNotification);
 router.patch("/notification/read", PassportCheck, api.readNotification);
-router.get("/schedule", PassportCheck, api.getScheduleById);
+router.get("/schedule", api.getSchedule);
 
 
 // Blog && service
