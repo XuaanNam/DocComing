@@ -304,14 +304,14 @@ class API {
   //[POST] /api/appointment/create
   createAppointment(req, res) {
     const idPatient = req.user.id;
-    const { idService, idDoctor, Price, Information } = req.body;
-    const insertSql = "insert into appointment (idService, idPatient, idDoctor, Price, Information) values(?,?,?,?,?)";
+    const { idService, idDoctor, Price, Information, DateBooking, TimeBooking } = req.body;
+    const insertSql = "insert into appointment (idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information) values(?,?,?,?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 1) {
       res.end("Unauthorized");
     } else {
-      pool.query(insertSql, [idService, idPatient, idDoctor, Price, Information], function (error, results, fields) {
+      pool.query(insertSql, [idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information], function (error, results, fields) {
         if (error) {
           res.send({ message: error.sqlMessage, checked: false });
         } else {
@@ -434,21 +434,62 @@ class API {
     
   }
 
+  //[GET] /api/schedule
+  getScheduleById(req, res, next) {
+    const sql = "call ScheduleById(?, ?)";
+    const {idDoctor, idService, DateBooking} = req.body;
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    let AppointmentData = {};
+    let ScheduleData = {};
+    let EstimatedTime = "";
+
+    const sql2 = "select id, FreeTimeStart, FreeTimeFinish, SpecificDate from schedule where idDoctor = ?";
+    const sql3 = "select EstimatedTime as DistantTime from servicedoctor where idDoctor = ? and idService = ?";
+
+    if (req.user.Authorization != 1) {
+      res.end("Unauthorized");
+    } 
+    else {
+      pool.getConnection(function(err, connection) {
+        if (err) throw err; // not connected!
+       
+        connection.query(sql, [idDoctor, DateBooking], function (error, results, fields) {
+          if (error) {
+            res.send({ message: error, checked: false });
+          }
+          if (results[0]) AppointmentData = results[0];
+        });
+
+        connection.query(sql2, idDoctor, function (error, results, fields) {
+          if (error) {
+            res.send({ message: error, checked: false });
+          }
+          if (results) ScheduleData = results;
+        });
+
+        connection.query(sql3, [idDoctor, idService], function (error, results, fields) {
+          connection.destroy();
+          if (error) {
+            res.send({ message: error, checked: false });
+          }
+          if (results) {
+            EstimatedTime = results;
+            res.status(200).send({ AppointmentData, ScheduleData, EstimatedTime }); 
+          }
+        });
+      });
+
+    }    
+  }
+
   //[POST] /api/notification/create
   createNotification(req, res, next) {
     const {noti } = req.body;
     const id = req.user.id;
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    const insertSql = "insert into notification (idAccount, Notification, NotiTime) values (?,?,?)";
-    const date = new Date();
-    const NotiTime =
-      date.getFullYear() + "-" +
-      date.getMonth() + "-" +
-      date.getDate() + " " +
-      date.getHours() + ":" +
-      date.getMinutes() + ":" +
-      date.getSeconds();
-    pool.query(insertSql, [id, noti, NotiTime], function (error, results, fields) {
+    const insertSql = "insert into notification (idAccount, Notification, NotiTime) values (?,?,now())";
+
+    pool.query(insertSql, [id, noti], function (error, results, fields) {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
@@ -517,13 +558,8 @@ class API {
 
   //[POST] /api/post/image
   addImage(req, res) {
-    let url = req.file ? req.file.path : "null"; console.log(url)
+    let url = req.file ? req.file.path : "null"; 
     res.status(200).send({ data: url }); 
-    // if (req.user.Authorization == 1) {
-    //   res.end("Unauthorized");
-    // } else {
-    //   res.status(200).send({ checked: true, url });
-    // }
   }
 
   //[PATCH] /api/post/update

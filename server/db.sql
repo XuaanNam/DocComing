@@ -159,6 +159,35 @@ foreign key (idDoctor) references account(id)
 )
 ; -- drop table appointment
 
+create table servicedoctor(
+id int not null primary key AUTO_INCREMENT,
+idService int  not null CHECK (idService !=""),
+idDoctor int  not null CHECK (idDoctor !=""),
+EstimatedTime TIME,
+Status int default 0, -- 0 hiển thị dịch vụ, 1 doctor ẩn dịch vụ  
+foreign key (idService) references service(id),
+foreign key (idDoctor) references account(id) 
+)
+; -- drop table servicedoctor
+
+insert into servicedoctor (idService, idDoctor, EstimatedTime) values 
+(1, 235523485, "01:00"),
+(2, 235523485, "01:30"),
+(3, 235523485, "00:30");
+
+create table schedule(
+id int not null primary key AUTO_INCREMENT,
+idDoctor int  not null CHECK (idDoctor !=""),
+FreeTimeStart TIME,
+FreeTimeFinish TIME,
+SpecificDate Date default null,
+foreign key (idDoctor) references account(id) 
+)
+; -- drop table schedule
+insert into schedule (idDoctor, FreeTimeStart, FreeTimeFinish) values 
+(235523485, "17:00", "20:30"),
+(235523485, "08:30", "11:30");
+
 create table notification(
 id int not null primary key AUTO_INCREMENT,
 idAccount int not null CHECK (idAccount !=""),
@@ -276,4 +305,12 @@ BEGIN
     WHERE id = idP;
     END IF;
 END$$
+
+DELIMITER $$ 
+CREATE PROCEDURE ScheduleById (IN idDoctor int, IN DateBooking date)
+BEGIN
+	SELECT a.id, sd.EstimatedTime, a.TimeBooking
+    FROM servicedoctor sd, appointment a
+    WHERE a.DateBooking = DateBooking and a.idDoctor = idDoctor and a.idDoctor = sd.idDoctor and sd.idService = a.idService and a.Status = 1;
+END$$ -- drop PROCEDURE ScheduleById
 
