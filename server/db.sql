@@ -177,16 +177,20 @@ insert into servicedoctor (idService, idDoctor, EstimatedTime) values
 
 create table schedule(
 id int not null primary key AUTO_INCREMENT,
-idDoctor int  not null CHECK (idDoctor !=""),
-FreeTimeStart TIME,
-FreeTimeFinish TIME,
-SpecificDate Date default null,
+idDoctor int  not null,
+FirstShiftStart TIME,
+FirstShiftEnd TIME,
+SecondShiftStart TIME,
+SecondShiftEnd TIME,
+ThirdShiftStart TIME,
+ThirdShiftEnd TIME,
+SpecificDay Date default null,
+Status int default 1,    			-- 0 lịch mặc định cửa bác sĩ, 1 lịch theo ngày cụ thể 
 foreign key (idDoctor) references account(id) 
 )
 ; -- drop table schedule
-insert into schedule (idDoctor, FreeTimeStart, FreeTimeFinish) values 
-(235523485, "17:00", "20:30"),
-(235523485, "08:30", "11:30");
+insert into schedule (idDoctor, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd) values 
+(235523485, "08:30", "11:30", "17:00", "20:30");
 
 create table notification(
 id int not null primary key AUTO_INCREMENT,
@@ -221,6 +225,17 @@ BEGIN
     THEN SIGNAL sqlstate '45001' set message_text = "Email đã được dùng để đăng kí tài khoản!";
     END IF;
 END$$
+
+delimiter $$
+CREATE TRIGGER TG_INSERT_ACCOUNT_DOCTOR AFTER INSERT ON account FOR EACH ROW 
+BEGIN
+	if (new.Authorization = 2)
+    then
+    insert into schedule (idDoctor, Status) values 
+	(new.id, 0);
+    end if;
+END$$
+
 
 -----------------------------------
 
@@ -307,10 +322,26 @@ BEGIN
 END$$
 
 DELIMITER $$ 
-CREATE PROCEDURE ScheduleById (IN idDoctor int, IN DateBooking date)
+CREATE PROCEDURE AppointmentData (IN idDoctor int, IN DateBooking date)
 BEGIN
 	SELECT a.id, sd.EstimatedTime, a.TimeBooking
     FROM servicedoctor sd, appointment a
     WHERE a.DateBooking = DateBooking and a.idDoctor = idDoctor and a.idDoctor = sd.idDoctor and sd.idService = a.idService and a.Status = 1;
-END$$ -- drop PROCEDURE ScheduleById
+END$$ -- drop PROCEDURE AppointmentData
 
+DELIMITER $$ 
+CREATE PROCEDURE ScheduleData (IN idDoctor int, IN DateBooking date)
+BEGIN
+	declare COUNT INT default 0;
+    SET COUNT = (select count(*) from schedule where SpecificDay = DateBooking);
+    IF (COUNT >  0)
+    THEN 
+    SELECT id, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd, ThirdShiftStart, ThirdShiftEnd, SpecificDay
+    FROM schedule s
+    WHERE s.idDoctor = idDoctor and s.SpecificDay = DateBooking;
+    ELSE
+    SELECT id, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd, ThirdShiftStart, ThirdShiftEnd, SpecificDay
+    FROM schedule s
+    WHERE s.idDoctor = idDoctor and status = 0;
+    END IF;
+END$$ -- drop PROCEDURE ScheduleData
