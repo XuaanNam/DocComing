@@ -19,13 +19,13 @@ const DashSidebar = ({ param }) => {
 
   return (
     <div>
-      <Sidebar className="w-full md:w-56 font-medium">
-        <div className="p-5">
+      <Sidebar className="w-full md:w-56 font-medium pt-[70px]">
+        <div className="px-5 py-3">
           <a
             href="/admin/dashboard"
-            className="text-3xl font-semibold uppercase text-[#0f766e] hover:text-gray-300"
+            className="text-2xl font-semibold uppercase text-[#0f766e] hover:text-gray-300"
           >
-            Doctor Coming 
+            Doctor Coming
           </a>
         </div>
         <Sidebar.Items className="">

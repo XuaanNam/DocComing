@@ -69,7 +69,7 @@ const Profile = () => {
 
   return (
     <div className="pt-[70px] mx-20 text-gray-700 flex gap-10">
-      <div className="my-7 w-1/5 h-64 bg-white rounded-lg shadow-lg">
+      <div className="my-7 w-1/5 h-44 bg-white rounded-lg shadow-lg">
         <div
           onClick={() => setActived(1)}
           className={` ${
@@ -87,12 +87,12 @@ const Profile = () => {
             Lịch khám của tôi
           </a>
         </div>
-        <div className="flex gap-4 account-link items-center hover:text-white px-4 py-2 cursor-pointer">
+        {/* <div className="flex gap-4 account-link items-center hover:text-white px-4 py-2 cursor-pointer">
           <LuCalendarCheck className="h-7 w-7"></LuCalendarCheck>
           <a href="/" className="block py-2 w-full">
             Kết quả khám
           </a>
-        </div>
+        </div> */}
         <div
           className="flex gap-4 account-link items-center hover:text-white px-4 py-2 cursor-pointer"
           // onClick={handleLogout}

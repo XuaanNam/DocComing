@@ -76,12 +76,12 @@ const Header = () => {
                       Lịch khám của tôi
                     </a>
                   </div>
-                  <div className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer">
+                  {/* <div className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer">
                     <LuCalendarCheck className="h-5 w-5"></LuCalendarCheck>
                     <a href="/" className="block py-2">
                       Kết quả khám
                     </a>
-                  </div>
+                  </div> */}
                   <div
                     className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer"
                     onClick={handleLogout}

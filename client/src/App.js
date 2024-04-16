@@ -10,6 +10,8 @@ import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Header from "./Layouts/Header";
 import DoctorDetail from "./pages/DoctorDetail";
+import Booking from "./pages/Booking";
+import Footer from "./Layouts/Footer";
 function App() {
   return (
     <div>
@@ -24,7 +26,9 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/doctor" element={<DoctorDetail />} />
+          <Route path="/doctor/booking" element={<Booking />} />
         </Routes>
+        <Footer></Footer>
       </Router>
     </div>
   );
