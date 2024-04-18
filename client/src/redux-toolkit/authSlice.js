@@ -24,37 +24,7 @@ export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   });
   return await res.json();
 });
-// export const signInUser = createAsyncThunk("signinuser", async (body) => {
-//   const res = await fetch("http://localhost:5000/api/login", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(body),
-//   });
-//   return await res.json();
-// });
-// export const signUpUser = createAsyncThunk("signupuser", async (body) => {
-//   console.log("body", body);
-//   const res = await fetch("http://localhost:5000/api/register", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(body),
-//   });
-//   return await res.json();
-// });
-export const getProfile = createAsyncThunk("getProfile", async () => {
-  const res = await fetch("http://localhost:5000/api/profile", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      // Authorization: localStorage.getItem("token"),
-    },
-  });
-  return await res.json();
-});
+
 export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
   const res = await fetch("http://localhost:5000/api/admin/account", {
     method: "GET",
@@ -87,17 +57,7 @@ export const updateProfile = createAsyncThunk("updateProfile", async (body) => {
   });
   return await res.json();
 });
-// export const emailChecked = createAsyncThunk("emailChecked", async (body) => {
-//   console.log("body", body);
-//   const res = await fetch("http://localhost:5000/api/check/email", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(body),
-//   });
-//   return await res.json();
-// });
+
 const authSlice = createSlice({
   name: "user",
   initialState,

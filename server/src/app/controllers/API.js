@@ -108,9 +108,13 @@ class API {
   Google(req, res) {
     const { email, name, googlePhotoUrl } = req.body;
     const sql = "select id, Authorization from account where Email = ? ";
-    let lastName = name.split(" ");
-    lastName = lastName[lastName.length - 1];
-    const firstName = name.split(lastName)[0];
+    const fn = name.split(" ");
+    let lastName = fn[fn.length - 1];
+    let firstName = "";
+    for (let i = 0; i < fn.length - 1; i++) {
+      firstName = firstName + fn[i] + " ";
+    }
+
     let payload = {};
     let token = "";
     const insertSql =
@@ -229,10 +233,11 @@ class API {
       } else {
         if (results.length > 0) {
           if (results[0].BirthDate) {
-            const bd = results[0].BirthDate.split("-");
-            const birth = bd[1] + "/" + bd[2] + "/" + bd[0];
+            const bd = results[0].BirthDate.split("-"); //yyyy-mm-dd
+            const birth = bd[2] + "/" + bd[1] + "/" + bd[0];
             results[0].BirthDate = birth;
           }
+
           res.status(200).send({ data: results[0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
@@ -245,19 +250,23 @@ class API {
   updateProfile(req, res) {
     const id = req.user.id;
     const { FullName, Address, Phone, Gender } = req.body;
-    let bd = req.body.BirthDate.split("/");
-    const BirthDate = bd[2] + "-" + bd[0] + "-" + bd[1];
+    let bd = req.body.BirthDate.split("/"); // dd/mm/yyyy
+    const BirthDate = bd[2] + "-" + bd[1] + "-" + bd[0];
     let data = [],
       updateSql = "";
     const Avt = req.file ? req.file.path : null;
 
-    let LastName = FullName.split(" ");
-    LastName = LastName[LastName.length - 1];
-    const FirstName = FullName.split(LastName)[0];
+    const fn = FullName.split(" "); // Duong Quoc ANh
+    let FirstName = "";
+    const LastName = fn[fn.length - 1];
+    for (let i = 0; i < fn.length - 1; i++) {
+      FirstName = FirstName + fn[i] + " ";
+    }
+
     if (Avt === null) {
-      data = [FirstName, LastName, BirthDate, Phone, Address, id];
+      data = [FirstName, LastName, BirthDate, Gender, Phone, Address, id];
       updateSql =
-        "update account set FirstName = ?, LastName = ?, BirthDate = ?, Phone = ?, Address = ? where id = ?";
+        "update account set FirstName = ?, LastName = ?, BirthDate = ?, Gender = ?, Phone = ?, Address = ? where id = ?";
     } else {
       data = [FirstName, LastName, BirthDate, Gender, Phone, Address, Avt, id];
       updateSql =
@@ -456,119 +465,186 @@ class API {
   }
 
   //[GET] /api/schedule
-  getScheduleById(req, res, next) {
-    const sql = "call ScheduleById(?, ?)";
-    const { idDoctor, idService, DateBooking } = req.body;
-    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+  getSchedule(req, res, next) {
+    const sql = "call AppointmentData(?, ?)";
+    let { idDoctor, DateBooking } = req.body; //dd/mm/yyyy
+    const sd = DateBooking.split("/");
+    DateBooking = sd[2] + "-" + sd[1] + "-" + sd[0];
     let AppointmentData = {};
     let ScheduleData = {};
-    let EstimatedTime = "";
+    let DistantTime = "";
 
-    const sql2 =
-      "select id, FreeTimeStart, FreeTimeFinish, SpecificDate from schedule where idDoctor = ?";
+    const sql2 = "call ScheduleData(?,?)";
     const sql3 =
       "select EstimatedTime as DistantTime from servicedoctor where idDoctor = ? and idService = ?";
 
-    if (req.user.Authorization != 1) {
-      res.end("Unauthorized");
-    } else {
-      pool.getConnection(function (err, connection) {
-        if (err) throw err; // not connected!
+    pool.getConnection(function (err, connection) {
+      if (err) throw err; // not connected!
 
-        connection.query(
-          sql,
-          [idDoctor, DateBooking],
-          function (error, results, fields) {
-            if (error) {
-              res.send({ message: error, checked: false });
-            }
-            if (results[0]) AppointmentData = results[0];
-          }
-        );
-
-        connection.query(sql2, idDoctor, function (error, results, fields) {
+      connection.query(
+        sql,
+        [idDoctor, DateBooking],
+        function (error, results, fields) {
           if (error) {
             res.send({ message: error, checked: false });
           }
-          if (results) ScheduleData = results;
-        });
+          if (results[0]) AppointmentData = results[0];
+        }
+      );
 
-        connection.query(
-          sql3,
-          [idDoctor, idService],
-          function (error, results, fields) {
-            connection.destroy();
-            if (error) {
-              res.send({ message: error, checked: false });
-            }
-            if (results) {
-              EstimatedTime = results;
-              res
-                .status(200)
-                .send({ AppointmentData, ScheduleData, EstimatedTime });
-            }
+      connection.query(
+        sql2,
+        [idDoctor, DateBooking],
+        function (error, results, fields) {
+          connection.destroy();
+          if (error) {
+            res.send({ message: error, checked: false });
           }
-        );
+          if (results[0]) {
+            ScheduleData = results[0];
+            res.status(200).send({ AppointmentData, ScheduleData });
+          }
+        }
+      );
+    });
+  }
+
+  //[POST] /api/schedule
+  setSchedule(req, res, next) {
+    const id = req.user.id;
+    let { SpecificDay } = req.body; // dd/mm/yyy
+
+    const FirstShiftStart = req.body.FirstShiftStart
+      ? req.body.FirstShiftStart
+      : null;
+    const FirstShiftEnd = req.body.FirstShiftEnd
+      ? req.body.FirstShiftEnd
+      : null;
+    const SecondShiftStart = req.body.SecondShiftStart
+      ? req.body.SecondShiftStart
+      : null;
+    const SecondShiftEnd = req.body.SecondShiftEnd
+      ? req.body.SecondShiftEnd
+      : null;
+    const ThirdShiftStart = req.body.ThirdShiftStart
+      ? req.body.ThirdShiftStart
+      : null;
+    const ThirdShiftEnd = req.body.ThirdShiftEnd
+      ? req.body.ThirdShiftEnd
+      : null;
+
+    let sql =
+      "update schedule set FirstShiftStart =?, FirstShiftEnd=?, SecondShiftStart=?, SecondShiftEnd=?, ThirdShiftStart=?, ThirdShiftEnd=? where idDoctor = ?";
+    let data = [
+      FirstShiftStart,
+      FirstShiftEnd,
+      SecondShiftStart,
+      SecondShiftEnd,
+      ThirdShiftStart,
+      ThirdShiftEnd,
+      id,
+    ];
+    if (SpecificDay) {
+      const sd = SpecificDay.split("/");
+      SpecificDay = sd[2] + "-" + sd[1] + "-" + sd[0];
+      sql =
+        "insert into schedule (idDoctor, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd, ThirdShiftStart, ThirdShiftEnd, SpecificDay) values(?,?,?,?,?,?,?,?)";
+      data = [
+        id,
+        FirstShiftStart,
+        FirstShiftEnd,
+        SecondShiftStart,
+        SecondShiftEnd,
+        ThirdShiftStart,
+        ThirdShiftEnd,
+        SpecificDay,
+      ];
+    }
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    if (req.user.Authorization != 2) {
+      res.end("Unauthorized");
+    } else {
+      pool.query(sql, data, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error.sqlMessage, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
+        }
       });
     }
   }
 
-  //[GET] /api/schedule
-  getScheduleById(req, res, next) {
-    const sql = "call ScheduleById(?, ?)";
-    const { idDoctor, idService, DateBooking } = req.body;
+  // [GET] /api/service
+  getService(req, res) {
+    const selectSql = "SELECT * FROM service";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    let AppointmentData = {};
-    let ScheduleData = {};
-    let EstimatedTime = "";
 
-    const sql2 =
-      "select id, FreeTimeStart, FreeTimeFinish, SpecificDate from schedule where idDoctor = ?";
-    const sql3 =
-      "select EstimatedTime as DistantTime from servicedoctor where idDoctor = ? and idService = ?";
+    pool.query(selectSql, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
 
-    if (req.user.Authorization != 1) {
+  // [POST] /api/service/doctor
+  serviceDoctor(req, res) {
+    const id = req.user.id;
+    const { idService, EstimatedTime } = req.body;
+    const insertSql =
+      "insert into servicedoctor (idService, idDoctor, EstimatedTime) values (?,?,?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    if (req.user.Authorization != 2) {
       res.end("Unauthorized");
     } else {
-      pool.getConnection(function (err, connection) {
-        if (err) throw err; // not connected!
-
-        connection.query(
-          sql,
-          [idDoctor, DateBooking],
-          function (error, results, fields) {
-            if (error) {
-              res.send({ message: error, checked: false });
-            }
-            if (results[0]) AppointmentData = results[0];
-          }
-        );
-
-        connection.query(sql2, idDoctor, function (error, results, fields) {
+      pool.query(
+        insertSql,
+        [idService, id, EstimatedTime],
+        function (error, results, fields) {
           if (error) {
             res.send({ message: error, checked: false });
-          }
-          if (results) ScheduleData = results;
-        });
-
-        connection.query(
-          sql3,
-          [idDoctor, idService],
-          function (error, results, fields) {
-            connection.destroy();
-            if (error) {
-              res.send({ message: error, checked: false });
-            }
+          } else {
             if (results) {
-              EstimatedTime = results;
-              res
-                .status(200)
-                .send({ AppointmentData, ScheduleData, EstimatedTime });
+              res.status(200).send({ checked: true });
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
             }
           }
-        );
-      });
+        }
+      );
     }
+  }
+
+  // [GET] /api/service
+  getServiceDoctor(req, res) {
+    console.log("heree");
+    const { idDoctor } = req.body;
+    const selectSql =
+      "SELECT s.id, s.Service, sd.EstimatedTime FROM servicedoctor sd, service s where s.id = sd.idService and idDoctor = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, idDoctor, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
   }
 
   //[POST] /api/notification/create
@@ -742,24 +818,6 @@ class API {
       } else {
         if (results[0]) {
           res.status(200).send({ data: results[0], checked: true });
-        } else {
-          res.status(200).send({ message: errorMsg, checked: false });
-        }
-      }
-    });
-  }
-
-  // [GET] /api/service
-  getService(req, res) {
-    const selectSql = "SELECT * FROM service";
-    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-
-    pool.query(selectSql, function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ data: results, checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }

@@ -25,6 +25,7 @@ const CreateBlog = () => {
     dispatch(fetchCategories());
     setCategories(category);
   }, [dispatch]);
+
   const handleChange = (event) => {
     setCategoryId(event.target.value);
   };

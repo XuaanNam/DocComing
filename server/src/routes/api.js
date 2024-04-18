@@ -36,9 +36,13 @@ router.patch("/appointment/cancel", PassportCheck, api.cancelAppointment);
 router.get("/notification", PassportCheck, api.getNotification);
 router.post("/notification/create", PassportCheck, api.createNotification);
 router.patch("/notification/read", PassportCheck, api.readNotification);
-router.get("/schedule", PassportCheck, api.getScheduleById);
+router.post("/doctor/schedule", api.getSchedule);
+router.post("/schedule", PassportCheck, api.setSchedule);
+router.get("/service", api.getService);
+router.post("/service/doctor", PassportCheck, api.serviceDoctor); //theem service cho moi bac si
+router.post("/service/doctors", api.getServiceDoctor); // lay dich vu cua tung bsi
 
-// Blog && service
+// Blog
 router.post(
   "/post/create",
   PassportCheck,
@@ -55,7 +59,6 @@ router.patch(
 router.get("/post", api.getPost);
 router.get("/post/detail/:id", api.getPostById);
 router.get("/search/keywords", api.searchByKeywords);
-router.get("/service", api.getService);
 router.get("/category", api.getCategory);
 
 //admin

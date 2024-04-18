@@ -26,8 +26,11 @@ const Profile = () => {
     setData(user?.data);
     setFullName(user?.data?.FirstName + user?.data?.LastName);
     const datepickerEl = document?.getElementById("BirthDate");
-    new Datepicker(datepickerEl, {});
-  }, []);
+    new Datepicker(datepickerEl, {
+      // autohide: true,
+      // format: "dd/mm/yyyy",
+    });
+  }, [user.data]);
 
   console.log(data);
   const handleEdit = () => {
@@ -228,8 +231,8 @@ const Profile = () => {
                     </div>
                     <input
                       id="BirthDate"
-                      datepicker="true"
-                      datepicker-format="dd/mm/yyyy"
+                      datepicker
+                      datepicker-autohide
                       datepicker-title="Ngày sinh"
                       value={data?.BirthDate}
                       type="text"
@@ -249,16 +252,20 @@ const Profile = () => {
                   <div className="max-w-md w-[90%] h-[40px] mt-2">
                     <select
                       className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      id="gender"
-                      required
-                      placeholder="--"
-                      // value={currentUser.gender || null}
-                      //   onChange={handleChange}
+                      id="Gender"
+                      // required
+                      // placeholder="--"
+                      value={data?.Gender}
+                      onChange={(e) => {
+                        setData({ ...data, [e.target.id]: e.target.value });
+                        handleChange(e);
+                      }}
                       disabled={!edit}
                     >
-                      <option value="">Nam</option>
-                      <option value="">Nữ</option>
-                      <option value="">Khác</option>
+                      <option value="" disabled className=""></option>
+                      <option value="Nam">Nam</option>
+                      <option value="Nữ">Nữ</option>
+                      <option value="Khác">Khác</option>
                     </select>
                   </div>
                 </div>

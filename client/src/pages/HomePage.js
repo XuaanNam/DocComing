@@ -41,6 +41,8 @@ const HomePage = () => {
   }, [currentIndex, slides.length]);
   useEffect(() => {
     dispatch(fetchProfile());
+  }, []);
+  useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
     }, 5000);
