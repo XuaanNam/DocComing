@@ -10,7 +10,7 @@ const createError = require("http-errors");
 const myOAuth2Client = require("../../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 const { Console } = require("console");
-
+ 
 class API {
 
   // [POST] /api/execute/query 
