@@ -7,9 +7,13 @@ import HospitalIcon from "../Images/hospital-icon.svg";
 import SpecialtiesIcon from "../Images/specialties-icon.svg";
 import { IoIosArrowForward } from "react-icons/io";
 import Slider from "react-slick";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchProfile } from "../redux-toolkit/authSlice";
 const HomePage = () => {
   const Navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { currentUser, user } = useSelector((state) => state.user);
+
   const slides = [
     {
       url: require("../Images/banner-01.jpg"),
@@ -35,6 +39,9 @@ const HomePage = () => {
     const newIndex = isLastSlide ? 0 : currentIndex + 1;
     setCurrentIndex(newIndex);
   }, [currentIndex, slides.length]);
+  useEffect(() => {
+    dispatch(fetchProfile());
+  }, []);
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();

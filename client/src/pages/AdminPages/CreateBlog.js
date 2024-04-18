@@ -1,35 +1,31 @@
 import React, { useEffect, useState } from "react";
 import "react-quill/dist/quill.snow.css";
-import { CircularProgressbar } from "react-circular-progressbar";
 import Editor from "./Editor";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost, fetchCategories } from "../../redux-toolkit/postSlice";
 import Select from "react-select";
 import { Alert, Button, FileInput } from "flowbite-react";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
 const CreateBlog = () => {
   const dispatch = useDispatch();
   const category = useSelector((state) => state.post.data);
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
-  const [content, setContent] = useState(""); 
+  const [content, setContent] = useState("");
   const [files, setFiles] = useState("");
   const [categories, setCategories] = useState([{ id: "", Categories: "" }]);
   const [categoryId, setCategoryId] = useState("");
-  const [imageUploadProgress, setImageUploadProgress] = useState(null);
-  const [imageUploadError, setImageUploadError] = useState(null);
-  const [formData, setFormData] = useState({});
-  const [publishError, setPublishError] = useState(null);
+  const data = new FormData();
+  data.append("Title", title);
+  data.append("Brief", summary);
+  data.append("Content", content);
+  data.append("idCategories", categoryId);
+  data.append("FeaturedImage", files);
 
   useEffect(() => {
     dispatch(fetchCategories());
     setCategories(category);
   }, [dispatch]);
+
   const handleChange = (event) => {
     setCategoryId(event.target.value);
   };
@@ -103,10 +99,12 @@ const CreateBlog = () => {
             onChange={(e) => setFiles(e.target.files[0])}
           />
         </div>
+        {/* <Editor value={content} onChange={(e) => setContent(e.target.value)} /> */}
+        {/* <Editor value={content} onChange={(e) => console.log(e)} /> */}
         <Editor value={content} onChange={setContent} />
         <button
           onClick={handleCreatePost}
-          className="h-12 w-[70%] border rounded-xl mt-16 py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
+          className="h-12 w-[70%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
         >
           Đăng
         </button>

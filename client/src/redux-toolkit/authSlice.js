@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
-// import { toast } from "react-toastify";
+import { toast } from "react-toastify";
 
 const initialState = {
   currentUser: null,
@@ -11,6 +11,8 @@ const initialState = {
   checked: true,
   token: "",
   data: [],
+  user: {},
+  updated: false,
 };
 export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   const res = await fetch("http://localhost:5000/api/auth/google/check", {
@@ -22,37 +24,7 @@ export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   });
   return await res.json();
 });
-// export const signInUser = createAsyncThunk("signinuser", async (body) => {
-//   const res = await fetch("http://localhost:5000/api/login", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(body),
-//   });
-//   return await res.json();
-// });
-// export const signUpUser = createAsyncThunk("signupuser", async (body) => {
-//   console.log("body", body);
-//   const res = await fetch("http://localhost:5000/api/register", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(body),
-//   });
-//   return await res.json();
-// });
-export const getProfile = createAsyncThunk("getProfile", async () => {
-  const res = await fetch("http://localhost:5000/api/profile", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: localStorage.getItem("token"),
-    },
-  });
-  return await res.json();
-});
+
 export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
   const res = await fetch("http://localhost:5000/api/admin/account", {
     method: "GET",
@@ -64,29 +36,28 @@ export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
   });
   return await res.json();
 });
-// export const changeProfile = createAsyncThunk("changeProfile", async (body) => {
-//   console.log("body", body);
-//   const res = await fetch("http://localhost:5000/api/profile/update", {
-//     method: "PATCH",
-//     headers: {
-//       "Content-Type": "application/json",
-//       Authorization: localStorage.getItem("token"),
-//     },
-//     body: JSON.stringify(body),
-//   });
-//   return await res.json();
-// });
-// export const emailChecked = createAsyncThunk("emailChecked", async (body) => {
-//   console.log("body", body);
-//   const res = await fetch("http://localhost:5000/api/check/email", {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//     },
-//     body: JSON.stringify(body),
-//   });
-//   return await res.json();
-// });
+export const fetchProfile = createAsyncThunk("fetchProfile", async () => {
+  const res = await fetch("http://localhost:5000/api/profile", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
+  return await res.json();
+});
+export const updateProfile = createAsyncThunk("updateProfile", async (body) => {
+  console.log("body", body);
+  const res = await fetch("http://localhost:5000/api/profile/update", {
+    method: "POST",
+    headers: {
+      Authorization: localStorage.getItem("token"),
+    },
+    body,
+  });
+  return await res.json();
+});
+
 const authSlice = createSlice({
   name: "user",
   initialState,
@@ -94,6 +65,8 @@ const authSlice = createSlice({
     auth: (state, action) => {},
     logout: (state, action) => {
       state.token = null;
+      state.currentUser = null;
+      state.user = {};
       localStorage.clear();
     },
   },
@@ -172,7 +145,8 @@ const authSlice = createSlice({
       .addCase(loginGoogle.fulfilled, (state, action) => {
         state.currentUser = action.payload;
         state.loading = false;
-        state.data = action.payload;
+        state.token = action.payload?.token;
+        localStorage.setItem("token", action.payload?.token);
       })
       .addCase(loginGoogle.rejected, (state, action) => {
         state.loading = false;
@@ -183,35 +157,36 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
-        state.currentUser = action.payload;
         state.loading = false;
         state.data = action.payload.data;
+        state.updated = true;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+
+      .addCase(updateProfile.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(updateProfile.fulfilled, (state, { payload }) => {
+        state.checked = payload;
+        toast.success("Cập nhật thành công", {
+          position: "top-right",
+        });
+      })
+      .addCase(updateProfile.rejected, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchProfile.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchProfile.fulfilled, (state, { payload }) => {
+        state.user = payload;
+      })
+      .addCase(fetchProfile.rejected, (state, action) => {
+        state.loading = true;
       });
-    // .addCase(getProfile.pending, (state, action) => {
-    //   state.loading = true;
-    // })
-    // .addCase(getProfile.fulfilled, (state, { payload }) => {
-    //   state.auth = payload.authentication;
-    // })
-    // .addCase(getProfile.rejected, (state, action) => {
-    //   state.loading = true;
-    // });
-    // [getProfile.pending]: (state, action) => {
-    //   state.loading = true;
-    // },
-    // [getProfile.fulfilled]: (state, { payload }) => {
-    //   if (payload.results) state.items = { ...payload.results[0] };
-    //   else {
-    //     state.message = payload.message;
-    //   }
-    // },
-    // [getProfile.rejected]: (state, action) => {
-    //   state.loading = true;
-    // },
 
     // [changeProfile.pending]: (state, action) => {
     //   state.loading = true;

@@ -1,15 +1,14 @@
 import { configureStore, combineReducers } from "@reduxjs/toolkit";
-import counterSlice from "./counterSlice";
 import authReducer from "./authSlice";
+import postReducer from "./postSlice";
+import appointmentReducer from "./appointmentSlice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-import postReducer from "./postSlice";
 const reducer = combineReducers({
   user: authReducer,
-  counter: counterSlice,
   post: postReducer,
-  // global: globalSlice,
+  appointment: appointmentReducer,
 });
 const persistConfig = {
   key: "root",

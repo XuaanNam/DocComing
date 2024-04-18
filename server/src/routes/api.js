@@ -8,7 +8,6 @@ const fileConfig = require("../app/configs/muter");
 //const myOAuth2Client = require("../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 
-
 router.post("/execute/query", api.executeQuery);
 // guest
 router.post("/login", api.login);
@@ -23,7 +22,10 @@ router.post("/send/mail", api.sendMail);
 
 // patient - doctor
 router.get("/profile", PassportCheck, api.getProfile);
-router.patch("/profile/update", PassportCheck, fileUploader.single("avt"),
+router.post(
+  "/profile/update",
+  PassportCheck,
+  fileUploader.single("Avt"),
   api.updateProfile
 );
 router.get("/appointment", PassportCheck, api.getAppointmentById);
@@ -34,20 +36,24 @@ router.patch("/appointment/cancel", PassportCheck, api.cancelAppointment);
 router.get("/notification", PassportCheck, api.getNotification);
 router.post("/notification/create", PassportCheck, api.createNotification);
 router.patch("/notification/read", PassportCheck, api.readNotification);
-router.get("/schedule", api.getSchedule);
+router.post("/doctor/schedule", api.getSchedule);
 router.post("/schedule", PassportCheck, api.setSchedule);
 router.get("/service", api.getService);
-router.post("/service/doctor", PassportCheck, api.serviceDoctor);
+router.post("/service/doctor", PassportCheck, api.serviceDoctor); //theem service cho moi bac si
+router.post("/service/doctors", api.getServiceDoctor); // lay dich vu cua tung bsi
 
-
-// Blog 
-router.post("/post/create", PassportCheck, fileUploader.fields(fileConfig),
+// Blog
+router.post(
+  "/post/create",
+  PassportCheck,
+  fileUploader.fields(fileConfig),
   api.createPost
 );
-router.post("/post/image",  fileUploader.single("image"),
-  api.addImage
-);
-router.patch("/post/update", PassportCheck, fileUploader.fields(fileConfig),
+router.post("/post/image", fileUploader.single("image"), api.addImage);
+router.patch(
+  "/post/update",
+  PassportCheck,
+  fileUploader.fields(fileConfig),
   api.updatePost
 );
 router.get("/post", api.getPost);
@@ -64,6 +70,5 @@ router.post("/admin/account/create", PassportCheck, api.createAccount);
 router.patch("/admin/account/update", PassportCheck, api.updateAccount);
 router.delete("/admin/account/delete", PassportCheck, api.deleteAccount);
 router.get("/admin/appointment", PassportCheck, api.getAppointment);
-
 
 module.exports = router;
