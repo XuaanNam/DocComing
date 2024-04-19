@@ -60,6 +60,10 @@ router.get("/post", api.getPost);
 router.get("/post/detail/:id", api.getPostById);
 router.get("/search/keywords", api.searchByKeywords);
 router.get("/category", api.getCategory);
+router.get("/comment", api.getComment);       // lấy tất cả cmt dựa trên idPost -> truyền idPost
+router.post("/comment/create", PassportCheck, api.createComment); // thêm cmt vào 1 post ->truyền idPost
+router.post("/comment/update", PassportCheck, api.updateComment); // chỉnh sửa cmt ->truyền id, Cmt (id này là id comment)
+router.post("/comment/delete", PassportCheck, api.deleteComment); // xóa cmt dựa trên id comment -> truyền id
 
 //admin
 router.get("/admin/post", PassportCheck, api.getAllPost);

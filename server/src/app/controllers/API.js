@@ -10,7 +10,7 @@ const createError = require("http-errors");
 const myOAuth2Client = require("../../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 const { Console } = require("console");
-
+ 
 class API {
   // [POST] /api/execute/query
   executeQuery(req, res, next) {
@@ -472,12 +472,8 @@ class API {
     DateBooking = sd[2] + "-" + sd[1] + "-" + sd[0];
     let AppointmentData = {};
     let ScheduleData = {};
-    let DistantTime = "";
 
     const sql2 = "call ScheduleData(?,?)";
-    const sql3 =
-      "select EstimatedTime as DistantTime from servicedoctor where idDoctor = ? and idService = ?";
-
     pool.getConnection(function (err, connection) {
       if (err) throw err; // not connected!
 
@@ -631,7 +627,7 @@ class API {
     console.log("heree");
     const { idDoctor } = req.body;
     const selectSql =
-      "SELECT s.id, s.Service, sd.EstimatedTime FROM servicedoctor sd, service s where s.id = sd.idService and idDoctor = ?";
+      "SELECT s.id, s.Service, sd.EstimatedTime, sd.Price FROM servicedoctor sd, service s where s.id = sd.idService and idDoctor = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, idDoctor, function (error, results, fields) {
@@ -836,6 +832,87 @@ class API {
       } else {
         if (results) {
           res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // [GET] /api/comment
+  getComment(req, res) {
+    const {idPost} = req.body;
+    const selectSql = "SELECT * FROM comment where idPost = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, idPost, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // [POST] /api/comment/create
+  createComment(req, res) {
+    const idAccount = req.user.id;
+    const {idPost, Cmt} = req.body;
+    const insertSql = "insert into comment (idAccount, idPost, Cmt, NotiTime) values (?,?,?,?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const date = new Date();
+    const NotiTime = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+    pool.query(insertSql, [idAccount, idPost, Cmt, NotiTime], function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // [POST] /api/comment/update
+  updateComment(req, res) {
+    const {id, Cmt} = req.body;
+    const updateSql = "update comment set Cmt = ?, NotiTime = ?, Status = 1 where id = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const date = new Date();
+    const NotiTime = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+    pool.query(updateSql, [Cmt, NotiTime, id], function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // [POST] /api/comment/delete
+  deleteComment(req, res) {
+    const {id} = req.body;
+    const deleteSql = "delete from comment where id = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(deleteSql, id, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
