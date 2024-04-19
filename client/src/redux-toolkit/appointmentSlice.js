@@ -10,12 +10,24 @@ const initialState = {
   data: [],
   user: {},
   service: [],
-  schedule: {},
   AppointmentData: [],
   ScheduleData: [],
 };
+export const fetchAppointment = createAsyncThunk(
+  "fetchAppointment",
+  async () => {
+    const res = await fetch("http://localhost:5000/api/appointment", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return await res.json();
+  }
+);
 export const fetchService = createAsyncThunk("fetchService", async (body) => {
-  const res = await fetch("http://localhost:5000/api/service/doctors", {
+  const res = await fetch("http://localhost:5000/api/doctor/service", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -60,6 +72,18 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchSchedule.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+      .addCase(fetchAppointment.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchAppointment.fulfilled, (state, action) => {
+        state.Appointment = action.payload.AppointmentData;
+        state.ScheduleData = action.payload.ScheduleData;
+        state.loading = false;
+      })
+      .addCase(fetchAppointment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       });

@@ -1,6 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-buttons/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-calendars/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-dropdowns/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-inputs/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-navigations/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-react-schedule/styles/material.css";
 /* #root {
   font-family: "Nunito", sans-serif;
   font-optical-sizing: auto;
@@ -35,7 +44,10 @@
 .App-link {
   color: #61dafb;
 }
-
+div.is-disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
