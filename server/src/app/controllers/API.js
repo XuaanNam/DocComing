@@ -843,6 +843,87 @@ class API {
     });
   }
 
+  // [GET] /api/comment
+  getComment(req, res) {
+    const {idPost} = req.body;
+    const selectSql = "SELECT * FROM comment where idPost = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, idPost, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // [POST] /api/comment/create
+  createComment(req, res) {
+    const idAccount = req.user.id;
+    const {idPost, Cmt} = req.body;
+    const insertSql = "insert into comment (idAccount, idPost, Cmt, NotiTime) values (?,?,?,?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const date = new Date();
+    const NotiTime = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+    pool.query(insertSql, [idAccount, idPost, Cmt, NotiTime], function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // [POST] /api/comment/update
+  updateComment(req, res) {
+    const {id, Cmt} = req.body;
+    const updateSql = "update comment set Cmt = ?, NotiTime = ?, Status = 1 where id = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const date = new Date();
+    const NotiTime = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+    pool.query(updateSql, [Cmt, NotiTime, id], function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // [POST] /api/comment/delete
+  deleteComment(req, res) {
+    const {id} = req.body;
+    const deleteSql = "delete from comment where id = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(deleteSql, id, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
   // ADMIN API
 
   //[GET] /api/admin/post
