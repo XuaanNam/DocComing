@@ -472,12 +472,8 @@ class API {
     DateBooking = sd[2] + "-" + sd[1] + "-" + sd[0];
     let AppointmentData = {};
     let ScheduleData = {};
-    let DistantTime = "";
 
     const sql2 = "call ScheduleData(?,?)";
-    const sql3 =
-      "select EstimatedTime as DistantTime from servicedoctor where idDoctor = ? and idService = ?";
-
     pool.getConnection(function (err, connection) {
       if (err) throw err; // not connected!
 
@@ -631,7 +627,7 @@ class API {
     console.log("heree");
     const { idDoctor } = req.body;
     const selectSql =
-      "SELECT s.id, s.Service, sd.EstimatedTime FROM servicedoctor sd, service s where s.id = sd.idService and idDoctor = ?";
+      "SELECT s.id, s.Service, sd.EstimatedTime, sd.Price FROM servicedoctor sd, service s where s.id = sd.idService and idDoctor = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, idDoctor, function (error, results, fields) {
