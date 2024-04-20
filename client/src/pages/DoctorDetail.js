@@ -315,6 +315,7 @@ const DoctorDetail = () => {
       format: "dd/mm/yyyy",
       title: "Thời gian làm việc",
       today: "true",
+      minDate: new Date(),
     });
     setData({ ...data, date: today });
   }, []);

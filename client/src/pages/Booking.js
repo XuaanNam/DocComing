@@ -7,15 +7,7 @@ import FlagIcon from "../Images/flag.png";
 import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  ScheduleComponent,
-  Day,
-  Week,
-  WorkWeek,
-  Month,
-  Agenda,
-  Inject,
-} from "@syncfusion/ej2-react-schedule";
+
 const Booking = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [today, setToday] = useState("");
@@ -27,14 +19,6 @@ const Booking = () => {
   const { currentUser, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
-  const dataScheduler = [
-    {
-      Id: 1,
-      Subject: "Meeting",
-      StartTime: new Date(2023, 1, 15, 10, 0),
-      EndTime: new Date(2023, 1, 15, 12, 30),
-    },
-  ];
   useEffect(() => {
     setData(user?.data);
     const datepickerEl = document?.getElementById("date");
@@ -180,14 +164,6 @@ const Booking = () => {
       >
         <p className="text-lg">XÁC NHẬN</p>
       </Button>
-      <ScheduleComponent
-        selectedDate={new Date(2023, 1, 15)}
-        eventSettings={{
-          dataSource: dataScheduler,
-        }}
-      >
-        <Inject services={[Day, Week, WorkWeek, Month]} />
-      </ScheduleComponent>
     </div>
   );
 };
