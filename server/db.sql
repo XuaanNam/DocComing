@@ -338,7 +338,8 @@ CREATE PROCEDURE AppointmentData (IN idDoctor int, IN DateBooking date)
 BEGIN
 	SELECT a.id, sd.EstimatedTime, a.TimeBooking
     FROM servicedoctor sd, appointment a
-    WHERE a.DateBooking = DateBooking and a.idDoctor = idDoctor and a.idDoctor = sd.idDoctor and sd.idService = a.idService and a.Status = 1;
+    WHERE a.DateBooking = DateBooking and a.idDoctor = idDoctor and a.idDoctor = sd.idDoctor and sd.idService = a.idService and a.Status = 1
+    ORDER BY a.TimeBooking asc;
 END$$ -- drop PROCEDURE AppointmentData
 
 DELIMITER $$ 
