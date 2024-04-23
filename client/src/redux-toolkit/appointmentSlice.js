@@ -79,7 +79,7 @@ const appointmentSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchAppointment.fulfilled, (state, action) => {
-        state.Appointment = action.payload.AppointmentData;
+        state.AppointmentData = action.payload.AppointmentData;
         state.ScheduleData = action.payload.ScheduleData;
         state.loading = false;
       })

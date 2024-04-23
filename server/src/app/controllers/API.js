@@ -292,9 +292,9 @@ class API {
     let sql = "";
     const id = req.user.id;
     if (req.user.Authorization == 1) {
-      sql = "select * from appointment where idPatient = ? order by DateBooking, TimeBooking";
+      sql = "select * from appointment a, appointmentstatus s where a.Status = s.id and idPatient = ? and a.Status !=4 order by DateBooking, TimeBooking";
     } else if (req.user.Authorization == 2) {
-      sql = "select * from appointment where idDoctor = ? order by DateBooking, TimeBooking";
+      sql = "select * from appointment a, appointmentstatus s where a.Status = s.id and idDoctor = ? and a.Status !=4 order by DateBooking, TimeBooking";
     }
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -360,7 +360,7 @@ class API {
   acceptAppointment(req, res) {
     const { id } = req.body;
     const updateSql =
-      "update appointment set status = 1 where status = 0 and id = ?";
+      "update appointment set status = 1 where status = 4 and id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 2) {

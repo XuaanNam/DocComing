@@ -141,7 +141,12 @@ foreign key (idCategories) references categories(id)
 )
 ;-- drop table post;
 
-
+create table appointmentstatus(
+id int not null primary key AUTO_INCREMENT,
+Type nvarchar(200)
+)
+; -- drop table appointmentstatus
+insert into appointmentstatus (id, Type) values(1, "success"),  (2, "warning"),  (3, "error"), (4, "waiting");
 
 create table appointment(
 id int not null primary key AUTO_INCREMENT,
@@ -151,13 +156,15 @@ idDoctor int  not null CHECK (idDoctor !=""),
 DateBooking date,
 TimeBooking TIME,
 Price double not null,
-Status int default 0, -- 0 đang chờ bác sĩ chấp nhận, 1 bác sĩ đã chấp nhận, 2 đã hoàn thành, 3 cuộc hẹn bị hủy 
+Status int default 4, -- 4 đang chờ bác sĩ chấp nhận, 1 bác sĩ đã chấp nhận, 2 đã hoàn thành, 3 cuộc hẹn bị hủy 
 Information text(1000),
 foreign key (idPatient) references account(id),
 foreign key (idService) references service(id),
-foreign key (idDoctor) references account(id) 
+foreign key (idDoctor) references account(id),
+foreign key (Status) references appointmentstatus(id)
 )
 ; -- drop table appointment
+
 
 create table servicedoctor(
 id int not null primary key AUTO_INCREMENT,

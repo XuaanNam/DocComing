@@ -11,40 +11,26 @@ import { useDispatch, useSelector } from "react-redux";
 const DoctorSchedule = () => {
   const [actived, setActived] = useState(1);
   const dispatch = useDispatch();
-  const { Appointment, error, loading, updated } = useSelector((state) => state.appointment);
+  const { AppointmentData, error, loading, updated } = useSelector((state) => state.appointment);
 
   useEffect(() => {
     dispatch(fetchAppointment()); 
   }, []);
-
+  console.log(AppointmentData)
   const getListData = (value) => {
     let listData = [];
-    for(let i = 0; i < Appointment.length; i++) {
-      let db = Appointment[i].DateBooking.split("-");
+    for(let i = 0; i < AppointmentData.length; i++) {
+      let db = AppointmentData[i].DateBooking.split("-");
       // eslint-disable-next-line eqeqeq
       if(value.date() == db[2] && (value.month() + 1) == db[1] && value.year() == db[0]){
         listData = [ ...listData,
           {
-            type: "success",
-            content: Appointment[i].TimeBooking,
+            type: AppointmentData[i].Type,
+            content: AppointmentData[i].TimeBooking,
           },
         ]; 
       } 
     }
-    //listData = [
-    //       {
-    //         type: "warning",
-    //         content: "This is warning event.",
-    //       },
-    //       {
-    //         type: "success",
-    //         content: "This is usual event.",
-    //       },
-    //       {
-    //         type: "error",
-    //         content: "This is error event.",
-    //       },
-    //     ];
     return listData || [];
   };
   const dateCellRender = (value) => {
