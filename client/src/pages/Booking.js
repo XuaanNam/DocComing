@@ -7,6 +7,7 @@ import FlagIcon from "../Images/flag.png";
 import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+
 const Booking = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [today, setToday] = useState("");
@@ -14,6 +15,7 @@ const Booking = () => {
   const date = currentDate.getDate();
   const year = currentDate.getFullYear();
   const [data, setData] = useState({});
+  const [actived, setActived] = useState();
   const { currentUser, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
@@ -104,12 +106,12 @@ const Booking = () => {
         <div className="grid grid-cols-2 gap-8 mb-8">
           <div>
             <p className="text-lg font-medium mb-2">Số điện thoại liên hệ</p>
-            <div className="flex gap-3 h-12 w-full items-center border rounded-xl py-2 cursor-pointer ">
-              <img className="h-[70%] pl-4" src={FlagIcon} alt=""></img>
+            <div className="flex p-2.5 gap-3 h-12 w-full items-center border rounded-xl cursor-pointer ">
+              <img className="h-[70%]" src={FlagIcon} alt=""></img>
               <p className="text-lg opacity-70 ">(+84)</p>
               <div className="w-[1.5px] h-[28px] bg-slate-400"></div>
               <input
-                className="h-full w-full outline-none text-lg"
+                className="h-full w-full text-lg outline-none "
                 value={data?.Phone}
               ></input>
             </div>
@@ -117,18 +119,32 @@ const Booking = () => {
           <div>
             <p className="text-lg font-medium mb-2">Họ và tên</p>
             <input
-              className="h-12 w-full pl-3 flex items-center border outline-none rounded-xl text-lg"
+              className="h-12 w-full p-2.5 block items-center border outline-none rounded-xl text-lg "
               value={data?.FirstName + data?.LastName}
             ></input>
           </div>
           <div>
             <p className="text-lg font-medium mb-2">Giới tính</p>
-            <input className="h-12 w-full pl-3 flex items-center border outline-none rounded-xl text-lg"></input>
+            <select
+              className="h-12 w-full p-2.5 items-center border outline-none rounded-xl text-lg border-slate-200"
+              id="Gender"
+              value={data?.Gender}
+              onChange={(e) => {
+                setData({ ...data, [e.target.id]: e.target.value });
+                // handleChange(e);
+              }}
+              // disabled={!edit}
+            >
+              <option value="Nam">Nam</option>
+              <option value="Nữ">Nữ</option>
+              <option value="Khác">Khác</option>
+            </select>
+            {/* </div> */}
           </div>
           <div>
             <p className="text-lg font-medium mb-2">Email</p>
             <input
-              className="h-12 w-full pl-3 flex items-center border outline-none rounded-xl text-lg"
+              className="h-12 w-full pl-3 flex items-center border outline-none rounded-xl text-lg "
               value={data?.Email}
             ></input>
           </div>

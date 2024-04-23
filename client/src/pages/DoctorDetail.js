@@ -13,8 +13,9 @@ const DoctorDetail = () => {
   const date = new Date();
   const today =
     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-  const { service, AppointmentData, ScheduleData, error, loading, updated } =
+  const { service, ScheduleData, AppointmentData, error, loading, updated } =
     useSelector((state) => state.appointment);
+  const [step, setStep] = useState(0);
   const [step1, setStep1] = useState(0);
   const [step2, setStep2] = useState(0);
   const [step3, setStep3] = useState(0);
@@ -41,8 +42,10 @@ const DoctorDetail = () => {
     DateBooking: today,
   };
   // console.log("allService", service);
-  //console.log("schedule", ScheduleData);
-  // console.log("service", data);
+  // console.log("schedule", ScheduleData);
+  console.log("appointment", AppointmentData);
+
+  console.log("service", data);
 
   const addTime = (fTime, sTime) => {
     const ft = fTime.split(":");
@@ -68,51 +71,123 @@ const DoctorDetail = () => {
   useEffect(() => {
     if (!data.Service) {
       if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 != null) {
-        if (
-          parse(currenTime1) + parse(service[0].EstimatedTime) <=
-          parse(ScheduleData[0]?.FirstShiftEnd)
-        ) {
+        let first = parse(currenTime1) + parse(service[0].EstimatedTime);
+
+        if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
           setTime1([...time1, { id: step1, value: currenTime1 }]);
           setStep1(step1 + 1);
           setTimeout(
             setCurrenTime1(addTime(currenTime1, service[0].EstimatedTime)),
             0
           );
-          setActived(time1[0]?.value);
+          if (
+            AppointmentData[step]?.TimeBooking != null &&
+            AppointmentData[step]?.EstimatedTime != null
+          ) {
+            if (
+              parse(currenTime1) >
+                parse(AppointmentData[step]?.TimeBooking) -
+                  parse(service[0]?.EstimatedTime) &&
+              parse(currenTime1) <
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+            ) {
+              setTime1([
+                ...time1,
+                { id: step1, value: currenTime1, booked: 1 },
+              ]);
+              console.log(step1, currenTime1);
+              if (
+                first >=
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+              ) {
+                setStep(step + 1);
+              }
+            }
+          }
         }
       }
       if (ScheduleData[0]?.SecondShiftEnd != null && currenTime2 != null) {
-        if (
-          parse(currenTime2) + parse(service[0].EstimatedTime) <=
-          parse(ScheduleData[0]?.SecondShiftEnd)
-        ) {
+        let second = parse(currenTime2) + parse(service[0].EstimatedTime);
+
+        if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
           setTime2([...time2, { id: step2, value: currenTime2 }]);
           setStep2(step2 + 1);
           setTimeout(
             setCurrenTime2(addTime(currenTime2, service[0].EstimatedTime)),
             0
           );
+          if (
+            AppointmentData[step]?.TimeBooking != null &&
+            AppointmentData[step]?.EstimatedTime != null
+          ) {
+            if (
+              parse(currenTime2) >
+                parse(AppointmentData[step]?.TimeBooking) -
+                  parse(service[0]?.EstimatedTime) &&
+              parse(currenTime2) <
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+            ) {
+              setTime2([
+                ...time2,
+                { id: step2, value: currenTime2, booked: 1 },
+              ]);
+              if (
+                second >=
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+              ) {
+                setStep(step + 1);
+              }
+            }
+          }
         }
       }
       if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 != null) {
-        if (
-          parse(currenTime3) + parse(service[0].EstimatedTime) <=
-          parse(ScheduleData[0]?.ThirdShiftEnd)
-        ) {
+        let third = parse(currenTime3) + parse(service[0].EstimatedTime);
+
+        if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
           setTime3([...time3, { id: step3, value: currenTime3 }]);
           setStep3(step3 + 1);
           setTimeout(
             setCurrenTime3(addTime(currenTime3, service[0].EstimatedTime)),
             0
           );
+          if (
+            AppointmentData[step]?.TimeBooking != null &&
+            AppointmentData[step]?.EstimatedTime != null
+          ) {
+            if (
+              parse(currenTime3) >
+                parse(AppointmentData[step]?.TimeBooking) -
+                  parse(service[0]?.EstimatedTime) &&
+              parse(currenTime3) <
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+            ) {
+              setTime3([
+                ...time3,
+                { id: step3, value: currenTime3, booked: 1 },
+              ]);
+              if (
+                third >=
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+              ) {
+                setStep(step + 1);
+              }
+            }
+          }
         }
       }
     } else {
       if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 != null) {
-        if (
-          parse(currenTime1) + parse(service[data.Service - 1].EstimatedTime) <=
-          parse(ScheduleData[0]?.FirstShiftEnd)
-        ) {
+        let first =
+          parse(currenTime1) + parse(service[data.Service - 1].EstimatedTime);
+
+        if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
           setTime1([...time1, { id: step1, value: currenTime1 }]);
           setStep1(step1 + 1);
           setTimeout(
@@ -121,14 +196,39 @@ const DoctorDetail = () => {
             ),
             0
           );
-          setActived(time1[0]?.value);
+          if (
+            AppointmentData[step]?.TimeBooking != null &&
+            AppointmentData[step]?.EstimatedTime != null
+          ) {
+            if (
+              parse(currenTime1) >
+                parse(AppointmentData[step]?.TimeBooking) -
+                  parse(service[data.Service - 1]?.EstimatedTime) &&
+              parse(currenTime1) <
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+            ) {
+              setTime1([
+                ...time1,
+                { id: step1, value: currenTime1, booked: 1 },
+              ]);
+              console.log(step1, currenTime1);
+              if (
+                first >=
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+              ) {
+                setStep(step + 1);
+              }
+            }
+          }
         }
       }
       if (ScheduleData[0]?.SecondShiftEnd != null && currenTime2 != null) {
-        if (
-          parse(currenTime2) + parse(service[data.Service - 1].EstimatedTime) <=
-          parse(ScheduleData[0]?.SecondShiftEnd)
-        ) {
+        let second =
+          parse(currenTime2) + parse(service[data.Service - 1].EstimatedTime);
+
+        if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
           setTime2([...time2, { id: step2, value: currenTime2 }]);
           setStep2(step2 + 1);
           setTimeout(
@@ -137,13 +237,38 @@ const DoctorDetail = () => {
             ),
             0
           );
+          if (
+            AppointmentData[step]?.TimeBooking != null &&
+            AppointmentData[step]?.EstimatedTime != null
+          ) {
+            if (
+              parse(currenTime2) >
+                parse(AppointmentData[step]?.TimeBooking) -
+                  parse(service[data.Service - 1]?.EstimatedTime) &&
+              parse(currenTime2) <
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+            ) {
+              setTime2([
+                ...time2,
+                { id: step2, value: currenTime2, booked: 1 },
+              ]);
+              if (
+                second >=
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+              ) {
+                setStep(step + 1);
+              }
+            }
+          }
         }
       }
       if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 != null) {
-        if (
-          parse(currenTime3) + parse(service[data.Service - 1].EstimatedTime) <=
-          parse(ScheduleData[0]?.ThirdShiftEnd)
-        ) {
+        let third =
+          parse(currenTime3) + parse(service[data.Service - 1].EstimatedTime);
+
+        if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
           setTime3([...time3, { id: step3, value: currenTime3 }]);
           setStep3(step3 + 1);
           setTimeout(
@@ -152,11 +277,36 @@ const DoctorDetail = () => {
             ),
             0
           );
+          if (
+            AppointmentData[step]?.TimeBooking != null &&
+            AppointmentData[step]?.EstimatedTime != null
+          ) {
+            if (
+              parse(currenTime3) >
+                parse(AppointmentData[step]?.TimeBooking) -
+                  parse(service[data.Service - 1]?.EstimatedTime) &&
+              parse(currenTime3) <
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+            ) {
+              setTime3([
+                ...time3,
+                { id: step3, value: currenTime3, booked: 1 },
+              ]);
+              if (
+                third >=
+                parse(AppointmentData[step]?.TimeBooking) +
+                  parse(AppointmentData[step]?.EstimatedTime)
+              ) {
+                setStep(step + 1);
+              }
+            }
+          }
         }
       }
     }
   }, [service, currenTime1, currenTime2, currenTime3, data.Service]);
-
+  console.log(time1);
   useEffect(() => {
     dispatch(fetchSchedule(body));
     dispatch(fetchService({ idDoctor: 235523485 }));
@@ -165,6 +315,7 @@ const DoctorDetail = () => {
       format: "dd/mm/yyyy",
       title: "Thời gian làm việc",
       today: "true",
+      minDate: new Date(),
     });
     setData({ ...data, date: today });
   }, []);
@@ -173,6 +324,7 @@ const DoctorDetail = () => {
     setTime1([]);
     setTime2([]);
     setTime3([]);
+    setStep(0);
     setStep1(0);
     setStep2(0);
     setStep3(0);
@@ -315,14 +467,26 @@ const DoctorDetail = () => {
                       id="timePicker"
                       key={item.id}
                       className={`${
-                        actived === item.value && "bg-teal-500 text-white"
+                        item.booked === 1 &&
+                        " bg-gray-400 opacity-60 text-white border-none is-disabled"
+                      } ${
+                        actived === item.value &&
+                        !item.booked &&
+                        "bg-teal-500 text-white"
                       } h-10 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
                       onClick={() => {
                         setActived(item.value);
                         setData({ ...data, timePicker: item.value });
                       }}
                     >
-                      {item.value}
+                      {item.booked === 1 ? (
+                        <div className="flex flex-col items-center justify-center p-1">
+                          {item.value}
+                          <p>Đã được đặt</p>
+                        </div>
+                      ) : (
+                        item.value
+                      )}
                     </div>
                   ))}
                 </div>
@@ -339,14 +503,26 @@ const DoctorDetail = () => {
                     <div
                       key={item.id}
                       className={`${
-                        actived === item.value && "bg-teal-500 text-white"
-                      } h-9 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
+                        item.booked === 1 &&
+                        " bg-gray-400 opacity-60 text-white border-none is-disabled"
+                      } ${
+                        actived === item.value &&
+                        !item.booked &&
+                        "bg-teal-500 text-white"
+                      } h-10 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
                       onClick={() => {
                         setActived(item.value);
                         setData({ ...data, timePicker: item.value });
                       }}
                     >
-                      {item.value}
+                      {item.booked === 1 ? (
+                        <div className="flex flex-col items-center justify-center p-1">
+                          {item.value}
+                          <p>Đã được đặt</p>
+                        </div>
+                      ) : (
+                        item.value
+                      )}
                     </div>
                   ))}
                 </div>
@@ -363,14 +539,26 @@ const DoctorDetail = () => {
                     <div
                       key={item.id}
                       className={`${
-                        actived === item.value && "bg-teal-500 text-white"
-                      } h-9 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
+                        item.booked === 1 &&
+                        " bg-gray-400 opacity-60 text-white border-none is-disabled"
+                      } ${
+                        actived === item.value &&
+                        !item.booked &&
+                        "bg-teal-500 text-white"
+                      } h-10 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
                       onClick={() => {
                         setActived(item.value);
                         setData({ ...data, timePicker: item.value });
                       }}
                     >
-                      {item.value}
+                      {item.booked === 1 ? (
+                        <div className="flex flex-col items-center justify-center p-1">
+                          {item.value}
+                          <p>Đã được đặt</p>
+                        </div>
+                      ) : (
+                        item.value
+                      )}
                     </div>
                   ))}
                 </div>
@@ -396,6 +584,7 @@ const DoctorDetail = () => {
             </div>
 
             <Button
+              disabled={!actived}
               onClick={handleBooking}
               className="w-full h-[48px] text-center"
               gradientDuoTone="greenToBlue"
@@ -403,7 +592,6 @@ const DoctorDetail = () => {
               <p className="text-lg">ĐẶT HẸN</p>
             </Button>
           </div>
-          {/* <p>{currentDate.toLocaleString().slice(9, 18)}</p> */}
         </div>
       </div>
     </div>

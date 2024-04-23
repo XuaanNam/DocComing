@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { IoMdArrowDropdown } from "react-icons/io";
-import { PiBell } from "react-icons/pi";
+import { GoBellFill } from "react-icons/go";
 import { FaRegUserCircle } from "react-icons/fa";
 import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
@@ -22,14 +22,16 @@ const Header = () => {
   };
 
   return (
-    <div className="h-[70px] fixed w-screen z-50 bg-white">
-      <div className="text-sm h-full px-5 text-gray-700 bg-white grid grid-cols-5 drop-shadow-md">
-        <div className="col-start-1 col-span-1 pl-5 text-xl flex items-center text-teal-500">
-          <img className="rounded-full h-12 w-12 mr-3" alt="" src={logo}></img>
-          <a href="/">Doctor Coming</a>
+    <div className="h-[70px] fixed w-screen z-50">
+      <div className="text-sm h-full px-5 text-gray-700 bg-teal-600 grid grid-cols-5 shadow-lg">
+        <div className="col-start-1 col-span-1 pl-5 text-xl flex items-center font-bold text-teal-500">
+          <img className="rounded-full h-12 w-12 mr-3 " alt="" src={logo}></img>
+          <a className="text-gray-100" href="/">
+            Doctor Coming
+          </a>
         </div>
         <div className="flex items-center col-span-2">
-          <div className="flex items-center col-span-2 h-[44px] w-[300px] border rounded-lg hover:ring-1 hover:ring-teal-400">
+          <div className="bg-white flex items-center col-span-2 h-[44px] w-[300px] border rounded-lg hover:ring-1 hover:ring-teal-400">
             <FiSearch className="ml-2 h-[24px] w-[24px] text-teal-500"></FiSearch>
             <input
               className="m-2 h-full w-full outline-none text-base"
@@ -37,7 +39,7 @@ const Header = () => {
             ></input>
           </div>
         </div>
-        <div className="flex items-center justify-end font-medium cursor-pointer">
+        <div className="text-gray-100 flex items-center justify-end font-medium cursor-pointer">
           <div className="h-[34px] w-[150px] p-1.5 rounded-lg text-center transition-transform duration-500 hover:scale-125">
             Đội ngũ bác sĩ
           </div>
@@ -46,7 +48,7 @@ const Header = () => {
           </div>
         </div>
         <div className="relative flex gap-4 w-full ml-5 items-center">
-          <div className="w-[1px] h-[34px] bg-slate-500"></div>
+          <div className="w-[1px] h-[34px] bg-gray-200"></div>
           {currentUser ? (
             <div className="flex gap-2 justify-center items-center">
               <div
@@ -58,19 +60,21 @@ const Header = () => {
                   alt=""
                   src={user?.data?.Avt || currentUser?.googlePhotoUrl}
                 ></img>
-                <p className="text-base font-medium">{currentUser?.name}</p>
-                <IoMdArrowDropdown className="h-5 w-5"></IoMdArrowDropdown>
+                <p className="text-base font-medium text-gray-100">
+                  {currentUser?.name}
+                </p>
+                <IoMdArrowDropdown className="text-gray-100 h-5 w-5"></IoMdArrowDropdown>
               </div>
-              <PiBell className="ml-3 h-6 w-6 text-yellow-500 cursor-pointer transition-transform duration-500 hover:scale-110" />
+              <GoBellFill className="ml-3 h-6 w-6 text-amber-200  cursor-pointer transition-transform duration-500 hover:scale-110" />
               {actived === true && (
-                <div className="absolute top-[62px] w-56 text-base bg-white rounded-lg shadow-lg drop-shadow-lg py-2 transition-all duration-500 z-10">
-                  <div className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer">
+                <div className="absolute top-[62px] w-56 text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-10">
+                  <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
                     <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
                     <a href="/patient/profile" className="block py-2 ">
                       Hồ sơ
                     </a>
                   </div>
-                  <div className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer">
+                  <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
                     <LuCalendarDays className="h-5 w-5"></LuCalendarDays>
                     <a href="/" className="block py-2">
                       Lịch khám của tôi
@@ -83,7 +87,7 @@ const Header = () => {
                     </a>
                   </div> */}
                   <div
-                    className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer"
+                    className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer"
                     onClick={handleLogout}
                   >
                     <FiLogOut className="h-5 w-5"></FiLogOut>
@@ -98,13 +102,13 @@ const Header = () => {
             <div className="flex gap-4 justify-center items-center">
               <a
                 href="/login"
-                className="cursor-pointer transition-transform duration-500 hover:scale-110"
+                className="text-gray-100 cursor-pointer transition-transform duration-500 hover:scale-110"
               >
                 Đăng nhập
               </a>
               <a
                 href="/register"
-                className="h-[34px] w-[100px] border text-white bg-teal-500 p-1.5  rounded-lg cursor-pointer"
+                className="h-[34px] w-[100px] border-[1.5px] text-white bg-teal-400 p-1.5  rounded-lg cursor-pointer"
               >
                 Tạo tài khoản
               </a>

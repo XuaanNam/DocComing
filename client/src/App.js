@@ -12,6 +12,7 @@ import Header from "./Layouts/Header";
 import DoctorDetail from "./pages/DoctorDetail";
 import Booking from "./pages/Booking";
 import Footer from "./Layouts/Footer";
+import DoctorSchedule from "./pages/DoctorSchedule";
 function App() {
   return (
     <div>
@@ -27,6 +28,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/doctor" element={<DoctorDetail />} />
           <Route path="/doctor/booking" element={<Booking />} />
+          <Route path="/doctor/schedule" element={<DoctorSchedule />} />
         </Routes>
         <Footer></Footer>
       </Router>

@@ -39,8 +39,8 @@ router.patch("/notification/read", PassportCheck, api.readNotification);
 router.post("/doctor/schedule", api.getSchedule);
 router.post("/schedule", PassportCheck, api.setSchedule);
 router.get("/service", api.getService);
-router.post("/service/doctor", PassportCheck, api.serviceDoctor); //theem service cho moi bac si
-router.post("/service/doctors", api.getServiceDoctor); // lay dich vu cua tung bsi
+router.post("/doctor/service/create", PassportCheck, api.serviceDoctor); //theem service cho moi bac si
+router.post("/doctor/service", api.getServiceDoctor); // lay dich vu cua tung bsi
 
 // Blog
 router.post(
