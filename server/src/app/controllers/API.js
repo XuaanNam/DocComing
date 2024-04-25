@@ -292,9 +292,9 @@ class API {
     let sql = "";
     const id = req.user.id;
     if (req.user.Authorization == 1) {
-      sql = "select * from appointment where idPatient = ?";
+      sql = "select * from appointment a, appointmentstatus s where a.Status = s.id and idPatient = ? and a.Status !=4 order by DateBooking, TimeBooking";
     } else if (req.user.Authorization == 2) {
-      sql = "select * from appointment where idDoctor = ?";
+      sql = "select * from appointment a, appointmentstatus s where a.Status = s.id and idDoctor = ? and a.Status !=4 order by DateBooking, TimeBooking";
     }
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -303,7 +303,7 @@ class API {
         res.send({ message: error, checked: false });
       } else {
         if (results) {
-          res.status(200).send({ data: results, checked: true });
+          res.status(200).send({ AppointmentData: results, checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
@@ -319,9 +319,10 @@ class API {
       idDoctor,
       Price,
       Information,
-      DateBooking,
       TimeBooking,
     } = req.body;
+    const db = req.body.DateBooking.split("/");
+    const DateBooking = db[2] + "-" + db[1] + "-" + db[0];
     const insertSql =
       "insert into appointment (idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information) values(?,?,?,?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
@@ -359,7 +360,7 @@ class API {
   acceptAppointment(req, res) {
     const { id } = req.body;
     const updateSql =
-      "update appointment set status = 1 where status = 0 and id = ?";
+      "update appointment set status = 1 where status = 4 and id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 2) {

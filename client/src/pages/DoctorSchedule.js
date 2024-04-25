@@ -4,88 +4,32 @@ import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { Badge, Calendar } from "antd";
+import { fetchAppointment } from "../redux-toolkit/appointmentSlice";
+import { useDispatch, useSelector } from "react-redux";
+
 
 const DoctorSchedule = () => {
   const [actived, setActived] = useState(1);
-  const [date, setDate] = useState([]);
-  const [step, setStep] = useState(0);
-  const [step1, setStep1] = useState(0);
-  const [listData, setListData] = useState([]);
-  const x = ["25/04/2024", "28/04/2024", "30/04/2024"];
-  // console.log(date, step);
+  const dispatch = useDispatch();
+  const { AppointmentData, error, loading, updated } = useSelector((state) => state.appointment);
+
   useEffect(() => {
-    if (x && step < x.length) {
-      let split = x[step].split("/");
-      setTimeout(
-        setDate([
-          ...date,
-          { day: parseInt(split[0]), month: parseInt(split[1]) },
-        ]),
-        setStep(step + 1),
-        0
-      );
-    }
-  }, [step]);
+    dispatch(fetchAppointment()); 
+  }, []);
+  console.log(AppointmentData)
   const getListData = (value) => {
-    let listData;
-    switch (value.date()) {
-      case 8:
-        listData = [
+    let listData = [];
+    for(let i = 0; i < AppointmentData.length; i++) {
+      let db = AppointmentData[i].DateBooking.split("-");
+      // eslint-disable-next-line eqeqeq
+      if(value.date() == db[2] && (value.month() + 1) == db[1] && value.year() == db[0]){
+        listData = [ ...listData,
           {
-            type: "warning",
-            content: "This is warning event.",
+            type: AppointmentData[i].Type,
+            content: AppointmentData[i].TimeBooking,
           },
-          {
-            type: "success",
-            content: "This is usual event.",
-          },
-        ];
-        break;
-      case 10:
-        listData = [
-          {
-            type: "warning",
-            content: "This is warning event.",
-          },
-          {
-            type: "success",
-            content: "This is usual event.",
-          },
-          {
-            type: "error",
-            content: "This is error event.",
-          },
-        ];
-        break;
-      case 15:
-        listData = [
-          {
-            type: "warning",
-            content: "This is warning event",
-          },
-          {
-            type: "success",
-            content: "This is very long usual event......",
-          },
-          {
-            type: "error",
-            content: "This is error event 1.",
-          },
-          {
-            type: "error",
-            content: "This is error event 2.",
-          },
-          {
-            type: "error",
-            content: "This is error event 3.",
-          },
-          {
-            type: "error",
-            content: "This is error event 4.",
-          },
-        ];
-        break;
-      default:
+        ]; 
+      } 
     }
     return listData || [];
   };

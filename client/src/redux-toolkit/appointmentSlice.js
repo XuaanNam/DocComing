@@ -17,7 +17,7 @@ export const fetchAppointment = createAsyncThunk(
   "fetchAppointment",
   async () => {
     const res = await fetch("http://localhost:5000/api/appointment", {
-      method: "POST",
+      method: "GET",
       headers: {
         "Content-Type": "application/json",
         Authorization: localStorage.getItem("token"),
@@ -79,7 +79,7 @@ const appointmentSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchAppointment.fulfilled, (state, action) => {
-        state.Appointment = action.payload.AppointmentData;
+        state.AppointmentData = action.payload.AppointmentData;
         state.ScheduleData = action.payload.ScheduleData;
         state.loading = false;
       })
