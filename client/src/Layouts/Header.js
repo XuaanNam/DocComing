@@ -40,10 +40,20 @@ const Header = () => {
           </div>
         </div>
         <div className="text-gray-100 flex items-center justify-end font-medium cursor-pointer">
-          <div className="h-[34px] w-[150px] p-1.5 rounded-lg text-center transition-transform duration-500 hover:scale-125">
+          <div
+            onClick={() => {
+              Navigate("/doctors");
+            }}
+            className="h-[34px] w-[150px] p-1.5 rounded-lg text-center transition-transform duration-500 hover:scale-125"
+          >
             Đội ngũ bác sĩ
           </div>
-          <div className="h-[34px] w-[100px] p-1.5 rounded-lg text-center transition-transform duration-500 hover:scale-125">
+          <div
+            onClick={() => {
+              Navigate("/categories");
+            }}
+            className="h-[34px] w-[100px] p-1.5 rounded-lg text-center transition-transform duration-500 hover:scale-125"
+          >
             Chuyên mục
           </div>
         </div>

@@ -203,7 +203,96 @@ const HomePage = () => {
               Xem thêm chuyên gia
             </div>
           </div>
-          <div className="w-[250px] h-[300px] text-sm bg-white rounded-3xl grid grid-rows-1 gap-y-3 justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-110">
+          <div className="flex gap-4 w-[50%]">
+            <div className="w-1/2 grid grid-rows-1 gap-2 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105">
+              <div className="relative w-[100%] flex justify-center mb-3">
+                <img
+                  className="rounded-3xl w-full h-[150px] rol-start-1 shadow-lg"
+                  src={require("../Images/background.png")}
+                  alt=""
+                ></img>
+                <img
+                  className="absolute top-0 h-[150px] mx-auto object-contain"
+                  src={require("../Images/doctor1.jpg")}
+                  alt=""
+                ></img>
+              </div>
+              <div className="w-full">
+                <p className="font-medium text-base text-slate-800 mb-4 text-center">
+                  ThS. BS. Nguyễn Sơn Lâm
+                </p>
+                <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
+                  <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
+                    <img
+                      src={HospitalIcon}
+                      className="w-5 h-5"
+                      alt="HeartIcon"
+                    />
+                  </div>
+                  <p className="w-[85%]">
+                    Bệnh viện Đại học Y Dược Thành Phố Hồ Chí Minh
+                  </p>
+                </div>
+                <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
+                  <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
+                    <img
+                      src={SpecialtiesIcon}
+                      className="w-5 h-5"
+                      alt="SpecialtiesIcon"
+                    />
+                  </div>
+                  <p className="w-[85%] flex gap-1">
+                    <p className="font-medium">12</p> năm kinh nghiệm
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div className="w-1/2 grid grid-rows-1 gap-2 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105">
+              <div className="relative w-[100%] flex justify-center mb-3">
+                <img
+                  className="rounded-3xl w-full h-[150px] rol-start-1 shadow-lg"
+                  src={require("../Images/background.png")}
+                  alt=""
+                ></img>
+                <img
+                  className="absolute top-0 h-[150px] mx-auto object-contain"
+                  src={require("../Images/doctor1.jpg")}
+                  alt=""
+                ></img>
+              </div>
+              <div className="w-full ">
+                <p className="font-medium text-base text-slate-800 mb-4 text-center">
+                  ThS. BS. Nguyễn Sơn Lâm
+                </p>
+                <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
+                  <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
+                    <img
+                      src={HospitalIcon}
+                      className="w-5 h-5"
+                      alt="HeartIcon"
+                    />
+                  </div>
+                  <p className="w-[85%]">
+                    Bệnh viện Đại học Y Dược Thành Phố Hồ Chí Minh
+                  </p>
+                </div>
+                <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
+                  <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
+                    <img
+                      src={SpecialtiesIcon}
+                      className="w-5 h-5"
+                      alt="SpecialtiesIcon"
+                    />
+                  </div>
+                  <p className="w-[85%] flex gap-1">
+                    <p className="font-medium">12</p> năm kinh nghiệm
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* <div className="w-[250px] h-[300px] text-sm bg-white rounded-3xl grid grid-rows-1 gap-y-3 justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-110">
             <div className="w-[140px] h-[140px] rounded-full bg-teal-200 mt-3 drop-shadow-lg row-span-1">
               <img
                 className="w-full h-full rounded-full object-contain"
@@ -240,45 +329,7 @@ const HomePage = () => {
                 </p>
               </div>
             </div>
-          </div>
-          <div className="w-[250px] h-[300px] text-sm bg-white rounded-3xl grid grid-rows-1 gap-y-3 justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-110">
-            <div className="w-[140px] h-[140px] rounded-full bg-teal-200 mt-3 drop-shadow-lg row-span-1">
-              <img
-                className="w-full h-full rounded-full object-contain"
-                src={require("../Images/doctor1.jpg")}
-                alt=""
-              ></img>
-            </div>
-            <div className="mb-3">
-              <p className="font-medium text-sm text-slate-800 mb-2 text-center">
-                ThS. BS. Nguyễn Sơn Lâm
-              </p>
-              <div className="w-[220px] h-[40px] mb-2 bg-teal-50 flex gap-3 items-center">
-                <div className="ml-3 w-[25px] h-[25px] rounded-full bg-white drop-shadow-lg flex items-center justify-center">
-                  <img
-                    src={HospitalIcon}
-                    className="w-[15px] h-[15px]"
-                    alt="HeartIcon"
-                  />
-                </div>
-                <p className="w-[180px]">
-                  Bệnh viện Đại học Y Dược Thành Phố Hồ Chí Minh
-                </p>
-              </div>
-              <div className="w-[220px] h-[40px] bg-teal-50 flex gap-3 items-center">
-                <div className="ml-3 w-[25px] h-[25px] rounded-full bg-white drop-shadow-lg flex items-center justify-center">
-                  <img
-                    src={SpecialtiesIcon}
-                    className="w-[15px] h-[15px]"
-                    alt="SpecialtiesIcon"
-                  />
-                </div>
-                <p className="w-[180px] flex gap-1">
-                  <p className="font-medium">12</p> năm kinh nghiệm
-                </p>
-              </div>
-            </div>
-          </div>
+          </div> */}
         </div>
         <div className="mb-[50px]">
           <div className="flex gap-x-7 mb-3">
@@ -615,7 +666,7 @@ const HomePage = () => {
           Doctor Coming đem đến thông tin sức khỏe mà bạn cần
         </div>
         <div className="grid grid-cols-4 gap-4 justify-items-center">
-          <div className="bg-slate-50 rounded-xl drop-shadow-xl">
+          <div className="bg-lime-50 rounded-xl drop-shadow-xl">
             <img
               className="mb-3"
               src={require("../Images/Research.webp")}
@@ -631,7 +682,7 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div className="bg-slate-50 rounded-xl drop-shadow-xl">
+          <div className="bg-lime-50 rounded-xl drop-shadow-xl">
             <img
               className="mb-3"
               src={require("../Images/Reviewed.webp")}
@@ -646,7 +697,7 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div className="bg-slate-50 rounded-xl drop-shadow-xl">
+          <div className="bg-lime-50 rounded-xl drop-shadow-xl">
             <img
               className="mb-3"
               src={require("../Images/Monitored.webp")}
@@ -661,7 +712,7 @@ const HomePage = () => {
             </p>
           </div>
 
-          <div className="bg-slate-50 rounded-xl drop-shadow-xl">
+          <div className="bg-lime-50 rounded-xl drop-shadow-xl">
             <img
               className="mb-3"
               src={require("../Images/Trustworthy.webp")}

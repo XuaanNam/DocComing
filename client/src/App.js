@@ -9,10 +9,13 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Profile from "./pages/Profile";
 import Header from "./Layouts/Header";
-import DoctorDetail from "./pages/DoctorDetail";
+import DoctorDetail from "./pages/BookingDoctor";
 import Booking from "./pages/Booking";
 import Footer from "./Layouts/Footer";
 import DoctorSchedule from "./pages/DoctorSchedule";
+import Doctors from "./pages/Doctors";
+import BookingDoctor from "./pages/BookingDoctor";
+import Categories from "./pages/Categories";
 function App() {
   return (
     <div>
@@ -26,8 +29,10 @@ function App() {
           <Route path="/patient/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/doctor" element={<DoctorDetail />} />
-          <Route path="/doctor/booking" element={<Booking />} />
+          <Route path="/doctors" element={<Doctors />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/doctor/booking" element={<BookingDoctor />} />
+          <Route path="/doctor/booking/confirm" element={<Booking />} />
           <Route path="/doctor/schedule" element={<DoctorSchedule />} />
         </Routes>
         <Footer></Footer>

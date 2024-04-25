@@ -9,7 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { fetchSchedule, fetchService } from "../redux-toolkit/appointmentSlice";
-const DoctorDetail = () => {
+const BookingDoctor = () => {
   const date = new Date();
   const today =
     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
@@ -41,9 +41,9 @@ const DoctorDetail = () => {
     idDoctor: 235523485,
     DateBooking: today,
   };
-  // console.log("allService", service);
+  console.log("allService", service);
   // console.log("schedule", ScheduleData);
-  console.log("appointment", AppointmentData);
+  // console.log("appointment", AppointmentData);
 
   console.log("service", data);
 
@@ -306,7 +306,6 @@ const DoctorDetail = () => {
       }
     }
   }, [service, currenTime1, currenTime2, currenTime3, data.Service]);
-  console.log(time1);
   useEffect(() => {
     dispatch(fetchSchedule(body));
     dispatch(fetchService({ idDoctor: 235523485 }));
@@ -346,6 +345,18 @@ const DoctorDetail = () => {
   };
 
   const handleBooking = () => {
+    const body = {
+      idService: data.Service ? data.Service : service[0].id,
+      Service: data.Service
+        ? service[data.Service - 1].Service
+        : service[0].Service,
+      idDoctor: 235523485,
+      Price: data.Service ? service[data.Service - 1].Price : service[0].Price,
+      // Information,
+      DateBooking: data.date ? data.date : today,
+      TimeBooking: data.timePicker,
+    };
+    localStorage.setItem("appointment", JSON.stringify(body));
     Navigate("/doctor/booking");
   };
   return (
@@ -582,7 +593,21 @@ const DoctorDetail = () => {
                 </select>
               </div>
             </div>
-
+            <div className="flex gap-3 mb-5 items-center">
+              <p className=" text-teal-800">Phí dịch vụ: </p>
+              <p className="font-medium text-emerald-500 text-lg">
+                {data?.Service
+                  ? service[data.Service - 1].Price
+                  : service[0].Price}
+                VND
+              </p>
+            </div>
+            <p className="italic text-sm text-teal-800 mb-5">
+              Lưu ý: Bảng giá dịch vụ trên chỉ mang tính chất tham khảo và có
+              thể thay đổi tuỳ theo tình trạng bệnh lý, phương pháp điều trị.
+              Vui lòng trao đổi với bác sĩ về các chi phí dịch vụ trước khi tiến
+              hành thăm khám & chữa bệnh.
+            </p>
             <Button
               disabled={!actived}
               onClick={handleBooking}
@@ -598,4 +623,4 @@ const DoctorDetail = () => {
   );
 };
 
-export default DoctorDetail;
+export default BookingDoctor;
