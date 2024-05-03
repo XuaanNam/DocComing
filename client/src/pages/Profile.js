@@ -32,7 +32,6 @@ const Profile = () => {
     });
   }, [user.data]);
 
-  console.log(data);
   const handleEdit = () => {
     setEdit(true);
   };
@@ -59,7 +58,7 @@ const Profile = () => {
     body.append("Phone", data.Phone);
     body.append("Address", data.Address);
     body.append("BirthDate", data.BirthDate);
-    body.append("Gender", data.Gender);
+    body.append("Gender", data.Gender || "Nam");
     body.append("Avt", imageFile);
 
     console.log(body);
@@ -72,9 +71,9 @@ const Profile = () => {
   // console.log(update);
 
   return (
-    <div className="pt-[70px] bg-gray-50 ">
-      <div className="px-16 text-gray-700 flex gap-10 ">
-        <div className="my-7 w-1/5 h-48 bg-white rounded-lg shadow-lg">
+    <div className="pt-[70px] bg-lime-50 ">
+      <div className="mx-16 text-gray-700 flex gap-10 ">
+        <div className="my-7 w-1/5 h-48 bg-white rounded-lg shadow-xl">
           <div
             onClick={() => setActived(1)}
             className={` ${
@@ -88,7 +87,7 @@ const Profile = () => {
           </div>
           <div className="flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer">
             <LuCalendarDays className="h-7 w-7"></LuCalendarDays>
-            <a href="/" className="block py-2 w-full">
+            <a href="/appointment" className="block py-2 w-full">
               Lịch khám của tôi
             </a>
           </div>
@@ -102,7 +101,7 @@ const Profile = () => {
             </a>
           </div>
         </div>
-        <div className="my-7 w-4/5 rounded-xl bg-white shadow-lg py-5 px-8">
+        <div className="my-7 w-4/5 rounded-xl bg-white shadow-xl py-5 px-8">
           <div className="mb-5 grid grid-cols-5 items-center">
             <p className="font-semibold text-2xl col-span-1">Hồ sơ</p>
             {edit === false && (
@@ -255,7 +254,9 @@ const Profile = () => {
                         }}
                         disabled={!edit}
                       >
-                        <option value="" disabled className=""></option>
+                        <option value="" disabled className="">
+                          --
+                        </option>
                         <option value="Nam">Nam</option>
                         <option value="Nữ">Nữ</option>
                         <option value="Khác">Khác</option>

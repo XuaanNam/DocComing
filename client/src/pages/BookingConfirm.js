@@ -7,19 +7,53 @@ import FlagIcon from "../Images/flag.png";
 import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { createAppointment } from "../redux-toolkit/appointmentSlice";
+import { updateProfile } from "../redux-toolkit/authSlice";
+import { toast } from "react-toastify";
+import { Input, Select } from "antd";
 
-const Booking = () => {
+const BookingConfirm = () => {
+  const Navigate = useNavigate();
+  const dispatch = useDispatch();
+
   const [data, setData] = useState({});
   const [information, setInformation] = useState("");
-  const { currentUser, user, error, loading, updated } = useSelector(
-    (state) => state.user
-  );
+  const [actived, setActived] = useState(true);
+
+  const { user, error, loading, updated } = useSelector((state) => state.user);
+  const { checked, message } = useSelector((state) => state.appointment);
+
   const appointment = JSON.parse(localStorage.getItem("appointment"));
+  console.log(checked);
   console.log(appointment);
   useEffect(() => {
-    setData(user?.data);
+    setData(user.data);
+    if ((user.data.Gender || user.data.FirstName || user.data.Phone) === null) {
+      setActived(false);
+    }
+    // if (checked) {
+    //   toast.success("Cập nhật thành công", {
+    //     position: "top-right",
+    //   });
+    // }
   }, []);
-  console.log(data);
+  console.log(user);
+  const handleBooking = () => {
+    const body = {
+      idService: appointment.idService,
+      idDoctor: appointment.idDoctor,
+      Price: appointment.Price,
+      DateBooking: appointment.DateBooking,
+      TimeBooking: appointment.TimeBooking,
+      Information: information,
+    };
+    // const profile = {
+    // }
+    // if (!actived) {
+    //   dispatch(updateProfile());
+    // }
+    dispatch(createAppointment(body));
+  };
   return (
     <div className="bg-slate-50 pt-[90px] h-[1200px]">
       <div className="mx-auto w-[80%] mb-5 p-6 grid grid-cols-6 gap-8 bg-white shadow-lg rounded-lg">
@@ -55,20 +89,20 @@ const Booking = () => {
         <div className="flex gap-3 mb-2">
           <div className="text-lg  text-gray-700">Ngày đặt hẹn:</div>
           <p className="font-medium text-emerald-500 text-lg">
-            {appointment.DateBooking}
+            {appointment?.DateBooking}
           </p>
         </div>
 
         <div className="flex gap-3 mb-2">
           <div className="text-lg text-gray-700">Thời gian hẹn:</div>
           <p className="font-medium text-emerald-500 text-lg">
-            {appointment.TimeBooking}
+            {appointment?.TimeBooking}
           </p>
         </div>
         <div className="flex gap-3 mb-2">
           <div className="text-lg  text-gray-700">Dịch vụ:</div>
           <p className="font-medium text-emerald-500 text-lg">
-            {appointment.Service}
+            {appointment?.Service}
           </p>
         </div>
         <div className="grid grid-cols-2 gap-8 mb-8">
@@ -76,32 +110,41 @@ const Booking = () => {
             <p className="text-lg font-medium mb-2 text-gray-700">
               Số điện thoại liên hệ
             </p>
-            <div className="flex p-2.5 gap-3 h-12 w-full items-center border rounded-xl cursor-pointer ">
-              <img className="h-[70%]" src={FlagIcon} alt=""></img>
-              <p className="text-lg opacity-70 ">(+84)</p>
-              <div className="w-[1.5px] h-[28px] bg-slate-400"></div>
-              <input
+            <div className="flex gap-3 h-12 w-full items-center border rounded-xl cursor-pointer bg-slate-100">
+              <img className="h-[70%] pl-3 py-1.5" src={FlagIcon} alt=""></img>
+              {/* <p className="text-lg opacity-70 ">(+84)</p>
+              <div className="w-[1.5px] h-[28px] bg-slate-400"></div> */}
+              <Input
                 id="Phone"
                 // type="text"
-                className="h-full w-full text-lg outline-none "
+                disabled={data.Phone !== null}
+                className={` ${
+                  data.Phone !== null && "!bg-slate-100 !text-gray-500"
+                } h-full  p-2.5 rounded-r-lg w-full text-lg outline-none `}
                 value={data?.Phone}
                 onChange={(e) => {
                   setData({ ...data, [e.target.id]: e.target.value });
                 }}
-              ></input>
+              ></Input>
             </div>
           </div>
           <div>
             <p className="text-lg font-medium mb-2 text-gray-700">Họ và tên</p>
-            <input
-              className="h-12 w-full p-2.5 block items-center border outline-none rounded-xl text-lg "
+            <Input
+              disabled={data?.FirstName + data?.LastName !== null}
+              className={` ${
+                data.FirstName !== null && "!bg-slate-100 !text-gray-500"
+              } h-12 w-full p-2.5 block items-center border outline-none rounded-xl text-lg `}
               value={data?.FirstName + data?.LastName}
-            ></input>
+            ></Input>
           </div>
           <div>
             <p className="text-lg font-medium mb-2 text-gray-700">Giới tính</p>
             <select
-              className="h-12 w-full p-2.5 items-center border outline-none rounded-xl text-lg border-slate-200"
+              disabled={data.Gender !== null}
+              className={` ${
+                data.Gender !== null && "bg-slate-100"
+              } h-12 w-full p-2.5 items-center border outline-none rounded-xl text-lg border-slate-300`}
               id="Gender"
               value={data?.Gender}
               onChange={(e) => {
@@ -115,10 +158,11 @@ const Booking = () => {
           </div>
           <div>
             <p className="text-lg font-medium mb-2 text-gray-700">Email</p>
-            <input
-              className="h-12 w-full pl-3 flex items-center border outline-none rounded-xl text-lg "
+            <Input
+              disabled
+              className="!bg-slate-100 !text-gray-500 h-12 w-full pl-3 flex items-center border outline-none rounded-xl text-lg "
               value={data?.Email}
-            ></input>
+            ></Input>
           </div>
         </div>
         <div>
@@ -135,7 +179,7 @@ const Booking = () => {
         </div>
       </div>
       <Button
-        //   onClick={handleBooking}
+        onClick={handleBooking}
         className="w-60 mx-auto h-[48px] text-center"
         gradientDuoTone="greenToBlue"
       >
@@ -145,4 +189,4 @@ const Booking = () => {
   );
 };
 
-export default Booking;
+export default BookingConfirm;

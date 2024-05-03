@@ -51,7 +51,6 @@ const HomePage = () => {
   const goToSlide = (slideIndex) => {
     setCurrentIndex(slideIndex);
   };
-
   return (
     <div className="">
       <div className="max-w-[95%] h-[740px] w-full m-auto pt-[70px] pb-[40px] px-4 relative group drop-shadow-md">
@@ -92,7 +91,7 @@ const HomePage = () => {
           </button>
         </div>
       </div>
-      <div className="mx-[48px]">
+      <div className="mx-[48px] mb-10">
         <div className="h-[44px] w-[150px] flex items-center justify-center p-1 mb-6 rounded-3xl bg-teal-50 text-blue-500 font-medium drop-shadow-lg">
           Bài viết mới nhất
         </div>
@@ -291,45 +290,6 @@ const HomePage = () => {
               </div>
             </div>
           </div>
-
-          {/* <div className="w-[250px] h-[300px] text-sm bg-white rounded-3xl grid grid-rows-1 gap-y-3 justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-110">
-            <div className="w-[140px] h-[140px] rounded-full bg-teal-200 mt-3 drop-shadow-lg row-span-1">
-              <img
-                className="w-full h-full rounded-full object-contain"
-                src={require("../Images/doctor1.jpg")}
-                alt=""
-              ></img>
-            </div>
-            <div className="mb-3">
-              <p className="font-medium text-sm text-slate-800 mb-2 text-center">
-                ThS. BS. Nguyễn Sơn Lâm
-              </p>
-              <div className="w-[220px] h-[40px] mb-2 bg-teal-50 flex gap-3 items-center">
-                <div className="ml-3 w-[25px] h-[25px] rounded-full bg-white drop-shadow-lg flex items-center justify-center">
-                  <img
-                    src={HospitalIcon}
-                    className="w-[15px] h-[15px]"
-                    alt="HeartIcon"
-                  />
-                </div>
-                <p className="w-[180px]">
-                  Bệnh viện Đại học Y Dược Thành Phố Hồ Chí Minh
-                </p>
-              </div>
-              <div className="w-[220px] h-[40px] bg-teal-50 flex gap-3 items-center">
-                <div className="ml-3 w-[25px] h-[25px] rounded-full bg-white drop-shadow-lg flex items-center justify-center">
-                  <img
-                    src={SpecialtiesIcon}
-                    className="w-[15px] h-[15px]"
-                    alt="SpecialtiesIcon"
-                  />
-                </div>
-                <p className="w-[180px] flex gap-1">
-                  <p className="font-medium">12</p> năm kinh nghiệm
-                </p>
-              </div>
-            </div>
-          </div> */}
         </div>
         <div className="mb-[50px]">
           <div className="flex gap-x-7 mb-3">
@@ -730,8 +690,6 @@ const HomePage = () => {
           </div>
         </div>
       </div>
-
-      <div className="h-[100px]"></div>
     </div>
   );
 };
