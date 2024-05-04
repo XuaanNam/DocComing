@@ -4,7 +4,6 @@ use doccoming
 ;
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '123123123';
 flush privileges;
-
 create table account(
 id int not null primary key AUTO_INCREMENT,
 LastName nvarchar(20) not null CHECK (LastName !=""),
@@ -13,17 +12,18 @@ BirthDate date,
 Gender varchar(30),
 Address nvarchar(300),
 Email varchar(50) not null UNIQUE CHECK (Email !=""),
+PassWord varchar(200) not null ,
 Phone varchar(15) null,
 Avt varchar(200),
 Authorization int default 1 
 )
 ;
 ALTER TABLE account AUTO_INCREMENT = 235523484;
-insert into account (LastName, FirstName, Email, Phone, Authorization) value 
-('admin', 'admin', 'admin@doccoming.com', 0123456789, 0),
-('Bac', 'Si', 'doctor@doccoming.com', 0123456789, 2),
-('Benh', 'Nhan', 'patient@doccoming.com', 0123456789, 1);
--- drop table account;
+insert into account (LastName, FirstName, Email, PassWord, Phone, Authorization) value 
+('admin', 'admin', 'admin@doccoming.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 0),
+('Bac', 'Si', 'doctor@doccoming.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 2),
+('Benh', 'Nhan', 'patient@doccoming.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 1);
+-- drop table account;  matkhau la 123123
 
 create table authorization(
 id int not null primary key,
@@ -197,8 +197,8 @@ Status int default 1,    			-- 0 lịch mặc định cửa bác sĩ, 1 lịch t
 foreign key (idDoctor) references account(id) 
 )
 ; -- drop table schedule
-insert into schedule (idDoctor, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd) values 
-(235523485, "08:30", "11:30", "17:00", "20:30");
+insert into schedule (idDoctor, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd, Status) values 
+(235523485, "08:30", "11:30", "17:00", "20:30", 0);
 
 create table notification(
 id int not null primary key AUTO_INCREMENT,

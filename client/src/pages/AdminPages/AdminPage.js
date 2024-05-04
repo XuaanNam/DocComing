@@ -4,6 +4,7 @@ import CreateBlog from "./CreateBlog";
 import UserList from "./UserList";
 import DashSidebar from "../../components/DashSidebar";
 import ManageBlog from "./ManageBlog";
+import Dashboard from "./Dashboard";
 const AdminPage = () => {
   const Navigate = useNavigate();
   const { adminpage } = useParams();
@@ -52,6 +53,7 @@ const AdminPage = () => {
         <div className="overflow-auto w-full" onClick={() => setActived(false)}>
           {adminpage === "create-post" && <CreateBlog />}
           {adminpage === "manage-post" && <ManageBlog />}
+          {adminpage === "dashboard" && <Dashboard />}
 
           {adminpage === "users" && <UserList />}
         </div>
