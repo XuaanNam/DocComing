@@ -4,7 +4,7 @@ const express = require("express");
 const path = require("path");
 require("dotenv").config();
 const bcrypt = require("bcrypt");
-const saltRound = 9;
+const saltRound = 7;
 const encodeToken = require("../../util/encodeToken");
 const createError = require("http-errors");
 const myOAuth2Client = require("../../app/configs/oauth2client");
@@ -31,25 +31,30 @@ class API {
   // [POST] /api/register
   register(req, res, next) {
     const insertSql =
-      "insert into account (LastName, FirstName, Email) value (?,?,?)";
+      "insert into account (LastName, FirstName, Email, PassWord) value (?,?,?,?)";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
     const successMsg = "Tài khoản đã đăng kí thành công!";
-    const LastName = req.body.LastName;
-    const FirstName = req.body.FirstName;
-    const Email = req.body.Email;
+    const {LastName, FirstName, Email, PassWord} = req.body;
+    
     const picture = req.body.picture;
-
-    pool.query(
-      insertSql,
-      [LastName, FirstName, Email],
-      function (error, results, fields) {
-        if (error) {
-          res.send({ message: errorMsg, checked: false });
-        } else {
-          res.send({ message: successMsg, checked: true });
-        }
+    bcrypt.hash(PassWord, saltRound, (err, hash) => {
+      if (err) {
+        res.status(200).send({ message: errorMsg, checked: false });
+      } else {
+        pool.query(
+          insertSql,
+          [LastName, FirstName, Email, hash],
+          function (error, results, fields) {
+            if (error) {
+              res.send({ message: errorMsg, checked: false });
+            } else {
+              res.send({ message: successMsg, hash, checked: true });
+            }
+          }
+        );
       }
-    );
+    });
+
   }
 
   // [GET] /api/isauth
@@ -65,12 +70,12 @@ class API {
   // [POST] /api/login
   login(req, res, next) {
     const sql =
-      "select id, Phone, PassWord, Authorization from account where Phone = ? ";
+      "select id, Email, PassWord, Authorization from account where Email = ? ";
     const message = "Số điện thoại hoặc mật khẩu không chính xác!";
-    const Phone = req.body.Phone;
+    const Email = req.body.Email;
     const PassWord = req.body.PassWord;
 
-    pool.query(sql, Phone, function (error, results, fields) {
+    pool.query(sql, Email, function (error, results, fields) {
       if (error) {
         res.send({ message: error });
       } else {
