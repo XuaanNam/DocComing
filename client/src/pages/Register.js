@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
+  const dispatch = useDispatch();
+  const Navigate = useNavigate();
   const initialValues = { email: "", password: "" };
   const [formValues, setFormValues] = useState(initialValues);
   const [formErrors, setFormErrors] = useState({});
@@ -10,16 +14,13 @@ const Register = () => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };
-
+  console.log(formValues);
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormErrors(validate(formValues));
-    // if (validate(formValues)) {
-    //   console.log("zzzzz");
-    // }
-    console.log(
-      !validate(formValues)?.email && !validate(formValues)?.password
-    );
+    if (!validate(formValues)?.email && !validate(formValues)?.password) {
+      // dispatch()
+    }
   };
 
   const validate = (values) => {

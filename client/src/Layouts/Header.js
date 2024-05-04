@@ -26,7 +26,7 @@ const Header = () => {
 
   return (
     <div className="h-[70px] fixed w-screen z-50">
-      <div className="text-sm h-full px-5 text-gray-700 bg-teal-600 grid grid-cols-5 shadow-lg">
+      <div className="text-sm h-full px-5 text-gray-700 bg-teal-600 grid grid-cols-5 drop-shadow-lg">
         <div className="col-start-1 col-span-1 pl-5 text-xl flex items-center font-bold text-teal-500">
           <img className="rounded-full h-12 w-12 mr-3 " alt="" src={logo}></img>
           <a className="text-gray-100" href="/">
