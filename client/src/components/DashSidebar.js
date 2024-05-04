@@ -31,7 +31,7 @@ const DashSidebar = ({ param }) => {
         <Sidebar.Items className="">
           <Sidebar.ItemGroup className="flex flex-col gap-1 font-medium">
             {/* {currentUser && currentUser.isAdmin && ( */}
-            <Link to="/dashboard/dash">
+            <Link to="/admin/dashboard">
               <Sidebar.Item
                 active={param === "dash"}
                 icon={HiChartPie}
@@ -41,7 +41,7 @@ const DashSidebar = ({ param }) => {
               </Sidebar.Item>
             </Link>
             {/* )} */}
-            <Link to="/dashboard/profile">
+            <Link to="/admin/profile">
               <Sidebar.Item
                 active={param === "profile"}
                 icon={HiUser}
@@ -63,7 +63,7 @@ const DashSidebar = ({ param }) => {
             </div>
             {blogActived && (
               <div className="flex flex-col gap-1 pl-1">
-                <Link to="/dashboard/create-post">
+                <Link to="/admin/create-post">
                   <Sidebar.Item
                     className="w-[90%]"
                     active={param === "create-post"}
@@ -73,7 +73,7 @@ const DashSidebar = ({ param }) => {
                     Tạo bài viết
                   </Sidebar.Item>
                 </Link>
-                <Link to="/dashboard/manage-post">
+                <Link to="/admin/manage-post">
                   <Sidebar.Item
                     className="w-[90%]"
                     active={param === "manage-post"}
@@ -88,7 +88,7 @@ const DashSidebar = ({ param }) => {
             {/* )} */}
             {/* {currentUser.isAdmin && ( */}
             <>
-              <Link to="/dashboard/users">
+              <Link to="/admin/users">
                 <Sidebar.Item
                   active={param === "users"}
                   icon={HiOutlineUserGroup}
@@ -97,7 +97,7 @@ const DashSidebar = ({ param }) => {
                   Users
                 </Sidebar.Item>
               </Link>
-              <Link to="/dashboard/create-blog">
+              <Link to="/admin/create-blog">
                 <Sidebar.Item
                   active={param === "comments"}
                   icon={HiAnnotation}
