@@ -10,6 +10,8 @@ import { logout } from "../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
 import logo from "../logo.png";
 import { fetchProfile } from "../redux-toolkit/authSlice";
+import { persistor } from "../redux-toolkit/configureStore";
+
 const Header = () => {
   const { currentUser, user } = useSelector((state) => state.user);
   // const [user, setUser] = useState({});
@@ -19,6 +21,7 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    setTimeout(() => persistor.purge(), 200);
   };
 
   return (
@@ -40,10 +43,20 @@ const Header = () => {
           </div>
         </div>
         <div className="text-gray-100 flex items-center justify-end font-medium cursor-pointer">
-          <div className="h-[34px] w-[150px] p-1.5 rounded-lg text-center transition-transform duration-500 hover:scale-125">
+          <div
+            onClick={() => {
+              Navigate("/doctors");
+            }}
+            className="h-[34px] w-[150px] p-1.5 rounded-lg text-center transition-transform duration-500 hover:scale-125"
+          >
             Đội ngũ bác sĩ
           </div>
-          <div className="h-[34px] w-[100px] p-1.5 rounded-lg text-center transition-transform duration-500 hover:scale-125">
+          <div
+            onClick={() => {
+              Navigate("/categories");
+            }}
+            className="h-[34px] w-[100px] p-1.5 rounded-lg text-center transition-transform duration-500 hover:scale-125"
+          >
             Chuyên mục
           </div>
         </div>
@@ -65,7 +78,7 @@ const Header = () => {
                 </p>
                 <IoMdArrowDropdown className="text-gray-100 h-5 w-5"></IoMdArrowDropdown>
               </div>
-              <GoBellFill className="ml-3 h-6 w-6 text-amber-200  cursor-pointer transition-transform duration-500 hover:scale-110" />
+              <GoBellFill className="ml-3 h-6 w-6 text-lime-100  cursor-pointer transition-transform duration-500 hover:scale-110" />
               {actived === true && (
                 <div className="absolute top-[62px] w-56 text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-10">
                   <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">

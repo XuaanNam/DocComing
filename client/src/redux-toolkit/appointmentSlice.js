@@ -5,11 +5,12 @@ import { toast } from "react-toastify";
 const initialState = {
   loading: false,
   error: "",
-  checked: true,
+  checked: false,
+  message: "",
   token: "",
-  data: [],
   user: {},
   service: [],
+  schedule: {},
   AppointmentData: [],
   ScheduleData: [],
 };
@@ -46,6 +47,21 @@ export const fetchSchedule = createAsyncThunk("fetchSchedule", async (body) => {
   });
   return await res.json();
 });
+
+export const createAppointment = createAsyncThunk(
+  "createAppointment",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/appointment/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
 const appointmentSlice = createSlice({
   name: "appointment",
   initialState,
@@ -61,7 +77,6 @@ const appointmentSlice = createSlice({
       })
       .addCase(fetchService.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
       })
       .addCase(fetchSchedule.pending, (state, action) => {
         state.loading = true;
@@ -73,7 +88,6 @@ const appointmentSlice = createSlice({
       })
       .addCase(fetchSchedule.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload;
       })
       .addCase(fetchAppointment.pending, (state, action) => {
         state.loading = true;
@@ -86,6 +100,17 @@ const appointmentSlice = createSlice({
       .addCase(fetchAppointment.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(createAppointment.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(createAppointment.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(createAppointment.rejected, (state, action) => {
+        state.loading = false;
       });
   },
 });

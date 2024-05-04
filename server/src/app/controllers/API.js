@@ -10,7 +10,7 @@ const createError = require("http-errors");
 const myOAuth2Client = require("../../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 const { Console } = require("console");
- 
+
 class API {
   // [POST] /api/execute/query
   executeQuery(req, res, next) {
@@ -292,9 +292,11 @@ class API {
     let sql = "";
     const id = req.user.id;
     if (req.user.Authorization == 1) {
-      sql = "select * from appointment a, appointmentstatus s where a.Status = s.id and idPatient = ? and a.Status !=4 order by DateBooking, TimeBooking";
+      sql =
+        "select * from appointment a, appointmentstatus s where a.Status = s.id and idPatient = ? and a.Status !=4 order by DateBooking, TimeBooking";
     } else if (req.user.Authorization == 2) {
-      sql = "select * from appointment a, appointmentstatus s where a.Status = s.id and idDoctor = ? and a.Status !=4 order by DateBooking, TimeBooking";
+      sql =
+        "select * from appointment a, appointmentstatus s where a.Status = s.id and idDoctor = ? and a.Status !=4 order by DateBooking, TimeBooking";
     }
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -314,15 +316,10 @@ class API {
   //[POST] /api/appointment/create
   createAppointment(req, res) {
     const idPatient = req.user.id;
-    const {
-      idService,
-      idDoctor,
-      Price,
-      Information,
-      TimeBooking,
-    } = req.body;
+    const { idService, idDoctor, Price, Information, TimeBooking } = req.body;
     const db = req.body.DateBooking.split("/");
     const DateBooking = db[2] + "-" + db[1] + "-" + db[0];
+    console.log(req.user);
     const insertSql =
       "insert into appointment (idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information) values(?,?,?,?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
@@ -470,6 +467,7 @@ class API {
     const sql = "call AppointmentData(?, ?)";
     let { idDoctor, DateBooking } = req.body; //dd/mm/yyyy
     const sd = DateBooking.split("/");
+    console.log(idDoctor);
     DateBooking = sd[2] + "-" + sd[1] + "-" + sd[0];
     let AppointmentData = {};
     let ScheduleData = {};
@@ -842,7 +840,7 @@ class API {
 
   // [GET] /api/comment
   getComment(req, res) {
-    const {idPost} = req.body;
+    const { idPost } = req.body;
     const selectSql = "SELECT * FROM comment where idPost = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -862,49 +860,81 @@ class API {
   // [POST] /api/comment/create
   createComment(req, res) {
     const idAccount = req.user.id;
-    const {idPost, Cmt} = req.body;
-    const insertSql = "insert into comment (idAccount, idPost, Cmt, NotiTime) values (?,?,?,?)";
+    const { idPost, Cmt } = req.body;
+    const insertSql =
+      "insert into comment (idAccount, idPost, Cmt, NotiTime) values (?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
     const date = new Date();
-    const NotiTime = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    const NotiTime =
+      date.getFullYear() +
+      "-" +
+      date.getMonth() +
+      "-" +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
 
-    pool.query(insertSql, [idAccount, idPost, Cmt, NotiTime], function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ checked: true });
+    pool.query(
+      insertSql,
+      [idAccount, idPost, Cmt, NotiTime],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
         } else {
-          res.status(200).send({ message: errorMsg, checked: false });
+          if (results) {
+            res.status(200).send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
         }
       }
-    });
+    );
   }
 
   // [POST] /api/comment/update
   updateComment(req, res) {
-    const {id, Cmt} = req.body;
-    const updateSql = "update comment set Cmt = ?, NotiTime = ?, Status = 1 where id = ?";
+    const { id, Cmt } = req.body;
+    const updateSql =
+      "update comment set Cmt = ?, NotiTime = ?, Status = 1 where id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
     const date = new Date();
-    const NotiTime = date.getFullYear() + "-" + date.getMonth() + "-" + date.getDate() + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+    const NotiTime =
+      date.getFullYear() +
+      "-" +
+      date.getMonth() +
+      "-" +
+      date.getDate() +
+      " " +
+      date.getHours() +
+      ":" +
+      date.getMinutes() +
+      ":" +
+      date.getSeconds();
 
-    pool.query(updateSql, [Cmt, NotiTime, id], function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({checked: true });
+    pool.query(
+      updateSql,
+      [Cmt, NotiTime, id],
+      function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
         } else {
-          res.status(200).send({ message: errorMsg, checked: false });
+          if (results) {
+            res.status(200).send({ checked: true });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
         }
       }
-    });
+    );
   }
 
   // [POST] /api/comment/delete
   deleteComment(req, res) {
-    const {id} = req.body;
+    const { id } = req.body;
     const deleteSql = "delete from comment where id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -913,7 +943,7 @@ class API {
         res.send({ message: error, checked: false });
       } else {
         if (results) {
-          res.status(200).send({checked: true });
+          res.status(200).send({ checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }

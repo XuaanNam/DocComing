@@ -1,14 +1,13 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-
 const initialState = {
   currentUser: null,
   auth: "",
   username: "",
   loading: false,
   error: "",
-  checked: true,
+  checked: false,
   token: "",
   data: [],
   user: {},
@@ -24,7 +23,6 @@ export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   });
   return await res.json();
 });
-
 export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
   const res = await fetch("http://localhost:5000/api/admin/account", {
     method: "GET",
@@ -71,72 +69,6 @@ const authSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    // [emailChecked.pending]: (state, action) => {
-    //   state.loading = true;
-    // },
-    // [emailChecked.fulfilled]: (state, { payload }) => {
-    //   state.loading = false;
-    //   state.emailChecked = payload.checked;
-    //   if (payload.checked === false) {
-    //     state.msg = payload.message;
-    //   }
-    // },
-    // [emailChecked.rejected]: (state, action) => {
-    //   state.loading = true;
-    // },
-    // [signUpUser.pending]: (state, action) => {
-    //   state.loading = true;
-    // },
-    // [signUpUser.fulfilled]: (
-    //   state,
-    //   { payload: { error, message, checked } }
-    // ) => {
-    //   state.loading = false;
-    //   if (error) {
-    //     state.error = error;
-    //     state.signupmsg = message;
-    //   } else {
-    //     if (checked) {
-    //       state.signupmsg = message;
-    //       state.checked = checked;
-    //     }
-    //   }
-    // },
-    // [signUpUser.rejected]: (state, action) => {
-    //   state.loading = true;
-    // },
-
-    // [signInUser.pending]: (state, action) => {
-    //   state.loading = true;
-    // },
-    // [signInUser.fulfilled]: (
-    //   state,
-    //   { payload: { error, authentication, token, username, checked, message } }
-    // ) => {
-    //   if (error) {
-    //     state.error = error;
-    //     state.loading = true;
-    //   } else {
-    //     if (checked) {
-    //       state.loading = false;
-    //       state.auth = authentication;
-    //       state.token = token;
-    //       state.username = username;
-    //       localStorage.setItem("auth", authentication);
-    //       localStorage.setItem("token", token);
-    //       localStorage.setItem("user", username);
-    //       state.signinmsg = "";
-    //       if (authentication !== 1) {
-    //         window.location.reload();
-    //       }
-    //     } else {
-    //       state.signinmsg = message;
-    //     }
-    //   }
-    // },
-    // [signInUser.rejected]: (state, action) => {
-    //   state.loading = true;
-    // },
     builder
       .addCase(loginGoogle.pending, (state, action) => {
         state.loading = true;
@@ -170,10 +102,10 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(updateProfile.fulfilled, (state, { payload }) => {
-        state.checked = payload;
-        toast.success("Cập nhật thành công", {
-          position: "top-right",
-        });
+        state.checked = payload.checked;
+        // toast.success("Cập nhật thành công", {
+        //   position: "top-right",
+        // });
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = true;

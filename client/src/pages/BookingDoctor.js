@@ -9,12 +9,15 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { fetchSchedule, fetchService } from "../redux-toolkit/appointmentSlice";
-const DoctorDetail = () => {
+const BookingDoctor = () => {
   const date = new Date();
   const today =
     date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
   const { service, ScheduleData, AppointmentData, error, loading, updated } =
     useSelector((state) => state.appointment);
+  // const ScheduleData = schedule?.ScheduleData;
+  // const AppointmentData = schedule?.AppointmentData;
+
   const [step, setStep] = useState(0);
   const [step1, setStep1] = useState(0);
   const [step2, setStep2] = useState(0);
@@ -29,6 +32,7 @@ const DoctorDetail = () => {
   const [currenTime3, setCurrenTime3] = useState(
     ScheduleData[0]?.ThirdShiftStart?.slice(0, 5)
   );
+  console.log(currenTime1, currenTime2, currenTime3, ScheduleData[0]);
   const [time1, setTime1] = useState([]);
   const [time2, setTime2] = useState([]);
   const [time3, setTime3] = useState([]);
@@ -41,11 +45,7 @@ const DoctorDetail = () => {
     idDoctor: 235523485,
     DateBooking: today,
   };
-  // console.log("allService", service);
-  // console.log("schedule", ScheduleData);
-  console.log("appointment", AppointmentData);
-
-  console.log("service", data);
+  console.log("data", data);
 
   const addTime = (fTime, sTime) => {
     const ft = fTime.split(":");
@@ -69,15 +69,27 @@ const DoctorDetail = () => {
     return curr;
   };
   useEffect(() => {
-    if (!data.Service) {
-      if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 != null) {
-        let first = parse(currenTime1) + parse(service[0].EstimatedTime);
+    dispatch(fetchSchedule(body));
+    dispatch(fetchService({ idDoctor: 235523485 }));
+    const datepickerEl = document?.getElementById("date");
+    new Datepicker(datepickerEl, {
+      format: "dd/mm/yyyy",
+      title: "Thời gian làm việc",
+      today: "true",
+      minDate: new Date(),
+    });
+    setData({ ...data, date: today });
+  }, []);
+  useEffect(() => {
+    if (!data.Service && ScheduleData) {
+      if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
+        let first = parse(currenTime1) + parse(service[0]?.EstimatedTime);
 
         if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
           setTime1([...time1, { id: step1, value: currenTime1 }]);
           setStep1(step1 + 1);
           setTimeout(
-            setCurrenTime1(addTime(currenTime1, service[0].EstimatedTime)),
+            setCurrenTime1(addTime(currenTime1, service[0]?.EstimatedTime)),
             0
           );
           if (
@@ -108,14 +120,17 @@ const DoctorDetail = () => {
           }
         }
       }
-      if (ScheduleData[0]?.SecondShiftEnd != null && currenTime2 != null) {
-        let second = parse(currenTime2) + parse(service[0].EstimatedTime);
+      if (
+        ScheduleData[0]?.SecondShiftEnd != null &&
+        currenTime2 !== undefined
+      ) {
+        let second = parse(currenTime2) + parse(service[0]?.EstimatedTime);
 
         if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
           setTime2([...time2, { id: step2, value: currenTime2 }]);
           setStep2(step2 + 1);
           setTimeout(
-            setCurrenTime2(addTime(currenTime2, service[0].EstimatedTime)),
+            setCurrenTime2(addTime(currenTime2, service[0]?.EstimatedTime)),
             0
           );
           if (
@@ -145,14 +160,14 @@ const DoctorDetail = () => {
           }
         }
       }
-      if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 != null) {
-        let third = parse(currenTime3) + parse(service[0].EstimatedTime);
+      if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 !== undefined) {
+        let third = parse(currenTime3) + parse(service[0]?.EstimatedTime);
 
         if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
           setTime3([...time3, { id: step3, value: currenTime3 }]);
           setStep3(step3 + 1);
           setTimeout(
-            setCurrenTime3(addTime(currenTime3, service[0].EstimatedTime)),
+            setCurrenTime3(addTime(currenTime3, service[0]?.EstimatedTime)),
             0
           );
           if (
@@ -183,7 +198,7 @@ const DoctorDetail = () => {
         }
       }
     } else {
-      if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 != null) {
+      if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
         let first =
           parse(currenTime1) + parse(service[data.Service - 1].EstimatedTime);
 
@@ -224,7 +239,10 @@ const DoctorDetail = () => {
           }
         }
       }
-      if (ScheduleData[0]?.SecondShiftEnd != null && currenTime2 != null) {
+      if (
+        ScheduleData[0]?.SecondShiftEnd != null &&
+        currenTime2 !== undefined
+      ) {
         let second =
           parse(currenTime2) + parse(service[data.Service - 1].EstimatedTime);
 
@@ -264,7 +282,7 @@ const DoctorDetail = () => {
           }
         }
       }
-      if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 != null) {
+      if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 !== undefined) {
         let third =
           parse(currenTime3) + parse(service[data.Service - 1].EstimatedTime);
 
@@ -306,19 +324,6 @@ const DoctorDetail = () => {
       }
     }
   }, [service, currenTime1, currenTime2, currenTime3, data.Service]);
-  console.log(time1);
-  useEffect(() => {
-    dispatch(fetchSchedule(body));
-    dispatch(fetchService({ idDoctor: 235523485 }));
-    const datepickerEl = document?.getElementById("date");
-    new Datepicker(datepickerEl, {
-      format: "dd/mm/yyyy",
-      title: "Thời gian làm việc",
-      today: "true",
-      minDate: new Date(),
-    });
-    setData({ ...data, date: today });
-  }, []);
 
   const changeData = () => {
     setTime1([]);
@@ -346,7 +351,19 @@ const DoctorDetail = () => {
   };
 
   const handleBooking = () => {
-    Navigate("/doctor/booking");
+    const body = {
+      idService: data.Service ? data.Service : service[0].id,
+      Service: data.Service
+        ? service[data.Service - 1].Service
+        : service[0].Service,
+      idDoctor: 235523485,
+      Price: data.Service ? service[data.Service - 1].Price : service[0].Price,
+      // Information,
+      DateBooking: data.date ? data.date : today,
+      TimeBooking: data.timePicker,
+    };
+    localStorage.setItem("appointment", JSON.stringify(body));
+    Navigate("/booking/confirm");
   };
   return (
     <div className="bg-slate-50 pt-[90px]">
@@ -582,7 +599,21 @@ const DoctorDetail = () => {
                 </select>
               </div>
             </div>
-
+            <div className="flex gap-3 mb-5 items-center">
+              <p className=" text-teal-800">Phí dịch vụ: </p>
+              <p className="font-medium text-emerald-500 text-lg">
+                {data?.Service
+                  ? service[data.Service - 1]?.Price
+                  : service[0]?.Price}
+                VND
+              </p>
+            </div>
+            <p className="italic text-sm text-teal-800 mb-5">
+              Lưu ý: Bảng giá dịch vụ trên chỉ mang tính chất tham khảo và có
+              thể thay đổi tuỳ theo tình trạng bệnh lý, phương pháp điều trị.
+              Vui lòng trao đổi với bác sĩ về các chi phí dịch vụ trước khi tiến
+              hành thăm khám & chữa bệnh.
+            </p>
             <Button
               disabled={!actived}
               onClick={handleBooking}
@@ -598,4 +629,4 @@ const DoctorDetail = () => {
   );
 };
 
-export default DoctorDetail;
+export default BookingDoctor;
