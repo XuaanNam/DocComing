@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
-
+import { userRegister } from "../redux-toolkit/authSlice";
 const Register = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
@@ -19,7 +19,11 @@ const Register = () => {
     e.preventDefault();
     setFormErrors(validate(formValues));
     if (!validate(formValues)?.email && !validate(formValues)?.password) {
-      // dispatch()
+      const data = {
+        Email: formValues.email,
+        PassWord: formValues.password,
+      };
+      dispatch(userRegister(data));
     }
   };
 

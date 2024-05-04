@@ -19,7 +19,7 @@ export const userRegister = createAsyncThunk("userRegister", async (body) => {
     headers: {
       "Content-Type": "application/json",
     },
-    body,
+    body: JSON.stringify(body),
   });
   return await res.json();
 });
