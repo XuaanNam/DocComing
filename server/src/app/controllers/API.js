@@ -30,18 +30,18 @@ class API {
 
   // [POST] /api/register
   register(req, res, next) {
-    const insertSql = "insert into account (Email, PassWord) value (?,?)";
+    const insertSql = "insert into account (Email, PassWord, LastName, FirstName) value (?,?,?,?)";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
     const successMsg = "Tài khoản đã đăng kí thành công!";
-    const { Email, PassWord } = req.body;
+    const { Email, PassWord } = req.body; 
     const picture = req.body.picture;
     bcrypt.hash(PassWord, saltRound, (err, hash) => {
       if (err) {
         res.status(200).send({ message: err, checked: false });
       } else {
-        pool.query(insertSql, [Email, hash], function (error, results, fields) {
-          if (error) {
-            res.send({ message: error.sqlMessage, checked: false });
+        pool.query(insertSql, [Email, hash, "LastName", " FirstName"], function (error, results, fields) {
+          if (error) { 
+            res.send({ message: errorMsg, checked: false });
           } else {
             res.send({ message: successMsg, checked: true });
           }
@@ -116,7 +116,8 @@ class API {
     let payload = {};
     let token = "";
     const insertSql =
-      "insert into account (Email, FirstName, LastName, Avt) values (?, ?, ?, ?)";
+      "insert into account (Email, FirstName, LastName, Avt, PassWord) values (?, ?, ?, ?)";
+    const password = "null";
     try {
       pool.query(sql, email, function (error, results, fields) {
         if (error) {
@@ -140,7 +141,7 @@ class API {
           } else {
             pool.query(
               insertSql,
-              [email, firstName, lastName, googlePhotoUrl],
+              [email, firstName, lastName, googlePhotoUrl, password],
               function (error, results, fields) {
                 if (error) res.send({ message: error });
                 else if (results) {
@@ -221,7 +222,7 @@ class API {
   // Profile
   //[GET] /api/profile
   getProfile(req, res) {
-    const id = req.user.id;
+    const id = req.user.id; 
     const selectSql = "select * from account where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể lấy thông tin!";
 
@@ -251,8 +252,11 @@ class API {
     const Address = req.body.Address ? req.body.Address : null;
     const Phone = req.body.Phone ? req.body.Phone : null;
     const Gender = req.body.Gender ? req.body.Gender : null;
-    let bd = req.body.BirthDate.split("/"); // dd/mm/yyyy
-    const BirthDate = bd[2] + "-" + bd[1] + "-" + bd[0];
+    let BirthDate = null; 
+    if(req.body.BirthDate !== "null"){
+      let bd = req.body.BirthDate?.split("/"); // dd/mm/yyyy
+      BirthDate = bd[2] + "-" + bd[1] + "-" + bd[0];
+    }
     let data = [],
       updateSql = "";
     const Avt = req.file ? req.file.path : null;
@@ -263,7 +267,6 @@ class API {
     for (let i = 0; i < fn.length - 1; i++) {
       FirstName = FirstName + fn[i] + " ";
     }
-
     if (Avt === null) {
       data = [FirstName, LastName, BirthDate, Gender, Phone, Address, id];
       updateSql =
@@ -276,7 +279,7 @@ class API {
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin!";
 
     pool.query(updateSql, data, function (error, results, fields) {
-      if (error) {
+      if (error) { console.log(error)
         res.send({ message: error, checked: false });
       } else {
         if (results) {
