@@ -89,7 +89,7 @@ const Header = () => {
                   </div>
                   <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
                     <LuCalendarDays className="h-5 w-5"></LuCalendarDays>
-                    <a href="/" className="block py-2">
+                    <a href="/appointment" className="block py-2">
                       Lịch khám của tôi
                     </a>
                   </div>

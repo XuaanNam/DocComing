@@ -16,7 +16,7 @@ const Register = () => {
     setFormValues({ ...formValues, [name]: value });
   };
   useEffect(() => {
-    if (checked) setTimeout(Navigate("/login"), 1000);
+    if (checked) setTimeout(Navigate("/login"), 2000);
   }, [checked]);
   const handleSubmit = (e) => {
     e.preventDefault();

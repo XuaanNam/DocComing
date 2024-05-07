@@ -35,6 +35,16 @@ export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   });
   return await res.json();
 });
+export const authentication = createAsyncThunk("authentication", async () => {
+  const res = await fetch("http://localhost:5000/api/isauth", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
+  return await res.json();
+});
 export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
   const res = await fetch("http://localhost:5000/api/admin/account", {
     method: "GET",
@@ -95,6 +105,15 @@ const authSlice = createSlice({
       .addCase(loginGoogle.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(authentication.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(authentication.fulfilled, (state, { payload }) => {
+        state.auth = payload;
+      })
+      .addCase(authentication.rejected, (state, action) => {
+        state.loading = true;
       })
       .addCase(fetchUsers.pending, (state, action) => {
         state.loading = true;

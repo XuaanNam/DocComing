@@ -11,6 +11,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile } from "../redux-toolkit/authSlice";
 
 const HomePage = () => {
+  const { currentUser, user, error, loading, updated } = useSelector(
+    (state) => state.user
+  );
+  console.log(currentUser, user);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const slides = [
