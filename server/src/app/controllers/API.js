@@ -247,7 +247,10 @@ class API {
   //[PATCH] /api/profile/update
   updateProfile(req, res) {
     const id = req.user.id;
-    const { FullName, Address, Phone, Gender } = req.body;
+    const FullName = req.body.FullName ? req.body.FullName : null;
+    const Address = req.body.Address ? req.body.Address : null;
+    const Phone = req.body.Phone ? req.body.Phone : null;
+    const Gender = req.body.Gender ? req.body.Gender : null;
     let bd = req.body.BirthDate.split("/"); // dd/mm/yyyy
     const BirthDate = bd[2] + "-" + bd[1] + "-" + bd[0];
     let data = [],
