@@ -13,6 +13,16 @@ const initialState = {
   user: {},
   updated: false,
 };
+export const userRegister = createAsyncThunk("userRegister", async (body) => {
+  const res = await fetch("http://localhost:5000/api/register", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
 export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   const res = await fetch("http://localhost:5000/api/auth/google/check", {
     method: "POST",
@@ -118,24 +128,16 @@ const authSlice = createSlice({
       })
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = true;
+      })
+      .addCase(userRegister.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(userRegister.fulfilled, (state, { payload }) => {
+        // state.user = payload;
+      })
+      .addCase(userRegister.rejected, (state, action) => {
+        state.loading = true;
       });
-
-    // [changeProfile.pending]: (state, action) => {
-    //   state.loading = true;
-    // },
-    // [changeProfile.fulfilled]: (state, { payload }) => {
-    //   if (payload.checked === true) {
-    //     state.checked = payload.checked;
-    //     toast.success("Cập nhật thông tin thành công", {
-    //       position: "bottom-right",
-    //     });
-    //   } else {
-    //     state.message = payload.message;
-    //   }
-    // },
-    // [changeProfile.rejected]: (state, action) => {
-    //   state.loading = true;
-    // },
   },
 });
 export const { addToken, addUser, logout } = authSlice.actions;

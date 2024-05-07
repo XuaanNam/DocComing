@@ -30,31 +30,24 @@ class API {
 
   // [POST] /api/register
   register(req, res, next) {
-    const insertSql =
-      "insert into account (LastName, FirstName, Email, PassWord) value (?,?,?,?)";
+    const insertSql = "insert into account (Email, PassWord) value (?,?)";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
     const successMsg = "Tài khoản đã đăng kí thành công!";
-    const {LastName, FirstName, Email, PassWord} = req.body;
-    
+    const { Email, PassWord } = req.body;
     const picture = req.body.picture;
     bcrypt.hash(PassWord, saltRound, (err, hash) => {
       if (err) {
         res.status(200).send({ message: errorMsg, checked: false });
       } else {
-        pool.query(
-          insertSql,
-          [LastName, FirstName, Email, hash],
-          function (error, results, fields) {
-            if (error) {
-              res.send({ message: errorMsg, checked: false });
-            } else {
-              res.send({ message: successMsg, hash, checked: true });
-            }
+        pool.query(insertSql, [Email, hash], function (error, results, fields) {
+          if (error) {
+            res.send({ message: errorMsg, checked: false });
+          } else {
+            res.send({ message: successMsg, checked: true });
           }
-        );
+        });
       }
     });
-
   }
 
   // [GET] /api/isauth
