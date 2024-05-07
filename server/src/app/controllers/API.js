@@ -37,7 +37,7 @@ class API {
     const picture = req.body.picture;
     bcrypt.hash(PassWord, saltRound, (err, hash) => {
       if (err) {
-        res.status(200).send({ message: errorMsg, checked: false });
+        res.status(200).send({ message: err, checked: false });
       } else {
         pool.query(insertSql, [Email, hash, "LastName", " FirstName"], function (error, results, fields) {
           if (error) { 

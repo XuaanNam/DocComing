@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
@@ -8,10 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "flowbite-react";
 import Datepicker from "flowbite-datepicker/Datepicker";
 import { fetchProfile, updateProfile } from "../redux-toolkit/authSlice";
+
 const Profile = () => {
   const { currentUser, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
+  console.log(currentUser);
   const [actived, setActived] = useState(1);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({});
@@ -19,6 +21,7 @@ const Profile = () => {
   const [imageFile, setImageFile] = useState(null);
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
+  console.log(user);
 
   const dispatch = useDispatch();
 
@@ -27,8 +30,7 @@ const Profile = () => {
     setFullName(user?.data?.FirstName + user?.data?.LastName);
     const datepickerEl = document?.getElementById("BirthDate");
     new Datepicker(datepickerEl, {
-      // autohide: true,
-      // format: "dd/mm/yyyy",
+      format: "dd/mm/yyyy",
     });
   }, [user.data]);
 
@@ -61,14 +63,12 @@ const Profile = () => {
     body.append("Gender", data.Gender || "Nam");
     body.append("Avt", imageFile);
 
-    console.log(body);
     dispatch(updateProfile(body)).then(() => {
       dispatch(fetchProfile());
     });
     setEdit(false);
     setFormData({});
   };
-  // console.log(update);
 
   return (
     <div className="pt-[70px] bg-lime-50 ">
@@ -226,9 +226,7 @@ const Profile = () => {
                       </div>
                       <input
                         id="BirthDate"
-                        datepicker
-                        datepicker-autohide
-                        datepicker-title="Ngày sinh"
+                        datepicker="true"
                         value={data?.BirthDate}
                         type="text"
                         className="w-[90%] h-[40px] mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"

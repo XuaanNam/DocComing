@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { BsChevronCompactRight } from "react-icons/bs";
 import HearIcon from "../Images/heart-icon.svg";
@@ -9,11 +9,10 @@ import { IoIosArrowForward } from "react-icons/io";
 import Slider from "react-slick";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile } from "../redux-toolkit/authSlice";
+
 const HomePage = () => {
   const Navigate = useNavigate();
   const dispatch = useDispatch();
-  const { currentUser, user } = useSelector((state) => state.user);
-
   const slides = [
     {
       url: require("../Images/banner-01.jpg"),
