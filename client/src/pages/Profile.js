@@ -8,16 +8,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "flowbite-react";
 import Datepicker from "flowbite-datepicker/Datepicker";
 import { fetchProfile, updateProfile } from "../redux-toolkit/authSlice";
-import { UserContext } from "../UserContext";
 
 const Profile = () => {
-  const { userInfo } = useContext(UserContext);
-  console.log(userInfo);
   const { currentUser, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
   console.log(currentUser);
-  console.log(user);
   const [actived, setActived] = useState(1);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({});
@@ -25,6 +21,7 @@ const Profile = () => {
   const [imageFile, setImageFile] = useState(null);
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
+  console.log(user);
 
   const dispatch = useDispatch();
 
@@ -33,8 +30,7 @@ const Profile = () => {
     setFullName(user?.data?.FirstName + user?.data?.LastName);
     const datepickerEl = document?.getElementById("BirthDate");
     new Datepicker(datepickerEl, {
-      // autohide: true,
-      // format: "dd/mm/yyyy",
+      format: "dd/mm/yyyy",
     });
   }, [user.data]);
 
@@ -231,8 +227,6 @@ const Profile = () => {
                       <input
                         id="BirthDate"
                         datepicker="true"
-                        datepicker-autohide="true"
-                        datepicker-title="Ngày sinh"
                         value={data?.BirthDate}
                         type="text"
                         className="w-[90%] h-[40px] mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"

@@ -14,7 +14,7 @@ import { persistor } from "../redux-toolkit/configureStore";
 
 const Header = () => {
   const { currentUser, user } = useSelector((state) => state.user);
-  // const [user, setUser] = useState({});
+  // const user = localStorage.getItem("userInfo");
   const [actived, setActived] = useState(false);
   const dispatch = useDispatch();
   const Navigate = useNavigate();

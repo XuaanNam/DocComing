@@ -115,9 +115,9 @@ const authSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, { payload }) => {
         state.checked = payload.checked;
-        // toast.success("Cập nhật thành công", {
-        //   position: "top-right",
-        // });
+        toast.success("Cập nhật thành công", {
+          position: "top-right",
+        });
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = true;
@@ -136,7 +136,7 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(userRegister.fulfilled, (state, action) => {
-        state.check = action.payload.checked;
+        state.checked = action.payload.checked;
         if (action.payload.checked) {
           toast.success(action.payload.message, {
             position: "top-right",

@@ -5,19 +5,19 @@ import appointmentReducer from "./appointmentSlice";
 import { persistReducer, persistStore } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 
-const appointmentPersistConfig = {
-  key: "appointment",
+const userPersistConfig = {
+  key: "user",
   storage,
-  blacklist: ["appointment"],
+  blacklist: ["checked"],
 };
 const persistConfig = {
   key: "root",
   storage,
   version: 1,
-  blacklist: ["appointment"],
+  blacklist: ["appointment", "user"],
 };
 const reducer = combineReducers({
-  // user: authReducer,
+  user: persistReducer(userPersistConfig, authReducer),
   post: postReducer,
   // appointment: persistReducer(appointmentPersistConfig, appointmentReducer),
   appointment: appointmentReducer,

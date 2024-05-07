@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { userRegister } from "../redux-toolkit/authSlice";
 const Register = () => {
+  const { checked } = useSelector((state) => state.user);
+  console.log(checked);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const initialValues = { email: "", password: "", confirmPassword: "" };
@@ -13,7 +15,9 @@ const Register = () => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };
-  console.log(formValues);
+  useEffect(() => {
+    if (checked) setTimeout(Navigate("/login"), 1000);
+  }, [checked]);
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormErrors(validate(formValues));
