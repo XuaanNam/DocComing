@@ -17,7 +17,7 @@ const persistConfig = {
   blacklist: ["appointment"],
 };
 const reducer = combineReducers({
-  user: authReducer,
+  // user: authReducer,
   post: postReducer,
   // appointment: persistReducer(appointmentPersistConfig, appointmentReducer),
   appointment: appointmentReducer,

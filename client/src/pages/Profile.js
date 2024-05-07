@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { FaRegUserCircle } from "react-icons/fa";
 import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
@@ -8,10 +8,16 @@ import { useDispatch, useSelector } from "react-redux";
 import { Button } from "flowbite-react";
 import Datepicker from "flowbite-datepicker/Datepicker";
 import { fetchProfile, updateProfile } from "../redux-toolkit/authSlice";
+import { UserContext } from "../UserContext";
+
 const Profile = () => {
+  const { userInfo } = useContext(UserContext);
+  console.log(userInfo);
   const { currentUser, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
+  console.log(currentUser);
+  console.log(user);
   const [actived, setActived] = useState(1);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({});
@@ -61,14 +67,12 @@ const Profile = () => {
     body.append("Gender", data.Gender || "Nam");
     body.append("Avt", imageFile);
 
-    console.log(body);
     dispatch(updateProfile(body)).then(() => {
       dispatch(fetchProfile());
     });
     setEdit(false);
     setFormData({});
   };
-  // console.log(update);
 
   return (
     <div className="pt-[70px] bg-lime-50 ">
@@ -226,8 +230,8 @@ const Profile = () => {
                       </div>
                       <input
                         id="BirthDate"
-                        datepicker
-                        datepicker-autohide
+                        datepicker="true"
+                        datepicker-autohide="true"
                         datepicker-title="Ngày sinh"
                         value={data?.BirthDate}
                         type="text"

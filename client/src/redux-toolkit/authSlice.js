@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+
 const initialState = {
   currentUser: null,
   auth: "",
@@ -13,6 +14,7 @@ const initialState = {
   user: {},
   updated: false,
 };
+
 export const userRegister = createAsyncThunk("userRegister", async (body) => {
   const res = await fetch("http://localhost:5000/api/register", {
     method: "POST",
@@ -125,6 +127,7 @@ const authSlice = createSlice({
       })
       .addCase(fetchProfile.fulfilled, (state, { payload }) => {
         state.user = payload;
+        localStorage.setItem("userInfo", JSON.stringify(payload));
       })
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = true;
@@ -132,8 +135,17 @@ const authSlice = createSlice({
       .addCase(userRegister.pending, (state, action) => {
         state.loading = true;
       })
-      .addCase(userRegister.fulfilled, (state, { payload }) => {
-        // state.user = payload;
+      .addCase(userRegister.fulfilled, (state, action) => {
+        state.check = action.payload.checked;
+        if (action.payload.checked) {
+          toast.success(action.payload.message, {
+            position: "top-right",
+          });
+        } else {
+          toast.error(action.payload.message, {
+            position: "top-right",
+          });
+        }
       })
       .addCase(userRegister.rejected, (state, action) => {
         state.loading = true;

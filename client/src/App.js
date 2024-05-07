@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
+import { UserContextProvider } from "./UserContext";
 import { ToastContainer } from "react-toastify";
 import HomePage from "./pages/HomePage";
 import BlogPage from "./pages/BlogPage";
@@ -20,23 +21,25 @@ function App() {
   return (
     <div>
       <Router>
-        <Header></Header>
         <ToastContainer></ToastContainer>
-        <Routes>
-          <Route path="/" exact element={<HomePage />} />
-          <Route path="/admin/:adminpage" exact element={<AdminPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/patient/profile" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/doctors" element={<Doctors />} />
-          <Route path="/categories" element={<Categories />} />
-          <Route path="/appointment" element={<Appointment />} />
-          <Route path="/doctor/booking" element={<BookingDoctor />} />
-          <Route path="/booking/confirm" element={<BookingConfirm />} />
-          <Route path="/doctor/schedule" element={<DoctorSchedule />} />
-        </Routes>
-        <Footer></Footer>
+        <UserContextProvider>
+          <Header></Header>
+          <Routes>
+            <Route path="/" exact element={<HomePage />} />
+            <Route path="/admin/:adminpage" exact element={<AdminPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/patient/profile" element={<Profile />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/doctors" element={<Doctors />} />
+            <Route path="/categories" element={<Categories />} />
+            <Route path="/appointment" element={<Appointment />} />
+            <Route path="/doctor/booking" element={<BookingDoctor />} />
+            <Route path="/booking/confirm" element={<BookingConfirm />} />
+            <Route path="/doctor/schedule" element={<DoctorSchedule />} />
+          </Routes>
+          <Footer></Footer>
+        </UserContextProvider>
       </Router>
     </div>
   );
