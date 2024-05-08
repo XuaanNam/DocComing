@@ -74,7 +74,7 @@ class API {
   // [POST] /api/login
   login(req, res, next) {
     const sql =
-      "select id, Email, PassWord, Authorization from account where Email = ? ";
+      "select id, Email, PassWord, FirstName, LastName Authorization from account where Email = ? ";
     const message = "Số điện thoại hoặc mật khẩu không chính xác!";
     const Email = req.body.Email;
     const PassWord = req.body.PassWord;
@@ -100,6 +100,7 @@ class API {
                 token,
                 id: results[0].id,
                 Phone: results[0].Phone,
+                FullName: results[0].FirstName + " " + results[0].LastName,
                 authentication: results[0].authentication,
               });
             } else {
@@ -116,7 +117,7 @@ class API {
   // [POST] /api/auth/google/check
   Google(req, res) {
     const { email, name, googlePhotoUrl } = req.body;
-    const sql = "select id, Authorization from account where Email = ? ";
+    const sql = "select id, Authorization, FirstName, LastName from account where Email = ? ";
     const fn = name.split(" ");
     let lastName = fn[fn.length - 1];
     let firstName = "";
@@ -145,7 +146,7 @@ class API {
               checked: true,
               token,
               id: results[0].id,
-              name,
+              FullName: results[0].FirstName + results[0].LastName,
               authentication: results[0].Authorization,
               googlePhotoUrl,
             });
@@ -247,7 +248,6 @@ class API {
             const birth = bd[2] + "/" + bd[1] + "/" + bd[0];
             results[0].BirthDate = birth;
           }
-
           res.status(200).send({ data: results[0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
