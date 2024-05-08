@@ -117,7 +117,7 @@ const Header = () => {
               )}
             </div>
           ) : (
-            <div className="flex gap-4 justify-center items-center text-base">
+            <div className="ml-5 flex gap-4 justify-center items-center text-base">
               <a
                 href="/login"
                 className="text-gray-100 cursor-pointer transition-transform duration-500 hover:scale-110"

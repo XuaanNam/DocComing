@@ -194,6 +194,7 @@ const authSlice = createSlice({
           toast.error(action.payload.message, {
             position: "top-right",
           });
+          state.message = action.payload.message;
         }
       })
       .addCase(userRegister.rejected, (state, action) => {

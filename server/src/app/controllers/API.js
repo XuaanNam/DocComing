@@ -31,21 +31,27 @@ class API {
   // [POST] /api/register
   register(req, res, next) {
     const insertSql =
-      "insert into account (Email, PassWord, LastName, FirstName) value (?,?,?,?)";
+      "insert into account (Email, PassWord, LastName, FirstName) values (?,?,?,?)";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
     const successMsg = "Tài khoản đã đăng kí thành công!";
-    const { Email, PassWord } = req.body;
-    const picture = req.body.picture;
+    const { Email, PassWord, FullName } = req.body;
+    const fn = FullName.split(" "); // Duong Quoc ANh
+    let FirstName = " ";
+    const LastName = fn[fn.length - 1];
+    for (let i = 0; i < fn.length - 1; i++) {
+      FirstName += fn[i] + " ";
+    }
+    //const picture = req.body.picture;
     bcrypt.hash(PassWord, saltRound, (err, hash) => {
       if (err) {
         res.status(200).send({ message: err, checked: false });
       } else {
         pool.query(
           insertSql,
-          [Email, hash, "LastName", " FirstName"],
+          [Email, hash, LastName, FirstName],
           function (error, results, fields) {
             if (error) {
-              res.send({ message: errorMsg, checked: false });
+              res.send({ message: error, checked: false });
             } else {
               res.send({ message: successMsg, checked: true });
             }
