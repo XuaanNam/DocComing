@@ -9,6 +9,7 @@ const initialState = {
   loading: false,
   error: "",
   checked: false,
+  isLogin: false,
   token: "",
   data: [],
   user: {},
@@ -27,6 +28,16 @@ export const userRegister = createAsyncThunk("userRegister", async (body) => {
 });
 export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   const res = await fetch("http://localhost:5000/api/auth/google/check", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
+export const login = createAsyncThunk("login", async (body) => {
+  const res = await fetch("http://localhost:5000/api/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -105,6 +116,25 @@ const authSlice = createSlice({
       .addCase(loginGoogle.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(login.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        if (action.payload?.checked === false) {
+          state.checked = action.payload.checked;
+        } else {
+          state.loading = false;
+          state.isLogin = action.payload.checked;
+          state.token = action.payload.token;
+          localStorage.setItem("token", action.payload?.token);
+          state.currentUser = action.payload;
+        }
+        console.log(action.payload);
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
       })
       .addCase(authentication.pending, (state, action) => {
         state.loading = true;

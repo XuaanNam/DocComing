@@ -32,16 +32,12 @@ export default function OAuth() {
   return (
     <div
       onClick={handleGoogleClick}
-      className="relative flex h-12 w-full items-center border rounded-xl py-2 cursor-pointer bg-white hover:drop-shadow-md"
+      className="relative flex h-12 w-full items-center border rounded-xl py-2 cursor-pointer  bg-gradient-to-r from-slate-50 to-white hover:drop-shadow-md"
     >
-      <img className="absolute h-[70%] pl-4" src={GoogleIcon} alt=""></img>
+      <img className="absolute h-[70%] pl-4 z-10" src={GoogleIcon} alt=""></img>
       <div className="w-full text-center text-lg opacity-70">
         Tiếp tục với google
       </div>
-      {/* <Button type='button' gradientDuoTone='pinkToOrange' outline onClick={handleGoogleClick}>
-        <AiFillGoogleCircle className='w-6 h-6 mr-2'/>
-        Continue with Google
-    </Button> */}
     </div>
   );
 }

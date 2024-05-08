@@ -30,22 +30,27 @@ class API {
 
   // [POST] /api/register
   register(req, res, next) {
-    const insertSql = "insert into account (Email, PassWord, LastName, FirstName) value (?,?,?,?)";
+    const insertSql =
+      "insert into account (Email, PassWord, LastName, FirstName) value (?,?,?,?)";
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
     const successMsg = "Tài khoản đã đăng kí thành công!";
-    const { Email, PassWord } = req.body; 
+    const { Email, PassWord } = req.body;
     const picture = req.body.picture;
     bcrypt.hash(PassWord, saltRound, (err, hash) => {
       if (err) {
         res.status(200).send({ message: err, checked: false });
       } else {
-        pool.query(insertSql, [Email, hash, "LastName", " FirstName"], function (error, results, fields) {
-          if (error) { 
-            res.send({ message: errorMsg, checked: false });
-          } else {
-            res.send({ message: successMsg, checked: true });
+        pool.query(
+          insertSql,
+          [Email, hash, "LastName", " FirstName"],
+          function (error, results, fields) {
+            if (error) {
+              res.send({ message: errorMsg, checked: false });
+            } else {
+              res.send({ message: successMsg, checked: true });
+            }
           }
-        });
+        );
       }
     });
   }
@@ -222,7 +227,7 @@ class API {
   // Profile
   //[GET] /api/profile
   getProfile(req, res) {
-    const id = req.user.id; 
+    const id = req.user.id;
     const selectSql = "select * from account where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể lấy thông tin!";
 
@@ -252,8 +257,8 @@ class API {
     const Address = req.body.Address ? req.body.Address : null;
     const Phone = req.body.Phone ? req.body.Phone : null;
     const Gender = req.body.Gender ? req.body.Gender : null;
-    let BirthDate = null; 
-    if(req.body.BirthDate !== "null"){
+    let BirthDate = null;
+    if (req.body.BirthDate !== "null") {
       let bd = req.body.BirthDate?.split("/"); // dd/mm/yyyy
       BirthDate = bd[2] + "-" + bd[1] + "-" + bd[0];
     }
@@ -267,6 +272,7 @@ class API {
     for (let i = 0; i < fn.length - 1; i++) {
       FirstName = FirstName + fn[i] + " ";
     }
+    console.log(FullName, BirthDate, Gender, Phone, Address, id);
     if (Avt === null) {
       data = [FirstName, LastName, BirthDate, Gender, Phone, Address, id];
       updateSql =
@@ -279,7 +285,8 @@ class API {
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin!";
 
     pool.query(updateSql, data, function (error, results, fields) {
-      if (error) { console.log(error)
+      if (error) {
+        console.log(error);
         res.send({ message: error, checked: false });
       } else {
         if (results) {

@@ -22,18 +22,18 @@ const Profile = () => {
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
   console.log(user);
-
+  console.log(currentUser);
   const dispatch = useDispatch();
 
   useEffect(() => {
     setData(user?.data);
-    setFullName(user?.data?.FirstName + user?.data?.LastName);
+    setFullName(currentUser?.name);
     const datepickerEl = document?.getElementById("BirthDate");
     new Datepicker(datepickerEl, {
       format: "dd/mm/yyyy",
     });
   }, [user.data]);
-
+  console.log(data);
   const handleEdit = () => {
     setEdit(true);
   };
@@ -129,7 +129,7 @@ const Profile = () => {
               onClick={() => filePickerRef.current.click()}
             >
               <img
-                src={data?.Avt || currentUser?.googlePhotoUrl}
+                src={data?.Avt || require("../Images/pattientavt.png")}
                 alt="userImage"
                 className="rounded-full w-full h-full object-cover border-4 border-[lightgray]"
               />
@@ -151,7 +151,11 @@ const Profile = () => {
                       } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
                       id="name"
                       placeholder="--"
-                      value={FullName ? FullName : currentUser?.name}
+                      value={
+                        data?.FirstName + data?.LastName
+                          ? data?.FirstName + data?.LastName
+                          : currentUser?.name
+                      }
                       onChange={(e) => {
                         setFullName(e.target.value);
                         handleChange(e);
