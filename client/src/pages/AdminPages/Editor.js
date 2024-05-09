@@ -2,7 +2,7 @@ import ReactQuill from "react-quill";
 import { useMemo, useRef } from "react";
 import "react-quill/dist/quill.snow.css";
 
-export default function Editor({ value, onChange }) {
+export default function Editor({ value, onChange, className }) {
   const inputRef = useRef(null);
   const quillRef = useRef(null);
 
@@ -34,7 +34,7 @@ export default function Editor({ value, onChange }) {
       //history: [{ delay: 500 }, { maxStack: 100 }, { userOnly: false }],
       toolbar: {
         container: [
-          [{ header: [1, 2, 3, false] }],
+          [{ header: [1, 2, 3, true] }],
           ["bold", "italic", "underline", "strike", "blockquote"],
           [
             { list: "ordered" },
@@ -57,12 +57,13 @@ export default function Editor({ value, onChange }) {
     <div className="content w-[70%] mb-4 bg-white">
       <input ref={inputRef} hidden type="file" onChange={imageHandler} />
       <ReactQuill
-        className=" text-lg "
+        className={className}
         ref={quillRef}
         value={value}
         theme={"snow"}
         onChange={onChange}
         modules={modules}
+        preserveWhitespace
       />
     </div>
   );

@@ -16,108 +16,115 @@ import {
 
 const DashSidebar = ({ param }) => {
   const [blogActived, setBlogActived] = useState(false);
-
+  const [actived, setActived] = useState("");
   return (
-    <div>
-      <Sidebar className="w-full md:w-56 font-medium pt-[70px]">
-        <div className="px-5 py-3">
+    <div className="border h-screen">
+      <div className="w-full md:w-56 font-medium pt-[70px]">
+        <div className="px-12 py-4 mb-4">
           <a
             href="/admin/dashboard"
             className="text-2xl font-semibold uppercase text-[#0f766e] hover:text-gray-300"
           >
-            Doctor Coming
+            <span className="text-left">Doctor</span>{" "}
+            <span className="flex justify-end">Coming</span>
           </a>
         </div>
-        <Sidebar.Items className="">
-          <Sidebar.ItemGroup className="flex flex-col gap-1 font-medium">
+        <div className="">
+          <div className="flex flex-col gap-1 font-medium">
             {/* {currentUser && currentUser.isAdmin && ( */}
-            <Link to="/admin/dashboard">
-              <Sidebar.Item
-                active={param === "dash"}
-                icon={HiChartPie}
-                as="div"
-              >
-                Dashboard
-              </Sidebar.Item>
-            </Link>
-            {/* )} */}
-            <Link to="/admin/profile">
-              <Sidebar.Item
-                active={param === "profile"}
-                icon={HiUser}
-                //   label={currentUser.isAdmin ? 'Admin' : 'User'}
-                labelColor="dark"
-                as="div"
-              >
-                Profile
-              </Sidebar.Item>
-            </Link>
-            {/* {currentUser.isAdmin && ( */}
-            <div
-              className="cursor-pointer"
-              onClick={() => setBlogActived(!blogActived)}
+            <Link
+              onClick={() => {
+                setActived("dashboard");
+              }}
+              className={` ${
+                actived === "dashboard" &&
+                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
+              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              to="/admin/dashboard"
             >
-              <Sidebar.Item active="" icon={HiDocumentText} as="div">
-                Bài viết
-              </Sidebar.Item>
+              Dashboard
+            </Link>
+            <Link
+              onClick={() => {
+                setActived("profile");
+              }}
+              className={` ${
+                actived === "profile" &&
+                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
+              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              to="/admin/profile"
+            >
+              Profile
+            </Link>
+            <Link
+              onClick={() => {
+                setActived("users");
+              }}
+              className={` ${
+                actived === "users" &&
+                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
+              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              to="/admin/users"
+            >
+              User
+            </Link>
+            <div
+              onClick={() => {
+                setActived("blog");
+              }}
+              className={` ${
+                actived === "blog" &&
+                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
+              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center  cursor-pointer`}
+              to="/admin/users"
+            >
+              Blog
             </div>
-            {blogActived && (
-              <div className="flex flex-col gap-1 pl-1">
-                <Link to="/admin/create-post">
-                  <Sidebar.Item
-                    className="w-[90%]"
-                    active={param === "create-post"}
-                    icon={HiDocumentAdd}
-                    as="div"
-                  >
-                    Tạo bài viết
-                  </Sidebar.Item>
+            {actived === "blog" && (
+              <div className="transition-all duration-500 ">
+                <Link
+                  className={` ${
+                    param === "manage-post" &&
+                    "bg-gradient-to-r from-green-400 to-teal-400 text-white"
+                  } w-44 h-10 rounded-lg shadow-md flex items-center justify-center mb-1`}
+                  to="/admin/manage-post"
+                >
+                  <div>Manage Blog</div>
                 </Link>
-                <Link to="/admin/manage-post">
-                  <Sidebar.Item
-                    className="w-[90%]"
-                    active={param === "manage-post"}
-                    icon={HiDocumentReport}
-                    as="div"
-                  >
-                    Quản lý bài viết
-                  </Sidebar.Item>
+                <Link
+                  className={` ${
+                    param === "create-post" &&
+                    "bg-gradient-to-r from-green-400 to-teal-400 text-white"
+                  } w-44 h-10 rounded-lg shadow-md flex items-center justify-center `}
+                  to="/admin/create-post"
+                >
+                  <div>Create Blog</div>
                 </Link>
               </div>
             )}
-            {/* )} */}
-            {/* {currentUser.isAdmin && ( */}
-            <>
-              <Link to="/admin/users">
-                <Sidebar.Item
-                  active={param === "users"}
-                  icon={HiOutlineUserGroup}
-                  as="div"
-                >
-                  Users
-                </Sidebar.Item>
-              </Link>
-              <Link to="/admin/create-blog">
-                <Sidebar.Item
-                  active={param === "comments"}
-                  icon={HiAnnotation}
-                  as="div"
-                >
-                  Comments
-                </Sidebar.Item>
-              </Link>
-            </>
-            {/* )} */}
-            <Sidebar.Item
-              icon={HiArrowSmRight}
-              className="cursor-pointer"
-              //   onClick={handleSignout}
+            <Link
+              onClick={() => {
+                setActived("comments");
+              }}
+              className={` ${
+                actived === "comments" &&
+                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
+              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mt-3`}
+              to="/admin/comments"
             >
-              Sign Out
-            </Sidebar.Item>
-          </Sidebar.ItemGroup>
-        </Sidebar.Items>
-      </Sidebar>
+              Comments
+            </Link>
+            <div
+              //  onClick={() => {
+              //   }}
+              className="
+              w-48 h-11 rounded-lg shadow-md flex items-center justify-center mt-3 cursor-pointet"
+            >
+              Log out
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

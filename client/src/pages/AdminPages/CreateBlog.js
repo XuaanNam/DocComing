@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import Editor from "./Editor";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,25 +7,18 @@ import Select from "react-select";
 import { Alert, Button, FileInput } from "flowbite-react";
 const CreateBlog = () => {
   const dispatch = useDispatch();
-  const { category } = useSelector((state) => state.post);
+  const { category, checked } = useSelector((state) => state.post);
+  const [filled, setFilled] = useState(true);
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
-  const [files, setFiles] = useState("");
-  const [categories, setCategories] = useState([{ id: "", Categories: "" }]);
+  const [files, setFiles] = useState(null);
   const [categoryId, setCategoryId] = useState("");
-  const data = new FormData();
-  data.append("Title", title);
-  data.append("Brief", summary);
-  data.append("Content", content);
-  data.append("idCategories", categoryId);
-  data.append("FeaturedImage", files);
-
+  const ref = useRef();
   useEffect(() => {
     dispatch(fetchCategories());
-    setCategories(category);
+    // setCategories(category);
   }, [dispatch]);
-
   const handleChange = (event) => {
     setCategoryId(event.target.value);
   };
@@ -37,16 +30,35 @@ const CreateBlog = () => {
     data.append("Content", content);
     data.append("idCategories", categoryId);
     data.append("FeaturedImage", files);
-    dispatch(createPost(data));
+    if (
+      title !== "" &&
+      summary !== "" &&
+      content.length > 0 &&
+      categoryId !== "" &&
+      files?.name
+    ) {
+      console.log("zz");
+      // dispatch(createPost(data));
+      setTitle("");
+      setSummary("");
+      setContent("");
+      setCategoryId("");
+      setFiles(null);
+      ref.current.value = null;
+    } else {
+      setFilled(false);
+    }
   };
-
+  console.log(files);
   return (
     <div className="pt-5 pl-16 ">
       <div className="text-2xl font-bold opacity-70 mb-5">Tạo Blog</div>
-      <div className="">
+      <div className="mb-20">
         <div className="flex items-center h-[48px] w-[70%] border rounded-lg mb-3 bg-white">
           <input
-            className="outline-none rounded-lg h-full p-3 w-full"
+            className={` ${
+              !filled && title === "" && "border-red-400 border-[1.5px]"
+            } outline-none rounded-lg h-full p-3 w-full`}
             type="text"
             placeholder="Tiêu đề"
             value={title}
@@ -55,7 +67,9 @@ const CreateBlog = () => {
         </div>
         <div className="flex items-center h-[48px] w-[70%] border rounded-lg mb-3 bg-white">
           <input
-            className="outline-none rounded-lg h-full p-3 w-full"
+            className={` ${
+              !filled && summary === "" && "border-red-400 border-[1.5px]"
+            } outline-none rounded-lg h-full p-3 w-full`}
             type="text"
             placeholder="Tóm tắt"
             value={summary}
@@ -63,7 +77,9 @@ const CreateBlog = () => {
           />
         </div>
         <select
-          className="flex items-center h-[48px] w-[70%] border rounded-lg mb-3 bg-white p-2 text-slate-800 opacity-60 cursor-pointer"
+          className={` ${
+            !filled && categoryId === "" && "border-red-400 border-[1.5px]"
+          } flex items-center h-[48px] w-[70%] border rounded-lg mb-3 bg-white p-2 text-slate-800 cursor-pointer`}
           value={categoryId}
           onChange={handleChange}
         >
@@ -78,42 +94,31 @@ const CreateBlog = () => {
           ))}
         </select>
 
-        {/* <div className="flex items-center h-[48px] w-[70%] border rounded-lg mb-3 bg-white">
-          <input
-            className="outline-none w-full"
-            type="file"
-            onChange={(e) => setFiles(e.target.files)}
-          />
-          <FileInput
-            className="w-full bg-white h-full"
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFiles(e.target.files[0])}
-          />
-        </div> */}
-        <div className="flex gap-4 w-[70%] mb-3 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+        <div
+          className={` ${
+            !filled && !files?.name ? "border-red-400" : "border-teal-500"
+          } flex gap-4 w-[70%] mb-3 items-center justify-between border-2 border-dotted p-3`}
+        >
           <FileInput
             className="cursor-pointer h-[48px] w-full !text-white"
             type="file"
             accept="image/*"
             onChange={(e) => setFiles(e.target.files[0])}
+            ref={ref}
           />
         </div>
-        {/* <Editor value={content} onChange={(e) => setContent(e.target.value)} /> */}
-        {/* <Editor value={content} onChange={(e) => console.log(e)} /> */}
-        <Editor value={content} onChange={setContent} />
+
+        <Editor
+          className={` ${!filled && content === "" && "ql-error"}`}
+          value={content}
+          onChange={setContent}
+        />
         <button
           onClick={handleCreatePost}
           className="h-12 w-[70%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
         >
           Đăng
         </button>
-        {/* {content && (
-          <div
-            className="content"
-            dangerouslySetInnerHTML={{ __html: content }}
-          />
-        )} */}
       </div>
     </div>
   );

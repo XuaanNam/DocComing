@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getDetailPost } from "../redux-toolkit/postSlice";
 
-const BlogPage = () => {
+export const BlogPage = () => {
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const { detailPost, error, loading } = useSelector((state) => state.post);
@@ -14,15 +14,12 @@ const BlogPage = () => {
   const post = detailPost[0];
   console.log(post);
   return (
-    <div className="bg-lime-50">
+    <div>
       <div className="mx-[48px] pt-[100px] pl-16">
-        <div className="flex gap-7 pb-20">
+        <div className="flex gap-7 mb-20">
           <div className="w-[70%]">
-            <div className="h-[44px] w-[150px] flex items-center justify-center p-1 mb-5 cursor-pointer rounded-3xl bg-teal-50 text-blue-500 font-medium drop-shadow-lg">
-              {post?.Categories}
-            </div>
             <div className="mb-5">
-              {/* Bệnh tiêu hóa {">"} Các vấn đề tiêu hóa khác */}
+              Bệnh tiêu hóa {">"} Các vấn đề tiêu hóa khác
             </div>
             <div className="text-4xl font-bold text-slate-800 w-full mb-5">
               {post?.Title}
@@ -51,15 +48,17 @@ const BlogPage = () => {
               alt=""
             ></img>
             <div className="grid place-items-center py-2">
-              <span className="">Tác giả:</span>
-              <div className="text-slate-800 text-lg font-medium">
-                {post?.FirstName + " " + post?.LastName}
+              <div className="text-slate-700 text-sm">
+                Thông tin kiểm chứng bởi:
               </div>
+              <div className="text-slate-800 text-lg font-medium">Author</div>
             </div>
-            <div className="grid place-items-center w-full py-2">
+            <div className="grid place-items-center py-2 w-full">
               <hr className="w-[90%]"></hr>
               <div className="text-sm text-center">
-                <div>Ngày đăng: {post?.DatePost.slice(0, 10)}</div>
+                <span className="">Tác giả:</span>
+                <span className="font-medium"> Hương lan</span>
+                <div>Ngày cập nhật: 11/03/2024</div>
               </div>
             </div>
           </div>
@@ -68,5 +67,3 @@ const BlogPage = () => {
     </div>
   );
 };
-
-export default BlogPage;

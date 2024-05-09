@@ -14,7 +14,7 @@ const persistConfig = {
   key: "root",
   storage,
   version: 1,
-  blacklist: ["appointment", "user"],
+  blacklist: ["appointment", "user", "post"],
 };
 const reducer = combineReducers({
   user: persistReducer(userPersistConfig, authReducer),
