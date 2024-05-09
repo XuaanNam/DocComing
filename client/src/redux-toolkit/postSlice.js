@@ -7,6 +7,8 @@ const initialState = {
   img: "",
   checked: false,
   data: [],
+  detailPost: {},
+  category: [],
 };
 export const createPost = createAsyncThunk("createPost", async (body) => {
   const res = await fetch("http://localhost:5000/api/post/create", {
@@ -39,6 +41,16 @@ export const fetchCategories = createAsyncThunk("fetchCategories", async () => {
   });
   return await res.json();
 });
+export const getDetailPost = createAsyncThunk("getDetailPost", async (body) => {
+  const res = await fetch(`http://localhost:5000/api/post/detail/${body}`, {
+    method: "GET",
+    headers: {
+      Authorization:
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJEb2Njb21pbmciLCJpZCI6MjM1NTIzNDg0LCJBdXRob3JpemF0aW9uIjowLCJpYXQiOjE3MTIzOTExMjYsImV4cCI6MTk3MTU5MTEyNn0.vBtdi41gAY9MYeAT7E83d6RSWg7Eh-0JQxTXTCVkVqA",
+    },
+  });
+  return await res.json();
+});
 const postSlice = createSlice({
   name: "post",
   initialState,
@@ -49,7 +61,7 @@ const postSlice = createSlice({
         state.loading = true;
       })
       .addCase(createPost.fulfilled, (state, action) => {
-        state.checked = action.payload.checked;
+        state.checked = action.payload;
       })
       .addCase(createPost.rejected, (state, action) => {
         state.loading = true;
@@ -59,7 +71,7 @@ const postSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
-        state.data = action.payload.data;
+        state.category = action.payload.data;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
         state.loading = true;
@@ -72,6 +84,17 @@ const postSlice = createSlice({
         state.data = action.payload.data;
       })
       .addCase(fetchPost.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //getDetailPost
+      .addCase(getDetailPost.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getDetailPost.fulfilled, (state, action) => {
+        state.detailPost = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getDetailPost.rejected, (state, action) => {
         state.loading = true;
       });
   },

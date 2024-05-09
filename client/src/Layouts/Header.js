@@ -14,7 +14,6 @@ import { persistor } from "../redux-toolkit/configureStore";
 
 const Header = () => {
   const { currentUser, user } = useSelector((state) => state.user);
-  // const user = localStorage.getItem("userInfo");
   const [actived, setActived] = useState(false);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
@@ -23,7 +22,6 @@ const Header = () => {
     dispatch(logout());
     setTimeout(() => persistor.purge(), 200);
   };
-  console.log(actived);
   return (
     <div className="h-[70px] fixed w-screen z-50">
       <div className="text-sm h-full px-5 text-gray-700 bg-teal-600 grid grid-cols-4 drop-shadow-lg">
@@ -60,21 +58,23 @@ const Header = () => {
             Chuyên mục
           </div>
         </div>
-        <div className="relative flex gap-2 w-full items-center">
+        <div className="relative flex gap-3 w-full items-center">
           <div className="w-[1px] h-[34px] bg-gray-200"></div>
           {currentUser ? (
             <div className="flex gap-2 items-center w-full">
               <div
-                className="flex gap-2 items-center cursor-pointer w-[80%]"
+                className="flex gap-3 items-center justify-center cursor-pointer w-[81%]"
                 onClick={() => setActived(!actived)}
               >
                 <img
-                  className="rounded-full h-10 w-10"
+                  className="rounded-full h-10 w-10 object-cover"
                   alt=""
                   src={user?.data?.Avt || require("../Images/pattientavt.png")}
                 ></img>
-                <p className="text-base font-medium text-gray-100 w-[65%]">
-                  {currentUser?.name}Nguyen Duong Quoc
+                <p className="font-medium text-base text-center text-gray-100 truncate max-w-[65%]">
+                  {user?.data
+                    ? user?.data?.FirstName + user?.data?.LastName
+                    : currentUser?.FullName}
                 </p>
                 <IoMdArrowDropdown
                   className={`${
@@ -82,8 +82,10 @@ const Header = () => {
                   } text-gray-100 h-5 w-5`}
                 ></IoMdArrowDropdown>
               </div>
-
-              <GoBellFill className="ml-3 h-7 w-7 text-lime-100  cursor-pointer transition-transform duration-500 hover:scale-110" />
+              <GoBellFill
+                onClick={() => console.log("zzz")}
+                className="h-7 w-7 text-lime-100  cursor-pointer transition-transform duration-500 hover:scale-110"
+              />
               {actived === true && (
                 <div className="absolute top-[62px] w-60 text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-10">
                   <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">

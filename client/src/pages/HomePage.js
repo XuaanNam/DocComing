@@ -8,13 +8,12 @@ import SpecialtiesIcon from "../Images/specialties-icon.svg";
 import { IoIosArrowForward } from "react-icons/io";
 import Slider from "react-slick";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchProfile } from "../redux-toolkit/authSlice";
+import { authentication, fetchProfile } from "../redux-toolkit/authSlice";
 
 const HomePage = () => {
   const { currentUser, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
-  console.log(currentUser, user);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const slides = [
@@ -43,8 +42,11 @@ const HomePage = () => {
     setCurrentIndex(newIndex);
   }, [currentIndex, slides.length]);
   useEffect(() => {
-    dispatch(fetchProfile());
-  }, []);
+    if (currentUser) {
+      dispatch(fetchProfile());
+      dispatch(authentication());
+    }
+  }, [currentUser]);
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
@@ -61,8 +63,6 @@ const HomePage = () => {
           style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
           className="w-full h-full  rounded-3xl bg-center bg-cover duration-500"
         ></div>
-        {/* Left Arrow */}
-        {/* Right Arrow */}
         <div className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] right-5 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">
           <BsChevronCompactRight onClick={nextSlide} size={30} />
         </div>

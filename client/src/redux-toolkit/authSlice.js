@@ -124,6 +124,7 @@ const authSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         if (action.payload?.checked === false) {
           state.checked = action.payload.checked;
+          state.message = action.payload.message;
         } else {
           state.loading = false;
           state.isLogin = action.payload.checked;
@@ -140,7 +141,7 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(authentication.fulfilled, (state, { payload }) => {
-        state.auth = payload;
+        state.auth = payload.authentication.Authorization;
       })
       .addCase(authentication.rejected, (state, action) => {
         state.loading = true;

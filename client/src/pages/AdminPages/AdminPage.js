@@ -14,15 +14,14 @@ const AdminPage = () => {
   const [blogActived, setBlogActived] = useState(false);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(authentication());
-    if (auth !== 0) {
-      Navigate("/");
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (auth !== 0) {
+  //     Navigate("/");
+  //   }
+  // }, []);
   return (
     <div>
-      {auth === 0 ? (
+      {auth === 1 ? (
         <div className="flex">
           <DashSidebar param={adminpage}></DashSidebar>
           <div className="w-full flex flex-col h-screen bg-gradient-to-r">

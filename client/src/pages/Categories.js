@@ -145,8 +145,8 @@ const Categories = () => {
   ];
   return (
     <div className="pt-[70px]">
-      <div className="mx-24 p-5">
-        <p className="text-slate-700 font-medium text-2xl mb-7 text-center">
+      <div className="mx-24 mb-14 p-5">
+        <p className="text-slate-700 font-medium text-2xl my-7 text-center">
           Tất cả chuyên mục
         </p>
         <div className="flex flex-wrap gap-7">

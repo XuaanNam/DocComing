@@ -7,7 +7,7 @@ import Select from "react-select";
 import { Alert, Button, FileInput } from "flowbite-react";
 const CreateBlog = () => {
   const dispatch = useDispatch();
-  const category = useSelector((state) => state.post.data);
+  const { category } = useSelector((state) => state.post);
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
@@ -71,7 +71,7 @@ const CreateBlog = () => {
             Chọn chuyên mục
           </option>
 
-          {category.map((category) => (
+          {category?.map((category) => (
             <option value={category.id} key={category.id}>
               {category.Categories}
             </option>
