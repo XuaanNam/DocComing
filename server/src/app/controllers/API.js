@@ -810,6 +810,25 @@ class API {
     });
   }
 
+  // [GET] /api/post/Categories
+  getPostByCategories(req, res) {
+    const id = req.body.id; 
+    const selectSql = "call PostByCategories(?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, id, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results[0]) {
+          res.status(200).send({ data: results[0], checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
   // [GET] /api/post/search/keywords
   searchByKeywords(req, res, next) {
     let { keywords } = req.body;
@@ -963,7 +982,7 @@ class API {
 
   // ADMIN API
 
-  //[GET] /api/admin/post
+  //[GET] /api/admin/post  
   getAllPost(req, res) {
     const selectSql = "select * from AllPost";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";

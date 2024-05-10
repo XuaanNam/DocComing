@@ -4,10 +4,11 @@ use doccoming
 ;
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '123123123';
 flush privileges;
+
 create table account(
 id int not null primary key AUTO_INCREMENT,
-LastName nvarchar(20) not null CHECK (LastName !=""),
-FirstName nvarchar(25) not null CHECK (FirstName !=""),
+LastName nvarchar(20),
+FirstName nvarchar(25),
 BirthDate date,
 Gender varchar(30),
 Address nvarchar(300),
@@ -23,7 +24,7 @@ insert into account (LastName, FirstName, Email, PassWord, Phone, Authorization)
 ('admin', 'admin', 'admin@doccoming.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 0),
 ('Bac', 'Si', 'doctor@doccoming.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 2),
 ('Benh', 'Nhan', 'patient@doccoming.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 1);
--- drop table account;  matkhau la 123123
+-- drop table account;
 
 create table authorization(
 id int not null primary key,
@@ -59,16 +60,18 @@ insert into major (Major) values
 ('Tâm thần học'),
 ('Tim mạch'), ('Ung bướu');
 
-create table majorDoctor(
+create table inforDoctor(
 id int not null primary key AUTO_INCREMENT,
 idAccount int,
+Degree varchar(30), -- trình độ
+Introduce varchar(150), -- giới thiệu
 idMajor int,
 foreign key (idAccount) references account(id),
 foreign key (idMajor) references major(id)
 )
 ;
-insert into majorDoctor (idAccount, idMajor) values 
-(235523485, 1);
+insert into inforDoctor (idAccount, Degree, Introduce, idMajor) values 
+(235523485, "Tiến Sĩ", "Chuyên Ngành Tim Mạch", 1);
 
 create table service(
 id int not null primary key AUTO_INCREMENT,
@@ -89,9 +92,17 @@ insert into service (Service, Description) values
 ('Đo khúc xạ', 'Đo khúc xạ ngay tại nhà, và đặt mua kính cận thị, viễn thị thông qua bác sĩ'),
 ('Cắt bao quy đầu', 'Cắt bao quy đầu nhanh chóng, tiện ích, riêng tư ngay tại nhà');
 
+create table similarCategories (
+id int not null primary key AUTO_INCREMENT,
+Similar int,
+Notes nvarchar(100) not null
+);
+
 create table categories(
 id int not null primary key AUTO_INCREMENT,
-Categories nvarchar(100) not null CHECK (Categories !="")
+Categories nvarchar(100) not null CHECK (Categories !=""),
+idSimilar int,
+foreign key (idSimilar) references similarCategories(Similar)
 )
 ;
 insert into categories (id, Categories) values 
@@ -141,6 +152,7 @@ foreign key (idCategories) references categories(id)
 )
 ;-- drop table post;
 
+
 create table appointmentstatus(
 id int not null primary key AUTO_INCREMENT,
 Type nvarchar(200)
@@ -171,17 +183,15 @@ id int not null primary key AUTO_INCREMENT,
 idService int  not null CHECK (idService !=""),
 idDoctor int  not null CHECK (idDoctor !=""),
 EstimatedTime TIME,
-Price double not null,
 Status int default 0, -- 0 hiển thị dịch vụ, 1 doctor ẩn dịch vụ  
 foreign key (idService) references service(id),
 foreign key (idDoctor) references account(id) 
 )
 ; -- drop table servicedoctor
-
-insert into servicedoctor (idService, idDoctor, EstimatedTime, Price) values 
-(1, 235523485, "01:00", 100000),
-(2, 235523485, "01:30", 200000),
-(3, 235523485, "00:30", 300000);
+insert into servicedoctor (idService, idDoctor, EstimatedTime) values 
+(1, 235523485, "01:00"),
+(2, 235523485, "01:30"),
+(3, 235523485, "00:30");
 
 create table schedule(
 id int not null primary key AUTO_INCREMENT,
@@ -197,8 +207,8 @@ Status int default 1,    			-- 0 lịch mặc định cửa bác sĩ, 1 lịch t
 foreign key (idDoctor) references account(id) 
 )
 ; -- drop table schedule
-insert into schedule (idDoctor, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd, Status) values 
-(235523485, "08:30", "11:30", "17:00", "20:30", 0);
+insert into schedule (idDoctor, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd) values 
+(235523485, "08:30", "11:30", "17:00", "20:30");
 
 create table notification(
 id int not null primary key AUTO_INCREMENT,
@@ -219,31 +229,19 @@ Status int default 0, -- 0 chưa chỉnh sửa, 1 đã chỉnh sửa
 foreign key (idAccount) references account(id),
 foreign key (idPost) references post(id)
 );
-
-
 -- ------------------------------------------------------------------------------------------------------
 delimiter $$
 CREATE TRIGGER TG_DELETE_ACCOUNT before DELETE ON account FOR EACH ROW 
 BEGIN
-    DELETE FROM majorDoctor
+    DELETE FROM inforDoctor
     WHERE idAccount = old.id;
     DELETE FROM post
     WHERE idAuthor = old.id;
     DELETE FROM appointment
-    WHERE idPatient = old.id AND idDoctor = old.id;
+    WHERE idPatient = old.id or idDoctor = old.id;
     DELETE FROM notification
     WHERE idAccount = old.id;
-END$$ -- drop TRIGGER TG_DELETE_ACCOUNT
-
-delimiter $$
-CREATE TRIGGER TG_CHECK_EMAIL BEFORE INSERT ON account FOR EACH ROW 
-BEGIN
-    DECLARE Count int default 0;
-    SET Count = (SELECT COUNT(*) FROM account WHERE Email = new.Email);
-    IF Count > 0
-    THEN SIGNAL sqlstate '45001' set message_text = "Email đã được dùng để đăng kí tài khoản!";
-    END IF;
-END$$
+END$$ -- drop TRIGGER TG_DELETE_ACCOUNT    chưa xử lý xonggg
 
 delimiter $$
 CREATE TRIGGER TG_INSERT_ACCOUNT_DOCTOR AFTER INSERT ON account FOR EACH ROW 
@@ -255,23 +253,31 @@ BEGIN
     end if;
 END$$
 
+delimiter $$
+CREATE TRIGGER TG_CHECK_EMAIL BEFORE INSERT ON account FOR EACH ROW 
+BEGIN
+    DECLARE Count int default 0;
+    SET Count = (SELECT COUNT(*) FROM account WHERE Email = new.Email);
+    IF Count > 0
+    THEN SIGNAL sqlstate '45001' set message_text = "Email đã được dùng để đăng kí tài khoản!";
+    END IF;
+END$$
 
------------------------------------
-
+--------------------------------
 
 delimiter $$
 CREATE VIEW AllPost AS
 SELECT *
 FROM post;
-$$
-
+ $$ -- drop view AllPost
+ 
 delimiter $$
 CREATE VIEW AvailablePost AS
-SELECT *
-FROM post
-WHERE Status = 1;
-$$
-
+	SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, c.Categories
+    FROM post p, account a, categories c
+    WHERE p.idAuthor = a.id and p.idCategories = c.id AND p.Status = 1;
+ $$
+ 
  delimiter $$
 CREATE VIEW AllAccount AS
 SELECT ta.id, ta.FirstName, ta.LastName, ta.BirthDate, ta.Address, ta.Email, ta.Phone, ta.Avt, ta.Role, dm.Major
@@ -281,46 +287,17 @@ FROM account a, authorization t
 WHERE a.Authorization = t.id) as ta
 LEFT JOIN
 (SELECT d.idAccount, m.Major
-FROM  majorDoctor d, major m
+FROM  inforDoctor d, major m
 WHERE d.idMajor = m.id) as dm
 ON ta.id = dm.idAccount
  $$ -- drop view AllAccount
 
- delimiter $$
+delimiter $$
 CREATE VIEW AllAppointment AS
 SELECT *
 FROM appointment;
  $$
- ------
--------------------------------
- DELIMITER $$ 
-CREATE PROCEDURE PostDetailById (IN id int)
-BEGIN
-    SELECT * 
-    FROM post 
-    WHERE id = id AND Status = 1;
-END$$ -- drop PROCEDURE PostDetailById
-
-DELIMITER $$
-CREATE PROCEDURE ListSearch(IN search text )
-BEGIN
-    SELECT *
-    FROM  account a, categories c, post p
-    WHERE p.Status = 1 
-    AND p.idCategories = c.id 
-    AND a.id = p.idAuthor 
-    AND (a.LastName like  search  or a.FirstName like search or c.Categories like search or p.Title like search 
-    or  p.Brief like search or p.Content like search) ;
-END$$
-
-DELIMITER $$
-CREATE PROCEDURE ListSearchService(IN search text )
-BEGIN
-    SELECT *
-    FROM  service
-    WHERE Service like  search  or Description like  search;
-END$$ -- drop PROCEDURE ListSearchService
-
+ -------------------------------------------------
 DELIMITER $$ 
 CREATE PROCEDURE UpdateStatusPost (IN idP int)
 BEGIN
@@ -341,13 +318,49 @@ BEGIN
 END$$
 
 DELIMITER $$ 
+CREATE PROCEDURE PostDetailById (IN id int)
+BEGIN
+    SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, i.Degree, c.Categories
+    FROM post p, account a, categories c, inforDoctor i
+    WHERE p.idAuthor = a.id and p.idCategories = c.id and a.id = i.idAccount and p.id = id AND p.Status = 1;
+END$$ -- drop PROCEDURE PostDetailById
+
+DELIMITER $$
+CREATE PROCEDURE PostByCategories(IN id int )
+BEGIN
+    SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, i.Degree
+    FROM post p, account a, inforDoctor i 
+    WHERE p.idAuthor = a.id and a.id = i.idAccount and p.idCategories = id AND p.Status = 1;
+END$$ 
+
+DELIMITER $$
+CREATE PROCEDURE ListSearch(IN search text )
+BEGIN
+    SELECT a.LastName, a.FirstName, c.Categories, p.Title, p.Brief, p.Content, p.id, p.idAuthor, p.DatePost
+    FROM  account a, categories c, post p
+    WHERE p.Status = 1 
+    AND p.idCategories = c.id 
+    AND a.id = p.idAuthor 
+    AND (a.LastName like  search  or a.FirstName like  search or c.Categories like search or p.Title like search 
+    or  p.Brief like search or p.Content like search) ;
+END$$ -- drop PROCEDURE ListSearch
+
+DELIMITER $$
+CREATE PROCEDURE ListSearchService(IN search text )
+BEGIN
+    SELECT *
+    FROM  service
+    WHERE Service like  search  or Description like  search;
+END$$ -- drop PROCEDURE ListSearchService
+
+DELIMITER $$ 
 CREATE PROCEDURE AppointmentData (IN idDoctor int, IN DateBooking date)
 BEGIN
 	SELECT a.id, sd.EstimatedTime, a.TimeBooking
     FROM servicedoctor sd, appointment a
     WHERE a.DateBooking = DateBooking and a.idDoctor = idDoctor and a.idDoctor = sd.idDoctor and sd.idService = a.idService and a.Status = 1
     ORDER BY a.TimeBooking asc;
-END$$ -- drop PROCEDURE AppointmentData
+END$$ -- drop PROCEDURE AppointmentData 
 
 DELIMITER $$ 
 CREATE PROCEDURE ScheduleData (IN idDoctor int, IN DateBooking date)
