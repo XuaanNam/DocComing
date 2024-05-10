@@ -92,17 +92,9 @@ insert into service (Service, Description) values
 ('Đo khúc xạ', 'Đo khúc xạ ngay tại nhà, và đặt mua kính cận thị, viễn thị thông qua bác sĩ'),
 ('Cắt bao quy đầu', 'Cắt bao quy đầu nhanh chóng, tiện ích, riêng tư ngay tại nhà');
 
-create table similarCategories (
-id int not null primary key AUTO_INCREMENT,
-Similar int,
-Notes nvarchar(100) not null
-);
-
 create table categories(
 id int not null primary key AUTO_INCREMENT,
-Categories nvarchar(100) not null CHECK (Categories !=""),
-idSimilar int,
-foreign key (idSimilar) references similarCategories(Similar)
+Categories nvarchar(100) not null CHECK (Categories !="")
 )
 ;
 insert into categories (id, Categories) values 
@@ -134,7 +126,19 @@ insert into categories (id, Categories) values
 (26, 'Sức khỏe răng miệng'),
 (27, 'Lão hóa lành mạnh'),
 (28, 'Sức khỏe tình dục'),
-(29, 'Bệnh thận và đường tiết niệu') ;
+(29, 'Bệnh thận và đường tiết niệu') 
+;
+
+create table similarCategories (
+id int not null primary key AUTO_INCREMENT,
+idCategories int,
+Similar nvarchar(100) not null
+); -- drop table similarCategories
+
+insert into similarCategories (idCategories, Similar) values 
+(1, "Đái Tháo đường"),
+(1, "Sỏi Thận"),
+(1, "Suy gan");
 
 create table post(
 id int not null primary key AUTO_INCREMENT,
