@@ -9,6 +9,7 @@ const initialState = {
   loading: false,
   error: "",
   checked: false,
+  isLogin: false,
   token: "",
   data: [],
   user: {},
@@ -32,6 +33,26 @@ export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(body),
+  });
+  return await res.json();
+});
+export const login = createAsyncThunk("login", async (body) => {
+  const res = await fetch("http://localhost:5000/api/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
+export const authentication = createAsyncThunk("authentication", async () => {
+  const res = await fetch("http://localhost:5000/api/isauth", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
   });
   return await res.json();
 });
@@ -96,6 +117,35 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(login.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        if (action.payload?.checked === false) {
+          state.checked = action.payload.checked;
+          state.message = action.payload.message;
+        } else {
+          state.loading = false;
+          state.isLogin = action.payload.checked;
+          state.token = action.payload.token;
+          localStorage.setItem("token", action.payload?.token);
+          state.currentUser = action.payload;
+        }
+        console.log(action.payload);
+      })
+      .addCase(login.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(authentication.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(authentication.fulfilled, (state, { payload }) => {
+        state.auth = payload.authentication.Authorization;
+      })
+      .addCase(authentication.rejected, (state, action) => {
+        state.loading = true;
+      })
       .addCase(fetchUsers.pending, (state, action) => {
         state.loading = true;
         state.error = null;
@@ -145,6 +195,7 @@ const authSlice = createSlice({
           toast.error(action.payload.message, {
             position: "top-right",
           });
+          state.message = action.payload.message;
         }
       })
       .addCase(userRegister.rejected, (state, action) => {

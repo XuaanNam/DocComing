@@ -2,6 +2,34 @@
 @tailwind components;
 @tailwind utilities;
 
+.quill.ql-error {
+  .ql-toolbar {
+    border-bottom: 1px solid red;
+  }
+  .ql-container {
+    border-left: 1px solid red;
+    border-right: 1px solid red;
+    border-bottom: 1px solid red;
+  }
+}
+@layer base {
+  ul,
+  ol {
+    list-style: revert;
+  }
+}
+li {
+  margin-left: 52px;
+}
+h1 {
+  @apply text-4xl;
+}
+h2 {
+  @apply text-3xl;
+}
+h3 {
+  @apply text-2xl;
+}
 /* #root {
   font-family: "Nunito", sans-serif;
   font-optical-sizing: auto;
@@ -97,3 +125,7 @@ div.is-disabled {
   background-color: #f4f4f4;
   margin-bottom: 1rem;
 }
+/* 
+.li {
+  text-decoration: initial;
+} */
