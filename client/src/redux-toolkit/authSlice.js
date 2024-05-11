@@ -9,11 +9,11 @@ const initialState = {
   loading: false,
   error: "",
   checked: false,
-  isLogin: false,
   token: "",
   data: [],
   user: {},
   updated: false,
+  message: "",
 };
 
 export const userRegister = createAsyncThunk("userRegister", async (body) => {
@@ -98,6 +98,8 @@ const authSlice = createSlice({
       state.token = null;
       state.currentUser = null;
       state.user = {};
+      state.isLogin = false;
+      state.auth = "";
       localStorage.clear();
     },
   },
@@ -126,8 +128,8 @@ const authSlice = createSlice({
           state.checked = action.payload.checked;
           state.message = action.payload.message;
         } else {
+          state.message = "";
           state.loading = false;
-          state.isLogin = action.payload.checked;
           state.token = action.payload.token;
           localStorage.setItem("token", action.payload?.token);
           state.currentUser = action.payload;
@@ -140,7 +142,7 @@ const authSlice = createSlice({
         state.loading = true;
       })
       .addCase(authentication.fulfilled, (state, { payload }) => {
-        state.auth = payload.authentication;
+        state.auth = payload.authentication.Authorization;
       })
       .addCase(authentication.rejected, (state, action) => {
         state.loading = true;

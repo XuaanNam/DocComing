@@ -7,10 +7,10 @@ import { MdEdit } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "flowbite-react";
 import Datepicker from "flowbite-datepicker/Datepicker";
-import { fetchProfile, updateProfile } from "../redux-toolkit/authSlice";
+import { fetchProfile, updateProfile } from "../../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
 
-const Profile = () => {
+const AdminProfile = () => {
   const { currentUser, user, auth, error, loading, updated } = useSelector(
     (state) => state.user
   );
@@ -24,21 +24,25 @@ const Profile = () => {
   const filePickerRef = useRef();
   const dispatch = useDispatch();
   const Navigate = useNavigate();
-  console.log(auth);
+  console.log(user);
+  useEffect(() => {
+    dispatch(fetchProfile());
+  }, []);
   useEffect(() => {
     if (!currentUser) {
-      Navigate("/");
+      //   Navigate("/");
     } else {
-      if (auth === 1) {
-        setData(user?.data);
-        setFullName(
-          user?.data?.FirstName + user?.data?.LastName || currentUser?.FullName
-        );
-        const datepickerEl = document?.getElementById("BirthDate");
-        new Datepicker(datepickerEl, {
-          format: "dd/mm/yyyy",
-        });
-      } else Navigate("/");
+      //   if (auth === 0) {
+      setData(user?.data);
+      setFullName(
+        user?.data?.FirstName + user?.data?.LastName || currentUser?.FullName
+      );
+      const datepickerEl = document?.getElementById("BirthDate");
+      new Datepicker(datepickerEl, {
+        format: "dd/mm/yyyy",
+      });
+      //   }
+      //   else Navigate("/");
     }
   }, [user.data]);
   const handleEdit = () => {
@@ -76,40 +80,12 @@ const Profile = () => {
     setEdit(false);
     setFormData({});
   };
-
   return (
-    <div className="pt-[70px] bg-lime-50 ">
-      {currentUser && auth === 1 ? (
+    <div className="">
+      {currentUser ? (
+        /* && auth === 1  */
         <div className="mx-16 text-gray-700 flex gap-10 ">
-          <div className="my-7 w-1/5 h-48 bg-white rounded-lg shadow-xl">
-            <div
-              onClick={() => setActived(1)}
-              className={` ${
-                actived === 1 && "bg-[#14b8a6] text-white"
-              } flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer`}
-            >
-              <FaRegUserCircle className="h-7 w-7"></FaRegUserCircle>
-              <a href="/patient/profile" className="block py-2 w-full">
-                Hồ sơ
-              </a>
-            </div>
-            <div className="flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer">
-              <LuCalendarDays className="h-7 w-7"></LuCalendarDays>
-              <a href="/appointment" className="block py-2 w-full">
-                Lịch khám của tôi
-              </a>
-            </div>
-            <div
-              className="flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer"
-              // onClick={handleLogout}
-            >
-              <FiLogOut className="h-7 w-7"></FiLogOut>
-              <a href="/" className="block py-2 w-full">
-                Đăng xuất
-              </a>
-            </div>
-          </div>
-          <div className="my-7 w-4/5 rounded-xl bg-white shadow-xl py-5 px-8">
+          <div className="my-7 w-full rounded-xl bg-white shadow-xl py-5 px-8">
             <div className="mb-5 grid grid-cols-5 items-center">
               <p className="font-semibold text-2xl col-span-1">Hồ sơ</p>
               {edit === false && (
@@ -137,7 +113,7 @@ const Profile = () => {
                 onClick={() => filePickerRef.current.click()}
               >
                 <img
-                  src={data?.Avt || require("../Images/pattientavt.png")}
+                  src={data?.Avt || require("../../Images/pattientavt.png")}
                   alt="userImage"
                   className="rounded-full w-full h-full object-cover border-4 border-[lightgray]"
                 />
@@ -304,4 +280,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default AdminProfile;

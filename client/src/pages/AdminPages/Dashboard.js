@@ -23,7 +23,7 @@ export default function Dashboards() {
   useEffect(() => {}, [currentUser]);
   return (
     <div className="m-3 md:mx-auto mt-10 p-6 border-collapse">
-      <div className="flex-wrap flex gap-4 justify-center">
+      <div className="flex flex-wrap gap-4 justify-center">
         <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md">
           <div className="flex justify-between">
             <div className="">
@@ -75,10 +75,10 @@ export default function Dashboards() {
           </div>
         </div>
       </div>
-      <div className="flex flex-wrap gap-4 py-3 mx-auto justify-center">
+      <div className="grid grid-cols-3 gap-4 py-3 mx-auto justify-center">
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
-          <div className="flex justify-between  p-3 text-sm font-semibold">
-            <h1 className="text-center p-2">Recent users</h1>
+          <div className="flex justify-between p-1 text-sm font-semibold">
+            <h3 className="text-center p-2">Recent users</h3>
             <Button outline gradientDuoTone="purpleToPink">
               <Link to={"/admin/users"}>See all</Link>
             </Button>
@@ -106,8 +106,8 @@ export default function Dashboards() {
           </Table>
         </div>
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
-          <div className="flex justify-between  p-3 text-sm font-semibold">
-            <h1 className="text-center p-2">Recent comments</h1>
+          <div className="flex justify-between p-1 text-sm font-semibold">
+            <h3 className=" p-2">Recent comments</h3>
             <Button outline gradientDuoTone="purpleToPink">
               <Link to={"/admin/comment"}>See all</Link>
             </Button>
@@ -131,8 +131,8 @@ export default function Dashboards() {
           </Table>
         </div>
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
-          <div className="flex justify-between  p-3 text-sm font-semibold">
-            <h1 className="text-center p-2">Recent posts</h1>
+          <div className="flex justify-between p-1 text-sm font-semibold">
+            <h3 className=" p-2">Recent posts</h3>
             <Button outline gradientDuoTone="purpleToPink">
               <Link to={"/dashboard/manage-post"}>See all</Link>
             </Button>
