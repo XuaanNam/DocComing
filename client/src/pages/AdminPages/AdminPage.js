@@ -7,21 +7,24 @@ import ManageBlog from "./ManageBlog";
 import Dashboard from "./Dashboard";
 import { useDispatch, useSelector } from "react-redux";
 import { authentication } from "../../redux-toolkit/authSlice";
+import AdminProfile from "./AdminProfile";
 const AdminPage = () => {
-  const { auth, error, loading } = useSelector((state) => state.user);
+  const { currentUser, auth, isLogin, error, loading } = useSelector(
+    (state) => state.user
+  );
   const { adminpage } = useParams();
   const [actived, setActived] = useState(false);
   const [blogActived, setBlogActived] = useState(false);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
-  // useEffect(() => {
-  //   if (auth !== 0) {
-  //     Navigate("/");
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (currentUser) {
+      if (currentUser.authentication !== 0) Navigate("/");
+    } else Navigate("/");
+  }, [currentUser]);
   return (
     <div>
-      {auth === 1 ? (
+      {currentUser?.authentication === 0 ? (
         <div className="flex">
           <DashSidebar param={adminpage}></DashSidebar>
           <div className="w-full flex flex-col h-screen bg-gradient-to-r">
@@ -37,7 +40,7 @@ const AdminPage = () => {
                     src="https://source.unsplash.com/uJ8LNVCBjFQ/400x400"
                   />
                 </button>
-                {actived === true && (
+                {actived && (
                   <div className="absolute w-32 bg-slate-50 rounded-lg shadow-lg py-2 mt-16 transition-all z-10">
                     <a
                       href="/"
@@ -65,6 +68,7 @@ const AdminPage = () => {
               className="overflow-auto w-full"
               onClick={() => setActived(false)}
             >
+              {adminpage === "profile" && <AdminProfile />}
               {adminpage === "create-post" && <CreateBlog />}
               {adminpage === "manage-post" && <ManageBlog />}
               {adminpage === "dashboard" && <Dashboard />}

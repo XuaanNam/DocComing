@@ -16,6 +16,7 @@ import DoctorSchedule from "./pages/DoctorSchedule";
 import Doctors from "./pages/Doctors";
 import Categories from "./pages/Categories";
 import Appointment from "./pages/Appointment";
+import AdminLogin from "./pages/AdminPages/AdminLogin";
 function App() {
   return (
     <div>
@@ -28,6 +29,7 @@ function App() {
           <Route path="/blog" element={<BlogPage />} />
           <Route path="/patient/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/register" element={<Register />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/categories" element={<Categories />} />

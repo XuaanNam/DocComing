@@ -15,7 +15,7 @@ const HomePage = () => {
   const { currentUser, auth, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
-  console.log(auth);
+  // console.log(auth);
   const { allPost } = useSelector((state) => state.post);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
@@ -47,12 +47,11 @@ const HomePage = () => {
   useEffect(() => {
     if (currentUser) {
       dispatch(fetchProfile());
-      dispatch(authentication());
     }
     dispatch(getAllPost());
   }, [currentUser]);
 
-  console.log(allPost);
+  // console.log(allPost);
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();

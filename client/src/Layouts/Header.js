@@ -13,14 +13,18 @@ import { fetchProfile } from "../redux-toolkit/authSlice";
 import { persistor } from "../redux-toolkit/configureStore";
 
 const Header = () => {
-  const { currentUser, user } = useSelector((state) => state.user);
+  const { currentUser, user, auth } = useSelector((state) => state.user);
   const [actived, setActived] = useState(false);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
-
+  // console.log(auth);
   const handleLogout = () => {
+    if (currentUser.authentication === 0) Navigate("/admin/login");
+    else Navigate("/");
     dispatch(logout());
-    setTimeout(() => persistor.purge(), 200);
+    setTimeout(() => {
+      persistor.purge();
+    }, 200);
   };
   return (
     <div className="h-[70px] fixed w-screen z-50">
@@ -58,7 +62,8 @@ const Header = () => {
             Chuyên mục
           </div>
         </div>
-        <div className="relative flex gap-3 w-full items-center">
+
+        <div className="relative flex gap-3 w-full items-center col-start-4">
           <div className="w-[1px] h-[34px] bg-gray-200"></div>
           {currentUser ? (
             <div className="flex gap-2 items-center w-full">
@@ -111,9 +116,8 @@ const Header = () => {
                     onClick={handleLogout}
                   >
                     <FiLogOut className="h-5 w-5"></FiLogOut>
-                    <a href="/" className="block py-3">
-                      Đăng xuất
-                    </a>
+
+                    <p className="block py-3">Đăng xuất</p>
                   </div>
                 </div>
               )}

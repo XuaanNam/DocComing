@@ -7,15 +7,10 @@ import { MdEdit } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "flowbite-react";
 import Datepicker from "flowbite-datepicker/Datepicker";
-import { fetchProfile, updateProfile } from "../redux-toolkit/authSlice";
+import { fetchProfile, updateProfile } from "../../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
 
-import { DatePicker, Space, Input, Select } from "antd";
-import dayjs from "dayjs";
-
-const Profile = () => {
-  const dateFormat = "DD/MM/YYYY";
-
+const AdminProfile = () => {
   const { currentUser, user, auth, error, loading, updated } = useSelector(
     (state) => state.user
   );
@@ -29,19 +24,27 @@ const Profile = () => {
   const filePickerRef = useRef();
   const dispatch = useDispatch();
   const Navigate = useNavigate();
-  console.log(auth);
+  console.log(user);
+  useEffect(() => {
+    dispatch(fetchProfile());
+  }, []);
   useEffect(() => {
     if (!currentUser) {
-      Navigate("/");
+      //   Navigate("/");
     } else {
-      if (currentUser.authentication === 1) {
-        setData(user?.data);
-        setFullName(
-          user?.data?.FirstName + user?.data?.LastName || currentUser?.FullName
-        );
-      } else Navigate("/");
+      //   if (auth === 0) {
+      setData(user?.data);
+      setFullName(
+        user?.data?.FirstName + user?.data?.LastName || currentUser?.FullName
+      );
+      const datepickerEl = document?.getElementById("BirthDate");
+      new Datepicker(datepickerEl, {
+        format: "dd/mm/yyyy",
+      });
+      //   }
+      //   else Navigate("/");
     }
-  }, [user.data, currentUser]);
+  }, [user.data]);
   const handleEdit = () => {
     setEdit(true);
   };
@@ -58,9 +61,7 @@ const Profile = () => {
       setFormData({ ...formData, avt: file });
     }
   };
-  const handleSelectBox = (value) => {
-    setFormData({ ...formData, Gender: value });
-  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -79,44 +80,12 @@ const Profile = () => {
     setEdit(false);
     setFormData({});
   };
-  const onChange = (date, dateString) => {
-    setData({ ...data, BirthDate: dateString });
-    setFormData({ ...formData, BirthDate: dateString });
-  };
-  console.log(data);
   return (
-    <div className="pt-[70px] bg-lime-50 ">
-      {currentUser?.authentication === 1 ? (
+    <div className="">
+      {currentUser ? (
+        /* && auth === 1  */
         <div className="mx-16 text-gray-700 flex gap-10 ">
-          <div className="my-7 w-1/5 h-48 bg-white rounded-lg shadow-xl">
-            <div
-              onClick={() => setActived(1)}
-              className={` ${
-                actived === 1 && "bg-[#14b8a6] text-white"
-              } flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer`}
-            >
-              <FaRegUserCircle className="h-7 w-7"></FaRegUserCircle>
-              <a href="/patient/profile" className="block py-2 w-full">
-                Hồ sơ
-              </a>
-            </div>
-            <div className="flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer">
-              <LuCalendarDays className="h-7 w-7"></LuCalendarDays>
-              <a href="/appointment" className="block py-2 w-full">
-                Lịch khám của tôi
-              </a>
-            </div>
-            <div
-              className="flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer"
-              // onClick={handleLogout}
-            >
-              <FiLogOut className="h-7 w-7"></FiLogOut>
-              <a href="/" className="block py-2 w-full">
-                Đăng xuất
-              </a>
-            </div>
-          </div>
-          <div className="my-7 w-4/5 rounded-xl bg-white shadow-xl py-5 px-8">
+          <div className="my-7 w-full rounded-xl bg-white shadow-xl py-5 px-8">
             <div className="mb-5 grid grid-cols-5 items-center">
               <p className="font-semibold text-2xl col-span-1">Hồ sơ</p>
               {edit === false && (
@@ -144,11 +113,11 @@ const Profile = () => {
                 onClick={() => filePickerRef.current.click()}
               >
                 <img
-                  src={data?.Avt || require("../Images/pattientavt.png")}
+                  src={data?.Avt || require("../../Images/pattientavt.png")}
                   alt="userImage"
                   className="rounded-full w-full h-full object-cover border-4 border-[lightgray]"
                 />
-                <div className="absolute w-8 h-8 rounded-full bg-gray-300 right-1 bottom-1  flex justify-center items-center">
+                <div className="absolute w-8 h-8 rounded-full bg-slate-300 right-1 bottom-1  flex justify-center items-center">
                   <CiCamera></CiCamera>
                 </div>
                 <div className="font-medium text-lg text-center w-full">
@@ -159,11 +128,11 @@ const Profile = () => {
                 <div className="p-5 bg-white shadow-md rounded-lg">
                   <div className="flex gap-5 mb-5">
                     <div className="w-1/2">
-                      <p className="font-medium text-sm mb-2">Họ và tên</p>
-                      <Input
+                      <p className="font-medium text-sm">Họ và tên</p>
+                      <input
                         className={` ${
-                          edit && "focus:border-sky-500 "
-                        } w-[90%] bg-white rounded-lg px-2 border-gray-300 h-[44px]`}
+                          edit && "focus:border-sky-500 focus:border-b-2"
+                        } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
                         id="FullName"
                         placeholder="--"
                         value={FullName}
@@ -172,29 +141,29 @@ const Profile = () => {
                           handleChange(e);
                         }}
                         disabled={!edit}
-                      ></Input>
+                      ></input>
                     </div>
                     <div className="w-1/2">
-                      <p className="font-medium text-sm mb-2">Email</p>
-                      <Input
+                      <p className="font-medium text-sm">Email</p>
+                      <input
                         className={` ${
-                          edit && "focus:border-sky-500 "
-                        } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
-                        id="Email"
+                          edit && "focus:border-sky-500 focus:border-b-2"
+                        } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
+                        id="email"
                         placeholder="--"
                         value={data?.Email || ""}
                         disabled={true}
-                      ></Input>
+                      ></input>
                     </div>
                   </div>
 
                   <div className="flex gap-5 mb-5">
                     <div className="w-1/2">
-                      <p className="font-medium text-sm mb-2">Số điện thoại</p>
-                      <Input
+                      <p className="font-medium text-sm">Số điện thoại</p>
+                      <input
                         className={` ${
-                          edit && "focus:border-sky-500 "
-                        } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
+                          edit && "focus:border-sky-500 focus:border-b-2"
+                        } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
                         id="Phone"
                         placeholder="--"
                         value={data?.Phone || ""}
@@ -203,30 +172,31 @@ const Profile = () => {
                           handleChange(e);
                         }}
                         disabled={!edit}
-                      ></Input>
+                      ></input>
                     </div>
                     <div className="w-1/2">
-                      <p className="font-medium text-sm mb-2">Địa chỉ</p>
-                      <Input
+                      <p className="font-medium text-sm">Địa chỉ</p>
+                      <input
                         className={` ${
-                          edit && "focus:border-sky-500 "
-                        } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
+                          edit && "focus:border-sky-500 focus:border-b-2"
+                        } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
                         id="Address"
                         placeholder="--"
                         value={data?.Address || ""}
+                        // value={Address}
                         onChange={(e) => {
                           setData({ ...data, [e.target.id]: e.target.value });
                           handleChange(e);
                         }}
                         disabled={!edit}
-                      ></Input>
+                      ></input>
                     </div>
                   </div>
 
                   <div className="flex gap-5 mb-5">
                     <div className="w-1/2">
-                      <p className="font-medium text-sm mb-2">Ngày sinh</p>
-                      {/* <div className="relative max-w-sm">
+                      <p className="font-medium text-sm">Ngày sinh</p>
+                      <div className="relative max-w-sm">
                         <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                           <svg
                             className="w-4 h-4 text-gray-500 dark:text-gray-400"
@@ -251,37 +221,29 @@ const Profile = () => {
                           }}
                           disabled={!edit}
                         />
-                      </div> */}
-                      <DatePicker
-                        id="BirthDate"
-                        className="w-[90%] h-[44px] text-lg bg-white border-gray-300 text-gray-900 rounded-lg"
-                        placeholder="--"
-                        value={dayjs(data?.BirthDate, dateFormat)}
-                        format={dateFormat}
-                        disabled={!edit}
-                        onChange={onChange}
-                      />
+                      </div>
                     </div>
                     <div className="w-1/2">
-                      <p className="font-medium text-sm mb-2">Giới tính</p>
-                      <Select
-                        className="w-[90%] h-[44px] text-lg bg-white border-gray-300 text-gray-900 "
-                        id="Gender"
-                        value={data?.Gender}
-                        onChange={(value) => {
-                          setData({ ...data, Gender: value });
-                          handleSelectBox(value);
-                        }}
-                        disabled={!edit}
-                      >
-                        <option value="" disabled className="">
-                          --
-                        </option>
-
-                        <option value="Nam">Nam</option>
-                        <option value="Nữ">Nữ</option>
-                        <option value="Khác">Khác</option>
-                      </Select>
+                      <p className="font-medium text-sm">Giới tính</p>
+                      <div className="max-w-md w-[90%] h-[40px] mt-2">
+                        <select
+                          className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          id="Gender"
+                          value={data?.Gender}
+                          onChange={(e) => {
+                            setData({ ...data, [e.target.id]: e.target.value });
+                            handleChange(e);
+                          }}
+                          disabled={!edit}
+                        >
+                          <option value="" disabled className="">
+                            --
+                          </option>
+                          <option value="Nam">Nam</option>
+                          <option value="Nữ">Nữ</option>
+                          <option value="Khác">Khác</option>
+                        </select>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -318,4 +280,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default AdminProfile;
