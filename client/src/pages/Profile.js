@@ -14,6 +14,7 @@ const Profile = () => {
   const { currentUser, user, auth, error, loading, updated } = useSelector(
     (state) => state.user
   );
+
   const [actived, setActived] = useState(1);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({});
@@ -26,7 +27,7 @@ const Profile = () => {
   console.log(auth);
   useEffect(() => {
     if (!currentUser) {
-      Navigate("/");
+      // Navigate("/");
     } else {
       if (auth === 1) {
         setData(user?.data);
@@ -37,7 +38,8 @@ const Profile = () => {
         new Datepicker(datepickerEl, {
           format: "dd/mm/yyyy",
         });
-      } else Navigate("/");
+      }
+      // else Navigate("/");
     }
   }, [user.data]);
   const handleEdit = () => {

@@ -8,19 +8,19 @@ const BlogPage = () => {
   const dispatch = useDispatch();
   const { detailPost, error, loading } = useSelector((state) => state.post);
   useEffect(() => {
-    dispatch(getDetailPost(7));
+    dispatch(getDetailPost(18));
   }, [dispatch]);
   console.log(detailPost);
   const post = detailPost[0];
   console.log(post);
   return (
-    <div className="bg-lime-50">
+    <div className="bg-white">
       <div className="mx-[48px] pt-[100px] pl-16">
         <div className="flex gap-7 pb-20">
-          <div className="w-[70%]">
-            <div className="h-[44px] w-[150px] flex items-center justify-center p-1 mb-5 cursor-pointer rounded-3xl bg-teal-50 text-blue-500 font-medium drop-shadow-lg">
+          <div className="w-[75%]">
+            <p className="h-[44px] bg-white max-w-64 flex items-center justify-center p-1 mb-5 cursor-pointer rounded-3xl  text-teal-400 font-medium drop-shadow-lg  transition-transform duration-500 hover:scale-105">
               {post?.Categories}
-            </div>
+            </p>
             <div className="mb-5">
               {/* Bệnh tiêu hóa {">"} Các vấn đề tiêu hóa khác */}
             </div>
@@ -29,7 +29,7 @@ const BlogPage = () => {
             </div>
             <div>
               <img
-                className="rounded-lg h-[450px] w-full object-cover mb-3"
+                className="rounded-lg h-[450px] w-full object-cover mb-3 shadow-lg"
                 src={post?.FeaturedImage}
                 alt=""
               ></img>
@@ -44,9 +44,9 @@ const BlogPage = () => {
             />
           </div>
 
-          <div className="bg-white border rounded-xl drop-shadow-lg w-[30%] max-h-[220px] px-2 grid grid-rows-3 justify-items-center">
+          <div className="bg-white border rounded-xl drop-shadow-lg w-[25%] max-h-[180px] px-2 grid grid-rows-3 justify-items-center">
             <img
-              className="rounded-full w-[65px] h-[65px] mt-2 object-contain drop-shadow-sm"
+              className="rounded-full w-[60px] h-[60px] mt-2 object-contain drop-shadow-sm"
               src={require("../Images/doctor1.jpg")}
               alt=""
             ></img>

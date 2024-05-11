@@ -64,6 +64,7 @@ class API {
   // [GET] /api/isauth
   isAuth(req, res, next) {
     const auth = req.user;
+    console.log(auth);
     if (auth) {
       res.status(200).send({ authentication: auth });
     } else {
@@ -74,7 +75,7 @@ class API {
   // [POST] /api/login
   login(req, res, next) {
     const sql =
-      "select id, Email, PassWord, FirstName, LastName, Authorization from account where Email = ? ";
+      "select id, Email, FirstName, PassWord, LastName, Authorization from account where Email = ? ";
     const message = "Số điện thoại hoặc mật khẩu không chính xác!";
     const Email = req.body.Email;
     const PassWord = req.body.PassWord;
@@ -89,19 +90,17 @@ class API {
               const payload = {
                 iss: "Doccoming",
                 id: results[0].id,
-                Phone: results[0].Phone,
-                authentication: results[0].Authorization,
+                Authorization: results[0].Authorization,
               };
               const token = "Bearer " + encodeToken(payload);
 
-              console.log(results[0]);
               //res.setHeader("isAuth", token);
               res.send({
                 checked: true,
                 token,
                 id: results[0].id,
                 FullName: results[0].FirstName + " " + results[0].LastName,
-                authentication: results[0].authentication,
+                authentication: results[0].Authorization,
               });
             } else {
               res.status(200).send({ message, checked: false });
@@ -820,7 +819,7 @@ class API {
 
   // [GET] /api/post/Categories
   getPostByCategories(req, res) {
-    const id = req.body.id; 
+    const id = req.body.id;
     const selectSql = "call PostByCategories(?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -990,7 +989,7 @@ class API {
 
   // ADMIN API
 
-  //[GET] /api/admin/post  
+  //[GET] /api/admin/post
   getAllPost(req, res) {
     const selectSql = "select * from AllPost";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
