@@ -189,8 +189,8 @@ class API {
   async sendMail(req, res, next) {
     try {
       // Lấy thông tin gửi lên từ client qua body
-      const { email, subject, content } = req.body;
-      if (!email || !subject || !content)
+      const { email } = req.body;
+      if (!email)
         throw new Error("Please provide email, subject and content!!!");
       const sms = "+84337999421@SMS-gateway";
       const myAccessTokenObject = await myOAuth2Client.getAccessToken();
@@ -215,8 +215,8 @@ class API {
       // mailOption là những thông tin gửi từ phía client lên thông qua API
       const mailOptions = {
         to: email,
-        subject: subject, // Tiêu đề email
-        html: `<h3>${content}</h3>`, // Nội dung email
+        subject: "Đổi mật khẩu DocComming", // Tiêu đề email
+        html: `<h3>${"nhấn vào link này để đổi mật khâu"}</h3>`, // Nội dung email
       };
       // Gọi hành động gửi email
       await transport.sendMail(mailOptions);
@@ -694,9 +694,9 @@ class API {
     }
     let Status = 0;
     const idAuthor = req.user.id;
-    const { Title, Brief, Content, idCategories } = req.body;
+    const { Title, Brief, Content, idCategories, idSimilar} = req.body;
     const insertSql =
-      "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories, Status) values (?,?,?,?,?,?, NOW(),?,?)";
+      "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories,idSimilar, Status) values (?,?,?,?,?,?,?, NOW(),?,?)";
 
     if (req.user.Authorization == 0) {
       Status = 1;
@@ -717,6 +717,7 @@ class API {
           Images,
           idAuthor,
           idCategories,
+          idSimilar,
           Status,
         ],
         function (error, results, fields) {
@@ -758,9 +759,9 @@ class API {
         }
       }
     }
-    const { Title, Brief, Content, idCategories, id } = req.body;
+    const { Title, Brief, Content, idCategories, idSimilar, id } = req.body;
     const updateSql =
-      "update post set FeaturedImage = ?, Title = ?, Brief = ?, Content = ?, Images = ?, idCategories = ? where id = ?";
+      "update post set FeaturedImage = ?, Title = ?, Brief = ?, Content = ?, Images = ?, idCategories = ?, idSimilar = ? where id = ?";
     const errorMsg = "Cập nhật bài viết không thành công!";
 
     pool.query(
@@ -836,6 +837,25 @@ class API {
     });
   }
 
+  // [GET] /api/post/similar/categories
+  getPostBySimilarCategories(req, res) {
+    const id = req.body.id; // id similar
+    const selectSql = "call PostBySimilarCategories(?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, id, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results[0]) {
+          res.status(200).send({ data: results[0], checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
   // [GET] /api/post/search/keywords
   searchByKeywords(req, res, next) {
     let { keywords } = req.body;
@@ -875,7 +895,6 @@ class API {
               results[i].Similar = [...results[i - 1].Similar, {id: results[i].idsimilar, SimilarCategories : results[i].Similar}];  
               results.splice(i - 1, 1);
               i -= 1;
-              console.log(i, results[i].Similar);
             }
             if(i == results.length - 1){
               res.status(200).send({ data: results, checked: true });

@@ -151,6 +151,7 @@ Images varchar(300),
 idAuthor int,
 DatePost datetime,
 idCategories int,
+idSimilar int,
 Status int default 0, -- 0 chờ duyệt, 1 hiển thị trên site, 2 ẩn
 foreign key (idAuthor) references account(id),
 foreign key (idCategories) references categories(id) 
@@ -278,11 +279,11 @@ FROM post;
  
 delimiter $$
 CREATE VIEW AvailablePost AS
-	SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, c.Categories
-    FROM post p, account a, categories c
-    WHERE p.idAuthor = a.id and p.idCategories = c.id AND p.Status = 1;
- $$
- 
+	SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, c.Categories, s.Similar
+    FROM post p, account a, categories c, similarcategories s
+    WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id AND p.Status = 1;
+$$
+
  delimiter $$
 CREATE VIEW AllAccount AS
 SELECT ta.id, ta.FirstName, ta.LastName, ta.BirthDate, ta.Address, ta.Email, ta.Phone, ta.Avt, ta.Role, dm.Major
@@ -325,9 +326,9 @@ END$$
 DELIMITER $$ 
 CREATE PROCEDURE PostDetailById (IN id int)
 BEGIN
-    SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, i.Degree, c.Categories
-    FROM post p, account a, categories c, inforDoctor i
-    WHERE p.idAuthor = a.id and p.idCategories = c.id and a.id = i.idAccount and p.id = id AND p.Status = 1;
+    SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, i.Degree, c.Categories, s.Similar
+    FROM post p, account a, categories c, inforDoctor i, similarcategories s
+    WHERE p.idAuthor = a.id and p.idCategories = c.id and a.id = i.idAccount and p.idSimilar = s.id and p.id = id AND p.Status = 1;
 END$$ -- drop PROCEDURE PostDetailById
 
 DELIMITER $$
@@ -337,6 +338,15 @@ BEGIN
     FROM post p, account a, inforDoctor i 
     WHERE p.idAuthor = a.id and a.id = i.idAccount and p.idCategories = id AND p.Status = 1;
 END$$ 
+
+DELIMITER $$
+CREATE PROCEDURE PostBySimilarCategories(IN id int )
+BEGIN
+    SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, i.Degree
+    FROM post p, account a, inforDoctor i
+    WHERE p.idAuthor = a.id and a.id = i.idAccount and p.idSimilar = id AND p.Status = 1;
+END$$ -- drop procedure PostBySimilarCategories
+
 
 DELIMITER $$
 CREATE PROCEDURE ListSearch(IN search text )

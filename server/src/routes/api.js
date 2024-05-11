@@ -58,7 +58,8 @@ router.patch(
 );
 router.get("/post", api.getPost);
 router.get("/post/detail/:id", api.getPostById);
-router.get("/post/Categories", api.getPostByCategories); // truyền tới id categories
+router.get("/post/categories", api.getPostByCategories); // truyền tới id categories
+router.get("/post/similar/categories", api.getPostBySimilarCategories); // truyền tới id similar
 router.get("/search/keywords", api.searchByKeywords);
 router.get("/category", api.getCategory);
 router.get("/comment", api.getComment); // lấy tất cả cmt dựa trên idPost -> truyền idPost
