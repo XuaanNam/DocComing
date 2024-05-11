@@ -870,11 +870,12 @@ class API {
           for(let i = 0; i < results.length; i ++){  
             if( i != 0 && results[i].id == results[i - 1].id){   //results.Similar = [suy gan, sỏi thận]
               if(!Array.isArray(results[i - 1].Similar) ){
-                results[i - 1].Similar = [{id: results[i - 1].idsimilar, Similar :results[i - 1].Similar}];
+                results[i - 1].Similar = [{id: results[i - 1].idsimilar, SimilarCategories :results[i - 1].Similar}];
               }
-              results[i].Similar = [...results[i - 1].Similar, {id: results[i - 1].idsimilar, Similar : results[i].Similar}];  
+              results[i].Similar = [...results[i - 1].Similar, {id: results[i].idsimilar, SimilarCategories : results[i].Similar}];  
               results.splice(i - 1, 1);
               i -= 1;
+              console.log(i, results[i].Similar);
             }
             if(i == results.length - 1){
               res.status(200).send({ data: results, checked: true });
