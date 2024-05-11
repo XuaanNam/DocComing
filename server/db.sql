@@ -133,6 +133,7 @@ create table similarCategories (
 id int not null primary key AUTO_INCREMENT,
 idCategories int,
 Similar nvarchar(100) not null
+-- foreign key (idCategories) references categories(id)
 ); -- drop table similarCategories
 
 insert into similarCategories (idCategories, Similar) values 
