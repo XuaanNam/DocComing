@@ -859,7 +859,7 @@ class API {
 
   // [GET] /api/category
   getCategory(req, res) {
-    const selectSql = "SELECT * FROM categories";
+    const selectSql = "SELECT c.id, c.Categories, s.Similar FROM categories c LEFT JOIN similarCategories s on c.id = s.idCategories";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, function (error, results, fields) {
@@ -867,7 +867,20 @@ class API {
         res.send({ message: error, checked: false });
       } else {
         if (results) {
-          res.status(200).send({ data: results, checked: true });
+
+          for(let i = 0; i < results.length; i ++){  
+            if( i != 0 && results[i].id == results[i - 1].id){   //results.Similar = [suy gan, sỏi thận]
+              if(!Array.isArray(results[i - 1].Similar) ){
+                results[i - 1].Similar = [results[i - 1].Similar];
+              }
+              results[i].Similar = [...results[i - 1].Similar, results[i].Similar];  
+              results.splice(i - 1, 1);
+              i -= 1;
+            }
+            if(i == results.length - 1){
+              res.status(200).send({ data: results, checked: true });
+            }
+          }
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
