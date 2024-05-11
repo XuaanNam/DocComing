@@ -858,7 +858,7 @@ class API {
 
   // [GET] /api/category
   getCategory(req, res) {
-    const selectSql = "SELECT c.id, c.Categories, s.Similar FROM categories c LEFT JOIN similarCategories s on c.id = s.idCategories";
+    const selectSql = "SELECT c.id, c.Categories, s.id as idsimilar, s.Similar FROM categories c LEFT JOIN similarCategories s on c.id = s.idCategories ORDER BY c.id, idsimilar";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, function (error, results, fields) {
@@ -870,9 +870,9 @@ class API {
           for(let i = 0; i < results.length; i ++){  
             if( i != 0 && results[i].id == results[i - 1].id){   //results.Similar = [suy gan, sỏi thận]
               if(!Array.isArray(results[i - 1].Similar) ){
-                results[i - 1].Similar = [results[i - 1].Similar];
+                results[i - 1].Similar = [{id: results[i - 1].idsimilar, Similar :results[i - 1].Similar}];
               }
-              results[i].Similar = [...results[i - 1].Similar, results[i].Similar];  
+              results[i].Similar = [...results[i - 1].Similar, {id: results[i - 1].idsimilar, Similar : results[i].Similar}];  
               results.splice(i - 1, 1);
               i -= 1;
             }
