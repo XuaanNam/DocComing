@@ -9,11 +9,14 @@ import { IoIosArrowForward } from "react-icons/io";
 import Slider from "react-slick";
 import { useDispatch, useSelector } from "react-redux";
 import { authentication, fetchProfile } from "../redux-toolkit/authSlice";
+import { getAllPost } from "../redux-toolkit/postSlice";
 
 const HomePage = () => {
-  const { currentUser, user, error, loading, updated } = useSelector(
+  const { currentUser, auth, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
+  console.log(auth);
+  const { allPost } = useSelector((state) => state.post);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const slides = [
@@ -46,7 +49,10 @@ const HomePage = () => {
       dispatch(fetchProfile());
       dispatch(authentication());
     }
+    dispatch(getAllPost());
   }, [currentUser]);
+
+  console.log(allPost);
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
@@ -61,7 +67,7 @@ const HomePage = () => {
       <div className="max-w-[95%] h-[740px] w-full m-auto pt-[70px] pb-[40px] px-4 relative group drop-shadow-md">
         <div
           style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
-          className="w-full h-full  rounded-3xl bg-center bg-cover duration-500"
+          className="w-full h-full transition-full rounded-3xl bg-center bg-cover duration-500"
         ></div>
         <div className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] right-5 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">
           <BsChevronCompactRight onClick={nextSlide} size={30} />
@@ -98,6 +104,7 @@ const HomePage = () => {
         <div className="h-[44px] w-[150px] flex items-center justify-center p-1 mb-6 rounded-3xl bg-teal-50 text-blue-500 font-medium drop-shadow-lg">
           Bài viết mới nhất
         </div>
+
         <div className="w-full flex gap-x-7">
           <div
             className="w-3/5 cursor-pointer"
@@ -105,19 +112,15 @@ const HomePage = () => {
           >
             <img
               className="h-[450px] w-full rounded-xl mb-2 bg-cover drop-shadow-lg"
-              src={require("../Images/banner-01.jpg")}
+              src={allPost[0]?.FeaturedImage}
               alt=""
             ></img>
-            <div className="text-teal-500 mb-2">Bệnh cúm</div>
+            <div className="text-teal-500 mb-2">{allPost[0]?.idCategories}</div>
             <div className="text-slate-800 text-xl font-medium mb-2">
-              Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm A?
+              {allPost[0]?.Title}
             </div>
             <p className="h-[76px] text-slate-600 text-base text-justify text-ellipsis overflow-hidden mb-2">
-              Có 4 loại virus cúm: A, B, C và D. Trong đó, virus cúm A là loại
-              virus cúm duy nhất được biết là gây ra đại dịch cúm trên toàn cầu.
-              Vậy, cúm A có nguy hiểm không mà được coi là đại dịch và làm cách
-              nào để tránh các hậu quả nghiêm trọng? Cùng tìm hiểu qua bài viết
-              sau đây cúm A có nguy hiểm không
+              {allPost[0]?.Brief}
             </p>
             <div className="flex gap-2 text-base items-center">
               <img
@@ -125,12 +128,10 @@ const HomePage = () => {
                 src={require("../Images/doctor.webp")}
                 alt=""
               ></img>
-              <div className="">Tham vấn y khoa:</div>
-              <div className="font-medium"> Bác sĩ Thu uyên -</div>
-              <div> 11/03/2024</div>
+              <div className="font-medium"> {allPost[0]?.idAuthor} -</div>
+              <div> {allPost[0]?.DatePost.slice(0, 10)}</div>
             </div>
           </div>
-
           <div className="grid grid-rows-3 w-2/5">
             <div className="row-span-2 cursor-pointer w-full pb-5 border-b-[1.5px]">
               <img
@@ -189,7 +190,7 @@ const HomePage = () => {
         </div>
         <div className="flex gap-x-7 mb-[60px]">
           <div className="w-[55%]">
-            <p className="block text-slate-600 text-[17px] mb-5 text-justify rounded-xl ">
+            <p className="block text-slate-600 text-[17px] mb-5 text-justify rounded-xl italic">
               Đội ngũ cố vấn của Doctor Coming gồm các chuyên gia sức khỏe và y
               bác sĩ từ nhiều chuyên khoa, với đầy đủ chứng nhận, chứng chỉ hành
               nghề, hỗ trợ xây dựng và củng cố nội dung theo chuyên môn của

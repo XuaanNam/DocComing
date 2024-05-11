@@ -2,30 +2,27 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { Sidebar } from "flowbite-react";
-import {
-  HiUser,
-  HiArrowSmRight,
-  HiDocumentText,
-  HiOutlineUserGroup,
-  HiAnnotation,
-  HiChartPie,
-  HiDocumentAdd,
-  HiDocumentReport,
-} from "react-icons/hi";
 
 const DashSidebar = ({ param }) => {
+  useEffect(() => {
+    if (param === "manage-post" || param === "create-post") {
+      setActived("blog");
+    } else {
+      setActived(param);
+    }
+  }, []);
+
   const [blogActived, setBlogActived] = useState(false);
   const [actived, setActived] = useState("");
   return (
-    <div className="border h-screen">
+    <div className="shadow-xl bg-white min-h-screen">
       <div className="w-full md:w-56 font-medium pt-[70px]">
         <div className="px-12 py-4 mb-4">
           <a
             href="/admin/dashboard"
             className="text-2xl font-semibold uppercase text-[#0f766e] hover:text-gray-300"
           >
-            <span className="text-left">Doctor</span>{" "}
+            <span className="text-left">Doctor</span>
             <span className="flex justify-end">Coming</span>
           </a>
         </div>
@@ -73,7 +70,9 @@ const DashSidebar = ({ param }) => {
                 setActived("blog");
               }}
               className={` ${
-                actived === "blog" &&
+                (actived === "blog" ||
+                  param === "manage-post" ||
+                  param === "create-post") &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
               } w-48 h-11 rounded-lg shadow-md flex items-center justify-center  cursor-pointer`}
               to="/admin/users"
@@ -86,7 +85,7 @@ const DashSidebar = ({ param }) => {
                   className={` ${
                     param === "manage-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
-                  } w-44 h-10 rounded-lg shadow-md flex items-center justify-center mb-1`}
+                  } w-40 h-9 rounded-lg shadow-md flex items-center justify-center mb-1`}
                   to="/admin/manage-post"
                 >
                   <div>Manage Blog</div>
@@ -95,7 +94,7 @@ const DashSidebar = ({ param }) => {
                   className={` ${
                     param === "create-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
-                  } w-44 h-10 rounded-lg shadow-md flex items-center justify-center `}
+                  } w-40 h-9 rounded-lg shadow-md flex items-center justify-center `}
                   to="/admin/create-post"
                 >
                   <div>Create Blog</div>
@@ -118,7 +117,7 @@ const DashSidebar = ({ param }) => {
               //  onClick={() => {
               //   }}
               className="
-              w-48 h-11 rounded-lg shadow-md flex items-center justify-center mt-3 cursor-pointet"
+              w-48 h-11 rounded-lg shadow-md flex items-center justify-center mt-3 mb-10 cursor-pointet"
             >
               Log out
             </div>

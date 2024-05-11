@@ -37,14 +37,14 @@ const CreateBlog = () => {
       categoryId !== "" &&
       files?.name
     ) {
-      console.log("zz");
-      // dispatch(createPost(data));
-      setTitle("");
-      setSummary("");
-      setContent("");
-      setCategoryId("");
-      setFiles(null);
-      ref.current.value = null;
+      dispatch(createPost(data)).then(() => {
+        // setTitle("");
+        // setSummary("");
+        // setContent("");
+        // setCategoryId("");
+        // setFiles(null);
+        // ref.current.value = null;
+      });
     } else {
       setFilled(false);
     }
@@ -93,7 +93,43 @@ const CreateBlog = () => {
             </option>
           ))}
         </select>
-
+        {/* <Select
+          defaultValue="lucy"
+          style={{
+            width: 200,
+          }}
+          onChange={handleChange}
+          options={[
+            {
+              label: <span>manager</span>,
+              title: "manager",
+              options: [
+                {
+                  label: <span>Jack</span>,
+                  value: "Jack",
+                },
+                {
+                  label: <span>Lucy</span>,
+                  value: "Lucy",
+                },
+              ],
+            },
+            {
+              label: <span>engineer</span>,
+              title: "engineer",
+              options: [
+                {
+                  label: <span>Chloe</span>,
+                  value: "Chloe",
+                },
+                {
+                  label: <span>Lucas</span>,
+                  value: "Lucas",
+                },
+              ],
+            },
+          ]}
+        /> */}
         <div
           className={` ${
             !filled && !files?.name ? "border-red-400" : "border-teal-500"
