@@ -609,6 +609,33 @@ class API {
     });
   }
 
+   // [GET] /api/doctor
+   getDoctor(req, res) {
+    const insertSql =
+      "insert into servicedoctor (idService, idDoctor, EstimatedTime) values (?,?,?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    if (req.user.Authorization != 2) {
+      res.end("Unauthorized");
+    } else {
+      pool.query(
+        insertSql,
+        [idService, id, EstimatedTime],
+        function (error, results, fields) {
+          if (error) {
+            res.send({ message: error, checked: false });
+          } else {
+            if (results) {
+              res.status(200).send({ checked: true });
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
+          }
+        }
+      );
+    }
+  }
+
   // [POST] /api/service/doctor
   serviceDoctor(req, res) {
     const id = req.user.id;
