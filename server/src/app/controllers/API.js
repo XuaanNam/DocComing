@@ -75,7 +75,7 @@ class API {
   // [POST] /api/login
   login(req, res, next) {
     const sql =
-      "select id, Email, FirstName, PassWord, LastName, Authorization from account where Email = ? ";
+      "select id, Email, CONCAT(a.FirstName, ' ', a.LastName) as FullName, PassWord, Authorization from account where Email = ? ";
     const message = "Số điện thoại hoặc mật khẩu không chính xác!";
     const Email = req.body.Email;
     const PassWord = req.body.PassWord;
@@ -99,7 +99,7 @@ class API {
                 checked: true,
                 token,
                 id: results[0].id,
-                FullName: results[0].FirstName + " " + results[0].LastName,
+                FullName: results[0].FullName,
                 authentication: results[0].Authorization,
               });
             } else {
@@ -117,7 +117,7 @@ class API {
   Google(req, res) {
     const { email, name, googlePhotoUrl } = req.body;
     const sql =
-      "select id, Authorization, FirstName, LastName from account where Email = ? ";
+      "select id, Authorization, CONCAT(a.FirstName, ' ', a.LastName) as FullName from account where Email = ? ";
     const fn = name.split(" ");
     let lastName = fn[fn.length - 1];
     let firstName = "";
@@ -147,7 +147,7 @@ class API {
               checked: true,
               token,
               id: results[0].id,
-              FullName: results[0].FirstName + results[0].LastName,
+              FullName: results[0].FullName,
               authentication: results[0].Authorization,
               googlePhotoUrl,
             });
@@ -279,7 +279,6 @@ class API {
     for (let i = 0; i < fn.length - 1; i++) {
       FirstName = FirstName + fn[i] + " ";
     }
-    console.log(FullName, BirthDate, Gender, Phone, Address, id);
     if (Avt === null) {
       data = [FirstName, LastName, BirthDate, Gender, Phone, Address, id];
       updateSql =
@@ -612,29 +611,22 @@ class API {
 
    // [GET] /api/doctor
    getDoctor(req, res) {
-    const insertSql =
-      "insert into servicedoctor (idService, idDoctor, EstimatedTime) values (?,?,?)";
+    const selectSql =
+      "select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major FROM account a, inforDoctor i, major m where a.id = i.idAccount and m.id = i.idMajor";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
-    if (req.user.Authorization != 2) {
-      res.end("Unauthorized");
-    } else {
-      pool.query(
-        insertSql,
-        [idService, id, EstimatedTime],
-        function (error, results, fields) {
-          if (error) {
-            res.send({ message: error, checked: false });
-          } else {
-            if (results) {
-              res.status(200).send({ checked: true });
-            } else {
-              res.status(200).send({ message: errorMsg, checked: false });
-            }
-          }
+    pool.query(selectSql, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data:results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
         }
-      );
-    }
+      }
+    });
+    
   }
 
   // [POST] /api/service/doctor
