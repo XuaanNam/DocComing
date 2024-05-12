@@ -20,7 +20,7 @@ const DashSidebar = ({ param }) => {
         <div className="px-12 py-4 mb-4">
           <a
             href="/admin/dashboard"
-            className="text-2xl font-semibold uppercase text-[#0f766e] hover:text-gray-300"
+            className="text-2xl font-semibold uppercase text-teal-400 hover:text-gray-300"
           >
             <span className="text-left">Doctor</span>
             <span className="flex justify-end">Coming</span>

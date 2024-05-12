@@ -5,8 +5,9 @@ import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 
 const AdminLogin = () => {
-  const { currentUser, isLogin, message, error, loading, updated } =
-    useSelector((state) => state.user);
+  const { currentUser, message, error, loading, updated } = useSelector(
+    (state) => state.user
+  );
   const dispatch = useDispatch();
   const Navigate = useNavigate();
 

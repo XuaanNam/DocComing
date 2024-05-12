@@ -3,8 +3,8 @@ import "react-quill/dist/quill.snow.css";
 import Editor from "./Editor";
 import { useDispatch, useSelector } from "react-redux";
 import { createPost, fetchCategories } from "../../redux-toolkit/postSlice";
-import Select from "react-select";
-import { Alert, Button, FileInput } from "flowbite-react";
+import { Select, Input } from "antd";
+import { FileInput } from "flowbite-react";
 const CreateBlog = () => {
   const dispatch = useDispatch();
   const { category, checked } = useSelector((state) => state.post);
@@ -14,34 +14,46 @@ const CreateBlog = () => {
   const [content, setContent] = useState("");
   const [files, setFiles] = useState(null);
   const [categoryId, setCategoryId] = useState("");
+  const [similarCategoryId, setSimilarCategoryId] = useState("");
+
   const ref = useRef();
+  const categoryRef = useRef();
   useEffect(() => {
     dispatch(fetchCategories());
     // setCategories(category);
   }, [dispatch]);
-  const handleChange = (event) => {
-    setCategoryId(event.target.value);
+  const handleChange = (value) => {
+    setSimilarCategoryId(value);
+    for (let i = 0; i < category?.length; i++) {
+      for (let j = 0; j < category[i]?.Similar?.length; j++) {
+        if (category[i].Similar[j].id === value) {
+          setCategoryId(category[i].id);
+          break;
+        }
+      }
+    }
   };
-
+  console.log({ content });
   const handleCreatePost = () => {
     const data = new FormData();
     data.append("Title", title);
     data.append("Brief", summary);
     data.append("Content", content);
     data.append("idCategories", categoryId);
+    data.append("idSimilar", similarCategoryId);
     data.append("FeaturedImage", files);
     if (
       title !== "" &&
       summary !== "" &&
       content.length > 0 &&
-      categoryId !== "" &&
+      similarCategoryId !== "" &&
       files?.name
     ) {
       dispatch(createPost(data)).then(() => {
         // setTitle("");
         // setSummary("");
         // setContent("");
-        // setCategoryId("");
+        // setsimilarCategoryId("");
         // setFiles(null);
         // ref.current.value = null;
       });
@@ -49,38 +61,40 @@ const CreateBlog = () => {
       setFilled(false);
     }
   };
-  console.log(files);
   return (
     <div className="pt-5 pl-16 ">
-      <div className="text-2xl font-bold opacity-70 mb-5">Tạo Blog</div>
+      <div className="text-2xl font-bold opacity-70 mb-5">Tạo bài viết</div>
       <div className="mb-20">
-        <div className="flex items-center h-[48px] w-[70%] border rounded-lg mb-3 bg-white">
-          <input
+        <div className="flex items-center h-[48px] w-[70%] border rounded-md mb-3 bg-white">
+          <Input
             className={` ${
               !filled && title === "" && "border-red-400 border-[1.5px]"
-            } outline-none rounded-lg h-full p-3 w-full`}
+            } outline-none rounded-md h-full p-3 w-full`}
             type="text"
             placeholder="Tiêu đề"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
         </div>
-        <div className="flex items-center h-[48px] w-[70%] border rounded-lg mb-3 bg-white">
-          <input
+        <div className="flex items-center h-[48px] w-[70%] border rounded-md mb-3 bg-white">
+          <Input
             className={` ${
               !filled && summary === "" && "border-red-400 border-[1.5px]"
-            } outline-none rounded-lg h-full p-3 w-full`}
+            } outline-none rounded-md h-full p-3 w-full`}
             type="text"
             placeholder="Tóm tắt"
             value={summary}
             onChange={(e) => setSummary(e.target.value)}
           />
         </div>
-        <select
+        <Select
+          id="categories"
           className={` ${
-            !filled && categoryId === "" && "border-red-400 border-[1.5px]"
-          } flex items-center h-[48px] w-[70%] border rounded-lg mb-3 bg-white p-2 text-slate-800 cursor-pointer`}
-          value={categoryId}
+            !filled && categoryId === ""
+              ? "border-red-400 border-[1.5px]"
+              : "border-gray-400"
+          } flex items-center h-[48px] w-[70%] border rounded-md mb-3 bg-white text-slate-800 cursor-pointer`}
+          value={similarCategoryId}
           onChange={handleChange}
         >
           <option disabled value="" className="text-white">
@@ -88,48 +102,26 @@ const CreateBlog = () => {
           </option>
 
           {category?.map((category) => (
-            <option value={category.id} key={category.id}>
-              {category.Categories}
-            </option>
+            <Select.OptGroup
+              id="category"
+              value={category.id}
+              label={category.Categories}
+              key={category.id}
+              ref={categoryRef}
+            >
+              {category?.Similar?.map((item) => (
+                <Select.Option
+                  value={item.id}
+                  label={item.SimilarCategories}
+                  key={item.id}
+                >
+                  {item.SimilarCategories}
+                </Select.Option>
+              ))}
+            </Select.OptGroup>
           ))}
-        </select>
-        {/* <Select
-          defaultValue="lucy"
-          style={{
-            width: 200,
-          }}
-          onChange={handleChange}
-          options={[
-            {
-              label: <span>manager</span>,
-              title: "manager",
-              options: [
-                {
-                  label: <span>Jack</span>,
-                  value: "Jack",
-                },
-                {
-                  label: <span>Lucy</span>,
-                  value: "Lucy",
-                },
-              ],
-            },
-            {
-              label: <span>engineer</span>,
-              title: "engineer",
-              options: [
-                {
-                  label: <span>Chloe</span>,
-                  value: "Chloe",
-                },
-                {
-                  label: <span>Lucas</span>,
-                  value: "Lucas",
-                },
-              ],
-            },
-          ]}
-        /> */}
+        </Select>
+
         <div
           className={` ${
             !filled && !files?.name ? "border-red-400" : "border-teal-500"

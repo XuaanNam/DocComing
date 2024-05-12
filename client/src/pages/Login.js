@@ -7,7 +7,7 @@ import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const { currentUser, isLogin, error, loading, updated } = useSelector(
+  const { currentUser, message, error, loading, updated } = useSelector(
     (state) => state.user
   );
   const dispatch = useDispatch();
@@ -67,6 +67,8 @@ function Login() {
                       : "border-b-teal-100"
                   } py-2 mb-8 w-96 h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
                 ></input>
+                <p className="text-red-500 mb-4">{message}</p>
+
                 <Button
                   onClick={handleLogin}
                   className="w-60 mx-auto h-[48px] text-center"
