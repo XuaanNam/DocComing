@@ -40,6 +40,7 @@ router.post("/doctor/schedule", api.getSchedule); // laays lich bac si cua ngay 
 router.post("/schedule", PassportCheck, api.setSchedule);
 router.get("/service", api.getService);
 router.get("/doctor", api.getDoctor); // lay all bsi
+router.get("/doctor/:id", api.getDetailDoctor); // lay bsi với id
 router.post("/doctor/service/create", PassportCheck, api.serviceDoctor); //theem service cho moi bac si
 router.post("/doctor/service", api.getServiceDoctor); // lay dich vu cua tung bsi
 

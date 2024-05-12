@@ -609,13 +609,34 @@ class API {
     });
   }
 
-   // [GET] /api/doctor
-   getDoctor(req, res) {
+  // [GET] /api/doctor
+  getDoctor(req, res) {
     const selectSql =
       "select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major FROM account a, inforDoctor i, major m where a.id = i.idAccount and m.id = i.idMajor";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ data:results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+    
+  }
+
+  // [GET] /api/doctor/:id
+  getDetailDoctor(req, res) {
+    const id = req.params.id;
+    const selectSql =
+      "select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major FROM account a, inforDoctor i, major m where a.id = i.idAccount and m.id = i.idMajor and a.id = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql,id, function (error, results, fields) {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
