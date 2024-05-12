@@ -128,8 +128,9 @@ class API {
     let payload = {};
     let token = "";
     const insertSql =
-      "insert into account (Email, FirstName, LastName, Avt, PassWord) values (?, ?, ?, ?)";
-    const password = "null";
+      "insert into account (Email, FirstName, LastName, Avt, PassWord) values (?, ?, ?, ?, ?)";
+    const password =
+      "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici";
     try {
       pool.query(sql, email, function (error, results, fields) {
         if (error) {
@@ -721,16 +722,16 @@ class API {
     }
     let Status = 0;
     const idAuthor = req.user.id;
-    const { Title, Brief, Content, idCategories, idSimilar} = req.body;
+    const { Title, Brief, Content, idCategories, idSimilar } = req.body;
     const insertSql =
-      "insert into post (FeaturedImage, Title, Brief, Content, Images, idAuthor, DatePost, idCategories,idSimilar, Status) values (?,?,?,?,?,?,?, NOW(),?,?)";
+      "insert into post (FeaturedImage, Title, Brief, Content, idAuthor, DatePost, idCategories, idSimilar, Status) values (?,?,?,?,?,NOW(),?,?,?)";
 
     if (req.user.Authorization == 0) {
       Status = 1;
     } else if (req.user.Authorization == 2) {
       Status = 0;
     }
-
+    console.log(Title, Brief, Content, idCategories, idSimilar);
     if (req.user.Authorization == 1) {
       res.end("Unauthorized");
     } else {
@@ -741,7 +742,6 @@ class API {
           Title,
           Brief,
           Content,
-          Images,
           idAuthor,
           idCategories,
           idSimilar,
@@ -905,7 +905,8 @@ class API {
 
   // [GET] /api/category
   getCategory(req, res) {
-    const selectSql = "SELECT c.id, c.Categories, s.id as idsimilar, s.Similar FROM categories c LEFT JOIN similarCategories s on c.id = s.idCategories ORDER BY c.id, idsimilar";
+    const selectSql =
+      "SELECT c.id, c.Categories, s.id as idsimilar, s.Similar FROM categories c LEFT JOIN similarCategories s on c.id = s.idCategories ORDER BY c.id, idsimilar";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, function (error, results, fields) {
@@ -913,17 +914,28 @@ class API {
         res.send({ message: error, checked: false });
       } else {
         if (results) {
-
-          for(let i = 0; i < results.length; i ++){  
-            if( i != 0 && results[i].id == results[i - 1].id){   //results.Similar = [suy gan, sỏi thận]
-              if(!Array.isArray(results[i - 1].Similar) ){
-                results[i - 1].Similar = [{id: results[i - 1].idsimilar, SimilarCategories :results[i - 1].Similar}];
+          for (let i = 0; i < results.length; i++) {
+            if (i != 0 && results[i].id == results[i - 1].id) {
+              //results.Similar = [suy gan, sỏi thận]
+              if (!Array.isArray(results[i - 1].Similar)) {
+                results[i - 1].Similar = [
+                  {
+                    id: results[i - 1].idsimilar,
+                    SimilarCategories: results[i - 1].Similar,
+                  },
+                ];
               }
-              results[i].Similar = [...results[i - 1].Similar, {id: results[i].idsimilar, SimilarCategories : results[i].Similar}];  
+              results[i].Similar = [
+                ...results[i - 1].Similar,
+                {
+                  id: results[i].idsimilar,
+                  SimilarCategories: results[i].Similar,
+                },
+              ];
               results.splice(i - 1, 1);
               i -= 1;
             }
-            if(i == results.length - 1){
+            if (i == results.length - 1) {
               res.status(200).send({ data: results, checked: true });
             }
           }

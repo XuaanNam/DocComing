@@ -6,11 +6,14 @@ import { CiCamera } from "react-icons/ci";
 import { MdEdit } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "flowbite-react";
-import Datepicker from "flowbite-datepicker/Datepicker";
 import { fetchProfile, updateProfile } from "../../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
+import { DatePicker, Space, Input, Select } from "antd";
+import dayjs from "dayjs";
 
 const AdminProfile = () => {
+  const dateFormat = "DD/MM/YYYY";
+
   const { currentUser, user, auth, error, loading, updated } = useSelector(
     (state) => state.user
   );
@@ -24,27 +27,20 @@ const AdminProfile = () => {
   const filePickerRef = useRef();
   const dispatch = useDispatch();
   const Navigate = useNavigate();
-  console.log(user);
   useEffect(() => {
     dispatch(fetchProfile());
-  }, []);
-  useEffect(() => {
+
     if (!currentUser) {
-      //   Navigate("/");
+      Navigate("/");
     } else {
-      //   if (auth === 0) {
-      setData(user?.data);
-      setFullName(
-        user?.data?.FirstName + user?.data?.LastName || currentUser?.FullName
-      );
-      const datepickerEl = document?.getElementById("BirthDate");
-      new Datepicker(datepickerEl, {
-        format: "dd/mm/yyyy",
-      });
-      //   }
-      //   else Navigate("/");
+      if (currentUser.authentication == 0) {
+        setData(user?.data);
+        setFullName(
+          user?.data?.FirstName + user?.data?.LastName || currentUser?.FullName
+        );
+      } else Navigate("/");
     }
-  }, [user.data]);
+  }, [user.data, currentUser]);
   const handleEdit = () => {
     setEdit(true);
   };
@@ -61,7 +57,9 @@ const AdminProfile = () => {
       setFormData({ ...formData, avt: file });
     }
   };
-
+  const handleSelectBox = (value) => {
+    setFormData({ ...formData, Gender: value });
+  };
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
@@ -80,12 +78,15 @@ const AdminProfile = () => {
     setEdit(false);
     setFormData({});
   };
+  const onChange = (date, dateString) => {
+    setData({ ...data, BirthDate: dateString });
+    setFormData({ ...formData, BirthDate: dateString });
+  };
   return (
     <div className="">
-      {currentUser ? (
-        /* && auth === 1  */
+      {currentUser?.authentication == 0 ? (
         <div className="mx-16 text-gray-700 flex gap-10 ">
-          <div className="my-7 w-full rounded-xl bg-white shadow-xl py-5 px-8">
+          <div className="my-7 w-full rounded-xl bg-lime-50 shadow-xl py-5 px-8">
             <div className="mb-5 grid grid-cols-5 items-center">
               <p className="font-semibold text-2xl col-span-1">Hồ sơ</p>
               {edit === false && (
@@ -117,22 +118,22 @@ const AdminProfile = () => {
                   alt="userImage"
                   className="rounded-full w-full h-full object-cover border-4 border-[lightgray]"
                 />
-                <div className="absolute w-8 h-8 rounded-full bg-slate-300 right-1 bottom-1  flex justify-center items-center">
+                <div className="absolute w-8 h-8 rounded-full bg-gray-300 right-1 bottom-1  flex justify-center items-center">
                   <CiCamera></CiCamera>
                 </div>
                 <div className="font-medium text-lg text-center w-full">
-                  {data?.FirstName + data?.LastName || currentUser?.name}
+                  {data?.FirstName + " " + data?.LastName || currentUser?.name}
                 </div>
               </div>
               <form className="col-span-4 mb-16">
                 <div className="p-5 bg-white shadow-md rounded-lg">
                   <div className="flex gap-5 mb-5">
                     <div className="w-1/2">
-                      <p className="font-medium text-sm">Họ và tên</p>
-                      <input
+                      <p className="font-medium text-sm mb-2">Họ và tên</p>
+                      <Input
                         className={` ${
-                          edit && "focus:border-sky-500 focus:border-b-2"
-                        } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
+                          edit && "focus:border-sky-500 "
+                        } w-[90%] bg-white rounded-lg px-2 border-gray-300 h-[44px]`}
                         id="FullName"
                         placeholder="--"
                         value={FullName}
@@ -141,29 +142,29 @@ const AdminProfile = () => {
                           handleChange(e);
                         }}
                         disabled={!edit}
-                      ></input>
+                      ></Input>
                     </div>
                     <div className="w-1/2">
-                      <p className="font-medium text-sm">Email</p>
-                      <input
+                      <p className="font-medium text-sm mb-2">Email</p>
+                      <Input
                         className={` ${
-                          edit && "focus:border-sky-500 focus:border-b-2"
-                        } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
-                        id="email"
+                          edit && "focus:border-sky-500 "
+                        } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
+                        id="Email"
                         placeholder="--"
                         value={data?.Email || ""}
                         disabled={true}
-                      ></input>
+                      ></Input>
                     </div>
                   </div>
 
                   <div className="flex gap-5 mb-5">
                     <div className="w-1/2">
-                      <p className="font-medium text-sm">Số điện thoại</p>
-                      <input
+                      <p className="font-medium text-sm mb-2">Số điện thoại</p>
+                      <Input
                         className={` ${
-                          edit && "focus:border-sky-500 focus:border-b-2"
-                        } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
+                          edit && "focus:border-sky-500 "
+                        } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
                         id="Phone"
                         placeholder="--"
                         value={data?.Phone || ""}
@@ -172,78 +173,63 @@ const AdminProfile = () => {
                           handleChange(e);
                         }}
                         disabled={!edit}
-                      ></input>
+                      ></Input>
                     </div>
                     <div className="w-1/2">
-                      <p className="font-medium text-sm">Địa chỉ</p>
-                      <input
+                      <p className="font-medium text-sm mb-2">Địa chỉ</p>
+                      <Input
                         className={` ${
-                          edit && "focus:border-sky-500 focus:border-b-2"
-                        } w-[90%] bg-white outline-none px-2 h-[48px] border-b`}
+                          edit && "focus:border-sky-500 "
+                        } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
                         id="Address"
                         placeholder="--"
                         value={data?.Address || ""}
-                        // value={Address}
                         onChange={(e) => {
                           setData({ ...data, [e.target.id]: e.target.value });
                           handleChange(e);
                         }}
                         disabled={!edit}
-                      ></input>
+                      ></Input>
                     </div>
                   </div>
 
                   <div className="flex gap-5 mb-5">
                     <div className="w-1/2">
-                      <p className="font-medium text-sm">Ngày sinh</p>
-                      <div className="relative max-w-sm">
-                        <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                          <svg
-                            className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                            aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                          </svg>
-                        </div>
-                        <input
-                          id="BirthDate"
-                          datepicker="true"
-                          value={data?.BirthDate}
-                          type="text"
-                          className="w-[90%] h-[40px] mt-2 bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          placeholder="--"
-                          onSelect={(e) => {
-                            setData({ ...data, [e.target.id]: e.target.value });
-                            handleChange(e);
-                          }}
-                          disabled={!edit}
-                        />
-                      </div>
+                      <p className="font-medium text-sm mb-2">Ngày sinh</p>
+                      <DatePicker
+                        id="BirthDate"
+                        className="w-[90%] h-[44px] text-lg bg-white border-gray-300 text-gray-900 rounded-lg"
+                        placeholder="--"
+                        value={
+                          data?.BirthDate
+                            ? dayjs(data?.BirthDate, dateFormat)
+                            : ""
+                        }
+                        format={dateFormat}
+                        disabled={!edit}
+                        onChange={onChange}
+                      />
                     </div>
                     <div className="w-1/2">
-                      <p className="font-medium text-sm">Giới tính</p>
-                      <div className="max-w-md w-[90%] h-[40px] mt-2">
-                        <select
-                          className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          id="Gender"
-                          value={data?.Gender}
-                          onChange={(e) => {
-                            setData({ ...data, [e.target.id]: e.target.value });
-                            handleChange(e);
-                          }}
-                          disabled={!edit}
-                        >
-                          <option value="" disabled className="">
-                            --
-                          </option>
-                          <option value="Nam">Nam</option>
-                          <option value="Nữ">Nữ</option>
-                          <option value="Khác">Khác</option>
-                        </select>
-                      </div>
+                      <p className="font-medium text-sm mb-2">Giới tính</p>
+                      <Select
+                        className="w-[90%] h-[44px] text-lg bg-white border-gray-300 text-gray-900 "
+                        id="Gender"
+                        value={data?.Gender}
+                        onChange={(value) => {
+                          setData({ ...data, Gender: value });
+                          handleSelectBox(value);
+                        }}
+                        disabled={!edit}
+                      >
+                        <option value="" disabled className="">
+                          --
+                        </option>
+
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                        <option value="Khác">Khác</option>
+                      </Select>
                     </div>
                   </div>
                 </div>

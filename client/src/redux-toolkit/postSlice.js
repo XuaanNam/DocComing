@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { message } from "antd";
 import { toast } from "react-toastify";
 
 const initialState = {
@@ -78,6 +79,9 @@ const postSlice = createSlice({
         toast.success("Tạo bài viết thành công!", {
           position: "top-right",
         });
+        if (action.payload.checked === false) {
+          state.message = action.payload.message;
+        }
       })
       .addCase(createPost.rejected, (state, action) => {
         state.loading = true;
