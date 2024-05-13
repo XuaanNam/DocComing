@@ -3,21 +3,29 @@ import { LuStethoscope } from "react-icons/lu";
 import { FaRegAddressBook, FaHome } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { GiSunrise, GiSun, GiSunset } from "react-icons/gi";
-import Datepicker from "flowbite-datepicker/Datepicker";
 import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { DatePicker, Space, Input, Select } from "antd";
+import dayjs from "dayjs";
 
 import { fetchSchedule, fetchService } from "../redux-toolkit/appointmentSlice";
 const BookingDoctor = () => {
+  const dateFormat = "DD/MM/YYYY";
   const date = new Date();
   const today =
-    date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-  const { service, ScheduleData, AppointmentData, error, loading, updated } =
-    useSelector((state) => state.appointment);
+    date.getDate() +
+    "/" +
+    (date.getMonth() + 1 < 10
+      ? "0" + (date.getMonth() + 1)
+      : date.getMonth() + 1) +
+    "/" +
+    date.getFullYear();
+
   // const ScheduleData = schedule?.ScheduleData;
   // const AppointmentData = schedule?.AppointmentData;
-
+  const { service, ScheduleData, AppointmentData, error, loading, updated } =
+    useSelector((state) => state.appointment);
   const [step, setStep] = useState(0);
   const [step1, setStep1] = useState(0);
   const [step2, setStep2] = useState(0);
@@ -46,7 +54,7 @@ const BookingDoctor = () => {
     DateBooking: today,
   };
   console.log("data", data);
-
+  console.log(date.getMonth());
   const addTime = (fTime, sTime) => {
     const ft = fTime.split(":");
     const st = sTime.split(":");
@@ -71,14 +79,7 @@ const BookingDoctor = () => {
   useEffect(() => {
     dispatch(fetchSchedule(body));
     dispatch(fetchService({ idDoctor: 235523485 }));
-    const datepickerEl = document?.getElementById("date");
-    new Datepicker(datepickerEl, {
-      format: "dd/mm/yyyy",
-      title: "Thời gian làm việc",
-      today: "true",
-      minDate: new Date(),
-    });
-    setData({ ...data, date: today });
+    setData({ ...data, DateBooking: today });
   }, []);
   useEffect(() => {
     if (!data.Service && ScheduleData) {
@@ -345,9 +346,9 @@ const BookingDoctor = () => {
     changeData();
   }, [ScheduleData]);
 
-  const handleDatePickerChange = (e) => {
-    setData({ ...data, [e.target.id]: e.target.value });
-    dispatch(fetchSchedule({ ...body, DateBooking: e.target.value })); //cu
+  const handleDatePickerChange = (date, dateString) => {
+    setData({ ...data, DateBooking: dateString });
+    dispatch(fetchSchedule({ ...body, DateBooking: dateString }));
   };
 
   const handleBooking = () => {
@@ -359,7 +360,7 @@ const BookingDoctor = () => {
       idDoctor: 235523485,
       Price: data.Service ? service[data.Service - 1].Price : service[0].Price,
       // Information,
-      DateBooking: data.date ? data.date : today,
+      DateBooking: data.DateBooking ? data.DateBooking : today,
       TimeBooking: data.timePicker,
     };
     localStorage.setItem("appointment", JSON.stringify(body));
@@ -448,30 +449,14 @@ const BookingDoctor = () => {
             <p className="font-medium text-slate-600 mb-3">
               Thời gian làm việc
             </p>
-            <div className="relative w-full flex items-center mb-5">
-              <div className="absolute inset-y-0 start-0 flex items-center ps-5 pointer-events-none">
-                <svg
-                  className="w-4 h-4 text-gray-500 dark:text-gray-400"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path d="M20 4a2 2 0 0 0-2-2h-2V1a1 1 0 0 0-2 0v1h-3V1a1 1 0 0 0-2 0v1H6V1a1 1 0 0 0-2 0v1H2a2 2 0 0 0-2 2v2h20V4ZM0 18a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8H0v10Zm5-8h10a1 1 0 0 1 0 2H5a1 1 0 0 1 0-2Z" />
-                </svg>
-              </div>
-              <input
-                id="date"
-                datepicker
-                datepicker-autohide
-                value={data?.date}
-                type="text"
-                className="w-full h-[40px] bg-white border border-gray-300 text-teal-700 text-base font-medium rounded-lg focus:ring-blue-500 focus:border-blue-500 block ps-12 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                onSelect={handleDatePickerChange}
-              />
-              <IoIosArrowDown className="absolute right-3"></IoIosArrowDown>
-            </div>
-
+            <DatePicker
+              id="DateBooking"
+              className="w-full h-[44px] mb-3 text-xl bg-white border border-gray-300 text-teal-700 font-medium rounded-lg block px-3 p-1"
+              value={dayjs(data?.DateBooking, dateFormat)}
+              format={dateFormat}
+              onChange={handleDatePickerChange}
+              minDate={dayjs(today, dateFormat)}
+            />
             {time1.length > 0 && (
               <>
                 <div className="flex gap-3 items-center mb-3">
@@ -601,10 +586,10 @@ const BookingDoctor = () => {
             </div>
             <div className="flex gap-3 mb-5 items-center">
               <p className=" text-teal-800">Phí dịch vụ: </p>
-              {/* <p className="font-medium text-emerald-500 text-lg">
+              <p className="font-medium text-emerald-500 text-lg">
                 {service ? service[data.Service - 1]?.Price : service[0]?.Price}
                 VND
-              </p> */}
+              </p>
             </div>
             <p className="italic text-sm text-teal-800 mb-5">
               Lưu ý: Bảng giá dịch vụ trên chỉ mang tính chất tham khảo và có

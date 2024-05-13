@@ -214,8 +214,8 @@ Status int default 1,    			-- 0 lịch mặc định cửa bác sĩ, 1 lịch t
 foreign key (idDoctor) references account(id) 
 )
 ; -- drop table schedule
-insert into schedule (idDoctor, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd) values 
-(235523485, "08:30", "11:30", "17:00", "20:30");
+insert into schedule (idDoctor, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd, Status) values 
+(235523485, "08:30", "11:30", "17:00", "20:30", 0);
 
 create table notification(
 id int not null primary key AUTO_INCREMENT,

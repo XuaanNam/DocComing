@@ -487,7 +487,6 @@ class API {
     DateBooking = sd[2] + "-" + sd[1] + "-" + sd[0];
     let AppointmentData = {};
     let ScheduleData = {};
-
     const sql2 = "call ScheduleData(?,?)";
     pool.getConnection(function (err, connection) {
       if (err) throw err; // not connected!
@@ -497,7 +496,6 @@ class API {
         [idDoctor, DateBooking],
         function (error, results, fields) {
           if (error) {
-            console.log(error);
             res.send({ message: error, checked: false });
           }
           if (results[0]) AppointmentData = results[0];
