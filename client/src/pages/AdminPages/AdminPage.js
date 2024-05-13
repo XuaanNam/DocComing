@@ -22,6 +22,7 @@ const AdminPage = () => {
       if (currentUser.authentication !== 0) Navigate("/");
     } else Navigate("/");
   }, [currentUser]);
+  console.log("a");
   return (
     <div>
       {currentUser?.authentication === 0 ? (

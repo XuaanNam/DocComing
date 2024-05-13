@@ -75,7 +75,7 @@ class API {
   // [POST] /api/login
   login(req, res, next) {
     const sql =
-      "select id, Email, CONCAT(a.FirstName, ' ', a.LastName) as FullName, PassWord, Authorization from account where Email = ? ";
+      "select id, Email, FirstName, LastName, PassWord, Authorization from account where Email = ? ";
     const message = "Số điện thoại hoặc mật khẩu không chính xác!";
     const Email = req.body.Email;
     const PassWord = req.body.PassWord;
@@ -99,7 +99,7 @@ class API {
                 checked: true,
                 token,
                 id: results[0].id,
-                FullName: results[0].FullName,
+                FullName: results[0].FirstName + " " + results[0].LastName,
                 authentication: results[0].Authorization,
               });
             } else {
@@ -117,7 +117,7 @@ class API {
   Google(req, res) {
     const { email, name, googlePhotoUrl } = req.body;
     const sql =
-      "select id, Authorization, CONCAT(a.FirstName, ' ', a.LastName) as FullName from account where Email = ? ";
+      "select id, Authorization, FirstName, LastName from account where Email = ? ";
     const fn = name.split(" ");
     let lastName = fn[fn.length - 1];
     let firstName = "";
@@ -147,7 +147,7 @@ class API {
               checked: true,
               token,
               id: results[0].id,
-              FullName: results[0].FullName,
+              FullName: results[0].FirstName + " " + results[0].LastName,
               authentication: results[0].Authorization,
               googlePhotoUrl,
             });
@@ -611,7 +611,7 @@ class API {
   // [GET] /api/doctor
   getDoctor(req, res) {
     const selectSql =
-      "select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major, i.Experience, i.Training FROM account a, inforDoctor i, major m where a.id = i.idAccount and m.id = i.idMajor";
+      "select a.id, a.FirstName, a.LastName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major, i.Experience, i.Training FROM account a, inforDoctor i, major m where a.id = i.idAccount and m.id = i.idMajor";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, function (error, results, fields) {
@@ -619,7 +619,7 @@ class API {
         res.send({ message: error, checked: false });
       } else {
         if (results) {
-          res.status(200).send({ data: results, checked: true });
+          results.res.status(200).send({ data: results, checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
