@@ -189,15 +189,16 @@ id int not null primary key AUTO_INCREMENT,
 idService int  not null CHECK (idService !=""),
 idDoctor int  not null CHECK (idDoctor !=""),
 EstimatedTime TIME,
+Price double,
 Status int default 0, -- 0 hiển thị dịch vụ, 1 doctor ẩn dịch vụ  
 foreign key (idService) references service(id),
 foreign key (idDoctor) references account(id) 
 )
 ; -- drop table servicedoctor
-insert into servicedoctor (idService, idDoctor, EstimatedTime) values 
-(1, 235523485, "01:00"),
-(2, 235523485, "01:30"),
-(3, 235523485, "00:30");
+insert into servicedoctor (idService, idDoctor, EstimatedTime, Price) values 
+(1, 235523485, "01:00", 500000),
+(2, 235523485, "01:30", 300000),
+(3, 235523485, "00:30", 2000000);
 
 create table schedule(
 id int not null primary key AUTO_INCREMENT,

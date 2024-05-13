@@ -32,7 +32,7 @@ const BookingDoctor = () => {
   const [currenTime3, setCurrenTime3] = useState(
     ScheduleData[0]?.ThirdShiftStart?.slice(0, 5)
   );
-  console.log(currenTime1, currenTime2, currenTime3, ScheduleData[0]);
+  console.log(ScheduleData);
   const [time1, setTime1] = useState([]);
   const [time2, setTime2] = useState([]);
   const [time3, setTime3] = useState([]);
@@ -601,12 +601,10 @@ const BookingDoctor = () => {
             </div>
             <div className="flex gap-3 mb-5 items-center">
               <p className=" text-teal-800">Phí dịch vụ: </p>
-              <p className="font-medium text-emerald-500 text-lg">
-                {data?.Service
-                  ? service[data.Service - 1]?.Price
-                  : service[0]?.Price}
+              {/* <p className="font-medium text-emerald-500 text-lg">
+                {service ? service[data.Service - 1]?.Price : service[0]?.Price}
                 VND
-              </p>
+              </p> */}
             </div>
             <p className="italic text-sm text-teal-800 mb-5">
               Lưu ý: Bảng giá dịch vụ trên chỉ mang tính chất tham khảo và có

@@ -14,6 +14,8 @@ const initialState = {
   user: {},
   updated: false,
   message: "",
+  doctors: [],
+  detailDoctor: {},
 };
 
 export const userRegister = createAsyncThunk("userRegister", async (body) => {
@@ -88,7 +90,27 @@ export const updateProfile = createAsyncThunk("updateProfile", async (body) => {
   });
   return await res.json();
 });
-
+export const getAllDoctors = createAsyncThunk("getAllDoctors", async () => {
+  const res = await fetch("http://localhost:5000/api/doctor", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return await res.json();
+});
+export const getDetailDoctor = createAsyncThunk(
+  "getDetailDoctor",
+  async (body) => {
+    const res = await fetch(`http://localhost:5000/api/doctor/${body}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return await res.json();
+  }
+);
 const authSlice = createSlice({
   name: "user",
   initialState,
@@ -200,6 +222,26 @@ const authSlice = createSlice({
         }
       })
       .addCase(userRegister.rejected, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getAllDoctors.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getAllDoctors.fulfilled, (state, { payload }) => {
+        state.doctors = payload.data;
+        state.loading = false;
+      })
+      .addCase(getAllDoctors.rejected, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getDetailDoctor.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getDetailDoctor.fulfilled, (state, { payload }) => {
+        state.detailDoctor = payload.data;
+        state.loading = false;
+      })
+      .addCase(getDetailDoctor.rejected, (state, action) => {
         state.loading = true;
       });
   },

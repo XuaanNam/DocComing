@@ -484,7 +484,6 @@ class API {
     const sql = "call AppointmentData(?, ?)";
     let { idDoctor, DateBooking } = req.body; //dd/mm/yyyy
     const sd = DateBooking.split("/");
-    console.log(idDoctor);
     DateBooking = sd[2] + "-" + sd[1] + "-" + sd[0];
     let AppointmentData = {};
     let ScheduleData = {};
@@ -498,6 +497,7 @@ class API {
         [idDoctor, DateBooking],
         function (error, results, fields) {
           if (error) {
+            console.log(error);
             res.send({ message: error, checked: false });
           }
           if (results[0]) AppointmentData = results[0];
@@ -510,6 +510,7 @@ class API {
         function (error, results, fields) {
           connection.destroy();
           if (error) {
+            console.log(error);
             res.send({ message: error, checked: false });
           }
           if (results[0]) {
@@ -620,13 +621,12 @@ class API {
         res.send({ message: error, checked: false });
       } else {
         if (results) {
-          res.status(200).send({ data:results, checked: true });
+          res.status(200).send({ data: results, checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
       }
     });
-    
   }
 
   // [GET] /api/doctor/:id
@@ -636,18 +636,17 @@ class API {
       "select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major FROM account a, inforDoctor i, major m where a.id = i.idAccount and m.id = i.idMajor and a.id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
-    pool.query(selectSql,id, function (error, results, fields) {
+    pool.query(selectSql, id, function (error, results, fields) {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
         if (results) {
-          res.status(200).send({ data:results, checked: true });
+          res.status(200).send({ data: results, checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
       }
     });
-    
   }
 
   // [POST] /api/service/doctor
@@ -679,9 +678,8 @@ class API {
     }
   }
 
-  // [GET] /api/service
+  // [GET] /api/doctor/service
   getServiceDoctor(req, res) {
-    console.log("heree");
     const { idDoctor } = req.body;
     const selectSql =
       "SELECT s.id, s.Service, sd.EstimatedTime, sd.Price FROM servicedoctor sd, service s where s.id = sd.idService and idDoctor = ?";
@@ -744,7 +742,6 @@ class API {
     } else if (req.user.Authorization == 2) {
       Status = 0;
     }
-    console.log(Title, Brief, Content, idCategories, idSimilar);
     if (req.user.Authorization == 1) {
       res.end("Unauthorized");
     } else {

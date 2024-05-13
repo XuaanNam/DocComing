@@ -210,7 +210,7 @@ const HomePage = () => {
               <div className="relative w-[100%] flex justify-center mb-3">
                 <img
                   className="rounded-3xl w-full h-[150px] rol-start-1 shadow-lg"
-                  src={require("../Images/background.png")}
+                  src={require("../Images/backgroundDoctor.jpg")}
                   alt=""
                 ></img>
                 <img
@@ -253,7 +253,7 @@ const HomePage = () => {
               <div className="relative w-[100%] flex justify-center mb-3">
                 <img
                   className="rounded-3xl w-full h-[150px] rol-start-1 shadow-lg"
-                  src={require("../Images/background.png")}
+                  src={require("../Images/backgroundDoctor.jpg")}
                   alt=""
                 ></img>
                 <img
