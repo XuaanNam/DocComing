@@ -611,7 +611,7 @@ class API {
   // [GET] /api/doctor
   getDoctor(req, res) {
     const selectSql =
-      "select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major FROM account a, inforDoctor i, major m where a.id = i.idAccount and m.id = i.idMajor";
+      "select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major, i.Experience, i.Training FROM account a, inforDoctor i, major m where a.id = i.idAccount and m.id = i.idMajor";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, function (error, results, fields) {
@@ -631,7 +631,7 @@ class API {
   getDetailDoctor(req, res) {
     const id = req.params.id;
     const selectSql =
-      "select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major FROM account a, inforDoctor i, major m where a.id = i.idAccount and m.id = i.idMajor and a.id = ?";
+      "select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major, i.Experience, i.Training FROM account a, inforDoctor i, major m where a.id = i.idAccount and m.id = i.idMajor and a.id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     pool.query(selectSql, id, function (error, results, fields) {
