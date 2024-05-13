@@ -64,14 +64,16 @@ create table inforDoctor(
 id int not null primary key AUTO_INCREMENT,
 idAccount int,
 Degree varchar(30), -- trình độ
-Introduce varchar(1500), -- giới thiệu
+Introduce varchar(150), -- giới thiệu
 idMajor int,
+Experience int, 
+Training varchar(100),
 foreign key (idAccount) references account(id),
 foreign key (idMajor) references major(id)
 )
-;
-insert into inforDoctor (idAccount, Degree, Introduce, idMajor) values 
-(235523485, "Tiến Sĩ", "Chuyên Ngành Tim Mạch", 1);
+; -- drop table inforDoctor
+insert into inforDoctor (idAccount, Degree, Introduce, idMajor, Experience, Training) values 
+(235523485, "Tiến Sĩ", "Chuyên Ngành Tim Mạch", 1, 7, "Viet Nam");
 
 create table service(
 id int not null primary key AUTO_INCREMENT,
