@@ -4,32 +4,61 @@ import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
 import { FaLongArrowAltRight } from "react-icons/fa";
 import { Badge, Calendar } from "antd";
-import { fetchAppointment } from "../redux-toolkit/appointmentSlice";
+import { fetchAppointment } from "../../redux-toolkit/appointmentSlice";
+import {
+  fetchSchedule,
+  fetchService,
+} from "../../redux-toolkit/appointmentSlice";
 import { useDispatch, useSelector } from "react-redux";
-
-
+import { DatePicker, Space, Input, Select } from "antd";
+import dayjs from "dayjs";
 const DoctorSchedule = () => {
-  const [actived, setActived] = useState(1);
   const dispatch = useDispatch();
-  const { AppointmentData, error, loading, updated } = useSelector((state) => state.appointment);
+  const { AppointmentData, error, loading, updated } = useSelector(
+    (state) => state.appointment
+  );
+  const { user } = useSelector((state) => state.user);
+  console.log(user.data.id);
+  const dateFormat = "DD/MM/YYYY";
+  const date = new Date();
+  const today =
+    date.getDate() +
+    "/" +
+    (date.getMonth() + 1 < 10
+      ? "0" + (date.getMonth() + 1)
+      : date.getMonth() + 1) +
+    "/" +
+    date.getFullYear();
+  let body = {
+    idDoctor: user?.data.id,
+    DateBooking: today,
+  };
 
   useEffect(() => {
-    dispatch(fetchAppointment()); 
+    dispatch(fetchSchedule(body));
+    dispatch(fetchService({ idDoctor: user?.data.id }));
+
+    dispatch(fetchAppointment());
   }, []);
-  console.log(AppointmentData)
+  console.log(today);
   const getListData = (value) => {
     let listData = [];
-    for(let i = 0; i < AppointmentData.length; i++) {
+    for (let i = 0; i < AppointmentData.length; i++) {
       let db = AppointmentData[i].DateBooking.split("-");
       // eslint-disable-next-line eqeqeq
-      if(value.date() == db[2] && (value.month() + 1) == db[1] && value.year() == db[0]){
-        listData = [ ...listData,
+      if (
+        value.date() == db[2] &&
+        value.month() + 1 == db[1] &&
+        value.year() == db[0]
+      ) {
+        listData = [
+          ...listData,
           {
             type: AppointmentData[i].Type,
             content: AppointmentData[i].TimeBooking,
           },
-        ]; 
-      } 
+        ];
+      }
     }
     return listData || [];
   };
@@ -51,37 +80,9 @@ const DoctorSchedule = () => {
   };
 
   return (
-    <div className="pt-[70px] bg-gray-50">
+    <div className="">
       <div className=" mx-16 text-gray-700 flex gap-7">
-        <div className="my-7 w-1/5 h-80 bg-white rounded-lg shadow-lg">
-          <div
-            onClick={() => setActived(1)}
-            className={` ${
-              actived === 1 && "bg-[#14b8a6] text-white"
-            } flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer`}
-          >
-            <FaRegUserCircle className="h-7 w-7"></FaRegUserCircle>
-            <a href="/patient/profile" className="block py-2 w-full">
-              Hồ sơ
-            </a>
-          </div>
-          <div className="flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer">
-            <LuCalendarDays className="h-7 w-7"></LuCalendarDays>
-            <a href="/" className="block py-2 w-full">
-              Lịch khám của tôi
-            </a>
-          </div>
-          <div
-            className="flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer"
-            // onClick={handleLogout}
-          >
-            <FiLogOut className="h-7 w-7"></FiLogOut>
-            <a href="/" className="block py-2 w-full">
-              Đăng xuất
-            </a>
-          </div>
-        </div>
-        <div className="my-7 w-4/5  rounded-xl bg-white shadow-lg py-5 px-8">
+        <div className="my-7 w-full  rounded-xl bg-lime-50 shadow-xl py-5 px-8">
           <p className="font-semibold text-2xl mb-5">Lịch làm việc</p>
           <div className="">
             <div className="flex gap-3 items-center mb-5">
@@ -151,7 +152,10 @@ const DoctorSchedule = () => {
               </select>
             </div>
           </div>
-          <Calendar cellRender={cellRender} />
+          <Calendar
+            className="shadow-lg shadow-blue-300 p-3 rounded-lg"
+            cellRender={cellRender}
+          />
         </div>
       </div>
     </div>

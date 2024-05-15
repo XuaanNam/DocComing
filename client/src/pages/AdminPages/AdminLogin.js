@@ -29,13 +29,13 @@ const AdminLogin = () => {
     if (currentUser) setTimeout(Navigate("/admin/dashboard"), 1000);
   }, [currentUser]);
   return (
-    <div className="pt-[100px]">
+    <div className="pt-[120px] mb-20">
       {!currentUser ? (
-        <div>
-          <div className="text-center text-xl font-medium  opacity-70  my-5">
+        <div className="shadow-lg bg-gradient-to-r p-5 rounded-xl from-lime-50 to-white w-1/3 h-80 mx-auto">
+          <div className="text-center text-xl font-medium my-2 opacity-70">
             Đăng nhập bằng tài khoản
           </div>
-          <div className="flex flex-col h-screen px-5 py-6 items-center rounded-2xl shadow-lg bg-gradient-to-r from-slate-50 to-white ">
+          <div className="flex flex-col px-5 py-6 items-center rounded-2xl ">
             <input
               type="text"
               name="email"
@@ -59,7 +59,7 @@ const AdminLogin = () => {
             <p className="text-red-500 mb-4">{message}</p>
             <Button
               onClick={handleLogin}
-              className="w-60 mx-auto h-[48px] text-center"
+              className="w-60 mt-3 mx-auto h-[48px] text-center"
               gradientDuoTone="greenToBlue"
             >
               <p className="text-lg">Đăng nhập</p>

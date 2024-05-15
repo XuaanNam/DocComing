@@ -13,13 +13,14 @@ import { fetchProfile } from "../redux-toolkit/authSlice";
 import { persistor } from "../redux-toolkit/configureStore";
 
 const Header = () => {
-  const { currentUser, user, auth } = useSelector((state) => state.user);
+  const { currentUser, user } = useSelector((state) => state.user);
   const [actived, setActived] = useState(false);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
+  const authentication = currentUser?.authentication;
   // console.log(auth);
   const handleLogout = () => {
-    if (currentUser.authentication === 0) Navigate("/admin/login");
+    if (authentication === 0) Navigate("/admin/login");
     else Navigate("/");
     dispatch(logout());
     setTimeout(() => {
@@ -35,16 +36,8 @@ const Header = () => {
             Doctor Coming
           </a>
         </div>
-        <div className="flex items-center col-span-1">
-          <div className="bg-white flex items-center col-span-2 h-[44px] w-[300px] border rounded-lg hover:ring-1 hover:ring-teal-400">
-            <FiSearch className="ml-2 h-[24px] w-[24px] text-teal-500"></FiSearch>
-            <input
-              className="m-2 h-full w-full outline-none text-base"
-              placeholder="Tìm kiếm..."
-            ></input>
-          </div>
-        </div>
-        <div className="text-gray-100 mr-4 flex items-center justify-end font-medium cursor-pointer">
+
+        <div className="text-gray-100 mr-4 flex items-center col-start-3 justify-end font-medium cursor-pointer">
           <div
             onClick={() => {
               Navigate("/doctors");
@@ -71,14 +64,19 @@ const Header = () => {
                 className="flex gap-3 items-center justify-center cursor-pointer w-[81%]"
                 onClick={() => setActived(!actived)}
               >
-                <img
-                  className="rounded-full h-10 w-10 object-cover"
-                  alt=""
-                  src={user?.data?.Avt || require("../Images/pattientavt.png")}
-                ></img>
+                <div className="rounded-full h-11 w-11 bg-white flex items-center justify-center">
+                  <img
+                    className="rounded-full h-10 w-10 object-cover"
+                    alt=""
+                    src={
+                      user?.data?.Avt || require("../Images/pattientavt.png")
+                    }
+                  ></img>
+                </div>
+
                 <p className="font-medium text-base text-center text-gray-100 truncate max-w-[65%]">
                   {user?.data
-                    ? user?.data?.FirstName + user?.data?.LastName
+                    ? user?.data?.FirstName + " " + user?.data?.LastName
                     : currentUser?.FullName}
                 </p>
                 <IoMdArrowDropdown
@@ -95,16 +93,45 @@ const Header = () => {
                 <div className="absolute top-[62px] w-60 text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-10">
                   <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
                     <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
-                    <a href="/patient/profile" className="block py-3 ">
-                      Hồ sơ
-                    </a>
+                    {authentication === 2 && (
+                      <div
+                        onClick={() => {
+                          Navigate("/profile");
+                        }}
+                        className="block py-3 "
+                      >
+                        Hồ sơ
+                      </div>
+                    )}
+                    {authentication === 1 && (
+                      <div
+                        onClick={() => {
+                          Navigate("/patient/profile");
+                        }}
+                        className="block py-3 "
+                      >
+                        Hồ sơ
+                      </div>
+                    )}
+                    {authentication === 0 && (
+                      <div
+                        onClick={() => {
+                          Navigate("/admin/profile");
+                        }}
+                        className="block py-3 "
+                      >
+                        Hồ sơ
+                      </div>
+                    )}
                   </div>
-                  <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
-                    <LuCalendarDays className="h-5 w-5"></LuCalendarDays>
-                    <a href="/appointment" className="block py-3">
-                      Lịch khám của tôi
-                    </a>
-                  </div>
+                  {authentication === 1 && (
+                    <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
+                      <LuCalendarDays className="h-5 w-5"></LuCalendarDays>
+                      <a href="/appointment" className="block py-3">
+                        Lịch khám của tôi
+                      </a>
+                    </div>
+                  )}
                   {/* <div className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer">
                     <LuCalendarCheck className="h-5 w-5"></LuCalendarCheck>
                     <a href="/" className="block py-2">

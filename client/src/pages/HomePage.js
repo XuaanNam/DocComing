@@ -51,7 +51,7 @@ const HomePage = () => {
     dispatch(getAllPost());
   }, [currentUser]);
 
-  // console.log(allPost);
+  console.log(allPost);
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
@@ -107,14 +107,14 @@ const HomePage = () => {
         <div className="w-full flex gap-x-7">
           <div
             className="w-3/5 cursor-pointer"
-            onClick={() => Navigate("/blog")}
+            onClick={() => Navigate(`/blog/${allPost[0].id}`)}
           >
             <img
               className="h-[450px] w-full rounded-xl mb-2 bg-cover drop-shadow-lg"
               src={allPost[0]?.FeaturedImage}
               alt=""
             ></img>
-            <div className="text-teal-500 mb-2">{allPost[0]?.idCategories}</div>
+            <div className="text-teal-500 mb-2">{allPost[0]?.Similar}</div>
             <div className="text-slate-800 text-xl font-medium mb-2">
               {allPost[0]?.Title}
             </div>
@@ -127,7 +127,9 @@ const HomePage = () => {
                 src={require("../Images/doctor.webp")}
                 alt=""
               ></img>
-              <div className="font-medium"> {allPost[0]?.idAuthor} -</div>
+              <div className="font-medium">
+                {allPost[0]?.FirstName + " " + allPost[0]?.LastName} -
+              </div>
               <div> {allPost[0]?.DatePost.slice(0, 10)}</div>
             </div>
           </div>
@@ -135,13 +137,12 @@ const HomePage = () => {
             <div className="row-span-2 cursor-pointer w-full pb-5 border-b-[1.5px]">
               <img
                 className="h-[280px] w-full rounded-xl mb-1 bg-cover drop-shadow-lg"
-                src={require("../Images/banner-01.jpg")}
+                src={allPost[1]?.FeaturedImage}
                 alt=""
               ></img>
-              <div className="text-teal-500 mb-1">Bệnh cúm</div>
+              <div className="text-teal-500 mb-1">{allPost[1]?.Similar}</div>
               <div className="text-slate-800 text-lg font-medium mb-2">
-                Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm
-                A?
+                {allPost[1]?.Title}
               </div>
               <div className="flex gap-2 text-base items-center">
                 <img
@@ -149,23 +150,25 @@ const HomePage = () => {
                   src={require("../Images/doctor.webp")}
                   alt=""
                 ></img>
-                <div className="">Tham vấn y khoa:</div>
-                <div className="font-medium"> Bác sĩ Thu uyên -</div>
-                <div> 11/03/2024</div>
+                <div className="font-medium">
+                  {allPost[1]?.FirstName + " " + allPost[1]?.LastName} -
+                </div>
+                <div>{allPost[1]?.DatePost}</div>
               </div>
             </div>
             <div className="cursor-pointer w-full pt-5">
               <div className=" flex gap-2 ">
                 <div>
-                  <div className="text-teal-500 mb-2">Bệnh cúm</div>
+                  <div className="text-teal-500 mb-2">
+                    {allPost[2]?.Similar}
+                  </div>
                   <div className="text-slate-800 text-lg font-medium mb-1">
-                    Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng
-                    cúm A?
+                    {allPost[2]?.Title}
                   </div>
                 </div>
                 <img
                   className="h-[120px] w-[180px] rounded-xl mb-2 bg-cover drop-shadow-lg"
-                  src={require("../Images/banner-01.jpg")}
+                  src={allPost[2]?.FeaturedImage}
                   alt=""
                 ></img>
               </div>
@@ -176,9 +179,10 @@ const HomePage = () => {
                   src={require("../Images/doctor.webp")}
                   alt=""
                 ></img>
-                <div className="">Tham vấn y khoa:</div>
-                <div className="font-medium"> Bác sĩ Thu uyên</div>
-                <div> 11/03/2024</div>
+                <div className="font-medium">
+                  {allPost[2]?.FirstName + " " + allPost[2]?.LastName} -
+                </div>
+                <div>{allPost[2]?.DatePost}</div>
               </div>
             </div>
           </div>

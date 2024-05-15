@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import DashSidebar from "../../components/DashSidebar";
 import CreateBlog from "./CreateBlog";
 import UserList from "./UserList";
-import DashSidebar from "../../components/DashSidebar";
 import ManageBlog from "./ManageBlog";
 import Dashboard from "./Dashboard";
-import { useDispatch, useSelector } from "react-redux";
-import { authentication } from "../../redux-toolkit/authSlice";
 import AdminProfile from "./AdminProfile";
+import { useDispatch, useSelector } from "react-redux";
+
 const AdminPage = () => {
   const { currentUser, auth, isLogin, error, loading } = useSelector(
     (state) => state.user
   );
   const { adminpage } = useParams();
   const [actived, setActived] = useState(false);
-  const [blogActived, setBlogActived] = useState(false);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -22,7 +21,7 @@ const AdminPage = () => {
       if (currentUser.authentication !== 0) Navigate("/");
     } else Navigate("/");
   }, [currentUser]);
-  console.log("a");
+
   return (
     <div>
       {currentUser?.authentication === 0 ? (

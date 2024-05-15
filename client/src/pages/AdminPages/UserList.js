@@ -14,7 +14,6 @@ const UserList = () => {
     dispatch(fetchUsers());
   }, [dispatch]);
   const allUsers = useSelector((state) => state.user.data);
-  console.log(allUsers);
 
   return (
     <div className="table-auto md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">

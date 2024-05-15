@@ -6,7 +6,7 @@ import { CiCamera } from "react-icons/ci";
 import { MdEdit } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "flowbite-react";
-import { fetchProfile, updateProfile } from "../redux-toolkit/authSlice";
+import { fetchProfile, updateProfile } from "../../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
 import { DatePicker, Space, Input, Select } from "antd";
 import dayjs from "dayjs";
@@ -79,7 +79,7 @@ const Profile = () => {
     setData({ ...data, BirthDate: dateString });
     setFormData({ ...formData, BirthDate: dateString });
   };
-  console.log(data);
+  console.log(data?.Avt);
   return (
     <div className="pt-[70px] ">
       {currentUser?.authentication == 1 ? (
@@ -140,7 +140,7 @@ const Profile = () => {
                 onClick={() => filePickerRef.current.click()}
               >
                 <img
-                  src={data?.Avt || require("../Images/pattientavt.png")}
+                  src={data?.Avt || require("../../Images/pattientavt.png")}
                   alt="userImage"
                   className="rounded-full w-full h-full object-cover border-4 border-[lightgray]"
                 />

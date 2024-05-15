@@ -3,12 +3,12 @@ import React, { useEffect, useState } from "react";
 import { FaHome, FaRegAddressBook } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { LuStethoscope } from "react-icons/lu";
-import FlagIcon from "../Images/flag.png";
+import FlagIcon from "../../Images/flag.png";
 import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { createAppointment } from "../redux-toolkit/appointmentSlice";
-import { updateProfile } from "../redux-toolkit/authSlice";
+import { createAppointment } from "../../redux-toolkit/appointmentSlice";
+import { updateProfile } from "../../redux-toolkit/authSlice";
 import { toast } from "react-toastify";
 import { Input, Select } from "antd";
 
@@ -20,12 +20,13 @@ const BookingConfirm = () => {
   const [information, setInformation] = useState("");
   const [actived, setActived] = useState(true);
 
-  const { user, error, loading, updated } = useSelector((state) => state.user);
+  const { user, detailDoctor, error, loading, updated } = useSelector(
+    (state) => state.user
+  );
   const { checked, message } = useSelector((state) => state.appointment);
 
   const appointment = JSON.parse(localStorage.getItem("appointment"));
-  console.log(checked);
-  console.log(appointment);
+  console.log(detailDoctor);
   useEffect(() => {
     setData(user.data);
     if ((user.data.Gender || user.data.FirstName || user.data.Phone) === null) {
@@ -59,16 +60,17 @@ const BookingConfirm = () => {
       <div className="mx-auto w-[80%] mb-5 p-6 grid grid-cols-6 gap-8 bg-white shadow-lg rounded-lg">
         <img
           className="h-48 w-40 object-cover border rounded-lg col-span-1"
-          src={require("../Images/doctor1.jpg")}
+          src={detailDoctor[0]?.Avt}
           alt="avt"
         ></img>
         <div className="col-start-2 col-span-5">
           <div className="text-2xl font-medium text-slate-700 mb-3">
-            ThS. BSCKI. Nguyễn Đức Hương - Chuyên khoa Tai Mũi Họng, Ung Bướu
+            ThS. BS. {detailDoctor[0]?.FullName} - Chuyên khoa{" "}
+            {detailDoctor[0]?.Major}
           </div>
           <div className="flex gap-3 items-center text-lg mb-2">
             <LuStethoscope className="text-teal-600" />
-            <div className="text-slate-600">Tai Mũi Họng, Ung bướu</div>
+            <div className="text-slate-600">{detailDoctor[0]?.Major}</div>
           </div>
           <div className="flex gap-3 items-center text-lg mb-2">
             <FaRegAddressBook className="text-teal-600" />
@@ -117,7 +119,7 @@ const BookingConfirm = () => {
               <Input
                 id="Phone"
                 // type="text"
-                disabled={data.Phone !== null}
+                disabled={data?.Phone !== null}
                 className={` ${
                   data.Phone !== null && "!bg-slate-100 !text-gray-500"
                 } h-full  p-2.5 rounded-r-lg w-full text-lg outline-none `}

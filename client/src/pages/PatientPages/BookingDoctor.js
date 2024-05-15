@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { LuStethoscope } from "react-icons/lu";
 import { FaRegAddressBook, FaHome } from "react-icons/fa";
 import { IoIosArrowDown } from "react-icons/io";
 import { GiSunrise, GiSun, GiSunset } from "react-icons/gi";
 import { Button } from "flowbite-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { DatePicker, Space, Input, Select } from "antd";
 import dayjs from "dayjs";
-
-import { fetchSchedule, fetchService } from "../redux-toolkit/appointmentSlice";
+import {
+  fetchSchedule,
+  fetchService,
+} from "../../redux-toolkit/appointmentSlice";
 const BookingDoctor = () => {
   const dateFormat = "DD/MM/YYYY";
   const date = new Date();
@@ -21,40 +23,35 @@ const BookingDoctor = () => {
       : date.getMonth() + 1) +
     "/" +
     date.getFullYear();
-
-  // const ScheduleData = schedule?.ScheduleData;
-  // const AppointmentData = schedule?.AppointmentData;
   const { service, ScheduleData, AppointmentData, error, loading, updated } =
     useSelector((state) => state.appointment);
+  const { detailDoctor } = useSelector((state) => state.user);
+  console.log(detailDoctor);
+  // const ScheduleData = schedule?.ScheduleData;
+  // const AppointmentData = schedule?.AppointmentData;
+  const [index, setIndex] = useState("");
+  const [estimatedTime, setEstimatedTime] = useState("");
   const [step, setStep] = useState(0);
   const [step1, setStep1] = useState(0);
   const [step2, setStep2] = useState(0);
   const [step3, setStep3] = useState(0);
 
-  const [currenTime1, setCurrenTime1] = useState(
-    ScheduleData[0]?.FirstShiftStart?.slice(0, 5)
-  );
-  const [currenTime2, setCurrenTime2] = useState(
-    ScheduleData[0]?.SecondShiftStart?.slice(0, 5)
-  );
-  const [currenTime3, setCurrenTime3] = useState(
-    ScheduleData[0]?.ThirdShiftStart?.slice(0, 5)
-  );
-  console.log(ScheduleData);
+  const [currenTime1, setCurrenTime1] = useState("");
+  const [currenTime2, setCurrenTime2] = useState("");
+  const [currenTime3, setCurrenTime3] = useState("");
   const [time1, setTime1] = useState([]);
   const [time2, setTime2] = useState([]);
   const [time3, setTime3] = useState([]);
-
   const [actived, setActived] = useState();
   const [data, setData] = useState({});
   const Navigate = useNavigate();
   const dispatch = useDispatch();
+  const { doctorId } = useParams();
+  const Id = doctorId?.slice(-9);
   let body = {
-    idDoctor: 235523485,
+    idDoctor: parseInt(Id),
     DateBooking: today,
   };
-  console.log("data", data);
-  console.log(date.getMonth());
   const addTime = (fTime, sTime) => {
     const ft = fTime.split(":");
     const st = sTime.split(":");
@@ -78,11 +75,12 @@ const BookingDoctor = () => {
   };
   useEffect(() => {
     dispatch(fetchSchedule(body));
-    dispatch(fetchService({ idDoctor: 235523485 }));
+    dispatch(fetchService({ idDoctor: parseInt(Id) }));
     setData({ ...data, DateBooking: today });
   }, []);
+
   useEffect(() => {
-    if (!data.Service && ScheduleData) {
+    if (!data?.Service && ScheduleData && service.length > 0) {
       if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
         let first = parse(currenTime1) + parse(service[0]?.EstimatedTime);
 
@@ -109,7 +107,6 @@ const BookingDoctor = () => {
                 ...time1,
                 { id: step1, value: currenTime1, booked: 1 },
               ]);
-              console.log(step1, currenTime1);
               if (
                 first >=
                 parse(AppointmentData[step]?.TimeBooking) +
@@ -198,20 +195,14 @@ const BookingDoctor = () => {
           }
         }
       }
-    } else {
+    } else if (data?.Service && ScheduleData && service.length > 0) {
       if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
-        let first =
-          parse(currenTime1) + parse(service[data.Service - 1].EstimatedTime);
+        let first = parse(currenTime1) + parse(estimatedTime);
 
         if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
           setTime1([...time1, { id: step1, value: currenTime1 }]);
           setStep1(step1 + 1);
-          setTimeout(
-            setCurrenTime1(
-              addTime(currenTime1, service[data.Service - 1].EstimatedTime)
-            ),
-            0
-          );
+          setTimeout(setCurrenTime1(addTime(currenTime1, estimatedTime)), 0);
           if (
             AppointmentData[step]?.TimeBooking != null &&
             AppointmentData[step]?.EstimatedTime != null
@@ -219,7 +210,7 @@ const BookingDoctor = () => {
             if (
               parse(currenTime1) >
                 parse(AppointmentData[step]?.TimeBooking) -
-                  parse(service[data.Service - 1]?.EstimatedTime) &&
+                  parse(estimatedTime) &&
               parse(currenTime1) <
                 parse(AppointmentData[step]?.TimeBooking) +
                   parse(AppointmentData[step]?.EstimatedTime)
@@ -228,7 +219,6 @@ const BookingDoctor = () => {
                 ...time1,
                 { id: step1, value: currenTime1, booked: 1 },
               ]);
-              console.log(step1, currenTime1);
               if (
                 first >=
                 parse(AppointmentData[step]?.TimeBooking) +
@@ -241,21 +231,15 @@ const BookingDoctor = () => {
         }
       }
       if (
-        ScheduleData[0]?.SecondShiftEnd != null &&
+        ScheduleData[0]?.SecondShiftEnd !== null &&
         currenTime2 !== undefined
       ) {
-        let second =
-          parse(currenTime2) + parse(service[data.Service - 1].EstimatedTime);
+        let second = parse(currenTime2) + parse(estimatedTime);
 
         if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
           setTime2([...time2, { id: step2, value: currenTime2 }]);
           setStep2(step2 + 1);
-          setTimeout(
-            setCurrenTime2(
-              addTime(currenTime2, service[data.Service - 1].EstimatedTime)
-            ),
-            0
-          );
+          setTimeout(setCurrenTime2(addTime(currenTime2, estimatedTime)), 0);
           if (
             AppointmentData[step]?.TimeBooking != null &&
             AppointmentData[step]?.EstimatedTime != null
@@ -263,7 +247,7 @@ const BookingDoctor = () => {
             if (
               parse(currenTime2) >
                 parse(AppointmentData[step]?.TimeBooking) -
-                  parse(service[data.Service - 1]?.EstimatedTime) &&
+                  parse(estimatedTime) &&
               parse(currenTime2) <
                 parse(AppointmentData[step]?.TimeBooking) +
                   parse(AppointmentData[step]?.EstimatedTime)
@@ -284,18 +268,12 @@ const BookingDoctor = () => {
         }
       }
       if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 !== undefined) {
-        let third =
-          parse(currenTime3) + parse(service[data.Service - 1].EstimatedTime);
+        let third = parse(currenTime3) + parse(estimatedTime);
 
         if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
           setTime3([...time3, { id: step3, value: currenTime3 }]);
           setStep3(step3 + 1);
-          setTimeout(
-            setCurrenTime3(
-              addTime(currenTime3, service[data.Service - 1].EstimatedTime)
-            ),
-            0
-          );
+          setTimeout(setCurrenTime3(addTime(currenTime3, estimatedTime)), 0);
           if (
             AppointmentData[step]?.TimeBooking != null &&
             AppointmentData[step]?.EstimatedTime != null
@@ -303,7 +281,7 @@ const BookingDoctor = () => {
             if (
               parse(currenTime3) >
                 parse(AppointmentData[step]?.TimeBooking) -
-                  parse(service[data.Service - 1]?.EstimatedTime) &&
+                  parse(estimatedTime) &&
               parse(currenTime3) <
                 parse(AppointmentData[step]?.TimeBooking) +
                   parse(AppointmentData[step]?.EstimatedTime)
@@ -325,7 +303,7 @@ const BookingDoctor = () => {
       }
     }
   }, [service, currenTime1, currenTime2, currenTime3, data.Service]);
-
+  console.log(data);
   const changeData = () => {
     setTime1([]);
     setTime2([]);
@@ -340,6 +318,12 @@ const BookingDoctor = () => {
   };
   const handleChange = (e) => {
     setData({ ...data, [e.target.id]: e.target.value });
+    for (let i = 0; i < service.length; i++) {
+      if (service[i].id === parseInt(e.target.value)) {
+        setEstimatedTime(service[i].EstimatedTime);
+        setIndex(i);
+      }
+    }
     changeData();
   };
   useEffect(() => {
@@ -367,53 +351,36 @@ const BookingDoctor = () => {
     Navigate("/booking/confirm");
   };
   return (
-    <div className="bg-slate-50 pt-[90px]">
-      <div className="mx-10 flex gap-5">
+    <div className="bg-lime-50 pt-[90px]">
+      <div className="mx-10 flex gap-5 pb-20">
         <div className="w-[60%] flex flex-col gap-y-5">
           <div className="w-full bg-white rounded-lg shadow-lg p-6">
             <div className="grid grid-cols-4 gap-5 w-full mb-5">
               <img
-                className="h-44 w-36 object-cover border rounded-lg"
-                src={require("../Images/doctor1.jpg")}
+                className="h-44 w-36 object-cover shadow-lg rounded-lg"
+                src={detailDoctor[0]?.Avt}
                 alt="avt"
               ></img>
               <div className="text-2xl font-medium col-span-3 text-slate-700">
-                ThS. BSCKI. Nguyễn Đức Hương - Chuyên khoa Tai Mũi Họng, Ung
-                Bướu
+                ThS. BS. {detailDoctor[0]?.FullName} - Chuyên khoa{" "}
+                {detailDoctor[0]?.Major}
               </div>
             </div>
-            <div className="flex gap-3 items-center text-lg mb-2">
-              <LuStethoscope className="text-teal-600" />
-              <div className="text-slate-600">Tai Mũi Họng, Ung bướu</div>
-            </div>
-            <div className="flex gap-3 items-center text-lg mb-2">
-              <FaRegAddressBook className="text-teal-600" />
-              <div className="text-slate-600">
-                1 Nơ Trang Long, Bình Thạnh, Hồ Chí Minh
-              </div>
-            </div>
-            <div className="flex gap-3 items-center text-lg mb-2">
+            <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
               <FaHome className="text-teal-600" />
               <div className="text-slate-600">Khám tại nhà</div>
             </div>
-            <div className="text-gray-600 text-xl font-medium my-5">
-              Thế mạnh chuyên môn
+            <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+              <LuStethoscope className="text-teal-600" />
+              <div className="text-slate-600">
+                Chuyên khoa {detailDoctor[0]?.Major}
+              </div>
             </div>
-            <div className="flex flex-wrap gap-3 w-full">
-              <div className="h-[36px] flex items-center p-2 w-fit text-gray-600 font-medium rounded-3xl bg-emerald-300">
-                Tai mũi họng
-              </div>
-              <div className="h-[36px] flex items-center p-2 w-fit text-gray-600 font-medium rounded-3xl bg-emerald-300">
-                Ung bướu
-              </div>
-              <div className="h-[36px] flex items-center p-2 w-fit text-gray-600 font-medium rounded-3xl bg-emerald-300">
-                Phẫu thuật nội soi
-              </div>
-              <div className="h-[36px] flex items-center p-2 w-fit text-gray-600 font-medium rounded-3xl bg-emerald-300">
-                Tạo hình thẩm mỹ
-              </div>
-              <div className="h-[36px] flex items-center p-2 w-fit text-gray-600 font-medium rounded-3xl bg-emerald-300">
-                Thẩm mỹ nội khoa
+
+            <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+              <FaRegAddressBook className="text-teal-600" />
+              <div className="text-slate-600">
+                1 Nơ Trang Long, Bình Thạnh, Hồ Chí Minh
               </div>
             </div>
           </div>
@@ -421,19 +388,10 @@ const BookingDoctor = () => {
             <p className="text-3xl font-medium text-slate-700 mb-5">
               Giới thiệu
             </p>
-            <p className="text-slate-600 text-justify">
-              Thạc sĩ, Bác sĩ Chuyên khoa 1 Nguyễn Đức Hương có hơn 15 năm kinh
-              nghiệm khám chữa bệnh Tai - Mũi - Họng, Ung Bướu, đặc biệt là Nội
-              soi tầm soát các bệnh lý Tai - Mũi - Họng, Ung thư đầu mặt cổ. Bác
-              sĩ hiện đang công tác tại Bệnh viện Ung Bướu - TP. Hồ Chí Minh với
-              cương vị bác sĩ phẫu thuật chính Khoa đầu - mặt - cổ. ThS. BSCKI
-              Nguyễn Đức Hương khám và điều trị các bệnh:
-              <p>- Viêm mũi xoang </p>
-              <p>- Viêm VA </p>
-              <p>- Viêm amidan </p>
-              <p>- Thủng màng nhĩ ( vá nhĩ nội soi) </p>
-              <p>- Viêm tai giữa </p>
-            </p>
+            <div
+              className="text-gray-600"
+              dangerouslySetInnerHTML={{ __html: detailDoctor[0]?.Introduce }}
+            ></div>
           </div>
           <div className="w-full bg-white rounded-lg shadow-lg p-6">
             <p className="text-3xl font-medium text-slate-700 mb-5">
@@ -475,7 +433,7 @@ const BookingDoctor = () => {
                         actived === item.value &&
                         !item.booked &&
                         "bg-teal-500 text-white"
-                      } h-10 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
+                      } shadow-md h-10 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
                       onClick={() => {
                         setActived(item.value);
                         setData({ ...data, timePicker: item.value });
@@ -511,7 +469,7 @@ const BookingDoctor = () => {
                         actived === item.value &&
                         !item.booked &&
                         "bg-teal-500 text-white"
-                      } h-10 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
+                      } shadow-md h-10 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
                       onClick={() => {
                         setActived(item.value);
                         setData({ ...data, timePicker: item.value });
@@ -547,7 +505,7 @@ const BookingDoctor = () => {
                         actived === item.value &&
                         !item.booked &&
                         "bg-teal-500 text-white"
-                      } h-10 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
+                      } shadow-md h-10 w-28 rounded-lg text-sm font-medium cursor-pointer text-teal-500 border border-teal-500 flex items-center justify-center`}
                       onClick={() => {
                         setActived(item.value);
                         setData({ ...data, timePicker: item.value });
@@ -570,7 +528,7 @@ const BookingDoctor = () => {
               <p className="font-medium text-teal-800">Loại dịch vụ</p>
               <div className="max-w-md h-[40px] mt-2">
                 <select
-                  className="bg-white border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  className="bg-white cursor-pointer border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   id="Service"
                   // required
                   value={data?.Service}
@@ -587,8 +545,7 @@ const BookingDoctor = () => {
             <div className="flex gap-3 mb-5 items-center">
               <p className=" text-teal-800">Phí dịch vụ: </p>
               <p className="font-medium text-emerald-500 text-lg">
-                {service ? service[data.Service - 1]?.Price : service[0]?.Price}
-                VND
+                {data?.Service ? service[index]?.Price : service[0]?.Price} VND
               </p>
             </div>
             <p className="italic text-sm text-teal-800 mb-5">

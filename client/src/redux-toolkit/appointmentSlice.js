@@ -84,8 +84,9 @@ const appointmentSlice = createSlice({
       .addCase(fetchSchedule.fulfilled, (state, action) => {
         state.AppointmentData = action.payload.AppointmentData;
         state.ScheduleData = action.payload.ScheduleData;
-        state.new = action.payload;
         state.loading = false;
+        console.log(action.payload.AppointmentData);
+        // state.checked = action.payload.checked;
       })
       .addCase(fetchSchedule.rejected, (state, action) => {
         state.loading = false;

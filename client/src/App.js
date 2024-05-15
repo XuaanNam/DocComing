@@ -7,17 +7,18 @@ import BlogPage from "./pages/BlogPage";
 import AdminPage from "./pages/AdminPages/AdminPage";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Profile from "./pages/Profile";
+import Profile from "./pages/PatientPages/Profile";
 import Header from "./Layouts/Header";
 import Footer from "./Layouts/Footer";
-import BookingDoctor from "./pages/BookingDoctor";
-import BookingConfirm from "./pages/BookingConfirm";
-import DoctorSchedule from "./pages/DoctorSchedule";
+import BookingDoctor from "./pages/PatientPages/BookingDoctor";
+import BookingConfirm from "./pages/PatientPages/BookingConfirm";
+// import DoctorSchedule from "./pages/DoctorPages/DoctorSchedule";
 import Doctors from "./pages/Doctors";
 import Categories from "./pages/Categories";
-import Appointment from "./pages/Appointment";
+import Appointment from "./pages/PatientPages/Appointment";
 import AdminLogin from "./pages/AdminPages/AdminLogin";
 import DoctorDetail from "./pages/DoctorDetail";
+import DoctorPage from "./pages/DoctorPages/DoctorPage";
 function App() {
   return (
     <div>
@@ -26,20 +27,21 @@ function App() {
         <Header></Header>
         <Routes>
           <Route path="/" exact element={<HomePage />} />
-          <Route path="/admin/:adminpage" exact element={<AdminPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/patient/profile" element={<Profile />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/blog/:blogId" element={<BlogPage />} />
           <Route path="/doctors" element={<Doctors />} />
-          <Route path="/doctor/:doctorId" element={<DoctorDetail />} />
+          <Route path="/doctors/:doctorId" element={<DoctorDetail />} />
 
+          <Route path="/admin/:adminpage" exact element={<AdminPage />} />
+          <Route path="/patient/profile" element={<Profile />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/appointment" element={<Appointment />} />
-          <Route path="/doctor/booking" element={<BookingDoctor />} />
+          <Route path="/booking/:doctorId" element={<BookingDoctor />} />
           <Route path="/booking/confirm" element={<BookingConfirm />} />
-          <Route path="/doctor/schedule" element={<DoctorSchedule />} />
+          {/* <Route path="/doctor/schedule" element={<DoctorSchedule />} /> */}
+          <Route path="/doctor/:doctorpage" element={<DoctorPage />} />
         </Routes>
         <Footer></Footer>
       </Router>

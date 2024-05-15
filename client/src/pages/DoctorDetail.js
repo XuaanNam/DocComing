@@ -18,13 +18,17 @@ const DoctorDetail = () => {
   const Navigate = useNavigate();
   const { doctorId } = useParams();
   const Id = doctorId?.slice(-9);
+  const path = (name, id) => {
+    const x = name + "_" + id;
+    return x;
+  };
   useEffect(() => {
     dispatch(getDetailDoctor(Id));
-  }, []);
+  }, [Id]);
   console.log(Id);
   return (
     <div className="pt-[70px]">
-      <div className="relative w-full">
+      <div className="relative w-full block">
         <img
           className="absolute w-full h-[480px] object-cover shadow-xl"
           src={require("../Images/backgroundDoctor.jpg")}
@@ -33,7 +37,7 @@ const DoctorDetail = () => {
 
         <img
           className="h-[440px] object-cover absolute top-10 right-72 z-10"
-          src={require("../Images/doctorBackground2.jpg")}
+          src={detailDoctor[0]?.Avt}
           alt=""
         ></img>
         <img
@@ -62,11 +66,11 @@ const DoctorDetail = () => {
           </p>
         </div>
 
-        <div className="absolute left-20 top-56 text-gray-700 drop-shadow-xl p-4 text-justify italic rounded-3xl bg-opacity-90 text-lg bg-white shadow-lg z-10 h-32 text-ellipsis w-[580px]">
-          a
-        </div>
+        <div className="absolute left-20 top-56 text-gray-700 drop-shadow-xl p-4 text-justify italic rounded-3xl bg-opacity-90 text-lg bg-white shadow-lg z-10 h-32 text-ellipsis w-[580px]"></div>
         <Button
-          //   onClick={handleBooking}
+          onClick={() => {
+            Navigate(`/booking/${path(detailDoctor[0]?.FullName, Id)}`);
+          }}
           className="absolute left-20 top-96 shadow-lg shadow-purple-500 z-10 w-60 my-5 mx-auto h-[52px] rounded-3xl drop-shadow-lg transition-transform duration-500 hover:scale-105"
           gradientDuoTone="purpleToPink"
         >
@@ -85,7 +89,9 @@ const DoctorDetail = () => {
             </div>
 
             <p className="text-lg text-teal-800 font-medium">Chuyên khoa</p>
-            <p className="text-gray-700">{detailDoctor[0]?.Major}</p>
+            <p className="h-12  text-gray-700 w-[90%] text-center">
+              {detailDoctor[0]?.Major}
+            </p>
           </div>
           <div className="w-60 h-48 bg-white p-3 rounded-3xl shadow-lg shadow-violet-300 flex flex-col gap-2 justify-center items-center">
             <div className="rounded-full w-16 h-16 shadow-lg shadow-violet-400 bg-white flex justify-center items-center">
@@ -93,14 +99,18 @@ const DoctorDetail = () => {
             </div>
 
             <p className="text-lg text-teal-800 font-medium">Nơi đào tạo</p>
-            <p className="text-gray-700">{detailDoctor[0]?.Major}</p>
+            <p className="h-12  text-gray-700 w-[90%] text-center">
+              {detailDoctor[0]?.Training}
+            </p>
           </div>
           <div className="w-60 h-48 bg-white p-3 rounded-3xl shadow-lg shadow-violet-300 flex flex-col gap-2 justify-center items-center">
             <div className="rounded-full w-16 h-16 shadow-lg shadow-violet-400 bg-white flex justify-center items-center">
               <img src={DegreeIcon} className="w-10 h-10" alt="DegreeIcon" />
             </div>
             <p className="text-lg text-teal-800 font-medium">Bằng cấp</p>
-            <p className="text-gray-700">{detailDoctor[0]?.Degree}</p>
+            <p className="h-12  text-gray-700 w-[90%] text-center">
+              {detailDoctor[0]?.Degree}
+            </p>
           </div>
           <div className="w-60 h-48 bg-white p-3 rounded-3xl shadow-lg shadow-violet-300 flex flex-col gap-2 justify-center items-center">
             <div className="rounded-full w-16 h-16 shadow-lg shadow-violet-400 bg-white flex justify-center items-center">
@@ -111,7 +121,9 @@ const DoctorDetail = () => {
               />
             </div>
             <p className="text-lg text-teal-800 font-medium">Khu vực</p>
-            <p className="text-gray-700">Tp.Hồ Chí Minh</p>
+            <p className="h-12  text-gray-700 w-[90%] text-center">
+              Tp.Hồ Chí Minh
+            </p>
           </div>
         </div>
         <p className="text-2xl text-teal-700 font-bold mb-5">

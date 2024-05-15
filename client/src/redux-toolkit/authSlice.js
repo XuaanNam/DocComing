@@ -176,6 +176,7 @@ const authSlice = createSlice({
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload.data;
+        console.log(action.payload.data);
         state.updated = true;
       })
       .addCase(fetchUsers.rejected, (state, action) => {

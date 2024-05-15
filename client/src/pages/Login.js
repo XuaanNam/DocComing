@@ -28,7 +28,9 @@ function Login() {
     dispatch(login(data));
   };
   useEffect(() => {
-    if (currentUser) setTimeout(Navigate("/"), 1000);
+    if (currentUser?.authentication === 1) setTimeout(Navigate("/"), 1000);
+    else if (currentUser?.authentication === 2)
+      setTimeout(Navigate("/doctor/dashboard"), 1000);
   }, [currentUser]);
   return (
     <div className="bg-lime-50">

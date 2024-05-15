@@ -11,14 +11,11 @@ import { useNavigate } from "react-router-dom";
 import { DatePicker, Space, Input, Select } from "antd";
 import dayjs from "dayjs";
 
-const AdminProfile = () => {
+const DoctorProfile = () => {
   const dateFormat = "DD/MM/YYYY";
-
-  const { currentUser, user, error, loading, updated } = useSelector(
+  const { currentUser, user, auth, error, loading, updated } = useSelector(
     (state) => state.user
   );
-
-  const [actived, setActived] = useState(1);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({});
   const [FullName, setFullName] = useState("");
@@ -31,18 +28,20 @@ const AdminProfile = () => {
     dispatch(fetchProfile());
   }, [dispatch]);
   useEffect(() => {
+    console.log("1");
     if (!currentUser) {
       Navigate("/");
     } else {
-      if (currentUser.authentication == 0) {
+      if (currentUser.authentication == 2) {
         setData(user?.data);
         setFullName(
-          user?.data?.FirstName + user?.data?.LastName || currentUser?.FullName
+          user?.data?.FirstName + " " + user?.data?.LastName ||
+            currentUser?.FullName
         );
       } else Navigate("/");
     }
   }, [currentUser, user.data]);
-
+  console.log(FullName);
   const handleEdit = () => {
     setEdit(true);
   };
@@ -86,7 +85,7 @@ const AdminProfile = () => {
   };
   return (
     <div className="">
-      {currentUser?.authentication == 0 ? (
+      {currentUser?.authentication == 2 ? (
         <div className="mx-16 text-gray-700 flex gap-10 ">
           <div className="my-7 w-full rounded-xl bg-lime-50 shadow-xl py-5 px-8">
             <div className="mb-5 grid grid-cols-5 items-center">
@@ -268,4 +267,4 @@ const AdminProfile = () => {
   );
 };
 
-export default AdminProfile;
+export default DoctorProfile;

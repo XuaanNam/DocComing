@@ -84,7 +84,7 @@ const Appointment = () => {
                 <img
                   className="h-14 w-14 rounded-full object-contain border border-lime-200"
                   alt=""
-                  src={require("../Images/doctorBackground2.jpg")}
+                  src={require("../../Images/doctorBackground2.jpg")}
                 ></img>
                 <div className="">
                   <p className="font-medium text-lg text-gray-600 mb-3">
@@ -128,7 +128,7 @@ const Appointment = () => {
                 <img
                   className="h-14 w-14 rounded-full object-contain border border-lime-200"
                   alt=""
-                  src={require("../Images/doctorBackground2.jpg")}
+                  src={require("../../Images/doctorBackground2.jpg")}
                 ></img>
                 <div className="">
                   <p className="font-medium text-lg text-gray-600 mb-3">

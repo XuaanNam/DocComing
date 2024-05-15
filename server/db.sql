@@ -64,7 +64,7 @@ create table inforDoctor(
 id int not null primary key AUTO_INCREMENT,
 idAccount int,
 Degree varchar(30), -- trình độ
-Introduce varchar(150), -- giới thiệu
+Introduce varchar(1500), -- giới thiệu
 idMajor int,
 Experience int, 
 Training varchar(100),

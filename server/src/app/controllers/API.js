@@ -619,7 +619,7 @@ class API {
         res.send({ message: error, checked: false });
       } else {
         if (results) {
-          results.res.status(200).send({ data: results, checked: true });
+          res.status(200).send({ data: results, checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }

@@ -93,7 +93,12 @@ const Doctors = () => {
             <div
               key={doctor?.id}
               onClick={() =>
-                Navigate(`/doctor/${path(doctor?.FullName, doctor?.id)}`)
+                Navigate(
+                  `/doctors/${path(
+                    doctor?.FirstName + doctor?.LastName,
+                    doctor?.id
+                  )}`
+                )
               }
               className="w-[30%] grid grid-rows-1 gap-4 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105"
             >
@@ -105,13 +110,13 @@ const Doctors = () => {
                 ></img>
                 <img
                   className="absolute top-0 h-[200px] mx-auto object-contain"
-                  src={require("../Images/doctor1.jpg")}
+                  src={doctor?.Avt}
                   alt=""
                 ></img>
               </div>
               <div className="w-full ">
                 <p className="font-medium text-base text-slate-800 mb-4 text-center">
-                  {doctor?.FullName}
+                  {doctor?.FirstName + " " + doctor?.LastName}
                 </p>
                 <div className="min-h-[70px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
                   <div className="w-9 h-9 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
@@ -121,8 +126,8 @@ const Doctors = () => {
                       alt="HeartIcon"
                     />
                   </div>
-                  <p className="w-[85%]">
-                    Bệnh viện Đại học Y Dược Thành Phố Hồ Chí Minh
+                  <p className="w-[85%] text-base">
+                    Chuyên khoa: {doctor?.Major}
                   </p>
                 </div>
                 <div className="min-h-[70px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
@@ -133,8 +138,8 @@ const Doctors = () => {
                       alt="SpecialtiesIcon"
                     />
                   </div>
-                  <p className="w-[85%] flex gap-1">
-                    <p className="font-medium">12</p> năm kinh nghiệm
+                  <p className="text-base">
+                    {doctor?.Experience} năm kinh nghiệm
                   </p>
                 </div>
               </div>

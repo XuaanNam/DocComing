@@ -5,11 +5,10 @@ import { useSelector } from "react-redux";
 import { logout } from "../redux-toolkit/authSlice";
 import { persistor } from "../redux-toolkit/configureStore";
 
-const DashSidebar = ({ param }) => {
+const DoctorSidebar = ({ param }) => {
   const { currentUser, user, auth } = useSelector((state) => state.user);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
-  const [blogActived, setBlogActived] = useState(false);
   const [actived, setActived] = useState("");
   useEffect(() => {
     if (param === "manage-post" || param === "create-post") {
@@ -18,6 +17,7 @@ const DashSidebar = ({ param }) => {
       setActived(param);
     }
   }, []);
+  console.log(param);
   const handleLogout = () => {
     dispatch(logout());
     setTimeout(() => {
@@ -30,7 +30,7 @@ const DashSidebar = ({ param }) => {
       <div className="w-full md:w-56 font-medium pt-[70px]">
         <div className="px-12 py-4 mb-4">
           <a
-            href="/admin/dashboard"
+            href="/doctor/dashboard"
             className="text-2xl font-semibold uppercase text-teal-400 hover:text-gray-300"
           >
             <span className="text-left">Doctor</span>
@@ -39,7 +39,7 @@ const DashSidebar = ({ param }) => {
         </div>
         <div className="">
           <div className="flex flex-col gap-1 font-medium">
-            {/* {currentUser && currentUser.isAdmin && ( */}
+            {/* {currentUser && currentUser.isdoctor && ( */}
             <Link
               onClick={() => {
                 setActived("dashboard");
@@ -48,7 +48,7 @@ const DashSidebar = ({ param }) => {
                 actived === "dashboard" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
               } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
-              to="/admin/dashboard"
+              to="/doctor/dashboard"
             >
               Dashboard
             </Link>
@@ -60,21 +60,33 @@ const DashSidebar = ({ param }) => {
                 actived === "profile" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
               } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
-              to="/admin/profile"
+              to="/doctor/profile"
             >
               Profile
             </Link>
             <Link
               onClick={() => {
-                setActived("users");
+                setActived("schedule");
               }}
               className={` ${
-                actived === "users" &&
+                actived === "schedule" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
               } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
-              to="/admin/users"
+              to="/doctor/schedule"
             >
-              User
+              Schedule
+            </Link>
+            <Link
+              onClick={() => {
+                setActived("appointment");
+              }}
+              className={` ${
+                actived === "appointment" &&
+                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
+              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              to="/doctor/appointment"
+            >
+              Appointment
             </Link>
             <div
               onClick={() => {
@@ -96,7 +108,7 @@ const DashSidebar = ({ param }) => {
                     param === "manage-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
                   } w-40 h-9 rounded-lg shadow-md flex items-center justify-center mb-1`}
-                  to="/admin/manage-post"
+                  to="/doctor/manage-post"
                 >
                   <div>Manage Blog</div>
                 </Link>
@@ -105,27 +117,15 @@ const DashSidebar = ({ param }) => {
                     param === "create-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
                   } w-40 h-9 rounded-lg shadow-md flex items-center justify-center `}
-                  to="/admin/create-post"
+                  to="/doctor/create-post"
                 >
                   <div>Create Blog</div>
                 </Link>
               </div>
             )}
             <Link
-              onClick={() => {
-                setActived("comments");
-              }}
-              className={` ${
-                actived === "comments" &&
-                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mt-3`}
-              to="/admin/comments"
-            >
-              Comments
-            </Link>
-            <Link
               onClick={handleLogout}
-              to="/admin/login"
+              to="/doctor/login"
               className="
               w-48 h-11 rounded-lg cursor-pointer shadow-md flex items-center justify-center mt-3 mb-10 cursor-pointet"
             >
@@ -138,4 +138,4 @@ const DashSidebar = ({ param }) => {
   );
 };
 
-export default DashSidebar;
+export default DoctorSidebar;
