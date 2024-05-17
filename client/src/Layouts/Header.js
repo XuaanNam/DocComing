@@ -20,7 +20,7 @@ const Header = () => {
   const authentication = currentUser?.authentication;
   // console.log(auth);
   const handleLogout = () => {
-    if (authentication === 0) Navigate("/admin/login");
+    if (authentication == 0) Navigate("/admin/login");
     else Navigate("/");
     dispatch(logout());
     setTimeout(() => {
@@ -93,7 +93,7 @@ const Header = () => {
                 <div className="absolute top-[62px] w-60 text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-10">
                   <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
                     <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
-                    {authentication === 2 && (
+                    {authentication == 2 && (
                       <div
                         onClick={() => {
                           Navigate("/profile");
@@ -103,7 +103,7 @@ const Header = () => {
                         Hồ sơ
                       </div>
                     )}
-                    {authentication === 1 && (
+                    {authentication == 1 && (
                       <div
                         onClick={() => {
                           Navigate("/patient/profile");
@@ -113,7 +113,7 @@ const Header = () => {
                         Hồ sơ
                       </div>
                     )}
-                    {authentication === 0 && (
+                    {authentication == 0 && (
                       <div
                         onClick={() => {
                           Navigate("/admin/profile");
@@ -124,7 +124,7 @@ const Header = () => {
                       </div>
                     )}
                   </div>
-                  {authentication === 1 && (
+                  {authentication == 1 && (
                     <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
                       <LuCalendarDays className="h-5 w-5"></LuCalendarDays>
                       <a href="/appointment" className="block py-3">

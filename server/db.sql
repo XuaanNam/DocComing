@@ -16,9 +16,10 @@ Email varchar(50) not null UNIQUE CHECK (Email !=""),
 PassWord varchar(200) not null ,
 Phone varchar(15) null,
 Avt varchar(200),
-Authorization int default 1 
+Authorization int default 1,
+foreign key (Authorization) references authorization(id);
 )
-;
+; 
 ALTER TABLE account AUTO_INCREMENT = 235523484;
 insert into account (LastName, FirstName, Email, PassWord, Phone, Authorization) value 
 ('admin', 'admin', 'admin@doccoming.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 0),
@@ -135,7 +136,6 @@ create table similarCategories (
 id int not null primary key AUTO_INCREMENT,
 idCategories int,
 Similar nvarchar(100) not null
--- foreign key (idCategories) references categories(id)
 ); -- drop table similarCategories
 
 insert into similarCategories (idCategories, Similar) values 
@@ -146,8 +146,8 @@ insert into similarCategories (idCategories, Similar) values
 create table post(
 id int not null primary key AUTO_INCREMENT,
 FeaturedImage varchar(300),
-Title nvarchar(200) not null CHECK (Title !=""),
-Brief nvarchar(400) not null CHECK (Brief !=""),
+Title nvarchar(500) not null CHECK (Title !=""),
+Brief nvarchar(1000) not null CHECK (Brief !=""),
 Content text(4000) not null CHECK (Content !=""),
 Images varchar(300),
 idAuthor int,
@@ -156,10 +156,10 @@ idCategories int,
 idSimilar int,
 Status int default 0, -- 0 chờ duyệt, 1 hiển thị trên site, 2 ẩn
 foreign key (idAuthor) references account(id),
-foreign key (idCategories) references categories(id) 
+foreign key (idCategories) references categories(id),
+foreign key (idSimilar) references similarCategories(id);
 )
 ;-- drop table post;
-
 
 create table appointmentstatus(
 id int not null primary key AUTO_INCREMENT,
@@ -237,7 +237,7 @@ NotiTime datetime,
 Status int default 0, -- 0 chưa chỉnh sửa, 1 đã chỉnh sửa
 foreign key (idAccount) references account(id),
 foreign key (idPost) references post(id)
-);
+); -- drop table comment
 -- ------------------------------------------------------------------------------------------------------
 delimiter $$
 CREATE TRIGGER TG_DELETE_ACCOUNT before DELETE ON account FOR EACH ROW 
@@ -272,20 +272,23 @@ BEGIN
     END IF;
 END$$
 
+
 --------------------------------
 
 delimiter $$
 CREATE VIEW AllPost AS
-SELECT *
-FROM post;
- $$ -- drop view AllPost
+SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, c.Categories, s.Similar
+FROM post p, account a, categories c, similarcategories s
+WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id order by p.DatePost;
+$$ -- drop view AllPost
  
 delimiter $$
 CREATE VIEW AvailablePost AS
 	SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, c.Categories, s.Similar
     FROM post p, account a, categories c, similarcategories s
-    WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id AND p.Status = 1;
+    WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id AND p.Status = 1 order by p.DatePost;
 $$
+ -- drop view AvailablePost
 
  delimiter $$
 CREATE VIEW AllAccount AS
@@ -298,7 +301,7 @@ LEFT JOIN
 (SELECT d.idAccount, m.Major
 FROM  inforDoctor d, major m
 WHERE d.idMajor = m.id) as dm
-ON ta.id = dm.idAccount
+ON ta.id = dm.idAccount where ta.Role != "Admin"
  $$ -- drop view AllAccount
 
 delimiter $$
@@ -349,7 +352,6 @@ BEGIN
     FROM post p, account a, inforDoctor i
     WHERE p.idAuthor = a.id and a.id = i.idAccount and p.idSimilar = id AND p.Status = 1;
 END$$ -- drop procedure PostBySimilarCategories
-
 
 DELIMITER $$
 CREATE PROCEDURE ListSearch(IN search text )

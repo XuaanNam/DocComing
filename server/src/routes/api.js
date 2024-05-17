@@ -28,7 +28,7 @@ router.post(
   fileUploader.single("Avt"),
   api.updateProfile
 );
-router.get("/appointment", PassportCheck, api.getAppointmentById);
+router.get("/appointment", PassportCheck, api.getAppointmentById); // lấy appointment của bác sĩ
 router.post("/appointment/create", PassportCheck, api.createAppointment);
 router.patch("/appointment/accept", PassportCheck, api.acceptAppointment);
 router.patch("/appointment/complete", PassportCheck, api.completeAppointment);
@@ -36,14 +36,16 @@ router.patch("/appointment/cancel", PassportCheck, api.cancelAppointment);
 router.get("/notification", PassportCheck, api.getNotification);
 router.post("/notification/create", PassportCheck, api.createNotification);
 router.patch("/notification/read", PassportCheck, api.readNotification);
-router.post("/doctor/schedule", api.getSchedule); // laays lich bac si cua ngay cu the + eTime
-router.post("/schedule", PassportCheck, api.setSchedule);
-router.get("/service", api.getService);
+router.get("/schedule/:idDoctor/:date/:month/:year", api.getSchedule); 
+// lấy lich bac si cua ngay cu the + eTime (chỉ dùng cho patient) booking
+router.get("/service", api.getService); // lấy all service
 router.get("/doctor", api.getDoctor); // lay all bsi
-router.get("/doctor/:id", api.getDetailDoctor); // lay bsi với id
-router.post("/doctor/service/create", PassportCheck, api.serviceDoctor); //theem service cho moi bac si
-router.post("/doctor/service", api.getServiceDoctor); // lay dich vu cua tung bsi
+router.post("/doctor/service", api.getServiceDoctor); // lay dich vu cua bsi với idDoctor
+router.get("/doctor/:id", api.getDetailDoctor); // lay bsi với id (danh cho patient)
 
+router.get("/doctor/schedule/:date/:month/:year", PassportCheck, api.getDoctorSchedule); // lay schedule bsi với id
+router.post("/doctor/service/create", PassportCheck, api.createServiceDoctor); //theem service cho moi bac si
+router.post("/schedule", PassportCheck, api.setSchedule);
 
 // Blog
 router.post(

@@ -14,6 +14,8 @@ const AdminLogin = () => {
   const initialValues = { email: "", password: "" };
   const [formValues, setFormValues] = useState(initialValues);
   const [formErrors, setFormErrors] = useState({});
+  const [err, setErr] = useState("");
+  
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
@@ -23,7 +25,14 @@ const AdminLogin = () => {
       Email: formValues.email,
       PassWord: formValues.password,
     };
-    dispatch(login(data));
+    if(formValues.email !== "admin@doccoming.com"){
+      setErr("Không thể đăng nhập bằng tài khoản này!!" )
+    } else {
+      dispatch(login(data))
+      .then(() => {
+        setErr(message);
+      })
+    }
   };
   useEffect(() => {
     if (currentUser) setTimeout(Navigate("/admin/dashboard"), 1000);
@@ -56,7 +65,7 @@ const AdminLogin = () => {
                 formErrors?.password ? "border-b-red-500" : "border-b-teal-100"
               } py-2 mb-4 w-96 h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
             ></input>
-            <p className="text-red-500 mb-4">{message}</p>
+            <p className="text-red-500 mb-4">{err}</p>
             <Button
               onClick={handleLogin}
               className="w-60 mt-3 mx-auto h-[48px] text-center"

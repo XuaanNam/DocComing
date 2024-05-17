@@ -7,7 +7,7 @@ import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const { currentUser, message, error, loading, updated } = useSelector(
+  const { currentUser, error, message, loading, updated } = useSelector(
     (state) => state.user
   );
   const dispatch = useDispatch();
@@ -16,6 +16,9 @@ function Login() {
   const initialValues = { email: "", password: "" };
   const [formValues, setFormValues] = useState(initialValues);
   const [formErrors, setFormErrors] = useState({});
+  const [err, setErr] = useState("");
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
@@ -25,13 +28,17 @@ function Login() {
       Email: formValues.email,
       PassWord: formValues.password,
     };
-    dispatch(login(data));
+    if(formValues.email == "admin@doccoming.com"){
+      setErr("Không thể đăng nhập bằng tài khoản này!!" )
+      } else {
+      dispatch(login(data))
+      .then((res) => {
+        setErr(message); 
+        if(res.payload.authentication === 1) Navigate("/");
+        else if(res.payload.authentication === 2) Navigate("/doctor/dashboard")
+      })
+    } 
   };
-  useEffect(() => {
-    if (currentUser?.authentication === 1) setTimeout(Navigate("/"), 1000);
-    else if (currentUser?.authentication === 2)
-      setTimeout(Navigate("/doctor/dashboard"), 1000);
-  }, [currentUser]);
   return (
     <div className="bg-lime-50">
       {!currentUser ? (
@@ -69,7 +76,7 @@ function Login() {
                       : "border-b-teal-100"
                   } py-2 mb-8 w-96 h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
                 ></input>
-                <p className="text-red-500 mb-4">{message}</p>
+                <p className="text-red-500 mb-4">{err}</p>
 
                 <Button
                   onClick={handleLogin}

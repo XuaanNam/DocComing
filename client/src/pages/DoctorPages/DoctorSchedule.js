@@ -6,7 +6,7 @@ import { FaLongArrowAltRight } from "react-icons/fa";
 import { Badge, Calendar } from "antd";
 import { fetchAppointment } from "../../redux-toolkit/appointmentSlice";
 import {
-  fetchSchedule,
+  fetchDoctorSchedule,
   fetchService,
 } from "../../redux-toolkit/appointmentSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -29,30 +29,22 @@ const DoctorSchedule = () => {
       : date.getMonth() + 1) +
     "/" +
     date.getFullYear();
-  let body = {
-    idDoctor: user?.data.id,
-    DateBooking: today,
-  };
 
   useEffect(() => {
-    dispatch(fetchSchedule(body));
+    dispatch(fetchDoctorSchedule(today)); //bệnh nhân -> idDOctor, ngày  {appointment{timebdau, 1:30:00} , schedule }
     dispatch(fetchService({ idDoctor: user?.data.id }));
 
-    dispatch(fetchAppointment());
+    dispatch(fetchAppointment()); // doctor -> appointment {cuộc hẹn 1{}, cuọc 2}
   }, []);
   console.log(today);
   const getListData = (value) => {
     let listData = [];
     for (let i = 0; i < AppointmentData.length; i++) {
-      let db = AppointmentData[i].DateBooking.split("-");
+      console.log(AppointmentData)
+      let db = AppointmentData[i]?.DateBooking?.split("-");
       // eslint-disable-next-line eqeqeq
-      if (
-        value.date() == db[2] &&
-        value.month() + 1 == db[1] &&
-        value.year() == db[0]
-      ) {
-        listData = [
-          ...listData,
+      if (value.date() == db[2] && value.month() + 1 == db[1] && value.year() == db[0]) {
+        listData = [...listData, 
           {
             type: AppointmentData[i].Type,
             content: AppointmentData[i].TimeBooking,

@@ -130,7 +130,7 @@ const HomePage = () => {
               <div className="font-medium">
                 {allPost[0]?.FirstName + " " + allPost[0]?.LastName} -
               </div>
-              <div> {allPost[0]?.DatePost.slice(0, 10)}</div>
+              <div> {allPost[0]?.DatePost?.slice(0, 10)}</div>
             </div>
           </div>
           <div className="grid grid-rows-3 w-2/5">

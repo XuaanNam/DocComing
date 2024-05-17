@@ -50,7 +50,7 @@ const BookingDoctor = () => {
   const Id = doctorId?.slice(-9);
   let body = {
     idDoctor: parseInt(Id),
-    DateBooking: today,
+    DateBooking: today, 
   };
   const addTime = (fTime, sTime) => {
     const ft = fTime.split(":");

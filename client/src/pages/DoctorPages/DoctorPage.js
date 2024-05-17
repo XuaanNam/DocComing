@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Dashboard from "./Dashboard";
+import Dashboard from "./DashBoard";
 import DoctorProfile from "./DoctorProfile";
 import CreateBlog from "./CreateBlog";
 import ManageBlog from "./ManageBlog";

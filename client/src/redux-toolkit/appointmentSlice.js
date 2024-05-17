@@ -37,13 +37,24 @@ export const fetchService = createAsyncThunk("fetchService", async (body) => {
   });
   return await res.json();
 });
+
 export const fetchSchedule = createAsyncThunk("fetchSchedule", async (body) => {
-  const res = await fetch("http://localhost:5000/api/doctor/schedule", {
-    method: "POST",
+  const res = await fetch(`http://localhost:5000/api/schedule/${body.idDoctor}/${body.DateBooking}`, {
+    method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
+
+export const fetchDoctorSchedule = createAsyncThunk("fetchDoctorSchedule", async (body) => {
+  const res = await fetch(`http://localhost:5000/api/doctor/schedule/${body}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
   });
   return await res.json();
 });
@@ -85,10 +96,22 @@ const appointmentSlice = createSlice({
         state.AppointmentData = action.payload.AppointmentData;
         state.ScheduleData = action.payload.ScheduleData;
         state.loading = false;
-        console.log(action.payload.AppointmentData);
+        console.log(action.payload);
         // state.checked = action.payload.checked;
       })
       .addCase(fetchSchedule.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(fetchDoctorSchedule.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchDoctorSchedule.fulfilled, (state, action) => {
+        state.ScheduleData = action.payload.ScheduleData;
+        state.loading = false;
+        console.log(action.payload);
+        // state.checked = action.payload.checked;
+      })
+      .addCase(fetchDoctorSchedule.rejected, (state, action) => {
         state.loading = false;
       })
       .addCase(fetchAppointment.pending, (state, action) => {
@@ -96,7 +119,6 @@ const appointmentSlice = createSlice({
       })
       .addCase(fetchAppointment.fulfilled, (state, action) => {
         state.AppointmentData = action.payload.AppointmentData;
-        state.ScheduleData = action.payload.ScheduleData;
         state.loading = false;
       })
       .addCase(fetchAppointment.rejected, (state, action) => {

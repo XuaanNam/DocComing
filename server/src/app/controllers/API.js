@@ -117,7 +117,7 @@ class API {
   Google(req, res) {
     const { email, name, googlePhotoUrl } = req.body;
     const sql =
-      "select id, Authorization, FirstName, LastName from account where Email = ? ";
+      "select id, Authorization, FirstName, LastName, Avt from account where Email = ? ";
     const fn = name.split(" ");
     let lastName = fn[fn.length - 1];
     let firstName = "";
@@ -149,7 +149,7 @@ class API {
               id: results[0].id,
               FullName: results[0].FirstName + " " + results[0].LastName,
               authentication: results[0].Authorization,
-              googlePhotoUrl,
+              Avt:  results[0].Avt,
             });
           } else {
             pool.query(
@@ -236,7 +236,7 @@ class API {
   //[GET] /api/profile
   getProfile(req, res) {
     const id = req.user.id;
-    const selectSql = "select * from account where id = ?";
+    const selectSql = "select id, LastName, FirstName, BirthDate, Gender, Address, Email, Phone, Avt from account where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể lấy thông tin!";
 
     pool.query(selectSql, id, function (error, results, fields) {
@@ -336,7 +336,6 @@ class API {
     const { idService, idDoctor, Price, Information, TimeBooking } = req.body;
     const db = req.body.DateBooking.split("/");
     const DateBooking = db[2] + "-" + db[1] + "-" + db[0];
-    console.log(req.user);
     const insertSql =
       "insert into appointment (idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information) values(?,?,?,?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
@@ -479,15 +478,15 @@ class API {
     });
   }
 
-  //[GET] /api/schedule
+  //[GET] /api/doctor/schedule
   getSchedule(req, res, next) {
     const sql = "call AppointmentData(?, ?)";
-    let { idDoctor, DateBooking } = req.body; //dd/mm/yyyy
-    const sd = DateBooking.split("/");
-    DateBooking = sd[2] + "-" + sd[1] + "-" + sd[0];
+    let { idDoctor, date, month, year } = req.params;   //dd/mm/yyyy
+    const DateBooking = year + "-" + month + "-" + date;
     let AppointmentData = {};
     let ScheduleData = {};
     const sql2 = "call ScheduleData(?,?)";
+    
     pool.getConnection(function (err, connection) {
       if (err) throw err; // not connected!
 
@@ -647,12 +646,31 @@ class API {
     });
   }
 
-  // [POST] /api/service/doctor
-  serviceDoctor(req, res) {
+  // [GET] /api/doctor/schedule
+  getDoctorSchedule(req, res) {
     const id = req.user.id;
-    const { idService, EstimatedTime } = req.body;
+    let { date, month, year } = req.params;   //dd/mm/yyyy
+    const Date = year + "-" + month + "-" + date;
+    const selectSql = "call ScheduleData(?,?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    console.log(id, Date)
+    pool.query(selectSql, [id, Date], function (error, results, fields) {
+        if (error) {
+          res.send({ message: errorMsg, checked: false });
+        }
+        if (results[0]) {
+          res.status(200).send({ ScheduleData: results[0] });
+        }
+      }
+    );
+  }
+
+  // [POST] /api/service/doctor
+  createServiceDoctor(req, res) {
+    const id = req.user.id;
+    const { idService, EstimatedTime, Price } = req.body;
     const insertSql =
-      "insert into servicedoctor (idService, idDoctor, EstimatedTime) values (?,?,?)";
+      "insert into servicedoctor (idService, idDoctor, EstimatedTime, Price) values (?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 2) {
@@ -660,7 +678,7 @@ class API {
     } else {
       pool.query(
         insertSql,
-        [idService, id, EstimatedTime],
+        [idService, id, EstimatedTime, Price],
         function (error, results, fields) {
           if (error) {
             res.send({ message: error, checked: false });
@@ -1150,7 +1168,7 @@ class API {
           res.send({ message: error, checked: false });
         } else {
           if (results) {
-            res.status(200).send({ checked: true });
+            res.status(200).send({ data: results, TotalAcc: results.length, checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
