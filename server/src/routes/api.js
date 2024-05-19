@@ -44,7 +44,8 @@ router.post("/doctor/service", api.getServiceDoctor); // lay dich vu cua bsi v�
 router.get("/doctor/:id", api.getDetailDoctor); // lay bsi với id (danh cho patient)
 
 router.get("/doctor/schedule/:date/:month/:year", PassportCheck, api.getDoctorSchedule); // lay schedule bsi với id
-router.post("/doctor/service/create", PassportCheck, api.createServiceDoctor); //theem service cho moi bac si
+router.post("/doctor/service/create", PassportCheck, api.createServiceDoctor); //theem service cho moi bac si -- gửi data
+router.post("/doctor/service/delete", PassportCheck, api.deleteServiceDoctor); //xóa service cho moi bac si -- gửi idService và token
 router.post("/schedule", PassportCheck, api.setSchedule);
 
 // Blog
