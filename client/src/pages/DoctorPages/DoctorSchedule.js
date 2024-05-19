@@ -19,13 +19,16 @@ import { Table, Button } from "flowbite-react";
 
 const DoctorSchedule = () => {
   const dispatch = useDispatch();
-  const { AppointmentData, scheduleData, allService, service, error, loading } =
+  const { AppointmentData, ScheduleData, allService, service, error, loading } =
     useSelector((state) => state.appointment);
   const { user } = useSelector((state) => state.user);
   const [actived, setActived] = useState(false);
   const [editService, setEditService] = useState(false);
-
   const [serviceData, setServiceData] = useState([]);
+  const [scheduleData, setScheduleData] = useState({});
+  const [firstStart, setFirstStart] = useState("");
+  const [secondStart, setSecondStart] = useState("");
+  const [thirdStart, setThirdStart] = useState("");
 
   const dateFormat = "DD/MM/YYYY";
   const date = new Date();
@@ -53,8 +56,8 @@ const DoctorSchedule = () => {
       Price: service[i]?.Price,
     });
   const time1 = ["7:00:00", "8:00:00", "9:00:00", "10:00:00", "11:00:00"];
-  const time2 = ["7:00:00", "8:00:00", "9:00:00", "10:00:00", "11:00:00"];
-  const time3 = ["7:00:00", "8:00:00", "9:00:00", "10:00:00", "11:00:00"];
+  const time2 = ["13:00:00", "14:00:00", "15:00:00", "16:00:00", "17:00:00"];
+  const time3 = ["18:00:00", "19:00:00", "20:00:00", "21:00:00", "22:00:00"];
   const handleChange = (e) => {
     for (let i = 0; i < e.length; i++) {
       for (let j = 0; j < allService.length; j++) {
@@ -70,6 +73,30 @@ const DoctorSchedule = () => {
     }
     setServiceData(sv);
   };
+  const handleAddService = () => {
+    let newData = [];
+    for (let i = 0; i < serviceData.length; i++) {
+      if (serviceData[i]?.value != service[i]?.id) {
+        newData.push({
+          idService: serviceData[i].value,
+          EstimatedTime: serviceData[i].EstimatedTime,
+          Price: serviceData[i].Price,
+        });
+        let data = { data: [...newData] };
+        if (i == serviceData.length - 1)
+          dispatch(addService(data)).then(() =>
+            dispatch(fetchService({ idDoctor: user?.data.id }))
+          );
+      }
+    }
+    setEditService(false);
+  };
+  const parse = (time) => {
+    const split = time.split(":");
+    let curr = parseInt(split[0]) + parseInt(split[1]) / 60;
+    return curr;
+  };
+  console.log(parse("8:00:00"));
   useEffect(() => {
     dispatch(fetchDoctorSchedule(today)); //bệnh nhân -> idDOctor, ngày  {appointment{timebdau, 1:30:00} , schedule }
     dispatch(fetchService({ idDoctor: user?.data.id }));
@@ -81,7 +108,10 @@ const DoctorSchedule = () => {
       setServiceData(sv);
       setActived(true);
     }
-  }, [service]);
+    if (ScheduleData) {
+      setScheduleData(ScheduleData[0]);
+    }
+  }, [service, ScheduleData]);
 
   const getListData = (value) => {
     let listData = [];
@@ -130,7 +160,7 @@ const DoctorSchedule = () => {
               {!editService && (
                 <div className="mb-5 flex w-[70%] justify-end">
                   <Button
-                    className="h-[40px] w-32"
+                    className="h-[40px] w-32 shadow-md shadow-emerald-200"
                     gradientDuoTone="greenToBlue"
                     onClick={() => {
                       setEditService(true);
@@ -154,11 +184,9 @@ const DoctorSchedule = () => {
                 />
                 <div className="flex justify-end w-1/3">
                   <Button
-                    className="h-[40px] w-32 flex self-end "
+                    className="h-[40px] w-32 flex self-end shadow-md shadow-emerald-200"
                     gradientDuoTone="greenToBlue"
-                    onClick={() => {
-                      setEditService(false);
-                    }}
+                    onClick={handleAddService}
                   >
                     Xác nhận
                   </Button>
@@ -239,78 +267,131 @@ const DoctorSchedule = () => {
                   Ca sáng
                 </p>
                 <Select
-                  className="text-lg h-[40px] w-32"
+                  className="h-[40px] w-32"
                   size="large"
-                  //   value={categoryId}
-                  //   onChange={handleChange}
+                  placeholder="--"
+                  value={scheduleData?.FirstShiftStart}
+                  onChange={(value) => {
+                    setScheduleData({
+                      ...scheduleData,
+                      FirstShiftStart: value,
+                    });
+                    setFirstStart(value);
+                  }}
                 >
-                  <option value="--" disabled className="">
-                    --
-                  </option>
                   {time1?.map((item) => (
-                    <option
-                      value={item}
-                      label={item}
-                      className="text-black"
-                    ></option>
+                    <option value={item} label={item}></option>
                   ))}
                 </Select>
                 <FaLongArrowAltRight />
-                <select
-                  className="flex self-center items-center pl-5 p-2 h-[40px] w-32 border rounded-lg bg-white text-slate-800 opacity-60 cursor-pointer"
-                  //   value={categoryId}
-                  //   onChange={handleChange}
+                <Select
+                  className="h-[40px] w-32"
+                  size="large"
+                  placeholder="--"
+                  value={scheduleData?.FirstShiftEnd}
+                  onChange={(value) => {
+                    setScheduleData({
+                      ...scheduleData,
+                      FirstShiftEnd: value,
+                    });
+                  }}
                 >
-                  <option value="--" disabled className="text-black">
-                    --
-                  </option>
-                </select>
+                  {time1?.map((item) => (
+                    <option
+                      disabled={firstStart && parse(item) <= parse(firstStart)}
+                      value={item}
+                      label={item}
+                    ></option>
+                  ))}
+                </Select>
               </div>
+
               <div className="flex gap-3 items-center mb-5">
                 <p className="text-lg font-medium text-gray-600 w-20">
                   Ca chiều
                 </p>
-                <select
-                  className="flex self-center items-center pl-5 p-2 h-[40px] w-32 border rounded-lg bg-white text-slate-800 opacity-60 cursor-pointer"
-                  //   value={categoryId}
-                  //   onChange={handleChange}
+                <Select
+                  className="h-[40px] w-32"
+                  size="large"
+                  placeholder="--"
+                  value={scheduleData?.SecondShiftStart}
+                  onChange={(value) => {
+                    setScheduleData({
+                      ...scheduleData,
+                      SecondShiftStart: value,
+                    });
+                    setSecondStart(value);
+                  }}
                 >
-                  <option value="--" disabled className="text-black">
-                    --
-                  </option>
-                </select>
+                  {time2?.map((item) => (
+                    <option value={item} label={item}></option>
+                  ))}
+                </Select>
                 <FaLongArrowAltRight />
-                <select
-                  className="flex self-center items-center pl-5 p-2 h-[40px] w-32 border rounded-lg bg-white text-slate-800 opacity-60 cursor-pointer"
-                  //   value={categoryId}
-                  //   onChange={handleChange}
+                <Select
+                  className="h-[40px] w-32"
+                  size="large"
+                  placeholder="--"
+                  value={scheduleData?.SecondShiftEnd}
+                  onChange={(value) => {
+                    setScheduleData({
+                      ...scheduleData,
+                      SecondShiftEnd: value,
+                    });
+                  }}
                 >
-                  <option value="--" disabled className="text-black">
-                    --
-                  </option>
-                </select>
+                  {time2?.map((item) => (
+                    <option
+                      disabled={
+                        secondStart && parse(item) <= parse(secondStart)
+                      }
+                      value={item}
+                      label={item}
+                    ></option>
+                  ))}
+                </Select>
               </div>
+
               <div className="flex gap-3 items-center mb-5">
                 <p className="text-lg font-medium text-gray-600 w-20">Ca tối</p>
-                <select
-                  className="flex self-center items-center pl-5 p-2 h-[40px] w-32 border rounded-lg bg-white text-slate-800 opacity-60 cursor-pointer"
-                  //   value={categoryId}
-                  //   onChange={handleChange}
+                <Select
+                  className="h-[40px] w-32"
+                  size="large"
+                  placeholder="--"
+                  value={scheduleData?.ThirdShiftStart}
+                  onChange={(value) => {
+                    setScheduleData({
+                      ...scheduleData,
+                      ThirdShiftStart: value,
+                    });
+                    setThirdStart(value);
+                  }}
                 >
-                  <option value="--" disabled className="text-black">
-                    --
-                  </option>
-                </select>
+                  {time3?.map((item) => (
+                    <option value={item} label={item}></option>
+                  ))}
+                </Select>
                 <FaLongArrowAltRight />
-                <select
-                  className="flex self-center items-center pl-5 p-2 h-[40px] w-32 border rounded-lg bg-white text-slate-800 opacity-60 cursor-pointer"
-                  //   value={categoryId}
-                  //   onChange={handleChange}
+                <Select
+                  className="h-[40px] w-32"
+                  size="large"
+                  placeholder="--"
+                  value={scheduleData?.ThirdShiftEnd}
+                  onChange={(value) => {
+                    setScheduleData({
+                      ...scheduleData,
+                      ThirdShiftEnd: value,
+                    });
+                  }}
                 >
-                  <option value="--" disabled className="text-black">
-                    --
-                  </option>
-                </select>
+                  {time3?.map((item) => (
+                    <option
+                      disabled={thirdStart && parse(item) <= parse(thirdStart)}
+                      value={item}
+                      label={item}
+                    ></option>
+                  ))}
+                </Select>
               </div>
             </div>
           </div>

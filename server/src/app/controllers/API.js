@@ -666,10 +666,10 @@ class API {
     });
   }
 
-  // [POST] /api/service/doctor
+  // [POST] /api/doctor/service/create
   createServiceDoctor(req, res) {
     const id = req.user.id;
-    const { idService, EstimatedTime, Price } = req.body;
+    const { data } = req.body; // data [{idService, EstimatedTime, Price},{},{}]
     const insertSql =
       "insert into servicedoctor (idService, idDoctor, EstimatedTime, Price) values (?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
@@ -677,21 +677,42 @@ class API {
     if (req.user.Authorization != 2) {
       res.end("Unauthorized");
     } else {
-      pool.query(
-        insertSql,
-        [idService, id, EstimatedTime, Price],
-        function (error, results, fields) {
-          if (error) {
-            res.send({ message: error, checked: false });
-          } else {
-            if (results) {
-              res.status(200).send({ checked: true });
-            } else {
-              res.status(200).send({ message: errorMsg, checked: false });
+      console.log(req.body);
+      for (let i = 0; i < data.length; i++) {
+        pool.query(
+          insertSql,
+          [data[i].idService, id, data[i].EstimatedTime, data[i].Price],
+          function (error, results, fields) {
+            if (error) {
+              res.send({ message: error, checked: false, i });
             }
           }
+        );
+        if (i == data.length - 1) {
+          res.status(200).send({ checked: true });
         }
-      );
+      }
+    }
+  }
+
+  // [POST] /api/doctor/service/delete
+  deleteServiceDoctor(req, res) {
+    const id = req.user.id;
+    const { idService } = req.body; // data [{idService, EstimatedTime, Price},{},{}]
+    const deleteSql =
+      "delete servicedoctor where idService = ? and idDoctor = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    if (req.user.Authorization != 2) {
+      res.end("Unauthorized");
+    } else {
+      pool.query(deleteSql, [idService, id], function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false, i });
+        } else {
+          res.status(200).send({ checked: true });
+        }
+      });
     }
   }
 

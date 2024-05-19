@@ -52,10 +52,12 @@ export const fetchAllService = createAsyncThunk(
   }
 );
 export const addService = createAsyncThunk("addService", async (body) => {
+  console.log(body);
   const res = await fetch("http://localhost:5000/api/doctor/service/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
     },
     body: JSON.stringify(body),
   });

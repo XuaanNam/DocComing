@@ -48,7 +48,8 @@ router.get(
   PassportCheck,
   api.getDoctorSchedule
 ); // lay schedule bsi với id
-router.post("/doctor/service/create", PassportCheck, api.createServiceDoctor); //theem service cho moi bac si
+router.post("/doctor/service/create", PassportCheck, api.createServiceDoctor); //theem service cho moi bac si -- gửi data
+router.post("/doctor/service/delete", PassportCheck, api.deleteServiceDoctor); //xóa service cho moi bac si -- gửi idService và token
 router.post("/schedule", PassportCheck, api.setSchedule);
 
 // Blog
