@@ -80,7 +80,6 @@ export const fetchProfile = createAsyncThunk("fetchProfile", async () => {
   return await res.json();
 });
 export const updateProfile = createAsyncThunk("updateProfile", async (body) => {
-  console.log("body", body);
   const res = await fetch("http://localhost:5000/api/profile/update", {
     method: "POST",
     headers: {
@@ -188,9 +187,6 @@ const authSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, { payload }) => {
         state.checked = payload.checked;
-        toast.success("Cập nhật thành công", {
-          position: "top-right",
-        });
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = true;
@@ -200,7 +196,6 @@ const authSlice = createSlice({
       })
       .addCase(fetchProfile.fulfilled, (state, { payload }) => {
         state.user = payload;
-        localStorage.setItem("userInfo", JSON.stringify(payload));
       })
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = true;

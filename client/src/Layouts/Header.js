@@ -29,6 +29,14 @@ const Header = () => {
   };
   return (
     <div className="h-[70px] fixed w-screen z-50">
+      {actived && (
+        <div
+          className="absolute inset-0 w-screen h-screen overlay"
+          onClick={() => {
+            setActived(false);
+          }}
+        ></div>
+      )}
       <div className="text-sm h-full px-5 text-gray-700 bg-teal-600 grid grid-cols-4 drop-shadow-lg">
         <div className="col-start-1 col-span-1 pl-5 text-xl flex items-center font-bold text-teal-500">
           <img className="rounded-full h-12 w-12 mr-3 " alt="" src={logo}></img>
@@ -89,11 +97,13 @@ const Header = () => {
                 onClick={() => console.log("zzz")}
                 className="h-7 w-7 text-lime-100  cursor-pointer transition-transform duration-500 hover:scale-110"
               />
-              {actived === true && (
-                <div className="absolute top-[62px] w-60 text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-10">
-                  <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
-                    <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
-                    {authentication == 2 && (
+              {actived && (
+                <div
+                  className={`absolute top-[62px] w-60 text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-50`}
+                >
+                  {authentication == 2 && (
+                    <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
+                      <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
                       <div
                         onClick={() => {
                           Navigate("/profile");
@@ -102,18 +112,32 @@ const Header = () => {
                       >
                         Hồ sơ
                       </div>
-                    )}
-                    {authentication == 1 && (
-                      <div
-                        onClick={() => {
-                          Navigate("/patient/profile");
-                        }}
-                        className="block py-3 "
-                      >
-                        Hồ sơ
+                    </div>
+                  )}
+                  {authentication == 1 && (
+                    <div>
+                      <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
+                        <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
+                        <div
+                          onClick={() => {
+                            Navigate("/patient/profile");
+                          }}
+                          className="block py-3 "
+                        >
+                          Hồ sơ
+                        </div>
                       </div>
-                    )}
-                    {authentication == 0 && (
+                      <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
+                        <LuCalendarDays className="h-5 w-5"></LuCalendarDays>
+                        <a href="/appointment" className="block py-3">
+                          Lịch khám của tôi
+                        </a>
+                      </div>
+                    </div>
+                  )}
+                  {authentication == 0 && (
+                    <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
+                      <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
                       <div
                         onClick={() => {
                           Navigate("/admin/profile");
@@ -122,22 +146,8 @@ const Header = () => {
                       >
                         Hồ sơ
                       </div>
-                    )}
-                  </div>
-                  {authentication == 1 && (
-                    <div className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer">
-                      <LuCalendarDays className="h-5 w-5"></LuCalendarDays>
-                      <a href="/appointment" className="block py-3">
-                        Lịch khám của tôi
-                      </a>
                     </div>
                   )}
-                  {/* <div className="flex gap-3 account-link items-center hover:text-white px-4 cursor-pointer">
-                    <LuCalendarCheck className="h-5 w-5"></LuCalendarCheck>
-                    <a href="/" className="block py-2">
-                      Kết quả khám
-                    </a>
-                  </div> */}
                   <div
                     className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer"
                     onClick={handleLogout}

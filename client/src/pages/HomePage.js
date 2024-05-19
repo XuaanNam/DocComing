@@ -118,19 +118,19 @@ const HomePage = () => {
             <div className="text-slate-800 text-xl font-medium mb-2">
               {allPost[0]?.Title}
             </div>
-            <p className="h-[76px] text-slate-600 text-base text-justify text-ellipsis overflow-hidden mb-2">
+            <p className="h-[76px] text-slate-600 text-base text-justify text-ellipsis overflow-hidden mb-4">
               {allPost[0]?.Brief}
             </p>
             <div className="flex gap-2 text-base items-center">
               <img
                 className="h-[35px] w-[35px] rounded-full mb-2 bg-cover drop-shadow-md"
-                src={require("../Images/doctor.webp")}
+                src={allPost[0]?.Avt}
                 alt=""
               ></img>
               <div className="font-medium">
                 {allPost[0]?.FirstName + " " + allPost[0]?.LastName} -
               </div>
-              <div> {allPost[0]?.DatePost?.slice(0, 10)}</div>
+              <div> Ngày đăng: {allPost[0]?.DatePost?.slice(0, 10)}</div>
             </div>
           </div>
           <div className="grid grid-rows-3 w-2/5">
@@ -141,13 +141,13 @@ const HomePage = () => {
                 alt=""
               ></img>
               <div className="text-teal-500 mb-1">{allPost[1]?.Similar}</div>
-              <div className="text-slate-800 text-lg font-medium mb-2">
+              <div className="text-slate-800 text-lg font-medium mb-4">
                 {allPost[1]?.Title}
               </div>
               <div className="flex gap-2 text-base items-center">
                 <img
                   className="h-[35px] w-[35px] rounded-full drop-shadow-md"
-                  src={require("../Images/doctor.webp")}
+                  src={allPost[1]?.Avt}
                   alt=""
                 ></img>
                 <div className="font-medium">
@@ -157,17 +157,17 @@ const HomePage = () => {
               </div>
             </div>
             <div className="cursor-pointer w-full pt-5">
-              <div className=" flex gap-2 ">
+              <div className=" flex gap-3 mb-2">
                 <div>
                   <div className="text-teal-500 mb-2">
                     {allPost[2]?.Similar}
                   </div>
-                  <div className="text-slate-800 text-lg font-medium mb-1">
+                  <div className="text-slate-800 text-lg font-medium">
                     {allPost[2]?.Title}
                   </div>
                 </div>
                 <img
-                  className="h-[120px] w-[180px] rounded-xl mb-2 bg-cover drop-shadow-lg"
+                  className="h-[140px] w-[180px] rounded-xl bg-cover drop-shadow-lg"
                   src={allPost[2]?.FeaturedImage}
                   alt=""
                 ></img>
@@ -176,7 +176,7 @@ const HomePage = () => {
               <div className="flex gap-2 text-base items-center">
                 <img
                   className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                  src={require("../Images/doctor.webp")}
+                  src={allPost[2]?.Avt}
                   alt=""
                 ></img>
                 <div className="font-medium">

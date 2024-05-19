@@ -2,14 +2,13 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { getDetailPost } from "../redux-toolkit/postSlice";
-
 const BlogPage = () => {
   const { blogId } = useParams();
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const { detailPost, error, loading } = useSelector((state) => state.post);
   useEffect(() => {
-    dispatch(getDetailPost(2));
+    dispatch(getDetailPost(blogId));
   }, [dispatch]);
   console.log(detailPost);
   // const post = detailPost[0];
@@ -40,7 +39,7 @@ const BlogPage = () => {
             </p>
             {/* <div className="text-lg mb-3 text-justify">{post?.Content}</div> */}
             <div
-              className="text-lg mb-3 text-justify"
+              className="text-lg mb-3 text-justify content"
               dangerouslySetInnerHTML={{ __html: detailPost[0]?.Content }}
             />
           </div>

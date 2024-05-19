@@ -112,6 +112,7 @@ const postSlice = createSlice({
       })
       .addCase(getDetailPost.fulfilled, (state, action) => {
         state.detailPost = action.payload.data;
+        console.log(action.payload.data);
         state.loading = false;
       })
       .addCase(getDetailPost.rejected, (state, action) => {

@@ -11,18 +11,18 @@ const DoctorAppointment = () => {
   const [passed, setPassed] = useState(false);
 
   return (
-    <div className="bg-lime-50">
+    <div className="">
       <div className="mx-16 text-gray-700 flex gap-10">
-        <div className="my-7 w-full rounded-xl bg-white text-slate-600 shadow-xl py-5 px-8">
-          <div className="mb-5 h-10 grid grid-cols-5 gap-3 font-semibold">
+        <div className="my-7 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-300 py-5 px-8">
+          <div className="mb-5 h-10  grid grid-cols-5 gap-3 font-semibold">
             <p className="text-2xl col-span-1">Lịch khám</p>
             <div
               onClick={() => {
                 setPassed(false);
               }}
               className={` ${
-                !passed && "bg-lime-100"
-              } col-start-4 underline rounded-lg text-center hover:bg-lime-100 cursor-pointer py-2 w-full h-full`}
+                !passed && "bg-white shadow-md shadow-violet-300"
+              } col-start-4 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               SẮP TỚI
             </div>
@@ -31,8 +31,8 @@ const DoctorAppointment = () => {
                 setPassed(true);
               }}
               className={` ${
-                passed && "bg-lime-100"
-              } col-start-5 underline rounded-lg text-center hover:bg-lime-100 cursor-pointer py-2 w-full h-full`}
+                passed && "bg-white shadow-md shadow-violet-300"
+              } col-start-5 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               ĐÃ QUA
             </div>

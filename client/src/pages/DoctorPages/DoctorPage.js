@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Dashboard from "./DashBoard";
+import Dashboard from "./Dashboard";
 import DoctorProfile from "./DoctorProfile";
 import CreateBlog from "./CreateBlog";
 import ManageBlog from "./ManageBlog";
@@ -28,13 +28,15 @@ const DoctorPage = () => {
       {currentUser?.authentication === 2 ? (
         <div className="flex">
           <DoctorSidebar param={doctorpage}></DoctorSidebar>
-          <div className="overflow-auto w-full pt-[70px]">
-            {doctorpage === "profile" && <DoctorProfile />}
-            {doctorpage === "create-post" && <CreateBlog />}
-            {doctorpage === "manage-post" && <ManageBlog />}
-            {doctorpage === "dashboard" && <Dashboard />}
-            {doctorpage === "schedule" && <DoctorSchedule />}
-            {doctorpage === "appointment" && <DoctorAppointment />}
+          <div className="w-full flex flex-col h-screen">
+            <div className="overflow-auto w-full pt-[70px]">
+              {doctorpage === "profile" && <DoctorProfile />}
+              {doctorpage === "create-post" && <CreateBlog />}
+              {doctorpage === "manage-post" && <ManageBlog />}
+              {doctorpage === "dashboard" && <Dashboard />}
+              {doctorpage === "schedule" && <DoctorSchedule />}
+              {doctorpage === "appointment" && <DoctorAppointment />}
+            </div>
           </div>
         </div>
       ) : (

@@ -25,8 +25,7 @@ const BookingDoctor = () => {
     date.getFullYear();
   const { service, ScheduleData, AppointmentData, error, loading, updated } =
     useSelector((state) => state.appointment);
-  const { detailDoctor } = useSelector((state) => state.user);
-  console.log(detailDoctor);
+  const { currentUser, detailDoctor } = useSelector((state) => state.user);
   // const ScheduleData = schedule?.ScheduleData;
   // const AppointmentData = schedule?.AppointmentData;
   const [index, setIndex] = useState("");
@@ -50,7 +49,7 @@ const BookingDoctor = () => {
   const Id = doctorId?.slice(-9);
   let body = {
     idDoctor: parseInt(Id),
-    DateBooking: today, 
+    DateBooking: today,
   };
   const addTime = (fTime, sTime) => {
     const ft = fTime.split(":");
@@ -303,7 +302,6 @@ const BookingDoctor = () => {
       }
     }
   }, [service, currenTime1, currenTime2, currenTime3, data.Service]);
-  console.log(data);
   const changeData = () => {
     setTime1([]);
     setTime2([]);
@@ -341,14 +339,20 @@ const BookingDoctor = () => {
       Service: data.Service
         ? service[data.Service - 1].Service
         : service[0].Service,
-      idDoctor: 235523485,
+      idDoctor: Id,
       Price: data.Service ? service[data.Service - 1].Price : service[0].Price,
-      // Information,
       DateBooking: data.DateBooking ? data.DateBooking : today,
       TimeBooking: data.timePicker,
     };
     localStorage.setItem("appointment", JSON.stringify(body));
     Navigate("/booking/confirm");
+  };
+  const handleNavigate = () => {
+    const data = {
+      doctor: doctorId,
+    };
+    Navigate("/login");
+    localStorage.setItem("check", JSON.stringify(data));
   };
   return (
     <div className="bg-lime-50 pt-[90px]">
@@ -556,7 +560,7 @@ const BookingDoctor = () => {
             </p>
             <Button
               disabled={!actived}
-              onClick={handleBooking}
+              onClick={currentUser ? handleBooking : handleNavigate}
               className="w-full h-[48px] text-center"
               gradientDuoTone="greenToBlue"
             >

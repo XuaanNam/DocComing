@@ -149,7 +149,7 @@ class API {
               id: results[0].id,
               FullName: results[0].FirstName + " " + results[0].LastName,
               authentication: results[0].Authorization,
-              Avt:  results[0].Avt,
+              Avt: results[0].Avt,
             });
           } else {
             pool.query(
@@ -236,7 +236,8 @@ class API {
   //[GET] /api/profile
   getProfile(req, res) {
     const id = req.user.id;
-    const selectSql = "select id, LastName, FirstName, BirthDate, Gender, Address, Email, Phone, Avt from account where id = ?";
+    const selectSql =
+      "select id, LastName, FirstName, BirthDate, Gender, Address, Email, Phone, Avt from account where id = ?";
     const errorMsg = "Lỗi hệ thống, không thể lấy thông tin!";
 
     pool.query(selectSql, id, function (error, results, fields) {
@@ -356,6 +357,7 @@ class API {
         ],
         function (error, results, fields) {
           if (error) {
+            console.log(error);
             res.send({ message: error.sqlMessage, checked: false });
           } else {
             if (results) {
@@ -481,12 +483,12 @@ class API {
   //[GET] /api/doctor/schedule
   getSchedule(req, res, next) {
     const sql = "call AppointmentData(?, ?)";
-    let { idDoctor, date, month, year } = req.params;   //dd/mm/yyyy
+    let { idDoctor, date, month, year } = req.params; //dd/mm/yyyy
     const DateBooking = year + "-" + month + "-" + date;
     let AppointmentData = {};
     let ScheduleData = {};
     const sql2 = "call ScheduleData(?,?)";
-    
+
     pool.getConnection(function (err, connection) {
       if (err) throw err; // not connected!
 
@@ -649,20 +651,19 @@ class API {
   // [GET] /api/doctor/schedule
   getDoctorSchedule(req, res) {
     const id = req.user.id;
-    let { date, month, year } = req.params;   //dd/mm/yyyy
+    let { date, month, year } = req.params; //dd/mm/yyyy
     const Date = year + "-" + month + "-" + date;
     const selectSql = "call ScheduleData(?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    console.log(id, Date)
+    console.log(id, Date);
     pool.query(selectSql, [id, Date], function (error, results, fields) {
-        if (error) {
-          res.send({ message: errorMsg, checked: false });
-        }
-        if (results[0]) {
-          res.status(200).send({ ScheduleData: results[0] });
-        }
+      if (error) {
+        res.send({ message: errorMsg, checked: false });
       }
-    );
+      if (results[0]) {
+        res.status(200).send({ ScheduleData: results[0] });
+      }
+    });
   }
 
   // [POST] /api/service/doctor
@@ -1168,7 +1169,9 @@ class API {
           res.send({ message: error, checked: false });
         } else {
           if (results) {
-            res.status(200).send({ data: results, TotalAcc: results.length, checked: true });
+            res
+              .status(200)
+              .send({ data: results, TotalAcc: results.length, checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
