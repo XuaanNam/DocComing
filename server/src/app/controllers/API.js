@@ -668,29 +668,26 @@ class API {
   // [POST] /api/service/doctor
   createServiceDoctor(req, res) {
     const id = req.user.id;
-    const { idService, EstimatedTime, Price } = req.body;
+    const { data } = req.body; // data [{idService, EstimatedTime, Price},{},{}]
     const insertSql =
       "insert into servicedoctor (idService, idDoctor, EstimatedTime, Price) values (?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 2) {
       res.end("Unauthorized");
-    } else {
-      pool.query(
-        insertSql,
-        [idService, id, EstimatedTime, Price],
-        function (error, results, fields) {
-          if (error) {
-            res.send({ message: error, checked: false });
-          } else {
-            if (results) {
-              res.status(200).send({ checked: true });
-            } else {
-              res.status(200).send({ message: errorMsg, checked: false });
+    } else { console.log("data: ", data)
+      for( let i = 0; i < data.length; i++){
+        pool.query(insertSql,[data[i].idService, id, data[i].EstimatedTime, data[i].Price],
+          function (error, results, fields) {
+            if (error) {
+              res.send({ message: error, checked: false, i });
             }
           }
+        );
+        if(i==data.length-1){
+          res.status(200).send({ checked: true });
         }
-      );
+      }
     }
   }
 
