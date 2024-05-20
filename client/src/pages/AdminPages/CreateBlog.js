@@ -17,7 +17,6 @@ const CreateBlog = () => {
   const [similarCategoryId, setSimilarCategoryId] = useState("");
 
   const ref = useRef();
-  const categoryRef = useRef();
   useEffect(() => {
     dispatch(fetchCategories());
     // setCategories(category);
@@ -33,6 +32,7 @@ const CreateBlog = () => {
       }
     }
   };
+  console.log(category);
   console.log({ content });
   const handleCreatePost = () => {
     const data = new FormData();
@@ -107,9 +107,8 @@ const CreateBlog = () => {
               value={category.id}
               label={category.Categories}
               key={category.id}
-              ref={categoryRef}
             >
-              {category?.Similar?.map((item) => (
+              {category.Similar?.map((item) => (
                 <Select.Option
                   value={item.id}
                   label={item.SimilarCategories}

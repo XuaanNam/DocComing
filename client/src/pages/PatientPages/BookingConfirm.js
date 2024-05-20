@@ -8,7 +8,7 @@ import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { createAppointment } from "../../redux-toolkit/appointmentSlice";
-import { updateProfile } from "../../redux-toolkit/authSlice";
+import { fetchProfile, updateProfile } from "../../redux-toolkit/authSlice";
 import { toast } from "react-toastify";
 import { Input, Select } from "antd";
 
@@ -24,21 +24,19 @@ const BookingConfirm = () => {
     (state) => state.user
   );
   const { checked, message } = useSelector((state) => state.appointment);
-
   const appointment = JSON.parse(localStorage.getItem("appointment"));
-  console.log(detailDoctor);
   useEffect(() => {
-    setData(user.data);
-    if ((user.data.Gender || user.data.FirstName || user.data.Phone) === null) {
+    setData(user?.data);
+    if (
+      !user?.data?.Phone ||
+      user?.data?.Phone == "null" ||
+      !user?.data?.Address ||
+      user?.data?.Address == "null"
+    ) {
       setActived(false);
     }
-    // if (checked) {
-    //   toast.success("Cập nhật thành công", {
-    //     position: "top-right",
-    //   });
-    // }
   }, []);
-  console.log(user);
+  console.log(appointment.idDoctor);
   const handleBooking = () => {
     const body = {
       idService: appointment.idService,
@@ -48,16 +46,29 @@ const BookingConfirm = () => {
       TimeBooking: appointment.TimeBooking,
       Information: information,
     };
-    // const profile = {
-    // }
-    // if (!actived) {
-    //   dispatch(updateProfile());
-    // }
-    dispatch(createAppointment(body));
+    dispatch(createAppointment(body)).then(() => {
+      Navigate("/booking/success");
+    });
+    if (!actived) {
+      const profile = new FormData();
+      profile.append("FullName", data?.FirstName + data?.LastName);
+      profile.append("Phone", data.Phone);
+      profile.append("Address", data.Address);
+      profile.append("BirthDate", data.BirthDate);
+      profile.append("Gender", data.Gender || "Nam");
+      profile.append("Avt", data.Avt);
+      dispatch(updateProfile(profile)).then(() => {
+        dispatch(fetchProfile());
+      });
+    }
   };
   return (
-    <div className="bg-slate-50 pt-[90px] h-[1200px]">
-      <div className="mx-auto w-[80%] mb-5 p-6 grid grid-cols-6 gap-8 bg-white shadow-lg rounded-lg">
+    <div className="pt-[90px] pb-20">
+      <script type="text/javascript">
+        function disableBack() {window.history.forward()}
+        setTimeout("disableBack()", 0); window.onunload = function () {null};
+      </script>
+      <div className="mx-auto w-[80%] mb-5 p-6 grid grid-cols-6 gap-8 bg-white shadow-md shadow-violet-300 rounded-lg">
         <img
           className="h-48 w-40 object-cover border rounded-lg col-span-1"
           src={detailDoctor[0]?.Avt}
@@ -84,7 +95,7 @@ const BookingConfirm = () => {
           </div>
         </div>
       </div>
-      <div className="mx-auto w-[80%] p-6 bg-white shadow-lg rounded-lg mb-5">
+      <div className="mx-auto w-[80%] p-6 bg-white shadow-md shadow-violet-300 rounded-lg mb-10">
         <div className="text-2xl font-medium text-slate-800 mb-5">
           Thông tin lịch hẹn
         </div>
@@ -112,18 +123,25 @@ const BookingConfirm = () => {
             <p className="text-lg font-medium mb-2 text-gray-700">
               Số điện thoại liên hệ
             </p>
-            <div className="flex gap-3 h-12 w-full items-center border rounded-xl cursor-pointer bg-slate-100">
-              <img className="h-[70%] pl-3 py-1.5" src={FlagIcon} alt=""></img>
+            <div className="relative gap-3 h-12 w-full items-center border rounded-xl cursor-pointer bg-slate-100">
+              <img
+                className="absolute z-10 h-full pl-3 py-3"
+                src={FlagIcon}
+                alt=""
+              ></img>
               {/* <p className="text-lg opacity-70 ">(+84)</p>
               <div className="w-[1.5px] h-[28px] bg-slate-400"></div> */}
               <Input
                 id="Phone"
                 // type="text"
-                disabled={data?.Phone !== null}
+                disabled={data?.Phone && data?.Phone != "null"}
                 className={` ${
-                  data.Phone !== null && "!bg-slate-100 !text-gray-500"
-                } h-full  p-2.5 rounded-r-lg w-full text-lg outline-none `}
-                value={data?.Phone}
+                  data?.Phone &&
+                  data?.Phone != "null" &&
+                  "!bg-slate-100 !text-gray-500"
+                } h-full pl-14 p-2.5 rounded-lg w-full text-lg outline-none `}
+                placeholder="--"
+                value={!data?.Phone || data?.Phone == "null" ? "" : data?.Phone}
                 onChange={(e) => {
                   setData({ ...data, [e.target.id]: e.target.value });
                 }}
@@ -135,28 +153,29 @@ const BookingConfirm = () => {
             <Input
               disabled={data?.FirstName + data?.LastName !== null}
               className={` ${
-                data.FirstName !== null && "!bg-slate-100 !text-gray-500"
+                data?.FirstName !== null && "!bg-slate-100 !text-gray-500"
               } h-12 w-full p-2.5 block items-center border outline-none rounded-xl text-lg `}
               value={data?.FirstName + data?.LastName}
             ></Input>
           </div>
           <div>
-            <p className="text-lg font-medium mb-2 text-gray-700">Giới tính</p>
-            <select
-              disabled={data.Gender !== null}
+            <p className="text-lg font-medium mb-2 text-gray-700">Địa chỉ</p>
+            <Input
+              disabled={data?.Address && data?.Address != "null"}
               className={` ${
-                data.Gender !== null && "bg-slate-100"
-              } h-12 w-full p-2.5 items-center border outline-none rounded-xl text-lg border-slate-300`}
-              id="Gender"
-              value={data?.Gender}
+                data?.Address &&
+                data?.Address != "null" &&
+                "!bg-slate-100 !text-gray-500"
+              } h-12 w-full p-2.5 block items-center border outline-none rounded-xl text-lg `}
+              id="Address"
+              placeholder="--"
+              value={
+                !data?.Address || data?.Address == "null" ? "" : data?.Address
+              }
               onChange={(e) => {
                 setData({ ...data, [e.target.id]: e.target.value });
               }}
-            >
-              <option value="Nam">Nam</option>
-              <option value="Nữ">Nữ</option>
-              <option value="Khác">Khác</option>
-            </select>
+            ></Input>
           </div>
           <div>
             <p className="text-lg font-medium mb-2 text-gray-700">Email</p>
@@ -180,10 +199,11 @@ const BookingConfirm = () => {
           ></textarea>
         </div>
       </div>
+
       <Button
         onClick={handleBooking}
-        className="w-60 mx-auto h-[48px] text-center"
-        gradientDuoTone="greenToBlue"
+        className="w-60 mx-auto h-[48px] text-center shadow-lg shadow-purple-500 z-10 rounded-3xl drop-shadow-lg transition-transform duration-500 hover:scale-105"
+        gradientDuoTone="purpleToPink"
       >
         <p className="text-lg">XÁC NHẬN</p>
       </Button>

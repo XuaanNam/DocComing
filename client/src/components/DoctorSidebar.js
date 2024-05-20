@@ -17,7 +17,6 @@ const DoctorSidebar = ({ param }) => {
       setActived(param);
     }
   }, []);
-  console.log(param);
   const handleLogout = () => {
     dispatch(logout());
     setTimeout(() => {
@@ -26,7 +25,7 @@ const DoctorSidebar = ({ param }) => {
   };
 
   return (
-    <div className="shadow-xl bg-white min-h-screen">
+    <div className="shadow-lg bg-white min-h-screen">
       <div className="w-full md:w-56 font-medium pt-[70px]">
         <div className="px-12 py-4 mb-4">
           <a
@@ -47,7 +46,7 @@ const DoctorSidebar = ({ param }) => {
               className={` ${
                 actived === "dashboard" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } w-48 h-11 bg-white rounded-lg shadow-md flex items-center justify-center mb-3`}
               to="/doctor/dashboard"
             >
               Dashboard
@@ -59,7 +58,7 @@ const DoctorSidebar = ({ param }) => {
               className={` ${
                 actived === "profile" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } w-48 h-11 bg-white rounded-lg shadow-md flex items-center justify-center mb-3`}
               to="/doctor/profile"
             >
               Profile
@@ -71,7 +70,7 @@ const DoctorSidebar = ({ param }) => {
               className={` ${
                 actived === "schedule" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } w-48 h-11 bg-white rounded-lg shadow-md flex items-center justify-center mb-3`}
               to="/doctor/schedule"
             >
               Schedule
@@ -83,7 +82,7 @@ const DoctorSidebar = ({ param }) => {
               className={` ${
                 actived === "appointment" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } w-48 h-11 bg-white rounded-lg shadow-md flex items-center justify-center mb-3`}
               to="/doctor/appointment"
             >
               Appointment
@@ -97,7 +96,7 @@ const DoctorSidebar = ({ param }) => {
                   param === "manage-post" ||
                   param === "create-post") &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center  cursor-pointer`}
+              } w-48 h-11 bg-white rounded-lg shadow-md flex items-center justify-center  cursor-pointer`}
             >
               Blog
             </div>
@@ -127,7 +126,7 @@ const DoctorSidebar = ({ param }) => {
               onClick={handleLogout}
               to="/doctor/login"
               className="
-              w-48 h-11 rounded-lg cursor-pointer shadow-md flex items-center justify-center mt-3 mb-10 cursor-pointet"
+              w-48 h-11 bg-white rounded-lg cursor-pointer shadow-md flex items-center justify-center mt-3 mb-10 cursor-pointet"
             >
               Log out
             </Link>

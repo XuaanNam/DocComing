@@ -7,9 +7,11 @@ import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 
 function Login() {
-  const { currentUser, error, message, loading, updated } = useSelector(
-    (state) => state.user
-  );
+  const data = JSON.parse(localStorage.getItem("check"));
+  console.log(data?.doctor);
+  const { currentUser, detailDoctor, error, message, loading, updated } =
+    useSelector((state) => state.user);
+  console.log(detailDoctor);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
 
@@ -17,7 +19,6 @@ function Login() {
   const [formValues, setFormValues] = useState(initialValues);
   const [formErrors, setFormErrors] = useState({});
   const [err, setErr] = useState("");
-
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -28,17 +29,27 @@ function Login() {
       Email: formValues.email,
       PassWord: formValues.password,
     };
-    if(formValues.email == "admin@doccoming.com"){
-      setErr("Không thể đăng nhập bằng tài khoản này!!" )
-      } else {
-      dispatch(login(data))
-      .then((res) => {
-        setErr(message); 
-        if(res.payload.authentication === 1) Navigate("/");
-        else if(res.payload.authentication === 2) Navigate("/doctor/dashboard")
-      })
-    } 
+    if (formValues.email == "admin@doccoming.com") {
+      setErr("Không thể đăng nhập bằng tài khoản này!!");
+    } else {
+      dispatch(login(data)).then((res) => {
+        setErr(message);
+        // if (res.payload.authentication === 1) {
+        //   if (data) {
+        //     Navigate(`/booking/${data.doctor}`);
+        //   } else Navigate("/");
+        // } else if (res.payload.authentication === 2)
+        //   Navigate("/doctor/dashboard");
+      });
+    }
   };
+  useEffect(() => {
+    if (currentUser?.authentication == 1) {
+      if (data) setTimeout(Navigate(`/booking/${data.doctor}`), 1000);
+      else setTimeout(Navigate("/"), 1000);
+    } else if (currentUser?.authentication == 2)
+      setTimeout(Navigate("/doctor/dashboard"));
+  }, [currentUser]);
   return (
     <div className="bg-lime-50">
       {!currentUser ? (

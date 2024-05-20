@@ -36,14 +36,18 @@ router.patch("/appointment/cancel", PassportCheck, api.cancelAppointment);
 router.get("/notification", PassportCheck, api.getNotification);
 router.post("/notification/create", PassportCheck, api.createNotification);
 router.patch("/notification/read", PassportCheck, api.readNotification);
-router.get("/schedule/:idDoctor/:date/:month/:year", api.getSchedule); 
+router.get("/schedule/:idDoctor/:date/:month/:year", api.getSchedule);
 // lấy lich bac si cua ngay cu the + eTime (chỉ dùng cho patient) booking
 router.get("/service", api.getService); // lấy all service
 router.get("/doctor", api.getDoctor); // lay all bsi
 router.post("/doctor/service", api.getServiceDoctor); // lay dich vu cua bsi với idDoctor
 router.get("/doctor/:id", api.getDetailDoctor); // lay bsi với id (danh cho patient)
 
-router.get("/doctor/schedule/:date/:month/:year", PassportCheck, api.getDoctorSchedule); // lay schedule bsi với id
+router.get(
+  "/doctor/schedule/:date/:month/:year",
+  PassportCheck,
+  api.getDoctorSchedule
+); // lay schedule bsi với id
 router.post("/doctor/service/create", PassportCheck, api.createServiceDoctor); //theem service cho moi bac si -- gửi data
 router.post("/doctor/service/delete", PassportCheck, api.deleteServiceDoctor); //xóa service cho moi bac si -- gửi idService và token
 router.post("/schedule", PassportCheck, api.setSchedule);

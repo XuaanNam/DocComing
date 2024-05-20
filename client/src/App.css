@@ -13,12 +13,12 @@
   }
 }
 @layer base {
-  ul,
+  .content ul,
   ol {
     list-style: revert;
   }
 }
-li {
+.content li {
   margin-left: 52px;
 }
 h1 {

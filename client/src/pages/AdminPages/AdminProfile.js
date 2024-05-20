@@ -10,14 +10,15 @@ import { fetchProfile, updateProfile } from "../../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
 import { DatePicker, Space, Input, Select } from "antd";
 import dayjs from "dayjs";
+import { toast } from "react-toastify";
 
 const AdminProfile = () => {
   const dateFormat = "DD/MM/YYYY";
 
-  const { currentUser, user, error, loading, updated } = useSelector(
+  const { currentUser, user, checked, error, loading, updated } = useSelector(
     (state) => state.user
   );
-
+  const [isSubmited, setIsSubmited] = useState(false);
   const [actived, setActived] = useState(1);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({});
@@ -40,6 +41,11 @@ const AdminProfile = () => {
           user?.data?.FirstName + user?.data?.LastName || currentUser?.FullName
         );
       } else Navigate("/");
+    }
+    if (checked && isSubmited) {
+      toast.success("Cập nhật thành công", {
+        position: "top-right",
+      });
     }
   }, [currentUser, user.data]);
 
@@ -66,6 +72,7 @@ const AdminProfile = () => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
   const handleUpdate = (e) => {
+    setIsSubmited(true);
     const body = new FormData();
     body.append("FullName", FullName);
     body.append("Phone", data.Phone);
@@ -169,7 +176,11 @@ const AdminProfile = () => {
                         } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
                         id="Phone"
                         placeholder="--"
-                        value={data?.Phone || ""}
+                        value={
+                          !data?.Phone || data?.Phone == "null"
+                            ? ""
+                            : data?.Phone
+                        }
                         onChange={(e) => {
                           setData({ ...data, [e.target.id]: e.target.value });
                           handleChange(e);
@@ -185,7 +196,11 @@ const AdminProfile = () => {
                         } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
                         id="Address"
                         placeholder="--"
-                        value={data?.Address || ""}
+                        value={
+                          !data?.Address || data?.Address == "null"
+                            ? ""
+                            : data?.Address
+                        }
                         onChange={(e) => {
                           setData({ ...data, [e.target.id]: e.target.value });
                           handleChange(e);

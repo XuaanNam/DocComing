@@ -9,6 +9,7 @@ const initialState = {
   message: "",
   token: "",
   user: {},
+  allService: [],
   service: [],
   schedule: {},
   AppointmentData: [],
@@ -37,27 +38,60 @@ export const fetchService = createAsyncThunk("fetchService", async (body) => {
   });
   return await res.json();
 });
-
-export const fetchSchedule = createAsyncThunk("fetchSchedule", async (body) => {
-  const res = await fetch(`http://localhost:5000/api/schedule/${body.idDoctor}/${body.DateBooking}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-  return await res.json();
-});
-
-export const fetchDoctorSchedule = createAsyncThunk("fetchDoctorSchedule", async (body) => {
-  const res = await fetch(`http://localhost:5000/api/doctor/schedule/${body}`, {
-    method: "GET",
+export const fetchAllService = createAsyncThunk(
+  "fetchAllService",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/service", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const addService = createAsyncThunk("addService", async (body) => {
+  console.log(body);
+  const res = await fetch("http://localhost:5000/api/doctor/service/create", {
+    method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: localStorage.getItem("token"),
     },
+    body: JSON.stringify(body),
   });
   return await res.json();
 });
+export const fetchSchedule = createAsyncThunk("fetchSchedule", async (body) => {
+  const res = await fetch(
+    `http://localhost:5000/api/schedule/${body.idDoctor}/${body.DateBooking}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+  return await res.json();
+});
+
+export const fetchDoctorSchedule = createAsyncThunk(
+  "fetchDoctorSchedule",
+  async (body) => {
+    const res = await fetch(
+      `http://localhost:5000/api/doctor/schedule/${body}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: localStorage.getItem("token"),
+        },
+      }
+    );
+    return await res.json();
+  }
+);
 
 export const createAppointment = createAsyncThunk(
   "createAppointment",
@@ -89,6 +123,26 @@ const appointmentSlice = createSlice({
       .addCase(fetchService.rejected, (state, action) => {
         state.loading = false;
       })
+      .addCase(fetchAllService.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchAllService.fulfilled, (state, action) => {
+        state.allService = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(fetchAllService.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(addService.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(addService.fulfilled, (state, action) => {
+        // state.allService = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(addService.rejected, (state, action) => {
+        state.loading = false;
+      })
       .addCase(fetchSchedule.pending, (state, action) => {
         state.loading = true;
       })
@@ -96,7 +150,6 @@ const appointmentSlice = createSlice({
         state.AppointmentData = action.payload.AppointmentData;
         state.ScheduleData = action.payload.ScheduleData;
         state.loading = false;
-        console.log(action.payload);
         // state.checked = action.payload.checked;
       })
       .addCase(fetchSchedule.rejected, (state, action) => {
@@ -108,8 +161,6 @@ const appointmentSlice = createSlice({
       .addCase(fetchDoctorSchedule.fulfilled, (state, action) => {
         state.ScheduleData = action.payload.ScheduleData;
         state.loading = false;
-        console.log(action.payload);
-        // state.checked = action.payload.checked;
       })
       .addCase(fetchDoctorSchedule.rejected, (state, action) => {
         state.loading = false;
@@ -129,7 +180,6 @@ const appointmentSlice = createSlice({
         state.loading = true;
       })
       .addCase(createAppointment.fulfilled, (state, action) => {
-        state.message = action.payload.message;
         state.checked = action.payload.checked;
         state.loading = false;
       })

@@ -27,8 +27,8 @@ const AdminPage = () => {
       {currentUser?.authentication === 0 ? (
         <div className="flex">
           <DashSidebar param={adminpage}></DashSidebar>
-          <div className="w-full flex flex-col h-screen bg-gradient-to-r">
-            <div className="w-full items-center bg-white py-2 px-6 sm:flex border-b mb-2">
+          <div className="w-full flex flex-col h-screen">
+            {/* <div className="w-full items-center bg-white py-2 px-6 sm:flex border-b mb-2">
               <div className="w-1/2"></div>
               <div className="relative w-1/2 flex justify-end">
                 <button
@@ -63,9 +63,9 @@ const AdminPage = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </div> */}
             <div
-              className="overflow-auto w-full"
+              className="overflow-auto w-full pt-[70px]"
               onClick={() => setActived(false)}
             >
               {adminpage === "profile" && <AdminProfile />}
