@@ -398,3 +398,16 @@ BEGIN
     WHERE s.idDoctor = idDoctor and status = 0;
     END IF;
 END$$ -- drop PROCEDURE ScheduleData
+
+delimiter $$
+CREATE PROCEDURE CHECK_SERVICE (IN idService int, IN idDoctor int, IN EstimatedTime TIME, IN Price Double)
+BEGIN
+	DECLARE Count int default 0;
+    SET Count = (select count(*) from servicedoctor s where s.idService = idService and s.idDoctor = idDoctor);
+    IF Count > 0
+    THEN
+    update servicedoctor s set s.EstimatedTime = EstimatedTime, s.Price = Price where s.idService = idService and s.idDoctor = idDoctor;
+    ELSE 
+    insert into servicedoctor (idService, idDoctor, EstimatedTime, Price) values (idService,idDoctor,EstimatedTime,Price);
+    END IF;
+END$$ -- drop PROCEDURE CHECK_SERVICE 
