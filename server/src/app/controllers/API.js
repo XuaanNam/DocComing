@@ -694,21 +694,25 @@ class API {
   // [POST] /api/doctor/service/delete
   deleteServiceDoctor(req, res) {
     const id = req.user.id;
-    const { idService } = req.body; // data [{idService, EstimatedTime, Price},{},{}]
+    const { idService } = req.body; // idService [1,2,3,4,...]
     const deleteSql =
-      "delete servicedoctor where idService = ? and idDoctor = ?";
+      "delete from servicedoctor where idService = ? and idDoctor = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 2) {
       res.end("Unauthorized");
     } else {
-      pool.query(deleteSql, [idService, id], function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false, i });
-        } else {
-          res.status(200).send({ checked: true });
+      for(let i = 0; i<idService.length; i++){
+        pool.query(deleteSql, [idService[i], id], function (error, results, fields) {
+          if (error) {
+            res.send({ message: error, checked: false, i });
+          }
+        });
+        if(i == idService.length - 1){
+          res.send({ checked: true});
         }
-      });
+      }
+      
     }
   }
 
