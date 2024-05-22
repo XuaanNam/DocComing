@@ -28,7 +28,7 @@ router.post(
   fileUploader.single("Avt"),
   api.updateProfile
 );
-router.get("/appointment", PassportCheck, api.getAppointmentById); // lấy appointment của bác sĩ
+router.get("/appointment", PassportCheck, api.getAppointmentById); // lấy appointment của bác sĩ hoặc bệnh nhân
 router.post("/appointment/create", PassportCheck, api.createAppointment);
 router.patch("/appointment/accept", PassportCheck, api.acceptAppointment);
 router.patch("/appointment/complete", PassportCheck, api.completeAppointment);
