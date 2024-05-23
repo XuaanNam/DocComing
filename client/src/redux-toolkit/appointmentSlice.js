@@ -121,7 +121,7 @@ export const acceptAppointment = createAsyncThunk(
     console.log(body);
 
     const res = await fetch("http://localhost:5000/api/appointment/accept", {
-      method: "PATCH",
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: localStorage.getItem("token"),

@@ -26,6 +26,7 @@ const BookingDoctor = () => {
   const { service, ScheduleData, AppointmentData, error, loading, updated } =
     useSelector((state) => state.appointment);
   const { currentUser, detailDoctor } = useSelector((state) => state.user);
+  console.log(ScheduleData)
   // const ScheduleData = schedule?.ScheduleData;
   // const AppointmentData = schedule?.AppointmentData;
   const [index, setIndex] = useState("");
