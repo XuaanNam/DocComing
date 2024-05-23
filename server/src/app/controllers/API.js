@@ -313,7 +313,7 @@ class API {
         "select a.id, sv.Service, a.idDoctor, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type from account ac, appointment a, appointmentstatus s, service sv where ac.id = a.idDoctor and a.Status = s.id and a.idService = sv.id and idPatient = ? and a.Status !=4 order by DateBooking, TimeBooking";
     } else if (req.user.Authorization == 2) {
       sql =
-        "select a.id, sv.Service, a.idPatient, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type from account ac, appointment a, appointmentstatus s, service sv where ac.id = a.idPatient and a.Status = s.id and a.idService = sv.id and idDoctor = ? and a.Status !=4 order by DateBooking, TimeBooking";
+        "select a.id, sv.Service, a.idPatient, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, ac.Address, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type from account ac, appointment a, appointmentstatus s, service sv where ac.id = a.idPatient and a.Status = s.id and a.idService = sv.id and idDoctor = ? and a.Status !=4 order by DateBooking, TimeBooking";
     }
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 

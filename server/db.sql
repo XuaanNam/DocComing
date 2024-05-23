@@ -423,7 +423,7 @@ DELIMITER $$
 CREATE PROCEDURE ScheduleData (IN idDoctor int, IN DateBooking date)
 BEGIN
 	declare COUNT INT default 0;
-    SET COUNT = (select count(*) from schedule where SpecificDay = DateBooking);
+    SET COUNT = (select count(*) from schedule s where s.SpecificDay = DateBooking and s.idDoctor = idDoctor);
     IF (COUNT >  0)
     THEN 
     SELECT id, FirstShiftStart, FirstShiftEnd, SecondShiftStart, SecondShiftEnd, ThirdShiftStart, ThirdShiftEnd, SpecificDay
