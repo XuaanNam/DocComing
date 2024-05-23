@@ -77,9 +77,9 @@ const DoctorAppointment = () => {
                       <div>{appointment.DateBooking}</div>
                     </div>
                     <div className="text-lg font-medium">
-                      {appointment.id == 1
+                      {appointment.Status == 1
                         ? "Đã xác nhận"
-                        : appointment.id == 2 && "Chưa xác nhận"}
+                        : appointment.Status == 2 && "Chưa xác nhận"}
                     </div>
                   </div>
                   <div className="p-5">

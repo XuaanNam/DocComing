@@ -317,7 +317,7 @@ class API {
     }
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
-    pool.query(sql, id, function (error, results, fields) {
+    pool.query(sql, req.user.id, function (error, results, fields) {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
