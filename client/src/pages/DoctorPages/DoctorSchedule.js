@@ -10,13 +10,15 @@ import {
   fetchAllService,
   fetchAppointment,
   addService,
+  deleteService,
+  updateSchedule,
 } from "../../redux-toolkit/appointmentSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 import { DatePicker, Space, InputNumber, Select } from "antd";
 import dayjs from "dayjs";
 import { Table, Button } from "flowbite-react";
-
+import { IoIosClose } from "react-icons/io";
 const DoctorSchedule = () => {
   const dispatch = useDispatch();
   const { AppointmentData, ScheduleData, allService, service, error, loading } =
@@ -26,20 +28,20 @@ const DoctorSchedule = () => {
   const [editService, setEditService] = useState(false);
   const [serviceData, setServiceData] = useState([]);
   const [scheduleData, setScheduleData] = useState({});
-  const [firstStart, setFirstStart] = useState("");
-  const [secondStart, setSecondStart] = useState("");
-  const [thirdStart, setThirdStart] = useState("");
+  const [date, setDate] = useState("");
+  const [disabled, setDisabled] = useState(true);
+  const [optimized, setOptimized] = useState(false);
 
   const dateFormat = "DD/MM/YYYY";
-  const date = new Date();
+  const currentDate = new Date();
   const today =
-    date.getDate() +
+    currentDate.getDate() +
     "/" +
-    (date.getMonth() + 1 < 10
-      ? "0" + (date.getMonth() + 1)
-      : date.getMonth() + 1) +
+    (currentDate.getMonth() + 1 < 10
+      ? "0" + (currentDate.getMonth() + 1)
+      : currentDate.getMonth() + 1) +
     "/" +
-    date.getFullYear();
+    currentDate.getFullYear();
   const options = [];
   for (let i = 0; i < allService?.length; i++) {
     options.push({
@@ -58,11 +60,14 @@ const DoctorSchedule = () => {
   const time1 = ["7:00:00", "8:00:00", "9:00:00", "10:00:00", "11:00:00"];
   const time2 = ["13:00:00", "14:00:00", "15:00:00", "16:00:00", "17:00:00"];
   const time3 = ["18:00:00", "19:00:00", "20:00:00", "21:00:00", "22:00:00"];
-  const handleChange = (e) => {
-    for (let i = 0; i < e.length; i++) {
+  const handleChange = (value) => {
+    let service = [];
+    let newService = [];
+    let temp = 0;
+    for (let i = 0; i < value.length; i++) {
       for (let j = 0; j < allService.length; j++) {
-        if (e[i] == allService[j].id && !sv[i]) {
-          sv.push({
+        if (value[i] == allService[j]?.id) {
+          service.push({
             value: allService[j].id,
             label: allService[j].Service,
             EstimatedTime: "",
@@ -70,34 +75,97 @@ const DoctorSchedule = () => {
           });
         }
       }
+      if (i == value.length - 1) temp = 1;
     }
-    setServiceData(sv);
-  };
-  const handleAddService = () => {
-    let newData = [];
-    for (let i = 0; i < serviceData.length; i++) {
-      if (serviceData[i]?.value != service[i]?.id) {
-        newData.push({
-          idService: serviceData[i].value,
-          EstimatedTime: serviceData[i].EstimatedTime,
-          Price: serviceData[i].Price,
-        });
-        let data = { data: [...newData] };
-        if (i == serviceData.length - 1)
-          dispatch(addService(data)).then(() =>
-            dispatch(fetchService({ idDoctor: user?.data.id }))
-          );
+    if (temp != 0) {
+      for (let i = 0; i < service.length; i++) {
+        let temp1 = 0;
+        for (let j = 0; j < sv.length; j++) {
+          if (service[i].value == sv[j]?.value) {
+            newService.push({
+              value: sv[j].value,
+              label: sv[j].label,
+              EstimatedTime: sv[j].EstimatedTime,
+              Price: sv[j].Price,
+            });
+            temp1 = 1;
+            break;
+          }
+        }
+        if (temp1 == 0) {
+          newService.push({
+            value: service[i].value,
+            label: service[i].label,
+            EstimatedTime: service[i].EstimatedTime,
+            Price: service[i].Price,
+          });
+        }
       }
     }
+    setServiceData(newService);
+  };
+  const handleAddService = () => {
+    let addData = [];
+    let deleteData = [];
+
+    for (let j = 0; j < sv.length; j++) {
+      let check = 0;
+      for (let i = 0; i < serviceData.length; i++) {
+        if (j == sv.length - 1) {
+          addData.push({
+            idService: serviceData[i].value,
+            EstimatedTime: serviceData[i].EstimatedTime,
+            Price: serviceData[i].Price,
+          });
+          let data1 = { data: [...addData] };
+          if (i == serviceData.length - 1) {
+            dispatch(addService(data1)).then(() =>
+              dispatch(fetchService({ idDoctor: user?.data.id }))
+            );
+          }
+        }
+        if (serviceData[i].value == sv[j].value) check = 1;
+
+        if (i == serviceData.length - 1 && check == 0)
+          deleteData.push(sv[j].value);
+      }
+    }
+    let data2 = { idService: [...deleteData] };
+    if (data2?.idService.length > 0) {
+      dispatch(deleteService(data2));
+    }
+
+    console.log(data2?.idService);
     setEditService(false);
+  };
+  const handleDatePickerChange = (date, dateString) => {
+    setDate(dateString);
+  };
+  const handleUpdateSchedule = () => {
+    let schedule = {
+      FirstShiftStart: scheduleData.FirstShiftStart,
+      FirstShiftEnd: scheduleData.FirstShiftEnd,
+      SecondShiftStart: scheduleData.SecondShiftStart,
+      SecondShiftEnd: scheduleData.SecondShiftEnd,
+      ThirdShiftStart: scheduleData.ThirdShiftStart,
+      ThirdShiftEnd: scheduleData.ThirdShiftEnd,
+    };
+    if (optimized) {
+      schedule = { ...schedule, SpecificDay: date };
+      dispatch(updateSchedule(schedule));
+    } else {
+      dispatch(updateSchedule(schedule));
+    }
+    setDisabled(true);
+    setOptimized(false);
   };
   const parse = (time) => {
     const split = time.split(":");
     let curr = parseInt(split[0]) + parseInt(split[1]) / 60;
     return curr;
   };
-  console.log(parse("8:00:00"));
   useEffect(() => {
+    setDate(today);
     dispatch(fetchDoctorSchedule(today)); //bệnh nhân -> idDOctor, ngày  {appointment{timebdau, 1:30:00} , schedule }
     dispatch(fetchService({ idDoctor: user?.data.id }));
     dispatch(fetchAllService());
@@ -112,6 +180,7 @@ const DoctorSchedule = () => {
       setScheduleData(ScheduleData[0]);
     }
   }, [service, ScheduleData]);
+  console.log(scheduleData);
 
   const getListData = (value) => {
     let listData = [];
@@ -149,7 +218,6 @@ const DoctorSchedule = () => {
     if (info.type === "date") return dateCellRender(current);
     return info.originNode;
   };
-  console.log(serviceData);
   return (
     <div className="">
       <div className=" mx-16 text-gray-700 flex gap-7">
@@ -182,7 +250,16 @@ const DoctorSchedule = () => {
                   onChange={handleChange}
                   options={options}
                 />
-                <div className="flex justify-end w-1/3">
+                <div className="flex justify-end w-1/3 gap-5">
+                  <Button
+                    className="h-[40px] w-28 flex self-end shadow-m shadow-emerald-200"
+                    gradientMonochrome="failure"
+                    onClick={() => {
+                      setEditService(false);
+                    }}
+                  >
+                    Hủy
+                  </Button>
                   <Button
                     className="h-[40px] w-32 flex self-end shadow-md shadow-emerald-200"
                     gradientDuoTone="greenToBlue"
@@ -210,6 +287,7 @@ const DoctorSchedule = () => {
                         className="w-full"
                         size="large"
                         value={item?.EstimatedTime}
+                        disabled={!editService}
                         onChange={(value) => {
                           let newArr = [...serviceData];
                           for (let i = 0; i < serviceData.length; i++) {
@@ -236,6 +314,7 @@ const DoctorSchedule = () => {
                         className="w-full"
                         size="large"
                         value={item.Price}
+                        disabled={!editService}
                         onChange={(value) => {
                           let newArr = [...serviceData];
                           for (let i = 0; i < serviceData.length; i++) {
@@ -258,52 +337,145 @@ const DoctorSchedule = () => {
               ))}
             </Table>
           </div>
-          <hr className="bg-gray-200 mb-5"></hr>
+          <hr className="bg-gray-200 my-10"></hr>
           <div>
-            <p className="font-semibold text-2xl mb-5">Lịch làm việc</p>
+            <div className="flex gap-5 mb-5 w-full">
+              <p className="font-semibold w-[30%] text-2xl">Lịch làm việc</p>
+              {disabled ? (
+                <div className="flex w-[70%] gap-5 justify-end">
+                  <Button
+                    className="h-[40px] w-32 shadow-md shadow-emerald-200"
+                    gradientDuoTone="greenToBlue"
+                    onClick={() => {
+                      setDisabled(false);
+                    }}
+                  >
+                    Cập nhật lịch
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex w-[70%] gap-5 justify-end">
+                  <Button
+                    className="h-[40px] w-28 flex self-end shadow-m shadow-emerald-200"
+                    gradientMonochrome="failure"
+                    onClick={() => {
+                      setScheduleData(ScheduleData[0]);
+                      setDisabled(true);
+                      setOptimized(false);
+                    }}
+                  >
+                    Hủy
+                  </Button>
+                  <Button
+                    className="h-[40px] w-32 shadow-md shadow-emerald-200"
+                    gradientDuoTone="greenToBlue"
+                    onClick={handleUpdateSchedule}
+                  >
+                    Xác nhận
+                  </Button>
+                </div>
+              )}
+            </div>
             <div className="">
-              <div className="flex gap-3 items-center mb-5">
-                <p className="text-lg font-medium text-gray-600 w-20">
-                  Ca sáng
-                </p>
-                <Select
-                  className="h-[40px] w-32"
-                  size="large"
-                  placeholder="--"
-                  value={scheduleData?.FirstShiftStart}
-                  onChange={(value) => {
-                    setScheduleData({
-                      ...scheduleData,
-                      FirstShiftStart: value,
-                    });
-                    setFirstStart(value);
-                  }}
-                >
-                  {time1?.map((item) => (
-                    <option value={item} label={item}></option>
-                  ))}
-                </Select>
-                <FaLongArrowAltRight />
-                <Select
-                  className="h-[40px] w-32"
-                  size="large"
-                  placeholder="--"
-                  value={scheduleData?.FirstShiftEnd}
-                  onChange={(value) => {
-                    setScheduleData({
-                      ...scheduleData,
-                      FirstShiftEnd: value,
-                    });
-                  }}
-                >
-                  {time1?.map((item) => (
-                    <option
-                      disabled={firstStart && parse(item) <= parse(firstStart)}
-                      value={item}
-                      label={item}
-                    ></option>
-                  ))}
-                </Select>
+              <div className="flex gap-10 w-full">
+                <div className="flex gap-3 items-center mb-5 w-[55%]">
+                  <p className="text-lg font-medium text-gray-600 w-20">
+                    Ca sáng
+                  </p>
+                  <Select
+                    className="h-[40px] w-32"
+                    size="large"
+                    placeholder="--"
+                    value={scheduleData?.FirstShiftStart}
+                    disabled={disabled}
+                    onChange={(value) => {
+                      setScheduleData({
+                        ...scheduleData,
+                        FirstShiftStart: value,
+                      });
+                    }}
+                  >
+                    {time1?.map((item) => (
+                      <option
+                        disabled={
+                          scheduleData?.FirstShiftEnd &&
+                          parse(item) >= parse(scheduleData?.FirstShiftEnd)
+                        }
+                        value={item}
+                        label={item}
+                      ></option>
+                    ))}
+                  </Select>
+                  <FaLongArrowAltRight />
+                  <Select
+                    className="h-[40px] w-32"
+                    size="large"
+                    placeholder="--"
+                    value={scheduleData?.FirstShiftEnd}
+                    disabled={disabled}
+                    onChange={(value) => {
+                      setScheduleData({
+                        ...scheduleData,
+                        FirstShiftEnd: value,
+                      });
+                    }}
+                  >
+                    {time1?.map((item) => (
+                      <option
+                        disabled={
+                          scheduleData?.FirstShiftStart &&
+                          parse(item) <= parse(scheduleData?.FirstShiftStart)
+                        }
+                        value={item}
+                        label={item}
+                      ></option>
+                    ))}
+                  </Select>
+                  {!disabled &&
+                    (scheduleData?.FirstShiftStart ||
+                      scheduleData?.FirstShiftEnd) && (
+                      <IoIosClose
+                        onClick={() => {
+                          setScheduleData({
+                            ...scheduleData,
+                            FirstShiftStart: null,
+                            FirstShiftEnd: null,
+                          });
+                        }}
+                        className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
+                      ></IoIosClose>
+                    )}
+                </div>
+                {optimized && (
+                  <div className="flex gap-3 w-[45%] items-center mb-5">
+                    <DatePicker
+                      id="DateBooking"
+                      className="h-[40px] w-[90%] bg-white border border-gray-300 !text-lg rounded-lg px-5 p-1"
+                      value={dayjs(date, dateFormat)}
+                      format={dateFormat}
+                      onChange={handleDatePickerChange}
+                      minDate={dayjs(today, dateFormat)}
+                    />
+                    <IoIosClose
+                      onClick={() => {
+                        setOptimized(false);
+                      }}
+                      className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
+                    ></IoIosClose>
+                  </div>
+                )}
+                {!disabled && !optimized && (
+                  <div className="flex w-[45%] justify-end">
+                    <button
+                      className="h-[36px] w-32 text-sm font-medium shadow-md shadow-emerald-200 py-1 rounded-lg bg-teal-600 hover:bg-teal-500 text-white"
+                      onClick={() => {
+                        setOptimized(true);
+                      }}
+                    >
+                      Chọn ngày
+                    </button>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-3 items-center mb-5">
@@ -315,16 +487,23 @@ const DoctorSchedule = () => {
                   size="large"
                   placeholder="--"
                   value={scheduleData?.SecondShiftStart}
+                  disabled={disabled}
                   onChange={(value) => {
                     setScheduleData({
                       ...scheduleData,
                       SecondShiftStart: value,
                     });
-                    setSecondStart(value);
                   }}
                 >
                   {time2?.map((item) => (
-                    <option value={item} label={item}></option>
+                    <option
+                      disabled={
+                        scheduleData?.SecondShiftEnd &&
+                        parse(item) >= parse(scheduleData?.SecondShiftEnd)
+                      }
+                      value={item}
+                      label={item}
+                    ></option>
                   ))}
                 </Select>
                 <FaLongArrowAltRight />
@@ -333,6 +512,7 @@ const DoctorSchedule = () => {
                   size="large"
                   placeholder="--"
                   value={scheduleData?.SecondShiftEnd}
+                  disabled={disabled}
                   onChange={(value) => {
                     setScheduleData({
                       ...scheduleData,
@@ -343,13 +523,28 @@ const DoctorSchedule = () => {
                   {time2?.map((item) => (
                     <option
                       disabled={
-                        secondStart && parse(item) <= parse(secondStart)
+                        scheduleData?.SecondShiftStart &&
+                        parse(item) <= parse(scheduleData?.SecondShiftStart)
                       }
                       value={item}
                       label={item}
                     ></option>
                   ))}
                 </Select>
+                {!disabled &&
+                  (scheduleData?.SecondShiftStart ||
+                    scheduleData?.SecondShiftEnd) && (
+                    <IoIosClose
+                      onClick={() => {
+                        setScheduleData({
+                          ...scheduleData,
+                          SecondShiftStart: null,
+                          SecondShiftEnd: null,
+                        });
+                      }}
+                      className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
+                    ></IoIosClose>
+                  )}
               </div>
 
               <div className="flex gap-3 items-center mb-5">
@@ -359,16 +554,23 @@ const DoctorSchedule = () => {
                   size="large"
                   placeholder="--"
                   value={scheduleData?.ThirdShiftStart}
+                  disabled={disabled}
                   onChange={(value) => {
                     setScheduleData({
                       ...scheduleData,
                       ThirdShiftStart: value,
                     });
-                    setThirdStart(value);
                   }}
                 >
                   {time3?.map((item) => (
-                    <option value={item} label={item}></option>
+                    <option
+                      disabled={
+                        scheduleData?.ThirdShiftEnd &&
+                        parse(item) >= parse(scheduleData?.ThirdShiftEnd)
+                      }
+                      value={item}
+                      label={item}
+                    ></option>
                   ))}
                 </Select>
                 <FaLongArrowAltRight />
@@ -377,6 +579,7 @@ const DoctorSchedule = () => {
                   size="large"
                   placeholder="--"
                   value={scheduleData?.ThirdShiftEnd}
+                  disabled={disabled}
                   onChange={(value) => {
                     setScheduleData({
                       ...scheduleData,
@@ -386,12 +589,29 @@ const DoctorSchedule = () => {
                 >
                   {time3?.map((item) => (
                     <option
-                      disabled={thirdStart && parse(item) <= parse(thirdStart)}
+                      disabled={
+                        scheduleData?.ThirdShiftStart &&
+                        parse(item) <= parse(scheduleData?.ThirdShiftStart)
+                      }
                       value={item}
                       label={item}
                     ></option>
                   ))}
                 </Select>
+                {!disabled &&
+                  (scheduleData?.ThirdShiftStart ||
+                    scheduleData?.ThirdShiftEnd) && (
+                    <IoIosClose
+                      onClick={() => {
+                        setScheduleData({
+                          ...scheduleData,
+                          ThirdShiftStart: null,
+                          ThirdShiftEnd: null,
+                        });
+                      }}
+                      className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
+                    ></IoIosClose>
+                  )}
               </div>
             </div>
           </div>

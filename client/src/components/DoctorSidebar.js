@@ -25,7 +25,7 @@ const DoctorSidebar = ({ param }) => {
   };
 
   return (
-    <div className="shadow-lg bg-white min-h-screen">
+    <div className="shadow-lg bg-white ">
       <div className="w-full md:w-56 font-medium pt-[70px]">
         <div className="px-12 py-4 mb-4">
           <a
