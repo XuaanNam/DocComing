@@ -106,7 +106,7 @@ const Header = () => {
                       <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
                       <div
                         onClick={() => {
-                          Navigate("/profile");
+                          Navigate("/doctor/profile");
                         }}
                         className="block py-3 "
                       >

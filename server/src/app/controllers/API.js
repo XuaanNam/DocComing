@@ -317,7 +317,7 @@ class API {
     }
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
-    pool.query(sql, id, function (error, results, fields) {
+    pool.query(sql, req.user.id, function (error, results, fields) {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
@@ -654,7 +654,6 @@ class API {
     const Date = year + "-" + month + "-" + date;
     const selectSql = "call ScheduleData(?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    console.log(id, Date);
     pool.query(selectSql, [id, Date], function (error, results, fields) {
       if (error) {
         res.send({ message: errorMsg, checked: false });
@@ -674,9 +673,11 @@ class API {
 
     if (req.user.Authorization != 2) {
       res.end("Unauthorized");
-    } else { 
-      for( let i = 0; i < data.length; i++){
-        pool.query(Sql,[data[i].idService, id, data[i].EstimatedTime, data[i].Price],
+    } else {
+      for (let i = 0; i < data.length; i++) {
+        pool.query(
+          Sql,
+          [data[i].idService, id, data[i].EstimatedTime, data[i].Price],
           function (error, results, fields) {
             if (error) {
               res.send({ message: error, checked: false, i });
@@ -697,21 +698,26 @@ class API {
     const deleteSql =
       "delete from servicedoctor where idService = ? and idDoctor = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    console.log(idService);
 
     if (req.user.Authorization != 2) {
       res.end("Unauthorized");
     } else {
-      for(let i = 0; i<idService.length; i++){
-        pool.query(deleteSql, [idService[i], id], function (error, results, fields) {
-          if (error) {
-            res.send({ message: error, checked: false, i });
+      for (let i = 0; i < idService.length; i++) {
+        pool.query(
+          deleteSql,
+          [idService[i], id],
+          function (error, results, fields) {
+            if (error) {
+              res.send({ message: error, checked: false, i });
+            }
+            console.log(fields);
           }
-        });
-        if(i == idService.length - 1){
-          res.send({ checked: true});
+        );
+        if (i == idService.length - 1) {
+          res.send({ checked: true });
         }
       }
-      
     }
   }
 
