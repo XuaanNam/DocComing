@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import DashSidebar from "../../components/DashSidebar";
-import CreateBlog from "./CreateBlog";
+import CreateBlog from ".././CreateBlog";
 import UserList from "./UserList";
 import ManageBlog from "./ManageBlog";
 import Dashboard from "./Dashboard";

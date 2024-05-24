@@ -118,9 +118,35 @@ export const fetchAppointment = createAsyncThunk(
 export const acceptAppointment = createAsyncThunk(
   "acceptAppointment",
   async (body) => {
-    console.log(body);
-
     const res = await fetch("http://localhost:5000/api/appointment/accept", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const completeAppointment = createAsyncThunk(
+  "completeAppointment",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/appointment/complete", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const cancelAppointment = createAsyncThunk(
+  "cancelAppointment",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/appointment/cancel", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -248,6 +274,26 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(acceptAppointment.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(completeAppointment.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(completeAppointment.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(completeAppointment.rejected, (state, action) => {
+        state.loading = false;
+      })
+      .addCase(cancelAppointment.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(cancelAppointment.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(cancelAppointment.rejected, (state, action) => {
         state.loading = false;
       })
       .addCase(createAppointment.pending, (state, action) => {

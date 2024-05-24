@@ -31,8 +31,8 @@ router.post(
 router.get("/appointment", PassportCheck, api.getAppointmentById); // lấy appointment của bác sĩ hoặc bệnh nhân
 router.post("/appointment/create", PassportCheck, api.createAppointment); //
 router.post("/appointment/accept", PassportCheck, api.acceptAppointment); // 4 api này gửi id appointment cần đổi status
-router.patch("/appointment/complete", PassportCheck, api.completeAppointment); //
-router.patch("/appointment/cancel", PassportCheck, api.cancelAppointment); //
+router.post("/appointment/complete", PassportCheck, api.completeAppointment); //
+router.post("/appointment/cancel", PassportCheck, api.cancelAppointment); //
 router.get("/notification", PassportCheck, api.getNotification);
 router.post("/notification/create", PassportCheck, api.createNotification);
 router.patch("/notification/read", PassportCheck, api.readNotification);

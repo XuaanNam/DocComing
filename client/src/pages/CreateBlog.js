@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
-import Editor from "./Editor";
+import Editor from "./AdminPages/Editor";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost, fetchCategories } from "../../redux-toolkit/postSlice";
+import { createPost, fetchCategories } from "../redux-toolkit/postSlice";
 import { Select, Input } from "antd";
 import { FileInput } from "flowbite-react";
 const CreateBlog = () => {
@@ -19,7 +19,6 @@ const CreateBlog = () => {
   const ref = useRef();
   useEffect(() => {
     dispatch(fetchCategories());
-    // setCategories(category);
   }, [dispatch]);
   const handleChange = (value) => {
     setSimilarCategoryId(value);

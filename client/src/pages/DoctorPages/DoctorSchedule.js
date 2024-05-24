@@ -13,6 +13,7 @@ import {
   deleteService,
   updateSchedule,
 } from "../../redux-toolkit/appointmentSlice";
+import { fetchProfile } from "../../redux-toolkit/authSlice";
 
 import { useDispatch, useSelector } from "react-redux";
 import { DatePicker, Space, InputNumber, Select } from "antd";
@@ -21,9 +22,9 @@ import { Table, Button } from "flowbite-react";
 import { IoIosClose } from "react-icons/io";
 const DoctorSchedule = () => {
   const dispatch = useDispatch();
+  const { currentUser, user } = useSelector((state) => state.user);
   const { AppointmentData, ScheduleData, allService, service, error, loading } =
     useSelector((state) => state.appointment);
-  const { user } = useSelector((state) => state.user);
   const [actived, setActived] = useState(false);
   const [editService, setEditService] = useState(false);
   const [serviceData, setServiceData] = useState([]);
@@ -170,7 +171,10 @@ const DoctorSchedule = () => {
     dispatch(fetchService({ idDoctor: user?.data.id }));
     dispatch(fetchAllService());
     dispatch(fetchAppointment()); // doctor -> appointment {cuộc hẹn 1{}, cuọ<!--  --> 2}
-  }, []);
+    if (currentUser) {
+      dispatch(fetchProfile());
+    }
+  }, [currentUser]);
   useEffect(() => {
     if (service && sv.length > 0) {
       setServiceData(sv);

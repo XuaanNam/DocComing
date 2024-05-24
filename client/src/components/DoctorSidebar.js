@@ -41,30 +41,6 @@ const DoctorSidebar = ({ param }) => {
             {/* {currentUser && currentUser.isdoctor && ( */}
             <Link
               onClick={() => {
-                setActived("dashboard");
-              }}
-              className={` ${
-                actived === "dashboard" &&
-                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 bg-white rounded-lg shadow-md flex items-center justify-center mb-3`}
-              to="/doctor/dashboard"
-            >
-              Dashboard
-            </Link>
-            <Link
-              onClick={() => {
-                setActived("profile");
-              }}
-              className={` ${
-                actived === "profile" &&
-                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 bg-white rounded-lg shadow-md flex items-center justify-center mb-3`}
-              to="/doctor/profile"
-            >
-              Profile
-            </Link>
-            <Link
-              onClick={() => {
                 setActived("schedule");
               }}
               className={` ${
@@ -86,6 +62,18 @@ const DoctorSidebar = ({ param }) => {
               to="/doctor/appointment"
             >
               Appointment
+            </Link>
+            <Link
+              onClick={() => {
+                setActived("profile");
+              }}
+              className={` ${
+                actived === "profile" &&
+                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
+              } w-48 h-11 bg-white rounded-lg shadow-md flex items-center justify-center mb-3`}
+              to="/doctor/profile"
+            >
+              Profile
             </Link>
             <div
               onClick={() => {

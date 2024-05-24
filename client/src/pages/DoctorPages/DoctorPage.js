@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import Dashboard from "./Dashboard";
 import DoctorProfile from "./DoctorProfile";
-import CreateBlog from "./CreateBlog";
+import CreateBlog from ".././CreateBlog";
 import ManageBlog from "./ManageBlog";
 import DoctorSchedule from "./DoctorSchedule";
 import DoctorAppointment from "./DoctorAppointment";
@@ -33,7 +32,7 @@ const DoctorPage = () => {
               {doctorpage === "profile" && <DoctorProfile />}
               {doctorpage === "create-post" && <CreateBlog />}
               {doctorpage === "manage-post" && <ManageBlog />}
-              {doctorpage === "dashboard" && <Dashboard />}
+              {/* {doctorpage === "dashboard" && <Dashboard />} */}
               {doctorpage === "schedule" && <DoctorSchedule />}
               {doctorpage === "appointment" && <DoctorAppointment />}
             </div>

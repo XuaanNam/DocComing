@@ -4,11 +4,17 @@ import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
 import { RiServiceFill } from "react-icons/ri";
 import { BsCash } from "react-icons/bs";
 import { FiLogOut } from "react-icons/fi";
-import { Button } from "flowbite-react";
+import { FaPhoneAlt } from "react-icons/fa";
+import { TbFileDescription } from "react-icons/tb";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+
+import { Modal, Table, Button } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointment,
   acceptAppointment,
+  completeAppointment,
+  cancelAppointment,
 } from "../../redux-toolkit/appointmentSlice";
 const DoctorAppointment = () => {
   const dispatch = useDispatch();
@@ -16,19 +22,37 @@ const DoctorAppointment = () => {
     useSelector((state) => state.appointment);
   const [actived, setActived] = useState();
   const [passed, setPassed] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [idAppointment, setIdAppointment] = useState();
+
   useEffect(() => {
     dispatch(fetchAppointment());
   }, []);
   const handleAcceptAppointment = (id) => {
-    const data = {id: id} 
-    dispatch(acceptAppointment(data));
-    console.log(id);
+    const data = { id };
+    dispatch(acceptAppointment(data)).then(() => {
+      dispatch(fetchAppointment());
+    });
+  };
+  const handleCompleteAppointment = (id) => {
+    const data = { id };
+    dispatch(completeAppointment(data)).then(() => {
+      dispatch(fetchAppointment());
+    });
+  };
+  const handleCancelAppointment = (id) => {
+    const data = { id };
+    dispatch(cancelAppointment(data)).then(() => {
+      dispatch(fetchAppointment());
+    });
   };
   let appointment = [];
-  for (let i = 0; i < AppointmentData?.length; i++)
+  for (let i = 0; i < AppointmentData?.length; i++) {
     if (AppointmentData[i].Status === passed)
       appointment.push({ ...AppointmentData[i] });
-
+    if (AppointmentData[i].Status === 3 && passed === 2)
+      appointment.push({ ...AppointmentData[i] });
+  }
   console.log(appointment);
   return (
     <div className="bg-lime-50 h-screen">
@@ -81,45 +105,79 @@ const DoctorAppointment = () => {
                     <FaRegCalendarPlus />
                     <div>{appointment.DateBooking}</div>
                   </div>
-                  <div className="text-lg font-medium">
+                  <div className={` ${appointment.Status == 3 && "text-red-400"} text-lg font-medium`}>
                     {appointment.Status == 1
                       ? "Đã xác nhận"
-                      : appointment.Status == 4 && "Chưa xác nhận"}
+                      : appointment.Status == 4
+                      ? "Chưa xác nhận"
+                      : appointment.Status == 2
+                      ? "Đã hoàn thành"
+                      : appointment.Status == 3 && "Đã hủy"}
                   </div>
                 </div>
                 <div className="p-5">
                   <div className="flex gap-5">
-                    <img
-                      className="h-14 w-14 rounded-full object-contain border border-lime-200"
-                      alt=""
-                      src={require("../../Images/doctorBackground2.jpg")}
-                    ></img>
-                    <div className="">
+                    <div className="flex w-[10%]">
+                      <img
+                        className="h-16 w-16 rounded-full object-contain border border-lime-200"
+                        alt=""
+                        src={require("../../Images/doctorBackground2.jpg")}
+                      ></img>
+                    </div>
+                    <div className="w-[90%]">
                       <p className="font-medium text-lg text-gray-600 mb-3">
                         {appointment.FirstName + appointment.LastName}
                       </p>
-                      <div className="flex gap-4 items-center mb-2">
-                        <RiServiceFill className="h-5 w-5 text-red-500"></RiServiceFill>
-                        <p className="">{appointment.Service}</p>
+                      <div className="flex w-full gap-10 mb-3">
+                        <div className="flex gap-3 items-center w-1/2">
+                          <RiServiceFill className="h-5 w-5 text-red-500"></RiServiceFill>
+                          <p>Dịch vụ:</p>
+                          <p className="font-medium">{appointment.Service}</p>
+                        </div>
+                        <div className="flex gap-3 items-center w-1/2">
+                          <BsCash className="h-5 w-5 text-green-400"></BsCash>
+                          <p>Giá dịch vụ:</p>
+                          <p className="font-medium">{appointment.Price} VND</p>
+                        </div>
                       </div>
-                      <div className="flex gap-4 items-center mb-2">
-                        <BsCash className="h-5 w-5 text-green-400"></BsCash>
-                        <p className="">{appointment.Price} VND</p>
+
+                      <div className="flex w-full gap-10 mb-3">
+                        <div className="flex gap-3 items-center w-1/2">
+                          <FaHome className="h-5 w-5 text-teal-600" />
+                          <p>Địa chỉ:</p>
+                          <div className="font-medium">
+                            {appointment.Address}
+                          </div>
+                        </div>
+                        <div className="flex gap-3 items-center w-1/2">
+                          <FaPhoneAlt className="h-5 w-5 text-teal-600" />
+                          <p>Số điện thoại:</p>
+                          <div className="font-medium">{appointment.Phone}</div>
+                        </div>
                       </div>
-                      <div className="flex gap-4 items-center mb-5">
-                        <FaHome className="h-5 w-5 text-teal-600" />
-                        <div className="">Khám tại nhà</div>
+                      <div className="flex gap-3 items-center mb-3">
+                        <TbFileDescription className="h-5 w-5 text-teal-600" />
+                        <p>Triệu chứng:</p>
+                        <div className="font-medium text-red-400">
+                          {appointment.Information}
+                        </div>
                       </div>
                     </div>
                   </div>
                   <hr className="w-[98%] mx-auto border-[1px] border-lime-100 rounded-lg mb-5"></hr>
                   <div className="flex mx-auto w-3/4 gap-10">
-                    <Button
-                      className="w-40 mx-auto rounded-2xl"
-                      gradientMonochrome="failure"
-                    >
-                      Hủy
-                    </Button>
+                    {appointment.Status != 2 && appointment.Status != 3 && (
+                      <Button
+                        className="w-40 mx-auto rounded-2xl"
+                        gradientMonochrome="failure"
+                        onClick={() => {
+                          setShowModal(true);
+                          setIdAppointment(appointment.id);
+                        }}
+                      >
+                        Hủy
+                      </Button>
+                    )}
                     {appointment.Status == 4 && (
                       <Button
                         className="w-40 mx-auto rounded-2xl"
@@ -129,6 +187,17 @@ const DoctorAppointment = () => {
                         }}
                       >
                         xác nhận
+                      </Button>
+                    )}
+                    {appointment.Status == 1 && (
+                      <Button
+                        className="w-40 mx-auto rounded-2xl"
+                        gradientDuoTone="greenToBlue"
+                        onClick={() => {
+                          handleCompleteAppointment(appointment.id);
+                        }}
+                      >
+                        Hoàn thành
                       </Button>
                     )}
                   </div>
@@ -142,6 +211,41 @@ const DoctorAppointment = () => {
           )}
         </div>
       </div>
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size="md"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
+              Bạn chắc chắn muốn hủy cuộc hẹn này chứ?
+            </h3>
+            <div className="flex justify-center gap-10 transition-all">
+              <Button
+                className="w-28"
+                color="gray"
+                onClick={() => setShowModal(false)}
+              >
+                Đóng
+              </Button>
+              <Button
+                className="w-28"
+                color="failure"
+                onClick={() => {
+                  handleCancelAppointment(idAppointment);
+                  setShowModal(false);
+                }}
+              >
+                Hủy
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
