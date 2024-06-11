@@ -13,7 +13,7 @@ const BookingSuccess = () => {
           src={require("../../Images/BookingSuccess.png")}
           alt=""
         ></img>
-        <p className="font-bold text-2xl text-teal-600">
+        <p className="max-lg:px-5 max-lg:text-center font-bold text-2xl text-teal-600">
           Cảm ơn bạn đã đặt lịch hẹn qua Doctor Coming
         </p>
         <a href="/" className="underline font-medium text-lg text-teal-800">

@@ -14,6 +14,7 @@ const initialState = {
   schedule: {},
   AppointmentData: [],
   ScheduleData: [],
+  ratingDoctor: []
 };
 export const fetchService = createAsyncThunk("fetchService", async (body) => {
   const res = await fetch("http://localhost:5000/api/doctor/service", {
@@ -171,6 +172,33 @@ export const createAppointment = createAsyncThunk(
     return await res.json();
   }
 );
+export const ratingDoctor = createAsyncThunk(
+  "ratingDoctor",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/rating", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const getRatingDoctor = createAsyncThunk(
+  "getRatingDoctor",
+  async (body) => {
+    console.log(body)
+    const res = await fetch(`http://localhost:5000/api/rating/${body}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return await res.json();
+  }
+);
 const appointmentSlice = createSlice({
   name: "appointment",
   initialState,
@@ -305,7 +333,30 @@ const appointmentSlice = createSlice({
       })
       .addCase(createAppointment.rejected, (state, action) => {
         state.loading = false;
-      });
+      })
+      //ratingDoctor
+      .addCase(ratingDoctor.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(ratingDoctor.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(ratingDoctor.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //getRatingDoctor
+      .addCase(getRatingDoctor.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getRatingDoctor.fulfilled, (state, action) => {
+        state.ratingDoctor = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(getRatingDoctor.rejected, (state, action) => {
+        state.loading = true;
+      })
+      ;
   },
 });
 export const {} = appointmentSlice.actions;

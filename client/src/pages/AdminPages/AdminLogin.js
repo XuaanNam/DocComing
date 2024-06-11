@@ -38,13 +38,13 @@ const AdminLogin = () => {
     if (currentUser) setTimeout(Navigate("/admin/dashboard"), 1000);
   }, [currentUser]);
   return (
-    <div className="pt-[120px] mb-20">
+    <div className="md:pt-[150px] max-md:pt-[80px] md:py-20 mb-20 w-full">
       {!currentUser ? (
-        <div className="shadow-lg bg-gradient-to-r p-5 rounded-xl from-lime-50 to-white w-1/3 h-80 mx-auto">
+        <div className="shadow-lg bg-gradient-to-r p-5 rounded-xl from-lime-50 to-white lg:w-1/3 sm:max-lg:w-1/2 max-sm:w-2/3 lg:h-80 mx-auto max-sm:mt-4">
           <div className="text-center text-xl font-medium my-2 opacity-70">
             Đăng nhập bằng tài khoản
           </div>
-          <div className="flex flex-col px-5 py-6 items-center rounded-2xl ">
+          <div className="flex flex-col xl:px-5 py-6 items-center rounded-2xl ">
             <input
               type="text"
               name="email"
@@ -53,7 +53,7 @@ const AdminLogin = () => {
               onChange={handleChange}
               className={` ${
                 formErrors?.email ? "border-b-red-500" : "border-b-teal-100"
-              } py-2 mb-4 w-96 h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
+              } py-2 mb-4 max-xl:w-full xl:w-96 h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
             ></input>
             <input
               type="password"
@@ -63,12 +63,12 @@ const AdminLogin = () => {
               placeholder="Mật khẩu"
               className={` ${
                 formErrors?.password ? "border-b-red-500" : "border-b-teal-100"
-              } py-2 mb-4 w-96 h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
+              } py-2 mb-4 max-xl:w-full xl:w-96 h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
             ></input>
             <p className="text-red-500 mb-4">{err}</p>
             <Button
               onClick={handleLogin}
-              className="w-60 mt-3 mx-auto h-[48px] text-center"
+              className="max-xl:w-full xl:w-60 mt-3 mx-auto h-[48px] text-center"
               gradientDuoTone="greenToBlue"
             >
               <p className="text-lg">Đăng nhập</p>

@@ -1,15 +1,12 @@
-import { Button } from "flowbite-react";
-import { AiFillGoogleCircle } from "react-icons/ai";
+
 import { GoogleAuthProvider, signInWithPopup, getAuth } from "firebase/auth";
 import { app } from "../api/firebase";
-import { useDispatch, useSelector } from "react-redux";
-import { loginFulfilled } from "../redux-toolkit/authSlice";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { loginGoogle } from "../redux-toolkit/authSlice";
 import GoogleIcon from "../Images/google.svg";
 
 export default function OAuth() {
-  const { data } = useSelector((state) => state.user);
   const auth = getAuth(app);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,8 +23,6 @@ export default function OAuth() {
     dispatch(loginGoogle(body)).then(() => {
       navigate("/");
     });
-
-    console.log(data);
   };
   return (
     <div

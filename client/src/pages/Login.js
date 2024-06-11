@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 function Login() {
   const data = JSON.parse(localStorage.getItem("check"));
-  console.log(data?.doctor);
+  const blogId = JSON.parse(localStorage.getItem("blog"));
   const { currentUser, detailDoctor, error, message, loading, updated } =
     useSelector((state) => state.user);
   console.log(detailDoctor);
@@ -34,29 +34,30 @@ function Login() {
     } else {
       dispatch(login(data)).then((res) => {
         setErr(message);
-        // if (res.payload.authentication === 1) {
-        //   if (data) {
-        //     Navigate(`/booking/${data.doctor}`);
-        //   } else Navigate("/");
-        // } else if (res.payload.authentication === 2)
-        //   Navigate("/doctor/dashboard");
+        if(blogId){
+          setTimeout(Navigate(`/blog/${blogId}`), 1000);
+          localStorage.removeItem('blog')
+        }
       });
     }
   };
   useEffect(() => {
     if (currentUser?.authentication == 1) {
-      if (data) setTimeout(Navigate(`/booking/${data.doctor}`), 1000);
+      if (data) 
+        {
+          setTimeout(Navigate(`/booking/${data.doctor}`), 1000);
+        }
       else setTimeout(Navigate("/"), 1000);
     } else if (currentUser?.authentication == 2)
-      setTimeout(Navigate("/doctor/dashboard"));
+      setTimeout(Navigate("/doctor/schedule"));
   }, [currentUser]);
   return (
-    <div className="bg-lime-50">
+    <div className="bg-white">
       {!currentUser ? (
         <div>
-          <div className="flex items-center justify-center min-h-screen p-6">
-            <div className="w-2/5 h-[400px]  rounded-xl pt-[30px]">
-              <div className="text-2xl font-bold text-teal-800 mb-9 ">
+          <div className="flex items-center justify-center min-h-screen lg:p-6 max-lg:px-7 max-lg:pt-20">
+            <div className="lg:w-2/5 lg:h-[400px] rounded-xl lg:pt-[30px] max-lg:w-full max-lg:px-10">
+              <div className="text-2xl font-bold text-teal-800 mb-9 max-lg:text-center ">
                 Đăng nhập tài khoản bệnh nhân
               </div>
 
@@ -73,7 +74,7 @@ function Login() {
                   onChange={handleChange}
                   className={` ${
                     formErrors?.email ? "border-b-red-500" : "border-b-teal-100"
-                  } py-2 mb-4 w-96 h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
+                  } py-2 mb-4 sm:w-96 max-sm:w-full h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
                 ></input>
                 <input
                   type="password"
@@ -85,7 +86,7 @@ function Login() {
                     formErrors?.password
                       ? "border-b-red-500"
                       : "border-b-teal-100"
-                  } py-2 mb-8 w-96 h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
+                  } py-2 mb-8 sm:w-96 max-sm:w-full h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
                 ></input>
                 <p className="text-red-500 mb-4">{err}</p>
 

@@ -6,31 +6,32 @@ import { GiSunrise, GiSun, GiSunset } from "react-icons/gi";
 import { Button } from "flowbite-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { DatePicker, Space, Input, Select } from "antd";
+import { DatePicker, Rate } from "antd";
 import dayjs from "dayjs";
 import {
   fetchSchedule,
   fetchService,
+  getRatingDoctor
 } from "../../redux-toolkit/appointmentSlice";
+import { fetchProfile } from "../../redux-toolkit/authSlice";
 const BookingDoctor = () => {
+  const check = JSON.parse(localStorage.getItem("check"));
   const dateFormat = "DD/MM/YYYY";
   const date = new Date();
   const today =
-    date.getDate() +
-    "/" +
-    (date.getMonth() + 1 < 10
-      ? "0" + (date.getMonth() + 1)
-      : date.getMonth() + 1) +
-    "/" +
+    (date.getDate() < 10 ? "0" + date.getDate() : date.getDate())
+    + "/" +
+    (date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) 
+    + "/" +
     date.getFullYear();
-  const { service, ScheduleData, AppointmentData, error, loading, updated } =
+  const { service, ScheduleData, AppointmentData,ratingDoctor, error, loading, updated } =
     useSelector((state) => state.appointment);
   const { currentUser, detailDoctor } = useSelector((state) => state.user);
-  console.log(ScheduleData)
   // const ScheduleData = schedule?.ScheduleData;
   // const AppointmentData = schedule?.AppointmentData;
   const [index, setIndex] = useState("");
   const [estimatedTime, setEstimatedTime] = useState("");
+  const [currentService, setCurrentService] = useState("");
   const [step, setStep] = useState(0);
   const [step1, setStep1] = useState(0);
   const [step2, setStep2] = useState(0);
@@ -74,18 +75,25 @@ const BookingDoctor = () => {
     return curr;
   };
   useEffect(() => {
+    if(check !== null){
+      dispatch(fetchProfile())
+      localStorage.removeItem('check')
+    }
+  },[check])
+  useEffect(() => {
     dispatch(fetchSchedule(body));
-    dispatch(fetchService({ idDoctor: parseInt(Id) }));
+    dispatch(fetchService({ idDoctor: Id }));
+    dispatch(getRatingDoctor(Id))
     setData({ ...data, DateBooking: today });
   }, []);
-
   useEffect(() => {
     if (!data?.Service && ScheduleData && service.length > 0) {
       if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
         let first = parse(currenTime1) + parse(service[0]?.EstimatedTime);
-
         if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
-          setTime1([...time1, { id: step1, value: currenTime1 }]);
+          if(parse(currenTime1) > parse(date.toLocaleTimeString())) {
+            setTime1([...time1, { id: step1, value: currenTime1 }]);
+          }
           setStep1(step1 + 1);
           setTimeout(
             setCurrenTime1(addTime(currenTime1, service[0]?.EstimatedTime)),
@@ -125,7 +133,9 @@ const BookingDoctor = () => {
         let second = parse(currenTime2) + parse(service[0]?.EstimatedTime);
 
         if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
-          setTime2([...time2, { id: step2, value: currenTime2 }]);
+          if(parse(currenTime2) > parse(date.toLocaleTimeString())) {
+            setTime2([...time2, { id: step2, value: currenTime2 }]);
+          }
           setStep2(step2 + 1);
           setTimeout(
             setCurrenTime2(addTime(currenTime2, service[0]?.EstimatedTime)),
@@ -160,9 +170,10 @@ const BookingDoctor = () => {
       }
       if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 !== undefined) {
         let third = parse(currenTime3) + parse(service[0]?.EstimatedTime);
-
         if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
-          setTime3([...time3, { id: step3, value: currenTime3 }]);
+          if(parse(currenTime3) > parse(date.toLocaleTimeString())) {
+            setTime3([...time3, { id: step3, value: currenTime3 }]);
+          }
           setStep3(step3 + 1);
           setTimeout(
             setCurrenTime3(addTime(currenTime3, service[0]?.EstimatedTime)),
@@ -200,7 +211,9 @@ const BookingDoctor = () => {
         let first = parse(currenTime1) + parse(estimatedTime);
 
         if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
-          setTime1([...time1, { id: step1, value: currenTime1 }]);
+          if(parse(currenTime1) > parse(date.toLocaleTimeString())) {
+            setTime1([...time1, { id: step1, value: currenTime1 }]);
+          }
           setStep1(step1 + 1);
           setTimeout(setCurrenTime1(addTime(currenTime1, estimatedTime)), 0);
           if (
@@ -237,7 +250,9 @@ const BookingDoctor = () => {
         let second = parse(currenTime2) + parse(estimatedTime);
 
         if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
-          setTime2([...time2, { id: step2, value: currenTime2 }]);
+          if(parse(currenTime2) > parse(date.toLocaleTimeString())) {
+            setTime2([...time2, { id: step2, value: currenTime2 }]);
+          }
           setStep2(step2 + 1);
           setTimeout(setCurrenTime2(addTime(currenTime2, estimatedTime)), 0);
           if (
@@ -271,7 +286,9 @@ const BookingDoctor = () => {
         let third = parse(currenTime3) + parse(estimatedTime);
 
         if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
-          setTime3([...time3, { id: step3, value: currenTime3 }]);
+          if(parse(currenTime3) > parse(date.toLocaleTimeString())) {
+            setTime3([...time3, { id: step3, value: currenTime3 }]);
+          }
           setStep3(step3 + 1);
           setTimeout(setCurrenTime3(addTime(currenTime3, estimatedTime)), 0);
           if (
@@ -325,6 +342,7 @@ const BookingDoctor = () => {
     }
     changeData();
   };
+  console.log(data)
   useEffect(() => {
     changeData();
   }, [ScheduleData]);
@@ -338,10 +356,10 @@ const BookingDoctor = () => {
     const body = {
       idService: data.Service ? data.Service : service[0].id,
       Service: data.Service
-        ? service[data.Service - 1].Service
+        ? service[index].Service
         : service[0].Service,
       idDoctor: Id,
-      Price: data.Service ? service[data.Service - 1].Price : service[0].Price,
+      Price: data.Service ? service[index].Price : service[0].Price,
       DateBooking: data.DateBooking ? data.DateBooking : today,
       TimeBooking: data.timePicker,
     };
@@ -356,9 +374,9 @@ const BookingDoctor = () => {
     localStorage.setItem("check", JSON.stringify(data));
   };
   return (
-    <div className="bg-lime-50 pt-[90px]">
-      <div className="mx-10 flex gap-5 pb-20">
-        <div className="w-[60%] flex flex-col gap-y-5">
+    <div className="bg-lime-50 max-lg:pt-[80px] pt-[90px]">
+      <div className="lg:mx-10 max-lg:px-6 lg:flex lg:gap-5 pb-20">
+        <div className="lg:w-[60%] flex flex-col gap-y-5">
           <div className="w-full bg-white rounded-lg shadow-lg p-6">
             <div className="grid grid-cols-4 gap-5 w-full mb-5">
               <img
@@ -367,7 +385,7 @@ const BookingDoctor = () => {
                 alt="avt"
               ></img>
               <div className="text-2xl font-medium col-span-3 text-slate-700">
-                ThS. BS. {detailDoctor[0]?.FullName} - Chuyên khoa{" "}
+                {detailDoctor[0]?.Degree}. {detailDoctor[0]?.FullName} - Chuyên khoa{" "}
                 {detailDoctor[0]?.Major}
               </div>
             </div>
@@ -382,7 +400,7 @@ const BookingDoctor = () => {
               </div>
             </div>
 
-            <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+            <div className="flex gap-3 items-center text-lg mb-2 lg:h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
               <FaRegAddressBook className="text-teal-600" />
               <div className="text-slate-600">
                 1 Nơ Trang Long, Bình Thạnh, Hồ Chí Minh
@@ -402,13 +420,42 @@ const BookingDoctor = () => {
             <p className="text-3xl font-medium text-slate-700 mb-5">
               Phản hồi từ bệnh nhân
             </p>
-            <p className="italic text-slate-600">
+            <p className="italic text-slate-600 mb-5">
               Phản hồi từ bệnh nhân đã thực sự được khám từ bác sĩ
             </p>
+            {ratingDoctor?.map((item) =>
+          <div className="mb-5">
+            <div className="flex gap-3 mb-3">
+              <div className="rounded-full h-12 w-12 bg-slate-200 flex items-center justify-center">
+                <img
+                  className="rounded-full h-10 w-10 object-cover"
+                  alt=""
+                  src={item.Avt || require("../../Images/pattientavt.png")}
+                ></img>
+              </div>
+              <div className="flex flex-col gap-1">
+                <div className="text-lg font-medium text-slate-700 mb-1">
+                  {item.FullName}
+                </div>
+                <Rate className="w-full" 
+                      defaultValue={item.Star}
+                      style={{ fontSize: 18}}
+                      disabled={true}
+                      >
+                </Rate>
+                <p className="text-lg text-slate-600 mt-2">{item.Comment}</p>
+              </div>
+            </div>
+            <hr className="w-full border-slate-200 rounded-lg my-2"></hr>
+          </div>
+          )}
           </div>
         </div>
-        <div className="w-[40%] flex flex-col gap-y-5">
+        <div className="lg:w-[40%] flex flex-col gap-y-5 max-lg:mt-10">
           <div className="w-full bg-white rounded-lg shadow-xl p-6">
+            <p className="max-lg:text-xl lg:hidden font-medium text-slate-600 mb-3">
+              ĐẶT LỊCH KHÁM NGAY!
+            </p>
             <p className="font-medium text-slate-600 mb-3">
               Thời gian làm việc
             </p>

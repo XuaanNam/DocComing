@@ -26,19 +26,19 @@ const DashSidebar = ({ param }) => {
   };
 
   return (
-    <div className="shadow-xl bg-white min-h-screen">
-      <div className="w-full md:w-56 font-medium pt-[70px]">
-        <div className="px-12 py-4 mb-4">
+    <div className="shadow-xl bg-white lg:min-h-screen">
+      <div className="w-full lg:w-56 max-lg:flex max-lg:flex-col max-lg:gap-2 font-medium lg:pt-[70px] max-lg:pt-[80px] max-lg:px-2">
+        <div className="px-12 py-4 lg:mb-4 max-lg:mb-1">
           <a
             href="/admin/dashboard"
-            className="text-2xl font-semibold uppercase text-teal-400 hover:text-gray-300"
+            className="text-2xl max-lg:items-center max-lg:justify-center max-lg:flex max-lg:gap-3 font-semibold uppercase text-teal-400 hover:text-gray-300"
           >
             <span className="text-left">Doctor</span>
             <span className="flex justify-end">Coming</span>
           </a>
         </div>
-        <div className="">
-          <div className="flex flex-col gap-1 font-medium">
+        <div className="max-lg:overflow-x-auto max-lg:w-[100vw]">
+          <div className="flex lg:flex-col max-lg:w-[96%] gap-1 font-medium">
             {/* {currentUser && currentUser.isAdmin && ( */}
             <Link
               onClick={() => {
@@ -47,7 +47,7 @@ const DashSidebar = ({ param }) => {
               className={` ${
                 actived === "dashboard" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
               to="/admin/dashboard"
             >
               Dashboard
@@ -59,7 +59,7 @@ const DashSidebar = ({ param }) => {
               className={` ${
                 actived === "profile" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
               to="/admin/profile"
             >
               Profile
@@ -71,7 +71,7 @@ const DashSidebar = ({ param }) => {
               className={` ${
                 actived === "users" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
               to="/admin/users"
             >
               User
@@ -85,17 +85,17 @@ const DashSidebar = ({ param }) => {
                   param === "manage-post" ||
                   param === "create-post") &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center  cursor-pointer`}
+              } ${actived === "blog" && "max-lg:hidden"} max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center  cursor-pointer`}
             >
               Blog
             </div>
             {actived === "blog" && (
-              <div className="transition-all duration-500 ">
+              <div className="transition-all duration-500 max-lg:flex max-lg:gap-2">
                 <Link
                   className={` ${
                     param === "manage-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
-                  } w-40 h-9 rounded-lg shadow-md flex items-center justify-center mb-1`}
+                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-md flex items-center justify-center mb-1`}
                   to="/admin/manage-post"
                 >
                   <div>Manage Blog</div>
@@ -104,7 +104,7 @@ const DashSidebar = ({ param }) => {
                   className={` ${
                     param === "create-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
-                  } w-40 h-9 rounded-lg shadow-md flex items-center justify-center `}
+                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-md flex items-center justify-center `}
                   to="/admin/create-post"
                 >
                   <div>Create Blog</div>
@@ -118,7 +118,7 @@ const DashSidebar = ({ param }) => {
               className={` ${
                 actived === "comments" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } w-48 h-11 rounded-lg shadow-md flex items-center justify-center mt-3`}
+              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center lg:mt-3 max-lg:mb-3`}
               to="/admin/comments"
             >
               Comments
@@ -127,7 +127,7 @@ const DashSidebar = ({ param }) => {
               onClick={handleLogout}
               to="/admin/login"
               className="
-              w-48 h-11 rounded-lg cursor-pointer shadow-md flex items-center justify-center mt-3 mb-10 cursor-pointet"
+              max-lg:hidden w-48 h-11 rounded-lg cursor-pointer shadow-md flex items-center justify-center mt-3 mb-10 cursor-pointet"
             >
               Log out
             </Link>

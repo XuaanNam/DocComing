@@ -68,13 +68,13 @@ const BookingConfirm = () => {
         function disableBack() {window.history.forward()}
         setTimeout("disableBack()", 0); window.onunload = function () {null};
       </script>
-      <div className="mx-auto w-[80%] mb-5 p-6 grid grid-cols-6 gap-8 bg-white shadow-md shadow-violet-300 rounded-lg">
+      <div className="max-lg:px-5 max-lg:pb-5 max-lg:mx-5 max-lg:mb-5 lg:mx-auto lg:w-[80%] lg:mb-5 lg:p-6 grid lg:grid-cols-6 lg:gap-8 max-lg:grid-cols-12 bg-white shadow-md shadow-violet-300 rounded-lg">
         <img
-          className="h-48 w-40 object-cover border rounded-lg col-span-1"
+          className="h-48 w-40 object-cover border rounded-lg lg:col-span-1 max-lg:col-start-4 max-lg:col-span-6 max-lg:mb-3"
           src={detailDoctor[0]?.Avt}
           alt="avt"
         ></img>
-        <div className="col-start-2 col-span-5">
+        <div className="lg:col-start-2 lg:col-span-5 max-lg:col-span-12">
           <div className="text-2xl font-medium text-slate-700 mb-3">
             ThS. BS. {detailDoctor[0]?.FullName} - Chuyên khoa{" "}
             {detailDoctor[0]?.Major}
@@ -95,7 +95,7 @@ const BookingConfirm = () => {
           </div>
         </div>
       </div>
-      <div className="mx-auto w-[80%] p-6 bg-white shadow-md shadow-violet-300 rounded-lg mb-10">
+      <div className="max-lg:px-5 max-lg:pb-5 max-lg:mx-5 max-lg:mb-5 lg:mx-auto lg:w-[80%] lg:p-6 bg-white shadow-md shadow-violet-300 rounded-lg mb-10">
         <div className="text-2xl font-medium text-slate-800 mb-5">
           Thông tin lịch hẹn
         </div>
@@ -118,12 +118,12 @@ const BookingConfirm = () => {
             {appointment?.Service}
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-8 mb-8">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-8 mb-8">
           <div>
             <p className="text-lg font-medium mb-2 text-gray-700">
               Số điện thoại liên hệ
             </p>
-            <div className="relative gap-3 h-12 w-full items-center border rounded-xl cursor-pointer bg-slate-100">
+            <div className="relative max-lg:mb-4 gap-3 h-12 w-full items-center border rounded-xl cursor-pointer bg-slate-100">
               <img
                 className="absolute z-10 h-full pl-3 py-3"
                 src={FlagIcon}
@@ -148,7 +148,7 @@ const BookingConfirm = () => {
               ></Input>
             </div>
           </div>
-          <div>
+          <div className="max-lg:mb-4">
             <p className="text-lg font-medium mb-2 text-gray-700">Họ và tên</p>
             <Input
               disabled={data?.FirstName + data?.LastName !== null}
@@ -158,7 +158,7 @@ const BookingConfirm = () => {
               value={data?.FirstName + data?.LastName}
             ></Input>
           </div>
-          <div>
+          <div className="max-lg:mb-4">
             <p className="text-lg font-medium mb-2 text-gray-700">Địa chỉ</p>
             <Input
               disabled={data?.Address && data?.Address != "null"}

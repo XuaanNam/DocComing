@@ -2,26 +2,33 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-import HomePage from "./pages/HomePage";
-import BlogPage from "./pages/BlogPage";
-import AdminPage from "./pages/AdminPages/AdminPage";
+
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import Profile from "./pages/PatientPages/Profile";
 import Header from "./Layouts/Header";
 import Footer from "./Layouts/Footer";
+import HomePage from "./pages/HomePage";
+import BlogPage from "./pages/BlogPage";
+import Doctors from "./pages/Doctors";
+import Categories from "./pages/Categories";
+import DoctorDetail from "./pages/DoctorDetail";
+
+import AdminPage from "./pages/AdminPages/AdminPage";
+import AdminLogin from "./pages/AdminPages/AdminLogin";
+import EditBlogAdmin from "./pages/AdminPages/EditBlog";
+
+import DoctorPage from "./pages/DoctorPages/DoctorPage";
+import EditBlogDoctor from "./pages/DoctorPages/EditBlog";
+
+import Profile from "./pages/PatientPages/Profile";
 import BookingDoctor from "./pages/PatientPages/BookingDoctor";
 import BookingConfirm from "./pages/PatientPages/BookingConfirm";
 import BookingSuccess from "./pages/PatientPages/BookingSuccess";
-
-// import DoctorSchedule from "./pages/DoctorPages/DoctorSchedule";
-import Doctors from "./pages/Doctors";
-import Categories from "./pages/Categories";
 import Appointment from "./pages/PatientPages/Appointment";
-import AdminLogin from "./pages/AdminPages/AdminLogin";
-import DoctorDetail from "./pages/DoctorDetail";
-import DoctorPage from "./pages/DoctorPages/DoctorPage";
+
 import { ScrollToTop } from "./pages/ScrollToTop";
+import SearchPost from "./pages/SearchPost";
+import SimilarPost from "./pages/SimilarPost";
 function App() {
   return (
     <div>
@@ -36,15 +43,22 @@ function App() {
           <Route path="/blog/:blogId" element={<BlogPage />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/doctors/:doctorId" element={<DoctorDetail />} />
-
-          <Route path="/admin/:adminpage" exact element={<AdminPage />} />
-          <Route path="/patient/profile" element={<Profile />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/categories" element={<Categories />} />
-          <Route path="/appointment" element={<Appointment />} />
+          <Route path="/categories/:cgr" element={<SimilarPost />} />
+          <Route path="/categories/:cgr/:similar" element={<SimilarPost />} />
+          <Route path="/admin/update-post/:postId" element={<EditBlogAdmin />} />
+          <Route path="/doctor/update-post/:postId" element={<EditBlogDoctor />} />
+          <Route path="/patient/profile" element={<Profile />} />
+          <Route path="/patient/appointment" element={<Appointment />} />
+
+          <Route path="/admin/:adminpage" element={<AdminPage />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          
           <Route path="/booking/:doctorId" element={<BookingDoctor />} />
           <Route path="/booking/confirm" element={<BookingConfirm />} />
           <Route path="/booking/success" element={<BookingSuccess />} />
+          <Route path="/search" element={<SearchPost />} />
+          
 
           {/* <Route path="/doctor/schedule" element={<DoctorSchedule />} /> */}
           <Route path="/doctor/:doctorpage" element={<DoctorPage />} />

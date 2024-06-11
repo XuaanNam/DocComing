@@ -14,35 +14,36 @@ const UserList = () => {
     dispatch(fetchUsers());
   }, [dispatch]);
   const allUsers = useSelector((state) => state.user.data);
-
+  console.log(allUsers);
   return (
-    <div className="table-auto md:mx-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
+    <div className="lg:pt-[70px] h-screen table-auto md:mx-auto p-10 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
       {/* {currentUser.isAdmin && users.length > 0 ? ( 
         <>*/}
-      <Table hoverable className="shadow-md">
+        <div className="lg:pt-[30px]">
+      <Table hoverable className="shadow-lg shadow-violet-200">
         <Table.Head>
-          <Table.HeadCell>Date created</Table.HeadCell>
-          <Table.HeadCell>User image</Table.HeadCell>
-          <Table.HeadCell>Name</Table.HeadCell>
+          <Table.HeadCell>Ngày tạo</Table.HeadCell>
+          <Table.HeadCell>Avatar</Table.HeadCell>
+          <Table.HeadCell>Họ và tên</Table.HeadCell>
           <Table.HeadCell>Email</Table.HeadCell>
-          <Table.HeadCell>Phone Number</Table.HeadCell>
-          <Table.HeadCell>Role</Table.HeadCell>
-          <Table.HeadCell>Delete</Table.HeadCell>
+          <Table.HeadCell>Số điện thoại</Table.HeadCell>
+          <Table.HeadCell>Phân quyền</Table.HeadCell>
+          <Table.HeadCell></Table.HeadCell>
         </Table.Head>
         {allUsers?.map((user) => (
           <Table.Body className="divide-y" key={user._id}>
             <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
               <Table.Cell>
-                {new Date(user.createdAt).toLocaleDateString()}
+                {new Date(user.CreatedAt).toLocaleDateString()}
               </Table.Cell>
               <Table.Cell>
                 <img
-                  src={user.Avt}
+                  src={user.Avt || require("../../Images/pattientavt.png") }
                   alt={user.username}
                   className="w-10 h-10 object-cover bg-gray-500 rounded-full"
                 />
               </Table.Cell>
-              <Table.Cell>{user.FirstName}</Table.Cell>
+              <Table.Cell>{user.FirstName + " " + user.LastName}</Table.Cell>
               <Table.Cell>{user.Email}</Table.Cell>
               <Table.Cell>{user.Phone}</Table.Cell>
 
@@ -108,6 +109,7 @@ const UserList = () => {
           </div>
         </Modal.Body>
       </Modal>
+      </div>
     </div>
   );
 };

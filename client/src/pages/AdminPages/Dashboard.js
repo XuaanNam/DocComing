@@ -22,9 +22,9 @@ export default function Dashboards() {
   const { currentUser } = useSelector((state) => state.user);
   useEffect(() => {}, [currentUser]);
   return (
-    <div className="m-3 md:mx-auto mt-10 p-6 border-collapse">
-      <div className="flex flex-wrap gap-4 justify-center">
-        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md">
+    <div className="pt-[70px] m-3 md:mx-auto p-6 border-collapse">
+      <div className="pt-[30px] flex flex-wrap gap-4 justify-center">
+        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-lg shadow-violet-200">
           <div className="flex justify-between">
             <div className="">
               <h3 className="text-gray-500 text-md uppercase">Total Users</h3>
@@ -40,7 +40,7 @@ export default function Dashboards() {
             <div className="text-gray-500">Last month</div>
           </div>
         </div>
-        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md">
+        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-lg shadow-violet-200">
           <div className="flex justify-between">
             <div className="">
               <h3 className="text-gray-500 text-md uppercase">
@@ -58,7 +58,7 @@ export default function Dashboards() {
             <div className="text-gray-500">Last month</div>
           </div>
         </div>
-        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-md">
+        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-72 w-full rounded-md shadow-lg shadow-violet-200">
           <div className="flex justify-between">
             <div className="">
               <h3 className="text-gray-500 text-md uppercase">Total Posts</h3>
@@ -75,8 +75,8 @@ export default function Dashboards() {
           </div>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-4 py-3 mx-auto justify-center">
-        <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
+      <div className="grid md:grid-cols-3 max-md:grid-rows-3 gap-4 py-3 mx-auto justify-center">
+        <div className="flex flex-col w-full md:w-auto shadow-lg shadow-violet-200 p-2 rounded-md dark:bg-gray-800">
           <div className="flex justify-between p-1 text-sm font-semibold">
             <h3 className="text-center p-2">Recent users</h3>
             <Button outline gradientDuoTone="purpleToPink">
@@ -105,7 +105,7 @@ export default function Dashboards() {
               ))}
           </Table>
         </div>
-        <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
+        <div className="flex flex-col w-full md:w-auto shadow-lg shadow-violet-200 p-2 rounded-md dark:bg-gray-800">
           <div className="flex justify-between p-1 text-sm font-semibold">
             <h3 className=" p-2">Recent comments</h3>
             <Button outline gradientDuoTone="purpleToPink">
@@ -130,7 +130,7 @@ export default function Dashboards() {
               ))}
           </Table>
         </div>
-        <div className="flex flex-col w-full md:w-auto shadow-md p-2 rounded-md dark:bg-gray-800">
+        <div className="flex flex-col w-full md:w-auto shadow-lg shadow-violet-200 p-2 rounded-md dark:bg-gray-800">
           <div className="flex justify-between p-1 text-sm font-semibold">
             <h3 className=" p-2">Recent posts</h3>
             <Button outline gradientDuoTone="purpleToPink">

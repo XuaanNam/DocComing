@@ -5,8 +5,6 @@ const passport = require("passport");
 const PassportCheck = passport.authenticate("jwt", { session: false });
 const fileUploader = require("../app/middleware/cloudinary-upload.js");
 const fileConfig = require("../app/configs/muter");
-//const myOAuth2Client = require("../app/configs/oauth2client");
-const nodemailer = require("nodemailer");
 
 router.post("/execute/query", api.executeQuery);
 // guest
@@ -19,6 +17,7 @@ router.post("/auth/google/check", api.Google);
 router.post("/register", api.register);
 router.post("/send/otp", api.sendOTP);
 router.post("/send/mail", api.sendMail);
+router.get("/reset/password", PassportCheck, api.resetPassword);
 
 // patient - doctor
 router.get("/profile", PassportCheck, api.getProfile);
@@ -38,6 +37,7 @@ router.post("/notification/create", PassportCheck, api.createNotification);
 router.patch("/notification/read", PassportCheck, api.readNotification);
 router.get("/schedule/:idDoctor/:date/:month/:year", api.getSchedule);
 // lấy lich bac si cua ngay cu the + eTime (chỉ dùng cho patient) booking
+router.post("/schedule", PassportCheck, api.setSchedule);
 router.get("/service", api.getService); // lấy all service
 router.get("/doctor", api.getDoctor); // lay all bsi
 router.post("/doctor/service", api.getServiceDoctor); // lay dich vu cua bsi với idDoctor
@@ -50,7 +50,11 @@ router.get(
 ); // lay schedule bsi với id
 router.post("/doctor/service/create", PassportCheck, api.createServiceDoctor); //theem service cho moi bac si -- gửi data
 router.post("/doctor/service/delete", PassportCheck, api.deleteServiceDoctor); //xóa service cho moi bac si -- gửi idService và token
-router.post("/schedule", PassportCheck, api.setSchedule);
+router.get("/doctor/post/get", PassportCheck, api.getDoctorPost); // token --> là đc
+
+// #RATING DOCTOR
+router.get("/rating/:idDoctor", api.getRateDoctor); // idDoctor/idPatient --> params, idPatient không có -> null
+router.post("/rating", PassportCheck, api.createRateDoctor); //
 
 // Blog
 router.post(
@@ -60,27 +64,33 @@ router.post(
   api.createPost
 );
 router.post("/post/image", fileUploader.single("image"), api.addImage);
-router.patch(
+router.post(
   "/post/update",
   PassportCheck,
   fileUploader.fields(fileConfig),
   api.updatePost
 );
 router.get("/post", api.getPost);
-router.get("/post/detail/:id", api.getPostById);
-router.get("/post/categories", api.getPostByCategories); // truyền tới id categories
-router.get("/post/similar/categories", api.getPostBySimilarCategories); // truyền tới id similar
-router.get("/search/keywords", api.searchByKeywords);
+router.get("/post/detail/:id", api.getPostById); 
+router.get("/post/categories/:id", api.getPostByCategories); // truyền tới id categories
+router.get("/post/categories/similar/:id", api.getPostBySimilarCategories); // truyền tới id similar
+
 router.get("/category", api.getCategory);
-router.get("/comment", api.getComment); // lấy tất cả cmt dựa trên idPost -> truyền idPost
+router.get("/comments/:idPost/:idAccount", api.getComment); // lấy tất cả cmt dựa trên idPost -> truyền idPost/ nếu k có idAcc -> idAcc = null
 router.post("/comment/create", PassportCheck, api.createComment); // thêm cmt vào 1 post ->truyền idPost
 router.post("/comment/update", PassportCheck, api.updateComment); // chỉnh sửa cmt ->truyền id, Cmt (id này là id comment)
 router.post("/comment/delete", PassportCheck, api.deleteComment); // xóa cmt dựa trên id comment -> truyền id
+router.post("/comment/love", PassportCheck, api.loveComment); //truyền tới idCMT (hoặc ipREP) + Status ("CMT" hoac "REP") và idPost
+
+// SEARCH
+router.post("/search/post", api.searchPost);
+router.post("/search/doctor", api.searchDoctor);
+router.post("/search/major", api.searchMajor);
 
 //admin
 router.get("/admin/post", PassportCheck, api.getAllPost);
-router.patch("/admin/post/accept", PassportCheck, api.acceptPost);
-router.patch("/admin/post/status/change", PassportCheck, api.changeStatusPost);
+router.post("/admin/post/accept", PassportCheck, api.acceptPost);
+router.post("/admin/post/status/change", PassportCheck, api.changeStatusPost);
 router.get("/admin/account", PassportCheck, api.getAccount);
 router.post("/admin/account/create", PassportCheck, api.createAccount);
 router.patch("/admin/account/update", PassportCheck, api.updateAccount);

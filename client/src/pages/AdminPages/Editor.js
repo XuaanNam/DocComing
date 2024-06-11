@@ -54,7 +54,7 @@ export default function Editor({ value, onChange, className }) {
   }, []);
 
   return (
-    <div className="content w-[70%] mb-4 bg-white">
+    <div className="content md:w-[90%] max-md:w-full h-[50vh] mb-5 bg-white">
       <input ref={inputRef} hidden type="file" onChange={imageHandler} />
       <ReactQuill
         className={className}

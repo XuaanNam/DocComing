@@ -1,30 +1,149 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import { getDetailPost } from "../redux-toolkit/postSlice";
+import { getDetailPost, fetchComment, createComment, updateComment, deleteComment,likeComment } from "../redux-toolkit/postSlice";
+import { BsSendArrowUpFill } from "react-icons/bs";
+import { IoIosCloseCircleOutline } from "react-icons/io";
+import { CiSettings } from "react-icons/ci";
+import { FaRegHeart,FaHeart,FaRegCommentDots } from "react-icons/fa";
+
+import { Input } from 'antd';
+import { Button } from "flowbite-react";
+const { TextArea } = Input;
+
 const BlogPage = () => {
+  const { currentUser, auth, user } = useSelector(
+    (state) => state.user
+  );
+  const { detailPost, comment, error, loading } = useSelector((state) => state.post);
   const { blogId } = useParams();
   const Navigate = useNavigate();
   const dispatch = useDispatch();
-  const { detailPost, error, loading } = useSelector((state) => state.post);
+  const [cmtData, setCmtData] = useState("");
+  const [repCmtData, setRepCmtData] = useState("");
+  const [settingCmt, setSettingCmt] = useState(0)
+  const [settingRepCmt, setSettingRepCmt] = useState(0)
+  const [idComment, setIdComment] = useState(0)
+  const [update,setUpdate] = useState("")
+  const [status,setStatus] = useState("CMT")
+  const [reply, setReply] = useState(false);
+
   useEffect(() => {
+    const data = {
+      idPost: blogId,
+      idAccount: currentUser?.id || null,  
+    }
     dispatch(getDetailPost(blogId));
+    dispatch(fetchComment(data))
   }, [dispatch]);
-  console.log(detailPost);
-  // const post = detailPost[0];
-  console.log(blogId);
+
+  const handleAction = (id) => {
+    if(currentUser)
+      setReply(id);
+    else{
+      Navigate("/login")
+      localStorage.setItem("blog", JSON.stringify(blogId))
+    }
+  }
+  const handleLike = ({id,status}) => {
+    if(currentUser)
+    {
+      const data = {
+        id : id,
+        Status: status,
+        idPost: blogId
+      }
+      dispatch(likeComment(data)).then(()=>{
+        const data = {
+          idPost: blogId,
+          idAccount: currentUser?.id,  
+        }
+        dispatch(fetchComment(data))
+      })
+    }
+    else{
+      Navigate("/login")
+      localStorage.setItem("blog", JSON.stringify(blogId))
+    }
+  }
+  const handleCreateComment = () => {
+    const data = {
+      id : reply !== 0 ? reply : blogId,
+      Cmt : reply !== 0 ? repCmtData : cmtData,
+      Status: status
+    }
+    dispatch(createComment(data)).then(()=>{
+      const data = {
+        idPost: blogId,
+        idAccount: currentUser?.id,  
+      }
+      dispatch(fetchComment(data))
+      setIdComment(0)
+      setStatus("CMT")
+      setCmtData("")
+      setRepCmtData("")
+      setReply(0)
+    })
+  }
+  const handleUpdateComment = () => {
+    const data = {
+      id : idComment,
+      Cmt : update,
+      Status: status
+    }
+    dispatch(updateComment(data)).then(()=>{
+      const data = {
+        idPost: blogId,
+        idAccount: currentUser?.id,  
+      }
+      dispatch(fetchComment(data))
+      setSettingRepCmt(0)
+      setSettingCmt(0)
+      setIdComment(0)
+      setStatus("CMT")
+    })
+    
+  }
+  const handleDeleteComment = () => {
+    let id = settingCmt
+    if(status === "REP")
+      id = settingRepCmt
+    let data = {
+      id : id,
+      Status: status
+    }
+    dispatch(deleteComment(data)).then(()=>{
+      const data = {
+        idPost: blogId,
+        idAccount: currentUser?.id,  
+      }
+      dispatch(fetchComment(data))
+      setSettingRepCmt(0)
+      setSettingCmt(0)
+      setStatus("CMT")
+    })
+  }
   return (
-    <div className="bg-white">
-      <div className="mx-[48px] pt-[100px] pl-16">
-        <div className="flex gap-7 pb-20">
-          <div className="w-[75%]">
-            <p className="h-[44px] bg-white max-w-64 flex items-center justify-center p-1 mb-5 cursor-pointer rounded-3xl  text-teal-400 font-medium drop-shadow-lg  transition-transform duration-500 hover:scale-105">
-              {detailPost[0]?.Categories}
+    <div className="relative bg-white">
+      {(settingCmt !== 0 || settingRepCmt !== 0) && (
+        <div
+          className="absolute h-full w-full overlay"
+          onClick={() => {
+            setSettingCmt(0);
+            setSettingRepCmt(0);
+          }}
+        ></div>
+      )}
+      <div className="lg:mx-[48px] max-lg:pt-[80px] lg:pt-[100px] lg:pl-16">
+        <div className="lg:flex lg:gap-7 pb-20 max-lg:px-7">
+          <div className="lg:w-[75%] ">
+            <p className="h-[44px] max-lg:mx-auto max-lg:mt-7 bg-white max-w-64 flex items-center justify-center p-1 mb-5 cursor-pointer rounded-3xl  text-teal-400 font-medium drop-shadow-lg  transition-transform duration-500 hover:scale-105">
+              {detailPost[0]?.Similar}
             </p>
             <div className="mb-5">
               {/* Bệnh tiêu hóa {">"} Các vấn đề tiêu hóa khác */}
             </div>
-            <div className="text-4xl font-bold text-slate-800 w-full mb-5">
+            <div className="text-4xl max-lg:text-3xl font-bold text-slate-800 w-full mb-5">
               {detailPost[0]?.Title}
             </div>
             <div>
@@ -37,17 +156,156 @@ const BlogPage = () => {
             <p className="text-lg text-slate-700 font-bold mb-3">
               {detailPost[0]?.Brief}
             </p>
-            {/* <div className="text-lg mb-3 text-justify">{post?.Content}</div> */}
             <div
               className="text-lg mb-3 text-justify content"
               dangerouslySetInnerHTML={{ __html: detailPost[0]?.Content }}
             />
+            <div className="max-lg:my-5 w-full bg-lime-50 shadow-lg shadow-violet-200 rounded-xl p-5">
+              
+              <p className="font-medium text-lg text-slate-700 mb-5">Bình luận</p>
+              {currentUser ? 
+              <div>
+                <TextArea className="p-3 mb-3" placeholder="Nhập bình luận" value={cmtData} onChange={(e) => {setStatus("CMT");setReply(0);setCmtData(e.target.value)}}></TextArea>
+                <Button className="w-32 mb-5" type="primary" disabled={cmtData === ""} onClick={()=>{handleCreateComment()}}>
+                  Đăng
+                </Button>
+              </div>
+              :
+              <p className="text-xl mb-5 italic">Vui lòng đăng nhập để bình luận</p>
+              }
+              <div className="w-full bg-white shadow-lg shadow-violet-200 rounded-xl p-5">
+              {comment?.map((cmt) => 
+                <div className="mb-5">
+                  <div className="flex gap-4 items-center mb-3">
+                    <img
+                      className="h-12 w-12 rounded-full object-cover drop-shadow-md"
+                      src={cmt.Avt !== null ? cmt.Avt : require("../Images/pattientavt.png")}
+                      alt=""
+                    ></img>
+                    <div className="flex flex-col gap-1 w-96">
+                      <div className="font-medium text-lg">
+                        {cmt.FirstName + " " + cmt.LastName}
+                      </div>
+                      <div>{cmt.CmtTime}</div>
+                    </div>
+                    {cmt.idAccount === currentUser?.id &&
+                    <div className="relative w-full">
+                      <CiSettings className="absolute right-10 h-6 w-6 cursor-pointer" onClick={()=>{setStatus("CMT");setSettingCmt(cmt.id);setSettingRepCmt(0);setUpdate("")}}/>
+                      {settingCmt === cmt.id &&
+                      <div className="absolute right-20 flex flex-col gap-2 p-3 w-40 bg-slate-200 shadow-md shadow-violet-200 rounded-xl">
+                        <div className="bg-white p-2 rounded-lg hover:bg-slate-100 text-center cursor-pointer" onClick={handleDeleteComment}>Xóa</div>
+                        <div className="bg-white p-2 rounded-lg hover:bg-slate-100 text-center cursor-pointer" 
+                          onClick={() => {setIdComment(cmt.id); setSettingCmt(0); setUpdate(cmt.Cmt)}}>
+                            Chỉnh sửa
+                        </div>
+                      </div>
+                      }
+                    </div>
+                    }                   
+                  </div>
+                  {idComment === cmt.id && status === "CMT"?
+                  <div>
+                    <Input className="mb-2 text-lg rounded-lg p-2" value={update} onChange={(e)=>{setUpdate(e.target.value)}}></Input>
+                    <div className="flex gap-3 mb-2">
+                      <Button gradientMonochrome="info" className="w-28 h-9 p-0" disabled={update === "" || update === cmt.Cmt} 
+                        onClick={handleUpdateComment}>
+                          xác nhận
+                      </Button>
+                      <Button gradientMonochrome="failure" className="w-20 h-9 p-0" onClick={()=>{setIdComment(0)}}>Hủy</Button>
+                    </div>
+                  </div>
+                  :
+                  <p className="mb-2 text-lg">{cmt.Cmt}</p>  
+                  }
+                  <div className="flex gap-5 mb-4">
+                    <div className="flex gap-2">
+                      {cmt.IsLoved ? 
+                          <FaHeart className="cursor-pointer w-5 h-5 text-rose-500 transition-full" onClick={()=>{handleLike({id:cmt.id, status: "CMT"})}}></FaHeart>
+                          :
+                          <FaRegHeart className="cursor-pointer w-5 h-5 text-gray-600 transition-full" onClick={()=>{handleLike({id:cmt.id, status: "CMT"})}}></FaRegHeart>
+                          } 
+                      <p>{cmt.Love}</p>
+                    </div>
+                    <div className="w-full">
+                      <FaRegCommentDots className="cursor-pointer w-5 h-6 text-slate-600" onClick={()=>{handleAction(cmt.id); setStatus("REP")}}></FaRegCommentDots>
+                      {cmt.RepComment?.map((replyCmt) => 
+                      <div className="flex flex-col gap-2 mt-3">
+                        <div className="flex gap-4 text-base items-center">
+                          <img
+                            className="h-10 w-10 rounded-full object-cover drop-shadow-md"
+                            src={replyCmt.repAvt !== null ? replyCmt.repAvt : require("../Images/pattientavt.png")}
+                            alt=""
+                          ></img>
+                          <div className="flex flex-col gap-1 w-96">
+                            <div className="font-medium text-lg">
+                              {replyCmt.repFirstName + " " + replyCmt.repLastName}
+                            </div>
+                            <div>{replyCmt.repCmtTime}</div>
+                          </div>
+                          {replyCmt.repidAccount === currentUser?.id &&
+                            <div className="relative w-full">
+                              <CiSettings className="absolute right-10 h-6 w-6 cursor-pointer" onClick={()=>{setStatus("REP");setSettingRepCmt(replyCmt.repid);setSettingCmt(0);setUpdate("")}}/>
+                              {settingRepCmt === replyCmt.repid &&
+                              <div className="absolute right-20 flex flex-col gap-2 p-3 w-40 bg-slate-200 shadow-md shadow-violet-200 rounded-xl">
+                                <div className="bg-white p-2 rounded-lg hover:bg-slate-100 text-center cursor-pointer" onClick={handleDeleteComment}>Xóa</div>
+                                <div className="bg-white p-2 rounded-lg hover:bg-slate-100 text-center cursor-pointer" 
+                                  onClick={() => {setIdComment(replyCmt.repid); setSettingRepCmt(0); setUpdate(replyCmt.repCmt)}}>
+                                    Chỉnh sửa
+                                </div>
+                              </div>
+                              }
+                            </div>
+                            }
+                        </div>
+                        {idComment === replyCmt.repid && status === "REP"?
+                        <div>
+                          <Input className="mb-2 text-lg rounded-lg p-2" value={update} onChange={(e)=>{setUpdate(e.target.value)}}></Input>
+                          <div className="flex gap-3 mb-2">
+                            <Button gradientMonochrome="info" className="w-28 h-9 p-0" disabled={update === "" || update === replyCmt.repCmt} 
+                              onClick={handleUpdateComment}>
+                                xác nhận
+                            </Button>
+                            <Button gradientMonochrome="failure" className="w-20 h-9 p-0" onClick={()=>{setIdComment(0)}}>Hủy</Button>
+                          </div>
+                        </div>
+                        :
+                        <p className="mb-2 text-lg">{replyCmt.repCmt}</p>  
+                        }
+                        {/* <p className="cursor-pointer hover:underline text-slate-600">Thích</p> */}
+                        <div className="flex gap-2">
+                          {replyCmt.repIsLoved ? 
+                          <FaHeart className="cursor-pointer w-5 h-5 text-rose-500 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP"})}}></FaHeart>
+                          :
+                          <FaRegHeart className="cursor-pointer w-5 h-5 text-gray-700 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP"})}}></FaRegHeart>
+                          } 
+                          <p>{replyCmt.repLove}</p>
+                        </div>
+                        <hr className="w-80"></hr>
+                      </div>
+                      )}
+                      {reply === cmt.id && 
+                      <div className="relative w-full mt-3 flex gap-3 items-center justify-center">
+                        <img className="h-10 w-10 rounded-full object-cover drop-shadow-md" src={user?.data?.Avt || require("../Images/pattientavt.png")} alt=""></img>
+                        <TextArea className="rounded-xl p-3 " placeholder="Nhập bình luận" value={repCmtData} onChange={(e) => setRepCmtData(e.target.value)}></TextArea>
+                        <div className="absolute w-10 h-10 cursor-pointer right-20 flex items-center justify-center">
+                          <BsSendArrowUpFill className="text-blue-500 rotate-45 h-6 w-6 " disabled={cmt === ""} onClick={handleCreateComment}></BsSendArrowUpFill>
+                        </div>
+                        <IoIosCloseCircleOutline className="h-8 w-8 text-red-400 cursor-pointer" onClick={()=>{setReply(0)}}/>
+                      </div>
+                      }
+                    </div>
+                  </div>
+                  <hr className="w-full"></hr>
+                </div>
+              )}
+              </div>  
+            </div>
           </div>
 
-          <div className="bg-white border rounded-xl drop-shadow-lg w-[25%] max-h-[180px] px-2 grid grid-rows-3 justify-items-center">
+          <div className="max-lg:my-7 max-lg:w-full bg-white border rounded-xl drop-shadow-lg w-[25%] max-h-[180px] px-2 grid grid-rows-3 justify-items-center">
             <img
               className="rounded-full w-[60px] h-[60px] mt-2 object-contain drop-shadow-sm"
-              src={require("../Images/doctor1.jpg")}
+              src={detailPost[0]?.Avt || require("../Images/pattientavt.png")}
               alt=""
             ></img>
             <div className="grid place-items-center py-2">
@@ -59,11 +317,12 @@ const BlogPage = () => {
             <div className="grid place-items-center w-full py-2">
               <hr className="w-[90%]"></hr>
               <div className="text-sm text-center">
-                {/* <div>Ngày đăng: {detailPost[0]?.DatePost.slice(0, 10)}</div> */}
+                <div>Ngày đăng: {detailPost[0]?.DatePost.slice(0, 10)}</div>
               </div>
             </div>
           </div>
         </div>
+        
       </div>
     </div>
   );

@@ -8,11 +8,11 @@ import SpecialtiesIcon from "../Images/specialties-icon.svg";
 import { IoIosArrowForward } from "react-icons/io";
 import Slider from "react-slick";
 import { useDispatch, useSelector } from "react-redux";
-import { authentication, fetchProfile } from "../redux-toolkit/authSlice";
+import { fetchProfile,getAllDoctors } from "../redux-toolkit/authSlice";
 import { getAllPost } from "../redux-toolkit/postSlice";
 
 const HomePage = () => {
-  const { currentUser, auth, user, error, loading, updated } = useSelector(
+  const { currentUser,doctors, auth, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
   // console.log(auth);
@@ -38,20 +38,11 @@ const HomePage = () => {
     slidesToScroll: 1,
   };
   const [currentIndex, setCurrentIndex] = useState(0);
-
   const nextSlide = useCallback(() => {
     const isLastSlide = currentIndex === slides.length - 1;
     const newIndex = isLastSlide ? 0 : currentIndex + 1;
     setCurrentIndex(newIndex);
   }, [currentIndex, slides.length]);
-  useEffect(() => {
-    if (currentUser) {
-      dispatch(fetchProfile());
-    }
-    dispatch(getAllPost());
-  }, [currentUser]);
-
-  console.log(allPost);
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
@@ -61,14 +52,49 @@ const HomePage = () => {
   const goToSlide = (slideIndex) => {
     setCurrentIndex(slideIndex);
   };
+
+  useEffect(() => {
+    if (currentUser) {
+      dispatch(fetchProfile());
+    }
+    dispatch(getAllPost());
+    dispatch(getAllDoctors());
+  }, [currentUser]);
+
+  
+  let heartDiseases = []
+  for (let i = 0; i < allPost?.length; i++)
+    if(allPost[i].Categories === "Bệnh tim mạch")
+    {
+      if(heartDiseases.length < 3)
+        heartDiseases.push({...allPost[i]});
+    }
+  let digestiveDiseases = []
+  for (let i = 0; i < allPost?.length; i++)
+    if(allPost[i].Categories === "Bệnh tiêu hóa")
+    {
+      if(digestiveDiseases.length < 3)
+        digestiveDiseases.push({...allPost[i]});
+    }
+  let diabetesDiseases = []
+  for (let i = 0; i < allPost?.length; i++)
+    if(allPost[i].Categories === "Tiểu đường")
+    {
+      if(diabetesDiseases.length < 3)
+        diabetesDiseases.push({...allPost[i]});
+    }
+  const path = (name, id) => {
+    const x = name + "_" + id;
+    return x;
+  };
   return (
-    <div className="">
-      <div className="max-w-[95%] h-[740px] w-full m-auto pt-[70px] pb-[40px] px-4 relative group drop-shadow-md">
+    <div className="pt-[72px]">
+      <div className="max-w-[95%] h-[740px] w-full max-sm:h-[560px] max-sm:pt-16 m-auto pb-[40px] px-4 relative group drop-shadow-md">
         <div
           style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
-          className="w-full h-full transition-full rounded-3xl bg-center bg-cover duration-500"
+          className="w-full lg:h-full max-sm:h-1/3 transition-full rounded-3xl bg-center bg-cover duration-500"
         ></div>
-        <div className="hidden group-hover:block absolute top-[50%] -translate-x-0 translate-y-[-50%] right-5 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">
+        <div className="hidden group-hover:block absolute max-sm:top-[25%] top-[50%] -translate-x-0 translate-y-[-50%] right-5 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">
           <BsChevronCompactRight onClick={nextSlide} size={30} />
         </div>
         <div className="flex top-4 justify-center py-2">
@@ -80,7 +106,7 @@ const HomePage = () => {
             ></div>
           ))}
         </div>
-        <div className="absolute top-[300px] h-[250px] w-[420px] pt-8 bg-white bg-opacity-75 rounded-[32px] grid grid-rows-2 items-center justify-center">
+        <div className="absolute top-[300px] max-sm:top-[300px] max-sm:left-[40px] h-[250px] lg:w-[420px] max-sm:h-[200px] max-sm:w-3/4 pt-8 bg-white bg-opacity-75 rounded-[32px] grid grid-rows-2 items-center justify-center">
           <img
             src={HearIcon}
             className="absolute left-[-14px] top-[-30px]"
@@ -91,7 +117,7 @@ const HomePage = () => {
             className="absolute right-[-50px] bottom-[30px]"
             alt="HeartIcon"
           />
-          <div className="text-4xl font-medium w-[380px] text-[#059669]">
+          <div className="text-4xl max-sm:text-2xl font-medium w-[380px] max-sm:w-[280px] text-[#059669]">
             Lựa chọn thông minh cho sức khỏe gia đình
           </div>
           <button className="w-[200px] h-[50px] rounded-3xl bg-gradient-to-r from-green-400 to-teal-500 text-white font-medium hover:drop-shadow-xl transition-transform duration-500 hover:scale-110">
@@ -99,23 +125,23 @@ const HomePage = () => {
           </button>
         </div>
       </div>
-      <div className="mx-[48px] mb-10">
+      <div className="lg:mx-[48px] max-sm:px-7 sm:px-7 mb-10">
         <div className="h-[44px] w-[150px] flex items-center justify-center p-1 mb-6 rounded-3xl bg-teal-50 text-blue-500 font-medium drop-shadow-lg">
           Bài viết mới nhất
         </div>
 
-        <div className="w-full flex gap-x-7">
+        <div className="w-full lg:flex gap-x-7">
           <div
-            className="w-3/5 cursor-pointer"
+            className="lg:w-3/5 max-sm:w-full cursor-pointer"
             onClick={() => Navigate(`/blog/${allPost[0].id}`)}
           >
             <img
-              className="h-[450px] w-full rounded-xl mb-2 bg-cover drop-shadow-lg"
+              className="lg:h-[450px] max-sm:h-[230px] w-full rounded-xl mb-2 bg-cover drop-shadow-lg"
               src={allPost[0]?.FeaturedImage}
               alt=""
             ></img>
             <div className="text-teal-500 mb-2">{allPost[0]?.Similar}</div>
-            <div className="text-slate-800 text-xl font-medium mb-2">
+            <div className="text-slate-800 text-ellipsis text-xl font-medium mb-2">
               {allPost[0]?.Title}
             </div>
             <p className="h-[76px] text-slate-600 text-base text-justify text-ellipsis overflow-hidden mb-4">
@@ -123,30 +149,32 @@ const HomePage = () => {
             </p>
             <div className="flex gap-2 text-base items-center">
               <img
-                className="h-[35px] w-[35px] rounded-full mb-2 bg-cover drop-shadow-md"
+                className="h-8 w-8 rounded-full bg-cover drop-shadow-md"
                 src={allPost[0]?.Avt}
                 alt=""
               ></img>
               <div className="font-medium">
                 {allPost[0]?.FirstName + " " + allPost[0]?.LastName} -
               </div>
-              <div> Ngày đăng: {allPost[0]?.DatePost?.slice(0, 10)}</div>
+              <div> {allPost[0]?.DatePost?.slice(0, 10)}</div>
             </div>
           </div>
-          <div className="grid grid-rows-3 w-2/5">
+          <div className="lg:grid max-sm:mt-5 max-sm:gap-3 lg:grid-rows-3 lg:w-2/5 max-sm:w-full">
             <div className="row-span-2 cursor-pointer w-full pb-5 border-b-[1.5px]">
               <img
-                className="h-[280px] w-full rounded-xl mb-1 bg-cover drop-shadow-lg"
+                className="h-[280px] w-full rounded-xl mb-4 bg-cover drop-shadow-lg"
                 src={allPost[1]?.FeaturedImage}
                 alt=""
+                onClick={() => Navigate(`/blog/${allPost[1].id}`)}
               ></img>
-              <div className="text-teal-500 mb-1">{allPost[1]?.Similar}</div>
-              <div className="text-slate-800 text-lg font-medium mb-4">
+              <div className="text-teal-500 mb-4">{allPost[1]?.Similar}</div>
+              <div className="text-slate-800 text-lg text-ellipsis font-medium mb-4"
+                   onClick={() => Navigate(`/blog/${allPost[1].id}`)}>
                 {allPost[1]?.Title}
               </div>
               <div className="flex gap-2 text-base items-center">
                 <img
-                  className="h-[35px] w-[35px] rounded-full drop-shadow-md"
+                  className="h-8 w-8 rounded-full drop-shadow-md"
                   src={allPost[1]?.Avt}
                   alt=""
                 ></img>
@@ -156,33 +184,34 @@ const HomePage = () => {
                 <div>{allPost[1]?.DatePost}</div>
               </div>
             </div>
+
             <div className="cursor-pointer w-full pt-5">
-              <div className=" flex gap-3 mb-2">
-                <div>
-                  <div className="text-teal-500 mb-2">
+              <div className=" flex gap-3">
+                <div className="w-3/5">
+                  <div className="text-teal-500 mb-4">
                     {allPost[2]?.Similar}
                   </div>
-                  <div className="text-slate-800 text-lg font-medium">
+                  <div className="text-slate-800 text-lg max-sm:mb-3 font-medium lg:mb-8 text-ellipsis overflow-hidden" onClick={() => Navigate(`/blog/${allPost[2].id}`)}>
                     {allPost[2]?.Title}
+                  </div>
+                  <div className="flex gap-2 text-base items-center self-end">
+                    <img
+                      className="h-8 w-8 rounded-full drop-shadow-md"
+                      src={allPost[2]?.Avt}
+                      alt=""
+                    ></img>
+                    <div className="overflow-hidden text-ellipsis font-medium">
+                      {allPost[2]?.FirstName + " " + allPost[2]?.LastName}
+                    </div>
+                    <div>{allPost[2]?.DatePost}</div>
                   </div>
                 </div>
                 <img
-                  className="h-[140px] w-[180px] rounded-xl bg-cover drop-shadow-lg"
+                  className="h-[140px] w-2/5 rounded-xl bg-cover drop-shadow-lg"
                   src={allPost[2]?.FeaturedImage}
                   alt=""
+                  onClick={() => Navigate(`/blog/${allPost[2].id}`)}
                 ></img>
-              </div>
-
-              <div className="flex gap-2 text-base items-center">
-                <img
-                  className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                  src={allPost[2]?.Avt}
-                  alt=""
-                ></img>
-                <div className="font-medium">
-                  {allPost[2]?.FirstName + " " + allPost[2]?.LastName} -
-                </div>
-                <div>{allPost[2]?.DatePost}</div>
               </div>
             </div>
           </div>
@@ -191,8 +220,8 @@ const HomePage = () => {
         <div className="text-2xl font-medium text-slate-800 mb-3">
           Đội ngũ chuyên gia của Doctor Coming
         </div>
-        <div className="flex gap-x-7 mb-[60px]">
-          <div className="w-[55%]">
+        <div className="md:flex gap-x-7 mb-15">
+          <div className="w-[58%] max-sm:w-full max-sm:pb-7">
             <p className="block text-slate-600 text-[17px] mb-5 text-justify rounded-xl italic">
               Đội ngũ cố vấn của Doctor Coming gồm các chuyên gia sức khỏe và y
               bác sĩ từ nhiều chuyên khoa, với đầy đủ chứng nhận, chứng chỉ hành
@@ -204,13 +233,15 @@ const HomePage = () => {
               hữu ích có thể dễ dàng tiếp cận đến bạn đọc, giúp bạn chủ động hơn
               trong các quyết định chăm sóc sức khỏe.
             </p>
-
-            <div className="h-[50px] w-[200px] flex items-center justify-center p-1 rounded-3xl bg-gradient-to-r from-green-400 to-teal-500 text-white font-medium hover:drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105">
+            <div className="h-[50px] w-[200px] flex items-center justify-center p-1 rounded-3xl bg-gradient-to-r from-green-400 to-teal-500 text-white font-medium hover:drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105"
+                 onClick={() => Navigate("/doctors")}>
               Xem thêm chuyên gia
             </div>
           </div>
-          <div className="flex gap-4 w-[50%]">
-            <div className="w-1/2 grid grid-rows-1 gap-2 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105">
+          <div className="flex gap-4 w-[42%] max-sm:w-full max-sm:mb-7">
+            {doctors?.slice(0,2).map((doctor) =>
+            <div onClick={()=>Navigate(`doctors/${path(doctor.FirstName + doctor.LastName, doctor.id)}`)} 
+                 className="w-1/2 grid grid-rows-1 gap-2 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105">
               <div className="relative w-[100%] flex justify-center mb-3">
                 <img
                   className="rounded-3xl w-full h-[150px] rol-start-1 shadow-lg"
@@ -219,13 +250,13 @@ const HomePage = () => {
                 ></img>
                 <img
                   className="absolute top-0 h-[150px] mx-auto object-contain"
-                  src={require("../Images/doctor1.jpg")}
+                  src={doctor.Avt}
                   alt=""
                 ></img>
               </div>
               <div className="w-full">
                 <p className="font-medium text-base text-slate-800 mb-4 text-center">
-                  ThS. BS. Nguyễn Sơn Lâm
+                  ThS. BS. {doctor.FirstName + " " + doctor.LastName}
                 </p>
                 <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
                   <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
@@ -236,7 +267,7 @@ const HomePage = () => {
                     />
                   </div>
                   <p className="w-[85%]">
-                    Bệnh viện Đại học Y Dược Thành Phố Hồ Chí Minh
+                    Bác sĩ {doctor.Major}
                   </p>
                 </div>
                 <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
@@ -247,55 +278,13 @@ const HomePage = () => {
                       alt="SpecialtiesIcon"
                     />
                   </div>
-                  <p className="w-[85%] flex gap-1">
-                    <p className="font-medium">12</p> năm kinh nghiệm
+                  <p className="w-[85%] gap-1">
+                    <span className="font-medium">{doctor.Experience}</span> năm kinh nghiệm
                   </p>
                 </div>
               </div>
             </div>
-            <div className="w-1/2 grid grid-rows-1 gap-2 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105">
-              <div className="relative w-[100%] flex justify-center mb-3">
-                <img
-                  className="rounded-3xl w-full h-[150px] rol-start-1 shadow-lg"
-                  src={require("../Images/backgroundDoctor.jpg")}
-                  alt=""
-                ></img>
-                <img
-                  className="absolute top-0 h-[150px] mx-auto object-contain"
-                  src={require("../Images/doctor1.jpg")}
-                  alt=""
-                ></img>
-              </div>
-              <div className="w-full ">
-                <p className="font-medium text-base text-slate-800 mb-4 text-center">
-                  ThS. BS. Nguyễn Sơn Lâm
-                </p>
-                <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
-                  <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
-                    <img
-                      src={HospitalIcon}
-                      className="w-5 h-5"
-                      alt="HeartIcon"
-                    />
-                  </div>
-                  <p className="w-[85%]">
-                    Bệnh viện Đại học Y Dược Thành Phố Hồ Chí Minh
-                  </p>
-                </div>
-                <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
-                  <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
-                    <img
-                      src={SpecialtiesIcon}
-                      className="w-5 h-5"
-                      alt="SpecialtiesIcon"
-                    />
-                  </div>
-                  <p className="w-[85%] flex gap-1">
-                    <p className="font-medium">12</p> năm kinh nghiệm
-                  </p>
-                </div>
-              </div>
-            </div>
+             )}
           </div>
         </div>
         <div className="mb-[50px]">
@@ -303,109 +292,41 @@ const HomePage = () => {
             <div className="text-2xl font-medium text-slate-800 flex items-center">
               Bệnh tim mạch
             </div>
-            <a className=" flex items-center" href="/">
+            <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("categories/Bệnh tim mạch")}>
               <span className="text-base text-blue-500">Xem thêm </span>
               <IoIosArrowForward className="text-blue-500 mt-1 h-[15px] w-[15px]"></IoIosArrowForward>
-            </a>
+            </div>
           </div>
           <Slider {...settings}>
-            {/* <div className="cursor-pointer w-full pt-5 flex gap-5"> */}
-            <div className="!flex gap-7 cursor-pointer w-[575px]">
+            {heartDiseases.length > 0 && heartDiseases.map((disease) => 
+            <div className="md:!flex gap-7 max-sm:mb-7 cursor-pointer w-[575px]">
               <img
-                className="h-[200px] w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"
-                src={require("../Images/banner-01.jpg")}
+                className="h-[200px] max-sm:w-full w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"
+                src={disease.FeaturedImage}
                 alt=""
               ></img>
               <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2">Bệnh cúm</div>
+                <div className="text-teal-500 mb-2" onClick={()=>Navigate(`categories/Bệnh tim mạch/${disease.Similar}`)}>{disease.Similar}</div>
                 <div className="text-slate-800 text-lg font-medium mb-2">
-                  Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm
-                  A?
+                  {disease.Title}
                 </div>
-                <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                  Có 4 loại virus cúm: A, B, C và D. Trong đó, virus cúm A là
-                  loại virus cúm duy nhất được biết là gây ra đại dịch cúm trên
-                  toàn cầu. Vậy, cúm A có nguy hiểm không mà được coi là đại
-                  dịch và làm cách nào để tránh các hậu quả nghiêm trọng?
+                <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-5">
+                  {disease.Brief}
                 </div>
                 <div className="flex gap-2 text-base items-center">
                   <img
-                    className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                    src={require("../Images/doctor.webp")}
+                    className="h-8 w-8 rounded-full bg-cover drop-shadow-md"
+                    src={disease.Avt}
                     alt=""
                   ></img>
-                  <div className="">
-                    <span className="">Tham vấn y khoa:</span>
-                    <span className="font-medium"> Bác sĩ Thu uyên</span>
-                    <span> 11/03/2024</span>
+                  <div className="font-medium">
+                    {disease.FirstName + " " + disease.LastName} -
                   </div>
+                  <div> Ngày đăng: {disease.DatePost?.slice(0, 10)}</div>
                 </div>
               </div>
             </div>
-            <div className="!flex gap-7 cursor-pointer w-[575px]">
-              <img
-                className="h-[200px] w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"
-                src={require("../Images/banner-01.jpg")}
-                alt=""
-              ></img>
-              <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2">Bệnh cúm</div>
-                <div className="text-slate-800 text-lg font-medium mb-2">
-                  Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm
-                  A?
-                </div>
-                <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                  Có 4 loại virus cúm: A, B, C và D. Trong đó, virus cúm A là
-                  loại virus cúm duy nhất được biết là gây ra đại dịch cúm trên
-                  toàn cầu. Vậy, cúm A có nguy hiểm không mà được coi là đại
-                  dịch và làm cách nào để tránh các hậu quả nghiêm trọng?
-                </div>
-                <div className="flex gap-2 text-base items-center">
-                  <img
-                    className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                    src={require("../Images/doctor.webp")}
-                    alt=""
-                  ></img>
-                  <div className="">
-                    <span className="">Tham vấn y khoa:</span>
-                    <span className="font-medium"> Bác sĩ Thu uyên</span>
-                    <span> 11/03/2024</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="!flex gap-7 cursor-pointer w-[575px]">
-              <img
-                className="h-[200px] w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"
-                src={require("../Images/banner-01.jpg")}
-                alt=""
-              ></img>
-              <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2">Bệnh cúm</div>
-                <div className="text-slate-800 text-lg font-medium mb-2">
-                  Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm
-                  A?
-                </div>
-                <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                  Có 4 loại virus cúm: A, B, C và D. Trong đó, virus cúm A là
-                  loại virus cúm duy nhất được biết là gây ra đại dịch cúm trên
-                  toàn cầu. Vậy, cúm A có nguy hiểm không mà được coi là đại
-                  dịch và làm cách nào để tránh các hậu quả nghiêm trọng?
-                </div>
-                <div className="flex gap-2 text-base items-center">
-                  <img
-                    className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                    src={require("../Images/doctor.webp")}
-                    alt=""
-                  ></img>
-                  <div className="">
-                    <span className="">Tham vấn y khoa:</span>
-                    <span className="font-medium"> Bác sĩ Thu uyên</span>
-                    <span> 11/03/2024</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </Slider>
         </div>
         <div className="mb-[50px]">
@@ -419,109 +340,41 @@ const HomePage = () => {
             </a>
           </div>
           <Slider {...settings}>
-            {/* <div className="cursor-pointer w-full pt-5 flex gap-5"> */}
-            <div className="!flex gap-7 cursor-pointer w-[575px]">
+            {heartDiseases.length > 0 && heartDiseases.map((disease) => 
+            <div className="md:!flex gap-7 max-sm:mb-7 cursor-pointer w-[575px]">
               <img
-                className="h-[200px] w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"
-                src={require("../Images/banner-01.jpg")}
+                className="h-[200px] w-[280px] max-sm:w-full rounded-xl mb-2 bg-cover drop-shadow-lg"
+                src={disease.FeaturedImage}
                 alt=""
               ></img>
               <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2">Bệnh cúm</div>
+                <div className="text-teal-500 mb-2">{disease.Similar}</div>
                 <div className="text-slate-800 text-lg font-medium mb-2">
-                  Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm
-                  A?
+                  {disease.Title}
                 </div>
                 <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                  Có 4 loại virus cúm: A, B, C và D. Trong đó, virus cúm A là
-                  loại virus cúm duy nhất được biết là gây ra đại dịch cúm trên
-                  toàn cầu. Vậy, cúm A có nguy hiểm không mà được coi là đại
-                  dịch và làm cách nào để tránh các hậu quả nghiêm trọng?
+                  {disease.Brief}
                 </div>
                 <div className="flex gap-2 text-base items-center">
                   <img
-                    className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                    src={require("../Images/doctor.webp")}
+                    className="h-8 w-8 rounded-full bg-cover drop-shadow-md"
+                    src={disease.Avt}
                     alt=""
                   ></img>
-                  <div className="">
-                    <span className="">Tham vấn y khoa:</span>
-                    <span className="font-medium"> Bác sĩ Thu uyên</span>
-                    <span> 11/03/2024</span>
+                  <div className="font-medium">
+                    {disease.FirstName + " " + disease.LastName} -
                   </div>
+                  <div> Ngày đăng: {disease.DatePost?.slice(0, 10)}</div>
                 </div>
               </div>
             </div>
-            <div className="!flex gap-7 cursor-pointer w-[575px]">
-              <img
-                className="h-[200px] w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"
-                src={require("../Images/banner-01.jpg")}
-                alt=""
-              ></img>
-              <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2">Bệnh cúm</div>
-                <div className="text-slate-800 text-lg font-medium mb-2">
-                  Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm
-                  A?
-                </div>
-                <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                  Có 4 loại virus cúm: A, B, C và D. Trong đó, virus cúm A là
-                  loại virus cúm duy nhất được biết là gây ra đại dịch cúm trên
-                  toàn cầu. Vậy, cúm A có nguy hiểm không mà được coi là đại
-                  dịch và làm cách nào để tránh các hậu quả nghiêm trọng?
-                </div>
-                <div className="flex gap-2 text-base items-center">
-                  <img
-                    className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                    src={require("../Images/doctor.webp")}
-                    alt=""
-                  ></img>
-                  <div className="">
-                    <span className="">Tham vấn y khoa:</span>
-                    <span className="font-medium"> Bác sĩ Thu uyên</span>
-                    <span> 11/03/2024</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="!flex gap-7 cursor-pointer w-[575px]">
-              <img
-                className="h-[200px] w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"
-                src={require("../Images/banner-01.jpg")}
-                alt=""
-              ></img>
-              <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2">Bệnh cúm</div>
-                <div className="text-slate-800 text-lg font-medium mb-2">
-                  Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm
-                  A?
-                </div>
-                <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                  Có 4 loại virus cúm: A, B, C và D. Trong đó, virus cúm A là
-                  loại virus cúm duy nhất được biết là gây ra đại dịch cúm trên
-                  toàn cầu. Vậy, cúm A có nguy hiểm không mà được coi là đại
-                  dịch và làm cách nào để tránh các hậu quả nghiêm trọng?
-                </div>
-                <div className="flex gap-2 text-base items-center">
-                  <img
-                    className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                    src={require("../Images/doctor.webp")}
-                    alt=""
-                  ></img>
-                  <div className="">
-                    <span className="">Tham vấn y khoa:</span>
-                    <span className="font-medium"> Bác sĩ Thu uyên</span>
-                    <span> 11/03/2024</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </Slider>
         </div>
         <div className="mb-[50px]">
           <div className="flex gap-x-7 mb-3">
             <div className="text-2xl font-medium text-slate-800 flex items-center">
-              Bệnh tiểu đường
+              Tiểu đường
             </div>
             <a className=" flex items-center" href="/">
               <span className="text-base text-blue-500">Xem thêm </span>
@@ -529,110 +382,42 @@ const HomePage = () => {
             </a>
           </div>
           <Slider {...settings}>
-            {/* <div className="cursor-pointer w-full pt-5 flex gap-5"> */}
-            <div className="!flex gap-7 cursor-pointer w-[575px]">
+            {diabetesDiseases.length > 0 && diabetesDiseases.map((disease) => 
+            <div className="md:!flex gap-7 max-sm:mb-7 cursor-pointer w-[575px]">
               <img
-                className="h-[200px] w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"
-                src={require("../Images/banner-01.jpg")}
+                className="h-[200px] w-[280px] max-sm:w-full rounded-xl mb-2 bg-cover drop-shadow-lg"
+                src={disease.FeaturedImage}
                 alt=""
               ></img>
               <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2">Bệnh cúm</div>
+                <div className="text-teal-500 mb-2">{disease.Similar}</div>
                 <div className="text-slate-800 text-lg font-medium mb-2">
-                  Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm
-                  A?
+                  {disease.Title}
                 </div>
                 <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                  Có 4 loại virus cúm: A, B, C và D. Trong đó, virus cúm A là
-                  loại virus cúm duy nhất được biết là gây ra đại dịch cúm trên
-                  toàn cầu. Vậy, cúm A có nguy hiểm không mà được coi là đại
-                  dịch và làm cách nào để tránh các hậu quả nghiêm trọng?
+                  {disease.Brief}
                 </div>
                 <div className="flex gap-2 text-base items-center">
                   <img
-                    className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                    src={require("../Images/doctor.webp")}
+                    className="h-8 w-8 rounded-full bg-cover drop-shadow-md"
+                    src={disease.Avt}
                     alt=""
                   ></img>
-                  <div className="">
-                    <span className="">Tham vấn y khoa:</span>
-                    <span className="font-medium"> Bác sĩ Thu uyên</span>
-                    <span> 11/03/2024</span>
+                  <div className="font-medium">
+                    {disease.FirstName + " " + disease.LastName} -
                   </div>
+                  <div> Ngày đăng: {disease.DatePost?.slice(0, 10)}</div>
                 </div>
               </div>
             </div>
-            <div className="!flex gap-7 cursor-pointer w-[575px]">
-              <img
-                className="h-[200px] w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"
-                src={require("../Images/banner-01.jpg")}
-                alt=""
-              ></img>
-              <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2">Bệnh cúm</div>
-                <div className="text-slate-800 text-lg font-medium mb-2">
-                  Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm
-                  A?
-                </div>
-                <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                  Có 4 loại virus cúm: A, B, C và D. Trong đó, virus cúm A là
-                  loại virus cúm duy nhất được biết là gây ra đại dịch cúm trên
-                  toàn cầu. Vậy, cúm A có nguy hiểm không mà được coi là đại
-                  dịch và làm cách nào để tránh các hậu quả nghiêm trọng?
-                </div>
-                <div className="flex gap-2 text-base items-center">
-                  <img
-                    className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                    src={require("../Images/doctor.webp")}
-                    alt=""
-                  ></img>
-                  <div className="">
-                    <span className="">Tham vấn y khoa:</span>
-                    <span className="font-medium"> Bác sĩ Thu uyên</span>
-                    <span> 11/03/2024</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="!flex gap-7 cursor-pointer w-[575px]">
-              <img
-                className="h-[200px] w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"
-                src={require("../Images/banner-01.jpg")}
-                alt=""
-              ></img>
-              <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2">Bệnh cúm</div>
-                <div className="text-slate-800 text-lg font-medium mb-2">
-                  Cúm A có nguy hiểm không? Làm gì để phòng tránh biến chứng cúm
-                  A?
-                </div>
-                <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                  Có 4 loại virus cúm: A, B, C và D. Trong đó, virus cúm A là
-                  loại virus cúm duy nhất được biết là gây ra đại dịch cúm trên
-                  toàn cầu. Vậy, cúm A có nguy hiểm không mà được coi là đại
-                  dịch và làm cách nào để tránh các hậu quả nghiêm trọng?
-                </div>
-                <div className="flex gap-2 text-base items-center">
-                  <img
-                    className="h-[35px] w-[35px] rounded-full mb-2 drop-shadow-md"
-                    src={require("../Images/doctor.webp")}
-                    alt=""
-                  ></img>
-                  <div className="">
-                    <span className="">Tham vấn y khoa:</span>
-                    <span className="font-medium"> Bác sĩ Thu uyên</span>
-                    <span> 11/03/2024</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </Slider>
         </div>
 
         <div className="flex items-center justify-center text-2xl text-slate-800 font-medium py-10 ">
           Doctor Coming đem đến thông tin sức khỏe mà bạn cần
         </div>
-        <div className="grid grid-cols-4 gap-4 justify-items-center">
+        <div className="grid md:grid-cols-4 max-sm:grid-rows-4 gap-4 justify-items-center">
           <div className="bg-lime-50 rounded-xl drop-shadow-xl">
             <img
               className="mb-3"

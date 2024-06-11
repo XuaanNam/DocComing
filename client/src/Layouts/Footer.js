@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <div>
       <div className="bg-teal-600 text-center text-gray-100 dark:bg-neutral-600 dark:text-neutral-200 lg:text-left">
-        <div className="flex items-center justify-center border-b-[1.5px] border-neutral-200 p-6 dark:border-neutral-500 lg:justify-between">
+        <div className="flex lg:gap-4 items-center justify-center border-b-[1.5px] border-neutral-200 p-6 dark:border-neutral-500 lg:justify-between">
           <div className="mr-12 hidden lg:block">
             <span className="text-base font-medium">
               Liên hệ với chúng tôi thông qua
@@ -92,7 +92,7 @@ const Footer = () => {
                 </svg>
                 DOCTOR COMING
               </h6>
-              <p className="text-lg w-2/3 italic font-medium">
+              <p className="text-lg w-2/3 max-lg:w-full italic font-medium items-center justify-center">
                 Lựa chọn thông minh cho sức khỏe gia đình
               </p>
             </div>

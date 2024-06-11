@@ -75,13 +75,13 @@ const Register = () => {
   console.log(formErrors?.email);
   return (
     <div>
-      <div className="flex items-center bg-lime-50 justify-center pt-[70px] p-9">
-        <div className="w-[45%] p-5 flex items-center  bg-white shadow-lg rounded-xl mt-10">
-          <form onSubmit={handleSubmit} className="w-96 flex flex-col mx-auto">
-            <div className="text-2xl font-bold text-teal-800 text-center">
+      <div className="flex items-center bg-white justify-center lg:pt-[70px] max-lg:pt-[80px] p-9">
+        <div className="lg:w-[45%] lg:p-5 max-lg:w-full max-lg:pt-6 max-lg:mt-5 flex items-center  bg-white shadow-lg rounded-xl lg:mt-10">
+          <form onSubmit={handleSubmit} className="sm:w-96 max-sm:w-[100%] flex flex-col sm:mx-auto max-sm:px-5">
+            <div className="text-2xl font-bold text-teal-800 text-center max-sm:w-full">
               Đăng ký tài khoản bệnh nhân
             </div>
-            <p className="text-lg opacity-70 mt-3 mb-3 text-center">
+            <p className="text-lg opacity-70 mt-3 mb-3 text-center max-sm:w-full">
               Vui lòng nhập thông tin
             </p>
             <input
@@ -92,7 +92,7 @@ const Register = () => {
               onChange={handleChange}
               className={` ${
                 formErrors?.fullname ? "border-b-red-500" : "border-b-slate-200"
-              } py-2 mb-3 w-96 h-12 focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg opacity-80 items-center focus:border-b-teal-400`}
+              } py-2 mb-3 sm:w-96 max-sm:w-full h-12 focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg opacity-80 items-center focus:border-b-teal-400`}
             ></input>
             <p className="text-red-500">{formErrors?.fullname}</p>
             <input
@@ -103,7 +103,7 @@ const Register = () => {
               onChange={handleChange}
               className={` ${
                 formErrors?.email ? "border-b-red-500" : "border-b-slate-200"
-              } py-2 mb-3 w-96 h-12 focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg opacity-80 items-center focus:border-b-teal-400`}
+              } py-2 mb-3 sm:w-96 max-sm:w-full h-12 focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg opacity-80 items-center focus:border-b-teal-400`}
             ></input>
             <p className="text-red-500">{formErrors?.email}</p>
             <input
@@ -114,7 +114,7 @@ const Register = () => {
               placeholder="Mật khẩu"
               className={` ${
                 formErrors?.password ? "border-b-red-500" : "border-b-slate-200"
-              } py-2 mb-3 w-96 h-12 focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg opacity-80 items-center focus:border-b-teal-400`}
+              } py-2 mb-3 sm:w-96 max-sm:w-full h-12 focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg opacity-80 items-center focus:border-b-teal-400`}
             ></input>
             <p className="text-red-500">{formErrors?.password}</p>
 
@@ -128,7 +128,7 @@ const Register = () => {
                 formErrors?.confirmPassword
                   ? "border-b-red-500"
                   : "border-b-slate-200"
-              } py-2 mb-3 w-96 h-12 focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg opacity-80 items-center focus:border-b-teal-400`}
+              } py-2 mb-3 sm:w-96 max-sm:w-full h-12 focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg opacity-80 items-center focus:border-b-teal-400`}
             ></input>
             <p className="text-red-500 flex self-start justify-start">
               {formErrors?.confirmPassword}
@@ -136,11 +136,11 @@ const Register = () => {
 
             <button
               type="submit"
-              className="h-12 w-96 border rounded-xl my-5 py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
+              className="h-12 sm:w-96 max-sm:w-full border rounded-xl my-5 py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
             >
               Tiếp tục
             </button>
-            <p className="justify-end opacity-70 flex gap-2">
+            <p className="sm:justify-end max-sm:justify-center opacity-70 flex gap-2">
               Nếu đã đăng ký,
               <a className="text-teal-500" href="/login">
                 Đăng nhập ở đây

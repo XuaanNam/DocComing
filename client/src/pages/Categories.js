@@ -1,6 +1,16 @@
-import React from "react";
+import React, { useEffect } from "react";
+import {fetchCategories} from "../redux-toolkit/postSlice"
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 const Categories = () => {
+  const dispatch = useDispatch();
+  const Navigate = useNavigate();
+  const { category, error, loading } = useSelector((state) => state.post);
+  console.log(category)
+  useEffect(() => {
+    dispatch(fetchCategories())
+  },[])
   const categories = [
     {
       url: require("../Images/categories/Category1.webp"),
@@ -144,20 +154,21 @@ const Categories = () => {
     },
   ];
   return (
-    <div className="pt-[70px]">
-      <div className="mx-24 mb-14 p-5">
-        <p className="text-slate-700 font-medium text-2xl my-7 text-center">
+    <div className="lg:pt-[70px] max-lg:pt-[80px]">
+      <div className="lg:mx-24 lg:mb-14 lg:p-5 max-lg:px-7 max-lg:pt-7 max-lg:pb-12">
+        <p className="text-slate-700 font-medium text-2xl lg:my-7 max-lg:mb-7 text-center">
           Tất cả chuyên mục
         </p>
-        <div className="flex flex-wrap gap-7">
-          {categories.map((item) => (
+        <div className="flex flex-wrap gap-7 justify-center items-center">
+          {category?.map((item) => (
             <div
               key={item.id}
               className="w-36 h-36 p-3 cursor-pointer rounded-3xl bg-lime-50 shadow-xl flex flex-col items-center justify-center transition-transform duration-500 hover:scale-110"
-            >
-              <img className="h-20 w-20" alt="" src={item.url}></img>
+              onClick={()=>Navigate(`/categories/${item.Categories}`)}
+           >
+              <img className="h-20 w-20" alt="" src={item.Image}></img>
               <p className="font-medium text-gray-500 h-14 flex items-center text-center">
-                {item.name}
+                {item.Categories}
               </p>
             </div>
           ))}

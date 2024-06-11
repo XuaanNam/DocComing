@@ -92,16 +92,16 @@ const AdminProfile = () => {
     setFormData({ ...formData, BirthDate: dateString });
   };
   return (
-    <div className="">
+    <div className="min-h-screen lg:pt-[70px] flex flex-col justify-center items-center">
       {currentUser?.authentication == 0 ? (
-        <div className="mx-16 text-gray-700 flex gap-10 ">
-          <div className="my-7 w-full rounded-xl bg-lime-50 shadow-xl py-5 px-8">
+        <div className="lg:mx-16 max-lg:px-3 text-gray-700 lg:flex lg:gap-10">
+          <div className="my-7 w-full rounded-xl bg-white shadow-lg shadow-violet-200 py-5 max-lg:px-6 lg:px-8">
             <div className="mb-5 grid grid-cols-5 items-center">
-              <p className="font-semibold text-2xl col-span-1">Hồ sơ</p>
+              <p className="font-semibold text-2xl max-lg:col-start-1 max-lg:col-span-2 col-span-1">Hồ sơ</p>
               {edit === false && (
                 <div
                   onClick={handleEdit}
-                  className="flex gap-1 justify-end items-center col-start-5 text-sky-500 cursor-pointer"
+                  className="flex gap-1 justify-end items-center max-lg:col-start-4 max-lg:col-span-2 col-start-5 text-sky-500 cursor-pointer"
                 >
                   <p className="font-medium">Chỉnh sửa</p>
                   <MdEdit />
@@ -109,7 +109,7 @@ const AdminProfile = () => {
               )}
             </div>
 
-            <div className="grid grid-cols-5 gap-8 w-full">
+            <div className="lg:grid lg:grid-cols-5 lg:gap-8 w-full">
               <input
                 type="file"
                 accept="image/*"
@@ -119,30 +119,30 @@ const AdminProfile = () => {
                 hidden
               />
               <div
-                className="relative w-32 h-32 cursor-pointer shadow-md rounded-full col-span-1"
+                className="max-lg:grid max-lg:grid-cols-2 max-lg:gap-1 max-lg:w-full relative lg:w-32 lg:h-32 cursor-pointer shadow-md rounded-full lg:col-span-1"
                 onClick={() => filePickerRef.current.click()}
               >
                 <img
                   src={data?.Avt || require("../../Images/pattientavt.png")}
                   alt="userImage"
-                  className="rounded-full w-full h-full object-cover border-4 border-[lightgray]"
+                  className="max-lg:col-start-1 max-lg:col-span-1 rounded-full w-full h-full object-cover border-4 border-[lightgray]"
                 />
                 <div className="absolute w-8 h-8 rounded-full bg-gray-300 right-1 bottom-1  flex justify-center items-center">
                   <CiCamera></CiCamera>
                 </div>
-                <div className="font-medium text-lg text-center w-full">
+                <div className="max-lg:col-start-2 max-lg:col-span-1 max-lg:text-left max-lg:text-base max-lg:flex max-lg:items-center max-lg:justify-center font-medium lg:text-lg lg:text-center w-full">
                   {data?.FirstName + " " + data?.LastName || currentUser?.name}
                 </div>
               </div>
-              <form className="col-span-4 mb-16">
+              <form className="lg:col-span-4 mb-16">
                 <div className="p-5 bg-white shadow-md rounded-lg">
-                  <div className="flex gap-5 mb-5">
-                    <div className="w-1/2">
+                  <div className="lg:flex lg:gap-5 mb-5">
+                    <div className="lg:w-1/2">
                       <p className="font-medium text-sm mb-2">Họ và tên</p>
                       <Input
                         className={` ${
                           edit && "focus:border-sky-500 "
-                        } w-[90%] bg-white rounded-lg px-2 border-gray-300 h-[44px]`}
+                        } lg:w-[90%] bg-white rounded-lg px-3 border-gray-300 max-lg:mb-4 h-[44px]`}
                         id="FullName"
                         placeholder="--"
                         value={FullName}
@@ -153,12 +153,12 @@ const AdminProfile = () => {
                         disabled={!edit}
                       ></Input>
                     </div>
-                    <div className="w-1/2">
+                    <div className="lg:w-1/2">
                       <p className="font-medium text-sm mb-2">Email</p>
                       <Input
                         className={` ${
                           edit && "focus:border-sky-500 "
-                        } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
+                        } lg:w-[90%] bg-white rounded-lg px-3 border-gray-300 max-lg:mb-4 h-[44px]`}
                         id="Email"
                         placeholder="--"
                         value={data?.Email || ""}
@@ -167,13 +167,13 @@ const AdminProfile = () => {
                     </div>
                   </div>
 
-                  <div className="flex gap-5 mb-5">
-                    <div className="w-1/2">
+                  <div className="lg:flex lg:gap-5 mb-5">
+                    <div className="lg:w-1/2">
                       <p className="font-medium text-sm mb-2">Số điện thoại</p>
                       <Input
                         className={` ${
                           edit && "focus:border-sky-500 "
-                        } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
+                        } lg:w-[90%] bg-white rounded-lg max-lg:mb-4 px-3 border-gray-300 h-[44px]`}
                         id="Phone"
                         placeholder="--"
                         value={
@@ -188,12 +188,12 @@ const AdminProfile = () => {
                         disabled={!edit}
                       ></Input>
                     </div>
-                    <div className="w-1/2">
+                    <div className="lg:w-1/2">
                       <p className="font-medium text-sm mb-2">Địa chỉ</p>
                       <Input
                         className={` ${
                           edit && "focus:border-sky-500 "
-                        } w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
+                        } lg:w-[90%] bg-white rounded-lg px-3 border-gray-300 h-[44px]`}
                         id="Address"
                         placeholder="--"
                         value={
@@ -210,12 +210,12 @@ const AdminProfile = () => {
                     </div>
                   </div>
 
-                  <div className="flex gap-5 mb-5">
-                    <div className="w-1/2">
+                  <div className="lg:flex lg:gap-5 mb-5">
+                    <div className="lg:w-1/2">
                       <p className="font-medium text-sm mb-2">Ngày sinh</p>
                       <DatePicker
                         id="BirthDate"
-                        className="w-[90%] h-[44px] text-lg bg-white border-gray-300 text-gray-900 rounded-lg"
+                        className="max-lg:w-full lg:w-[90%] h-[44px] text-lg max-lg:mb-4 bg-white border-gray-300 text-gray-900 rounded-lg"
                         placeholder="--"
                         value={
                           data?.BirthDate
@@ -227,10 +227,10 @@ const AdminProfile = () => {
                         onChange={onChange}
                       />
                     </div>
-                    <div className="w-1/2">
+                    <div className="lg:w-1/2">
                       <p className="font-medium text-sm mb-2">Giới tính</p>
                       <Select
-                        className="w-[90%] h-[44px] text-lg bg-white border-gray-300 text-gray-900 "
+                        className="max-lg:w-full lg:w-[90%] h-[44px] text-lg bg-white border-gray-300 text-gray-900 "
                         id="Gender"
                         value={data?.Gender}
                         onChange={(value) => {
@@ -251,7 +251,7 @@ const AdminProfile = () => {
                   </div>
                 </div>
                 {edit && (
-                  <div className="flex gap-4 mt-5">
+                  <div className="flex max-lg:justify-end gap-4 mt-5">
                     <Button
                       outline
                       gradientDuoTone="cyanToBlue"

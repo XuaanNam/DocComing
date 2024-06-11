@@ -32,6 +32,8 @@ const DoctorSchedule = () => {
   const [date, setDate] = useState("");
   const [disabled, setDisabled] = useState(true);
   const [optimized, setOptimized] = useState(false);
+  const [serviceChange, setServiceChange] = useState(false)
+  const [scheduleChange, setScheduleChange] = useState(false)
 
   const dateFormat = "DD/MM/YYYY";
   const currentDate = new Date();
@@ -62,6 +64,7 @@ const DoctorSchedule = () => {
   const time2 = ["13:00:00", "14:00:00", "15:00:00", "16:00:00", "17:00:00"];
   const time3 = ["18:00:00", "19:00:00", "20:00:00", "21:00:00", "22:00:00"];
   const handleChange = (value) => {
+    setServiceChange(true);
     let service = [];
     let newService = [];
     let temp = 0;
@@ -106,38 +109,74 @@ const DoctorSchedule = () => {
     setServiceData(newService);
   };
   const handleAddService = () => {
+    let data = [];
     let addData = [];
     let deleteData = [];
-
-    for (let j = 0; j < sv.length; j++) {
-      let check = 0;
-      for (let i = 0; i < serviceData.length; i++) {
-        if (j == sv.length - 1) {
+    let check = true;
+    for(let i = 0 ; i < serviceData.length; i++)
+      {
+        data.push({...serviceData[i]});
+        if(serviceData[i].EstimatedTime == "" && serviceData[i].Price == "")
+          {
+          data[i] = {...serviceData[i],checkTime: false,checkPrice: false};
+          check = false;
+          } 
+        else if(serviceData[i].EstimatedTime == "")
+          {
+          data[i] = {...serviceData[i],checkTime: false};
+          check = false;
+          } 
+         else if(serviceData[i].Price == "")
+          {
+          data[i] = {...serviceData[i],checkPrice: false};
+          check = false;
+          }   
+      }
+    if(check == true){
+      if(sv.length == 0){
+        for (let i = 0; i < serviceData.length; i++){
           addData.push({
             idService: serviceData[i].value,
             EstimatedTime: serviceData[i].EstimatedTime,
             Price: serviceData[i].Price,
           });
-          let data1 = { data: [...addData] };
-          if (i == serviceData.length - 1) {
-            dispatch(addService(data1)).then(() =>
-              dispatch(fetchService({ idDoctor: user?.data.id }))
-            );
+        }
+        let data1 = { data: [...addData] };
+        dispatch(addService(data1));
+      }
+      else{
+        for (let j = 0; j < sv.length; j++) {
+          let check = 0;
+          for (let i = 0; i < serviceData.length; i++) {
+            if (j == sv.length - 1) {
+              addData.push({
+                idService: serviceData[i].value,
+                EstimatedTime: serviceData[i].EstimatedTime,
+                Price: serviceData[i].Price,
+              });
+              let data1 = { data: [...addData] };
+    
+              if (i == serviceData.length - 1) {
+                dispatch(addService(data1));
+              }
+            }
+            if (serviceData[i].value == sv[j].value) check = 1;
+            if (i == serviceData.length - 1 && check == 0)
+              deleteData.push(sv[j].value);
           }
         }
-        if (serviceData[i].value == sv[j].value) check = 1;
-
-        if (i == serviceData.length - 1 && check == 0)
-          deleteData.push(sv[j].value);
       }
+      setEditService(false);
+      setServiceChange(false);
     }
+    else{
+      setServiceData(data)
+    }
+    
     let data2 = { idService: [...deleteData] };
     if (data2?.idService.length > 0) {
       dispatch(deleteService(data2));
     }
-
-    console.log(data2?.idService);
-    setEditService(false);
   };
   const handleDatePickerChange = (date, dateString) => {
     setDate(dateString);
@@ -155,10 +194,11 @@ const DoctorSchedule = () => {
       schedule = { ...schedule, SpecificDay: date };
       dispatch(updateSchedule(schedule));
     } else {
-      dispatch(updateSchedule(schedule));
+     dispatch(updateSchedule(schedule));
     }
     setDisabled(true);
     setOptimized(false);
+    setScheduleChange(false)
   };
   const parse = (time) => {
     const split = time.split(":");
@@ -168,7 +208,7 @@ const DoctorSchedule = () => {
   useEffect(() => {
     setDate(today);
     dispatch(fetchDoctorSchedule(today)); //bệnh nhân -> idDOctor, ngày  {appointment{timebdau, 1:30:00} , schedule }
-    dispatch(fetchService({ idDoctor: user?.data.id }));
+    dispatch(fetchService({ idDoctor: currentUser?.id }));
     dispatch(fetchAllService());
     dispatch(fetchAppointment()); // doctor -> appointment {cuộc hẹn 1{}, cuọ<!--  --> 2}
     if (currentUser) {
@@ -184,7 +224,6 @@ const DoctorSchedule = () => {
       setScheduleData(ScheduleData[0]);
     }
   }, [service, ScheduleData]);
-  console.log(scheduleData);
 
   const getListData = (value) => {
     let listData = [];
@@ -222,15 +261,16 @@ const DoctorSchedule = () => {
     if (info.type === "date") return dateCellRender(current);
     return info.originNode;
   };
+
   return (
-    <div className="">
-      <div className=" mx-16 text-gray-700 flex gap-7">
-        <div className="my-7 w-full rounded-xl bg-white border shadow-lg shadow-violet-300 py-5 px-8">
+    <div className="lg:pt-[70px] max-md:pt-[20px] min-h-screen">
+      <div className=" md:mx-16 max-md:px-7 text-gray-700 flex gap-7">
+        <div className="md:my-7 max-md:mt-5 max-md:mb-7 w-full rounded-xl bg-white border shadow-lg shadow-violet-300 py-5 md:px-8 max-md:px-2">
           <div className="w-full">
             <div className="flex gap-5">
-              <p className="font-semibold text-2xl w-[30%] mb-5">Dịch vụ</p>
+              <p className="font-semibold max-md:pl-5 text-2xl max-md:w-[40%] md:w-[30%] mb-5">Dịch vụ</p>
               {!editService && (
-                <div className="mb-5 flex w-[70%] justify-end">
+                <div className="mb-5 flex max-md:w-[60%] md:w-[70%] justify-end">
                   <Button
                     className="h-[40px] w-32 shadow-md shadow-emerald-200"
                     gradientDuoTone="greenToBlue"
@@ -243,10 +283,10 @@ const DoctorSchedule = () => {
                 </div>
               )}
             </div>
-            {actived && editService && (
-              <div className="flex mb-5 gap-5">
+            {editService && (
+              <div className="flex max-md:flex-col mb-5 gap-5">
                 <Select
-                  className="w-2/3"
+                  className="md:w-2/3 md:max-lg:w-7/10 max-md:w-full max-md:p-2"
                   mode="multiple"
                   size="large"
                   placeholder="Chọn dịch vụ"
@@ -254,9 +294,9 @@ const DoctorSchedule = () => {
                   onChange={handleChange}
                   options={options}
                 />
-                <div className="flex justify-end w-1/3 gap-5">
+                <div className="flex md:max-lg:flex-col lg:justify-end max-lg:items-center max-lg:justify-center max-md:w-full md:max-lg:w-1/5 lg:w-1/3 lg:gap-5 max-lg:gap-2">
                   <Button
-                    className="h-[40px] w-28 flex self-end shadow-m shadow-emerald-200"
+                    className="h-[40px] lg:w-28 max-lg:w-24 flex self-end shadow-m shadow-emerald-200"
                     gradientMonochrome="failure"
                     onClick={() => {
                       setEditService(false);
@@ -265,8 +305,9 @@ const DoctorSchedule = () => {
                     Hủy
                   </Button>
                   <Button
-                    className="h-[40px] w-32 flex self-end shadow-md shadow-emerald-200"
+                    className="h-[40px] lg:w-32 max-lg:w-24 flex self-end shadow-md shadow-emerald-200"
                     gradientDuoTone="greenToBlue"
+                    disabled={!serviceChange}
                     onClick={handleAddService}
                   >
                     Xác nhận
@@ -277,18 +318,19 @@ const DoctorSchedule = () => {
 
             <Table hoverable className="shadow-md mb-5 rounded-lg">
               <Table.Head>
-                <Table.HeadCell>Dịch vụ</Table.HeadCell>
-                <Table.HeadCell>Thời gian</Table.HeadCell>
-                <Table.HeadCell>Giá dịch vụ (VND)</Table.HeadCell>
+                <Table.HeadCell className="max-lg:px-2">Dịch vụ</Table.HeadCell>
+                <Table.HeadCell className="max-lg:px-2">Thời gian thực hiện</Table.HeadCell>
+                <Table.HeadCell className="max-lg:px-2">Giá dịch vụ (VND)</Table.HeadCell>
               </Table.Head>
               {serviceData?.map((item) => (
                 <Table.Body className="divide-y" key={item.value}>
                   <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="w-2/4">{item.label}</Table.Cell>
-                    <Table.Cell className="w-1/4">
+                    <Table.Cell className="max-lg:px-2 max-lg:w-1/3 lg:w-2/4">{item.label}</Table.Cell>
+                    <Table.Cell className="max-lg:px-2 max-lg:w-1/3 lg:w-1/4">
                       <Select
                         id={item.value}
                         className="w-full"
+                        status={item?.checkTime == false ? "error" : ""}
                         size="large"
                         value={item?.EstimatedTime}
                         disabled={!editService}
@@ -313,9 +355,9 @@ const DoctorSchedule = () => {
                         <option value="02:30:00" label="02:30:00"></option>
                       </Select>
                     </Table.Cell>
-                    <Table.Cell className="w-1/4">
+                    <Table.Cell className="max-lg:px-2 max-lg:w-1/3 lg:w-1/4">
                       <InputNumber
-                        className="w-full"
+                        className={`${item?.checkPrice === false && "border-red-500"} w-full`}
                         size="large"
                         value={item.Price}
                         disabled={!editService}
@@ -344,9 +386,9 @@ const DoctorSchedule = () => {
           <hr className="bg-gray-200 my-10"></hr>
           <div>
             <div className="flex gap-5 mb-5 w-full">
-              <p className="font-semibold w-[30%] text-2xl">Lịch làm việc</p>
+              <p className="font-semibold max-md:pl-5 max-lg:w-[50%] lg:w-[30%] text-2xl">Lịch làm việc</p>
               {disabled ? (
-                <div className="flex w-[70%] gap-5 justify-end">
+                <div className="flex max-md:w-[50%] md:w-[70%] gap-5 justify-end">
                   <Button
                     className="h-[40px] w-32 shadow-md shadow-emerald-200"
                     gradientDuoTone="greenToBlue"
@@ -358,7 +400,7 @@ const DoctorSchedule = () => {
                   </Button>
                 </div>
               ) : (
-                <div className="flex w-[70%] gap-5 justify-end">
+                <div className="flex max-md:w-[50%] md:w-[70%] gap-5 justify-end">
                   <Button
                     className="h-[40px] w-28 flex self-end shadow-m shadow-emerald-200"
                     gradientMonochrome="failure"
@@ -366,6 +408,7 @@ const DoctorSchedule = () => {
                       setScheduleData(ScheduleData[0]);
                       setDisabled(true);
                       setOptimized(false);
+                      setScheduleChange(false)
                     }}
                   >
                     Hủy
@@ -373,6 +416,7 @@ const DoctorSchedule = () => {
                   <Button
                     className="h-[40px] w-32 shadow-md shadow-emerald-200"
                     gradientDuoTone="greenToBlue"
+                    disabled={!scheduleChange}
                     onClick={handleUpdateSchedule}
                   >
                     Xác nhận
@@ -382,7 +426,7 @@ const DoctorSchedule = () => {
             </div>
             <div className="">
               <div className="flex gap-10 w-full">
-                <div className="flex gap-3 items-center mb-5 w-[55%]">
+                <div className="flex gap-3 items-center mb-5 w-full">
                   <p className="text-lg font-medium text-gray-600 w-20">
                     Ca sáng
                   </p>
@@ -397,6 +441,7 @@ const DoctorSchedule = () => {
                         ...scheduleData,
                         FirstShiftStart: value,
                       });
+                      setScheduleChange(true);
                     }}
                   >
                     {time1?.map((item) => (
@@ -422,6 +467,7 @@ const DoctorSchedule = () => {
                         ...scheduleData,
                         FirstShiftEnd: value,
                       });
+                      setScheduleChange(true);
                     }}
                   >
                     {time1?.map((item) => (
@@ -445,6 +491,7 @@ const DoctorSchedule = () => {
                             FirstShiftStart: null,
                             FirstShiftEnd: null,
                           });
+                        setScheduleChange(true);
                         }}
                         className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
                       ></IoIosClose>
@@ -497,6 +544,7 @@ const DoctorSchedule = () => {
                       ...scheduleData,
                       SecondShiftStart: value,
                     });
+                    setScheduleChange(true);
                   }}
                 >
                   {time2?.map((item) => (
@@ -522,6 +570,7 @@ const DoctorSchedule = () => {
                       ...scheduleData,
                       SecondShiftEnd: value,
                     });
+                    setScheduleChange(true);
                   }}
                 >
                   {time2?.map((item) => (
@@ -545,6 +594,7 @@ const DoctorSchedule = () => {
                           SecondShiftStart: null,
                           SecondShiftEnd: null,
                         });
+                        setScheduleChange(true);
                       }}
                       className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
                     ></IoIosClose>
@@ -564,6 +614,7 @@ const DoctorSchedule = () => {
                       ...scheduleData,
                       ThirdShiftStart: value,
                     });
+                    setScheduleChange(true);
                   }}
                 >
                   {time3?.map((item) => (
@@ -589,6 +640,7 @@ const DoctorSchedule = () => {
                       ...scheduleData,
                       ThirdShiftEnd: value,
                     });
+                    setScheduleChange(true);
                   }}
                 >
                   {time3?.map((item) => (
@@ -612,6 +664,7 @@ const DoctorSchedule = () => {
                           ThirdShiftStart: null,
                           ThirdShiftEnd: null,
                         });
+                        setScheduleChange(true);
                       }}
                       className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
                     ></IoIosClose>

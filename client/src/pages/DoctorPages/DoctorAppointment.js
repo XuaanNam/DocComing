@@ -1,13 +1,10 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaRegUserCircle, FaRegCalendarPlus, FaHome } from "react-icons/fa";
-import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
+import { FaRegCalendarPlus, FaHome } from "react-icons/fa";
 import { RiServiceFill } from "react-icons/ri";
 import { BsCash } from "react-icons/bs";
-import { FiLogOut } from "react-icons/fi";
 import { FaPhoneAlt } from "react-icons/fa";
 import { TbFileDescription } from "react-icons/tb";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-
 import { Modal, Table, Button } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,7 +17,6 @@ const DoctorAppointment = () => {
   const dispatch = useDispatch();
   const { AppointmentData, ScheduleData, allService, service, error, loading } =
     useSelector((state) => state.appointment);
-  const [actived, setActived] = useState();
   const [passed, setPassed] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [idAppointment, setIdAppointment] = useState();
@@ -45,6 +41,7 @@ const DoctorAppointment = () => {
     dispatch(cancelAppointment(data)).then(() => {
       dispatch(fetchAppointment());
     });
+    setShowModal(false);
   };
   let appointment = [];
   for (let i = 0; i < AppointmentData?.length; i++) {
@@ -53,20 +50,19 @@ const DoctorAppointment = () => {
     if (AppointmentData[i].Status === 3 && passed === 2)
       appointment.push({ ...AppointmentData[i] });
   }
-  console.log(appointment);
   return (
-    <div className="bg-lime-50 h-screen">
-      <div className="mx-16 text-gray-700 flex gap-10">
-        <div className="my-7 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-300 py-5 px-8">
-          <div className="mb-5 h-10  grid grid-cols-5 gap-3 font-semibold">
-            <p className="text-2xl col-span-1">Lịch khám</p>
+    <div className="lg:pt-[70px] min-h-screen">
+      <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
+        <div className="md:my-7 xl:w-4/5 lg:max-xl:w-full max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-200 py-5 lg:px-8">
+          <div className="lg:mb-5 max-lg:my-5 lg:h-10 max-lg:h-auto grid lg:grid-cols-6 max-lg:grid-cols-12 lg:gap-3 max-lg:gap-1 font-semibold">
+            <p className="max-md:mb-3 md:text-2xl max-md:text-3xl lg:col-span-2 max-lg:col-start-1 max-lg:col-span-12">Lịch khám</p>
             <div
               onClick={() => {
                 setPassed(4);
               }}
               className={` ${
                 passed === 4 && "bg-white shadow-md shadow-violet-300"
-              } col-start-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+              } max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-2 max-lg:col-span-5 lg:col-span-2 lg:col-start-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               CHƯA XÁC NHẬN
             </div>
@@ -76,7 +72,7 @@ const DoctorAppointment = () => {
               }}
               className={` ${
                 passed === 1 && "bg-white shadow-md shadow-violet-300"
-              } col-start-4 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+              } max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-7 max-lg:col-span-3 col-start-5 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               SẮP TỚI
             </div>
@@ -86,7 +82,7 @@ const DoctorAppointment = () => {
               }}
               className={` ${
                 passed === 2 && "bg-white shadow-md shadow-violet-300"
-              } col-start-5 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+              } max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-10 max-lg:col-span-3 col-start-6 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               ĐÃ QUA
             </div>
@@ -98,14 +94,14 @@ const DoctorAppointment = () => {
                 className="w-full rounded-xl shadow-lg mb-5 border"
               >
                 <div className="p-1 rounded-t-xl bg-teal-200 w-full h-10 grid grid-cols-3 place-items-center">
-                  <div className="text-lg font-medium">
+                  <div className="max-lg:text-base lg:text-lg font-medium">
                     {appointment.TimeBooking}
                   </div>
-                  <div className="text-lg font-medium flex gap-2 items-center">
+                  <div className="max-lg:text-base lg:text-lg font-medium flex gap-2 items-center">
                     <FaRegCalendarPlus />
                     <div>{appointment.DateBooking}</div>
                   </div>
-                  <div className={` ${appointment.Status == 3 && "text-red-400"} text-lg font-medium`}>
+                  <div className={` ${appointment.Status == 3 && "text-red-600"} max-lg:text-base lg:text-lg font-medium`}>
                     {appointment.Status == 1
                       ? "Đã xác nhận"
                       : appointment.Status == 4
@@ -116,40 +112,40 @@ const DoctorAppointment = () => {
                   </div>
                 </div>
                 <div className="p-5">
-                  <div className="flex gap-5">
-                    <div className="flex w-[10%]">
+                  <div className="lg:flex lg:gap-5">
+                    <div className="flex md:w-[10%] max-md:w-full">
                       <img
-                        className="h-16 w-16 rounded-full object-contain border border-lime-200"
+                        className="h-14 w-14 rounded-full object-contain border border-lime-200"
                         alt=""
                         src={require("../../Images/doctorBackground2.jpg")}
                       ></img>
                     </div>
                     <div className="w-[90%]">
-                      <p className="font-medium text-lg text-gray-600 mb-3">
+                      <p className="font-medium lg:text-lg max-lg:mt-3 max-lg:text-base text-gray-600 mb-3">
                         {appointment.FirstName + appointment.LastName}
                       </p>
-                      <div className="flex w-full gap-10 mb-3">
-                        <div className="flex gap-3 items-center w-1/2">
+                      <div className="lg:flex w-full gap-10 mb-3">
+                        <div className="flex gap-3 items-center max-lg:mb-3 lg:w-1/2">
                           <RiServiceFill className="h-5 w-5 text-red-500"></RiServiceFill>
                           <p>Dịch vụ:</p>
                           <p className="font-medium">{appointment.Service}</p>
                         </div>
-                        <div className="flex gap-3 items-center w-1/2">
+                        <div className="flex gap-3 items-center lg:w-1/2">
                           <BsCash className="h-5 w-5 text-green-400"></BsCash>
                           <p>Giá dịch vụ:</p>
                           <p className="font-medium">{appointment.Price} VND</p>
                         </div>
                       </div>
 
-                      <div className="flex w-full gap-10 mb-3">
-                        <div className="flex gap-3 items-center w-1/2">
+                      <div className="lg:flex w-full gap-10 mb-3">
+                        <div className="flex gap-3 items-center max-lg:mb-3 lg:w-1/2">
                           <FaHome className="h-5 w-5 text-teal-600" />
                           <p>Địa chỉ:</p>
                           <div className="font-medium">
                             {appointment.Address}
                           </div>
                         </div>
-                        <div className="flex gap-3 items-center w-1/2">
+                        <div className="flex gap-3 items-center lg:w-1/2">
                           <FaPhoneAlt className="h-5 w-5 text-teal-600" />
                           <p>Số điện thoại:</p>
                           <div className="font-medium">{appointment.Phone}</div>
@@ -165,10 +161,10 @@ const DoctorAppointment = () => {
                     </div>
                   </div>
                   <hr className="w-[98%] mx-auto border-[1px] border-lime-100 rounded-lg mb-5"></hr>
-                  <div className="flex mx-auto w-3/4 gap-10">
+                  <div className="flex max-md:justify-center max-md:items-center mx-auto md:w-3/4 max-md:w-full max-md:px-3 gap-10">
                     {appointment.Status != 2 && appointment.Status != 3 && (
                       <Button
-                        className="w-40 mx-auto rounded-2xl"
+                        className="md:w-40 max-md:w-48 md:mx-auto rounded-2xl"
                         gradientMonochrome="failure"
                         onClick={() => {
                           setShowModal(true);
@@ -180,7 +176,7 @@ const DoctorAppointment = () => {
                     )}
                     {appointment.Status == 4 && (
                       <Button
-                        className="w-40 mx-auto rounded-2xl"
+                        className="md:w-40 max-md:w-48 mx-auto rounded-2xl"
                         gradientDuoTone="greenToBlue"
                         onClick={() => {
                           handleAcceptAppointment(appointment.id);
@@ -191,7 +187,7 @@ const DoctorAppointment = () => {
                     )}
                     {appointment.Status == 1 && (
                       <Button
-                        className="w-40 mx-auto rounded-2xl"
+                        className="md:w-40 max-md:w-48 mx-auto rounded-2xl"
                         gradientDuoTone="greenToBlue"
                         onClick={() => {
                           handleCompleteAppointment(appointment.id);
@@ -237,7 +233,6 @@ const DoctorAppointment = () => {
                 color="failure"
                 onClick={() => {
                   handleCancelAppointment(idAppointment);
-                  setShowModal(false);
                 }}
               >
                 Hủy

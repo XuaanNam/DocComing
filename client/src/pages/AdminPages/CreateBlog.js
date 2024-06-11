@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
-import Editor from "./AdminPages/Editor";
+import Editor from "./Editor";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost, fetchCategories } from "../redux-toolkit/postSlice";
+import { createPost, fetchCategories } from "../../redux-toolkit/postSlice";
 import { Select, Input } from "antd";
 import { FileInput } from "flowbite-react";
 const CreateBlog = () => {
@@ -31,8 +31,7 @@ const CreateBlog = () => {
       }
     }
   };
-  console.log(category);
-  console.log({ content });
+
   const handleCreatePost = () => {
     const data = new FormData();
     data.append("Title", title);
@@ -61,21 +60,23 @@ const CreateBlog = () => {
     }
   };
   return (
-    <div className="pt-5 pl-16 ">
-      <div className="text-2xl font-bold opacity-70 mb-5">Tạo bài viết</div>
-      <div className="mb-20">
-        <div className="flex items-center h-[48px] w-[70%] border rounded-md mb-3 bg-white">
+    <div className="lg:pt-[70px] min-h-screen md:flex md:items-center md:justify-center ">
+      <div className="lg:mt-10 max-lg:mt-5 mb-20 flex flex-col items-center justify-center md:w-3/4 max-md:w-[90%] md:p-8 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200 border">
+        <div className="text-2xl font-bold opacity-70 mb-5">
+          Thêm bài viết
+        </div>
+        <div className="h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
           <Input
             className={` ${
               !filled && title === "" && "border-red-400 border-[1.5px]"
             } outline-none rounded-md h-full p-3 w-full`}
             type="text"
-            placeholder="Tiêu đề"
+            placeholder="Tiêu đề" 
             value={title}
             onChange={(e) => setTitle(e.target.value)}
           />
         </div>
-        <div className="flex items-center h-[48px] w-[70%] border rounded-md mb-3 bg-white">
+        <div className="h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
           <Input
             className={` ${
               !filled && summary === "" && "border-red-400 border-[1.5px]"
@@ -92,7 +93,7 @@ const CreateBlog = () => {
             !filled && categoryId === ""
               ? "border-red-400 border-[1.5px]"
               : "border-gray-400"
-          } flex items-center h-[48px] w-[70%] border rounded-md mb-3 bg-white text-slate-800 cursor-pointer`}
+          } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
           value={similarCategoryId}
           onChange={handleChange}
         >
@@ -123,7 +124,7 @@ const CreateBlog = () => {
         <div
           className={` ${
             !filled && !files?.name ? "border-red-400" : "border-teal-500"
-          } flex gap-4 w-[70%] mb-3 items-center justify-between border-2 border-dotted p-3`}
+          } md:w-[90%] max-md:w-full mb-4  justify-between border-2 border-dotted p-3`}
         >
           <FileInput
             className="cursor-pointer h-[48px] w-full !text-white"
@@ -141,7 +142,7 @@ const CreateBlog = () => {
         />
         <button
           onClick={handleCreatePost}
-          className="h-12 w-[70%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
+          className="h-12 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
         >
           Đăng
         </button>
