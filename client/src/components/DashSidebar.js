@@ -24,7 +24,7 @@ const DashSidebar = ({ param }) => {
       persistor.purge();
     }, 200);
   };
-
+  console.log(param)
   return (
     <div className="shadow-xl bg-white lg:min-h-screen">
       <div className="w-full lg:w-56 max-lg:flex max-lg:flex-col max-lg:gap-2 font-medium lg:pt-[70px] max-lg:pt-[80px] max-lg:px-2">
@@ -45,7 +45,7 @@ const DashSidebar = ({ param }) => {
                 setActived("dashboard");
               }}
               className={` ${
-                actived === "dashboard" &&
+                param === "dashboard" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
               } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
               to="/admin/dashboard"
@@ -57,7 +57,7 @@ const DashSidebar = ({ param }) => {
                 setActived("profile");
               }}
               className={` ${
-                actived === "profile" &&
+                param === "profile" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
               } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
               to="/admin/profile"
@@ -69,7 +69,7 @@ const DashSidebar = ({ param }) => {
                 setActived("users");
               }}
               className={` ${
-                actived === "users" &&
+                param === "users" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
               } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
               to="/admin/users"
@@ -111,18 +111,6 @@ const DashSidebar = ({ param }) => {
                 </Link>
               </div>
             )}
-            <Link
-              onClick={() => {
-                setActived("comments");
-              }}
-              className={` ${
-                actived === "comments" &&
-                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center lg:mt-3 max-lg:mb-3`}
-              to="/admin/comments"
-            >
-              Comments
-            </Link>
             <Link
               onClick={handleLogout}
               to="/admin/login"

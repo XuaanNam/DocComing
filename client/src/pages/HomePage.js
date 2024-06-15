@@ -66,21 +66,21 @@ const HomePage = () => {
   for (let i = 0; i < allPost?.length; i++)
     if(allPost[i].Categories === "Bệnh tim mạch")
     {
-      if(heartDiseases.length < 3)
+      if(heartDiseases.length < 10)
         heartDiseases.push({...allPost[i]});
     }
   let digestiveDiseases = []
   for (let i = 0; i < allPost?.length; i++)
     if(allPost[i].Categories === "Bệnh tiêu hóa")
     {
-      if(digestiveDiseases.length < 3)
+      if(digestiveDiseases.length < 10)
         digestiveDiseases.push({...allPost[i]});
     }
   let diabetesDiseases = []
   for (let i = 0; i < allPost?.length; i++)
     if(allPost[i].Categories === "Tiểu đường")
     {
-      if(diabetesDiseases.length < 3)
+      if(diabetesDiseases.length < 10)
         diabetesDiseases.push({...allPost[i]});
     }
   const path = (name, id) => {
@@ -89,7 +89,7 @@ const HomePage = () => {
   };
   return (
     <div className="pt-[72px]">
-      <div className="max-w-[95%] h-[740px] w-full max-sm:h-[560px] max-sm:pt-16 m-auto pb-[40px] px-4 relative group drop-shadow-md">
+      <div className="max-w-[92%] h-[720px] w-full max-sm:h-[560px] max-sm:pt-16 m-auto pb-[40px] px-4 relative group drop-shadow-md">
         <div
           style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
           className="w-full lg:h-full max-sm:h-1/3 transition-full rounded-3xl bg-center bg-cover duration-500"
@@ -125,7 +125,7 @@ const HomePage = () => {
           </button>
         </div>
       </div>
-      <div className="lg:mx-[48px] max-sm:px-7 sm:px-7 mb-10">
+      <div className="lg:mx-12 max-sm:px-7 sm:px-7 mb-10">
         <div className="h-[44px] w-[150px] flex items-center justify-center p-1 mb-6 rounded-3xl bg-teal-50 text-blue-500 font-medium drop-shadow-lg">
           Bài viết mới nhất
         </div>

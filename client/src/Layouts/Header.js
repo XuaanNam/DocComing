@@ -110,7 +110,7 @@ const Header = () => {
 
                 <p className="max-sm:text-sm max-sm:pl-1 font-medium text-base text-center text-gray-100 truncate max-w-[65%]">
                   {user?.data
-                    ? user?.data?.FirstName + " " + user?.data?.LastName
+                    ? user?.data?.FullName
                     : currentUser?.FullName}
                 </p>
                 <IoMdArrowDropdown
@@ -120,7 +120,7 @@ const Header = () => {
                 ></IoMdArrowDropdown>
               </div>
               <GoBellFill
-                onClick={() => console.log("zzz")}
+                onClick={() => setActived(false)}
                 className="max-sm:h-5 max-sm:w-5 h-7 w-7 text-lime-100  cursor-pointer transition-transform duration-500 hover:scale-110"
               />
               {actived && (
@@ -130,6 +130,7 @@ const Header = () => {
                   {authentication == 2 && (
                     <div
                       onClick={() => {
+                        setActived(false);
                         Navigate("/doctor/schedule");
                       }}
                       className="flex gap-3 account-link rounded-lg items-center hover:text-white pl-3 pr-2 cursor-pointer"
@@ -142,6 +143,7 @@ const Header = () => {
                     <div>
                       <div
                         onClick={() => {
+                          setActived(false);
                           Navigate("/patient/profile");
                         }}
                         className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer"
@@ -151,6 +153,7 @@ const Header = () => {
                       </div>
                       <div
                         onClick={() => {
+                          setActived(false);
                           Navigate("/patient/appointment");
                         }}
                         className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer"
@@ -163,6 +166,7 @@ const Header = () => {
                   {authentication == 0 && (
                     <div
                       onClick={() => {
+                        setActived(false);
                         Navigate("/admin/dashboard");
                       }}
                       className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer"
@@ -184,18 +188,22 @@ const Header = () => {
             </div>
           ) : (
             <div className="sm:ml-5 w-full flex gap-3 justify-center items-center text-base max-sm:pl-3">
-              <a
-                href="/login"
-                className="max-sm:p-1 max-sm:text-xs sm:max-lg:w-full text-center text-gray-100 cursor-pointer transition-transform duration-500 hover:scale-110"
-              >
-                Đăng nhập
-              </a>
-              <a
-                href="/register"
-                className="max-sm:text-xs sm:max-lg:h-[40px] flex justify-center items-center sm:max-lg:w-[90%] max-sm:h-[40px] max-sm:w-[80px] max-sm:p-1 lg:h-[38px] lg:w-[120px] text-center border-[1.5px] text-white bg-teal-400 lg:p-1.5 hover:bg-teal-500 transition-transform hover:duration-1000 rounded-lg cursor-pointer"
-              >
-                Tạo tài khoản
-              </a>
+              <div className="w-1/2 flex justify-center">
+                <a
+                  href="/login"
+                  className="max-sm:p-1 max-sm:text-xs sm:max-lg:w-full font-medium text-center text-gray-100 cursor-pointer transition-transform duration-500 hover:scale-110"
+                >
+                  Đăng nhập
+                </a>
+              </div>
+              <div className="w-1/2 flex justify-center">
+                <a
+                  href="/register"
+                  className="max-sm:text-xs sm:max-lg:h-[40px] flex justify-center items-center sm:max-lg:w-[90%] max-sm:h-[40px] max-sm:w-[80px] max-sm:p-1 lg:h-[38px] lg:w-[120px] text-center border-[1.5px] text-white bg-teal-400 lg:p-1.5 hover:bg-teal-500 transition-transform hover:duration-1000 rounded-lg cursor-pointer"
+                >
+                  Tạo tài khoản
+                </a>
+              </div>
             </div>
           )}
         </div>

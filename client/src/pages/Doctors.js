@@ -19,6 +19,7 @@ const Doctors = () => {
   const [keywordDoctor, setKeywordDoctor] = useState("")
   const [keywordMajor, setKeywordMajor] = useState("")
   const [isSearched, setIsSearched] = useState(false)
+  const [numberElement, setNumberElement] = useState(8)
 
   const handleSearchDoctor = () => {
     setIsSearched(true)
@@ -34,7 +35,6 @@ const Doctors = () => {
     //   setKeywordMajor(searchMajor)
     // })
   }
-  console.log(allSearchData)
   useEffect(() => {
     dispatch(getAllDoctors());
   }, []);
@@ -42,6 +42,10 @@ const Doctors = () => {
     const x = name + "_" + id;
     return x;
   };
+  const slice1 = doctors?.slice(0,numberElement);
+  const slice2 = allSearchData?.slice(0,numberElement);
+  console.log(slice2)
+
   return (
     <div className="lg:pt-[70px] max-lg:pt-[70px]">
       <div className="relative w-full">
@@ -123,7 +127,7 @@ const Doctors = () => {
         </div>
 
         <div className="flex flex-wrap max-lg:w-full gap-6">
-          {isSearched ? allSearchData.map((doctor) => (
+          {isSearched ? slice2.map((doctor) => (
           <div
             key={doctor?.id}
             onClick={() =>
@@ -134,7 +138,7 @@ const Doctors = () => {
                 )}`
               )
             }
-            className="lg:w-[30%]  sm:max-lg:w-[47%] max-sm:w-[100%] grid grid-rows-1 gap-4 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105"
+            className="lg:w-[23.5%]  sm:max-lg:w-[47%] max-sm:w-[100%] grid grid-rows-1 gap-4 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105"
           >
             <div className="relative w-full flex justify-center">
               <img
@@ -179,7 +183,7 @@ const Doctors = () => {
             </div>
           </div>
           )) :
-          doctors?.map((doctor) => (
+          slice1?.map((doctor) => (
             <div
               key={doctor?.id}
               onClick={() =>
@@ -236,13 +240,12 @@ const Doctors = () => {
             </div>
           ))}
         </div>
-
         <Button
-          //   onClick={handleBooking}
-          className="w-40 my-8 mx-auto h-[44px] rounded-3xl drop-shadow-lg transition-transform duration-500 hover:scale-105"
-          gradientDuoTone="greenToBlue"
+          className="my-10 w-40 rounded-lg mx-auto h-11"
+          outline gradientDuoTone="tealToLime"
+          onClick={()=>{setNumberElement(numberElement+numberElement)}}
         >
-          <p className="text-lg">Xem thêm</p>
+          Xem thêm
         </Button>
       </div>
     </div>

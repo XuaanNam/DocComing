@@ -11,6 +11,8 @@ const initialState = {
   checked: false,
   token: "",
   data: [],
+  countUser: 0,
+  allSearchUsers: [],
   user: {},
   updated: false,
   message: "",
@@ -48,6 +50,27 @@ export const login = createAsyncThunk("login", async (body) => {
   });
   return await res.json();
 });
+export const sendMail = createAsyncThunk("sendMail", async (body) => {
+  const res = await fetch("http://localhost:5000/api/send/mail", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
+export const resetPassword = createAsyncThunk("resetPassword", async (body) => {
+  const res = await fetch("http://localhost:5000/api/reset/password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
 export const authentication = createAsyncThunk("authentication", async () => {
   const res = await fetch("http://localhost:5000/api/isauth", {
     method: "GET",
@@ -63,9 +86,34 @@ export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization:
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJEb2Njb21pbmciLCJpZCI6MjM1NTIzNDg0LCJBdXRob3JpemF0aW9uIjowLCJpYXQiOjE3MTM5NTczNDMsImV4cCI6MTk3MzE1NzM0M30.H15KHG8BZ8rSbAbRDEvfpf8knUKw32iZ8Elr544AOH8",
+      Authorization: localStorage.getItem("token"),
     },
+  });
+  return await res.json();
+});
+export const searchUser = createAsyncThunk(
+  "searchUser",
+  async (body) => {
+    console.log(body)
+    const res = await fetch(`http://localhost:5000/api/admin/account/search`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const deleteAccount = createAsyncThunk("deleteAccount", async (body) => {
+  const res = await fetch("http://localhost:5000/api/admin/account/delete", {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
   });
   return await res.json();
 });
@@ -159,29 +207,97 @@ const authSlice = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
       })
+      .addCase(sendMail.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(sendMail.fulfilled, (state, action) => {
+        state.sendMailMessage = action.payload.message;
+        if (action.payload.checked) {
+          toast.success(action.payload.message, {
+            position: "top-right",
+          });
+        } else {
+          toast.error(action.payload.message, {
+            position: "top-right",
+          });
+        }
+        state.loading = false;
+      })
+      .addCase(sendMail.rejected, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(resetPassword.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(resetPassword.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        if (action.payload.checked) {
+          toast.success("Đổi mật khẩu thành công", {
+            position: "top-right",
+          });
+        } else {
+          toast.error(action.payload.message, {
+            position: "top-right",
+          });
+          state.message = action.payload.message;
+        }
+        state.loading = false;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = true;
+      })
       .addCase(authentication.pending, (state, action) => {
         state.loading = true;
       })
       .addCase(authentication.fulfilled, (state, { payload }) => {
-        state.auth = payload.authentication.Authorization;
+        state.auth = payload.authentication;
       })
       .addCase(authentication.rejected, (state, action) => {
         state.loading = true;
       })
       .addCase(fetchUsers.pending, (state, action) => {
         state.loading = true;
-        state.error = null;
+        state.error = false;
       })
       .addCase(fetchUsers.fulfilled, (state, action) => {
         state.loading = false;
         state.data = action.payload.data;
+        state.countUser = action.payload.count;
         state.updated = true;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
       })
-
+      .addCase(searchUser.pending, (state, action) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(searchUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.allSearchUsers = action.payload;
+        console.log(action.payload)
+        state.updated = true;
+      })
+      .addCase(searchUser.rejected, (state, action) => {
+        state.loading = false;
+        state.error = false;
+      })
+      .addCase(deleteAccount.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(deleteAccount.fulfilled, (state, action) => {
+        state.loading = false;
+        state.checked = action.payload.checked;
+        if (action.payload.checked) {
+          toast.success("Đã xóa người dùng", {
+            position: "top-right",
+          });
+        }
+      })
+      .addCase(deleteAccount.rejected, (state, action) => {
+        state.loading = false;
+      })
       .addCase(updateProfile.pending, (state, action) => {
         state.loading = true;
       })

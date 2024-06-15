@@ -11,6 +11,8 @@ const ManageBlog = () => {
   const [showMore, setShowMore] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [postId, setPostId] = useState();
+  const [numberElement, setNumberElement] = useState(6)
+
   const dispatch = useDispatch();
   useEffect(() => {
     if(currentUser.authentication == 2)
@@ -33,6 +35,7 @@ const ManageBlog = () => {
     })
     setShowModal(false)
   }
+
   let posts = [];
   for (let i = 0; i < data?.length; i++) {
     if (data[i].Status === confirmedPost)
@@ -40,6 +43,7 @@ const ManageBlog = () => {
     if (data[i].Status === 2 && confirmedPost === 1)
       posts.push({ ...data[i] });
   }
+  const slice = posts.slice(0,numberElement);
   console.log(data, confirmedPost);
   return (
     <div className="lg:pt-[70px] table-auto md:mx-auto md:p-10 max-md:px-5 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
@@ -78,7 +82,7 @@ const ManageBlog = () => {
             <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs"></Table.HeadCell>
           )}
         </Table.Head>
-        {posts?.map((post) => (
+        {slice?.map((post) => (
           <Table.Body className="divide-y">
             <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
               <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs ">
@@ -160,14 +164,15 @@ const ManageBlog = () => {
           </Table.Body>
         ))}
       </Table>
-      {showMore && (
-        <button
-          //   onClick={handleShowMore}
-          className="w-full text-teal-500 self-center text-sm py-7"
-        >
-          Show more
-        </button>
-      )}
+      {posts.length > 6 &&
+      <Button
+        className="mt-3 w-32 mx-auto rounded-lg h-11"
+        outline gradientDuoTone="tealToLime"
+        onClick={()=>{setNumberElement(numberElement+numberElement)}}
+      >
+        Xem thêm
+      </Button>
+      }
       {/* </>
       ) : (
         <p>You have no posts yet!</p>

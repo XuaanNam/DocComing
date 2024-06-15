@@ -20,7 +20,7 @@ const DoctorAppointment = () => {
   const [passed, setPassed] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [idAppointment, setIdAppointment] = useState();
-
+  console.log(AppointmentData)
   useEffect(() => {
     dispatch(fetchAppointment());
   }, []);
@@ -50,10 +50,11 @@ const DoctorAppointment = () => {
     if (AppointmentData[i].Status === 3 && passed === 2)
       appointment.push({ ...AppointmentData[i] });
   }
+
   return (
     <div className="lg:pt-[70px] min-h-screen">
       <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
-        <div className="md:my-7 xl:w-4/5 lg:max-xl:w-full max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-200 py-5 lg:px-8">
+        <div className="md:my-7 lg:max-xl:w-full max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-200 py-5 lg:px-8">
           <div className="lg:mb-5 max-lg:my-5 lg:h-10 max-lg:h-auto grid lg:grid-cols-6 max-lg:grid-cols-12 lg:gap-3 max-lg:gap-1 font-semibold">
             <p className="max-md:mb-3 md:text-2xl max-md:text-3xl lg:col-span-2 max-lg:col-start-1 max-lg:col-span-12">Lịch khám</p>
             <div
@@ -122,36 +123,36 @@ const DoctorAppointment = () => {
                     </div>
                     <div className="w-[90%]">
                       <p className="font-medium lg:text-lg max-lg:mt-3 max-lg:text-base text-gray-600 mb-3">
-                        {appointment.FirstName + appointment.LastName}
+                        {appointment.FirstName + " " + appointment.LastName}
                       </p>
                       <div className="lg:flex w-full gap-10 mb-3">
-                        <div className="flex gap-3 items-center max-lg:mb-3 lg:w-1/2">
+                        <div className="flex gap-3 max-lg:mb-3 lg:w-1/2">
                           <RiServiceFill className="h-5 w-5 text-red-500"></RiServiceFill>
-                          <p>Dịch vụ:</p>
+                          <p className="min-w-14">Dịch vụ:</p>
                           <p className="font-medium">{appointment.Service}</p>
                         </div>
-                        <div className="flex gap-3 items-center lg:w-1/2">
+                        <div className="flex gap-3 lg:w-1/2">
                           <BsCash className="h-5 w-5 text-green-400"></BsCash>
-                          <p>Giá dịch vụ:</p>
+                          <p className="min-w-20">Giá dịch vụ:</p>
                           <p className="font-medium">{appointment.Price} VND</p>
                         </div>
                       </div>
 
                       <div className="lg:flex w-full gap-10 mb-3">
-                        <div className="flex gap-3 items-center max-lg:mb-3 lg:w-1/2">
+                        <div className="flex gap-3 lg:w-1/2">
+                          <FaPhoneAlt className="h-5 w-5 text-teal-600" />
+                          <p className="min-w-20">Số điện thoại:</p>
+                          <div className="font-medium">{appointment.Phone}</div>
+                        </div>
+                        <div className="flex gap-3 max-lg:mb-3 lg:w-1/2">
                           <FaHome className="h-5 w-5 text-teal-600" />
-                          <p>Địa chỉ:</p>
+                          <p className="min-w-14">Địa chỉ:</p>
                           <div className="font-medium">
                             {appointment.Address}
                           </div>
                         </div>
-                        <div className="flex gap-3 items-center lg:w-1/2">
-                          <FaPhoneAlt className="h-5 w-5 text-teal-600" />
-                          <p>Số điện thoại:</p>
-                          <div className="font-medium">{appointment.Phone}</div>
-                        </div>
                       </div>
-                      <div className="flex gap-3 items-center mb-3">
+                      <div className="flex gap-3 mb-3">
                         <TbFileDescription className="h-5 w-5 text-teal-600" />
                         <p>Triệu chứng:</p>
                         <div className="font-medium text-red-400">

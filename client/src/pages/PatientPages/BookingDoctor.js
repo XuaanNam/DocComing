@@ -29,6 +29,7 @@ const BookingDoctor = () => {
   const { currentUser, detailDoctor } = useSelector((state) => state.user);
   // const ScheduleData = schedule?.ScheduleData;
   // const AppointmentData = schedule?.AppointmentData;
+  console.log(detailDoctor)
   const [index, setIndex] = useState("");
   const [estimatedTime, setEstimatedTime] = useState("");
   const [currentService, setCurrentService] = useState("");
@@ -342,7 +343,7 @@ const BookingDoctor = () => {
     }
     changeData();
   };
-  console.log(data)
+  console.log(detailDoctor)
   useEffect(() => {
     changeData();
   }, [ScheduleData]);
@@ -384,28 +385,50 @@ const BookingDoctor = () => {
                 src={detailDoctor[0]?.Avt}
                 alt="avt"
               ></img>
-              <div className="text-2xl font-medium col-span-3 text-slate-700">
-                {detailDoctor[0]?.Degree}. {detailDoctor[0]?.FullName} - Chuyên khoa{" "}
-                {detailDoctor[0]?.Major}
+              <div className="col-span-3 ">
+                <p className="text-2xl font-medium text-slate-700 mb-4"> {detailDoctor[0]?.Degree}. {detailDoctor[0]?.FullName} - Chuyên khoa {detailDoctor[0]?.Major}</p>
+                <div className="min-h-11 w-[65%] px-5 py-3 rounded-3xl bg-white bg-opacity-90 shadow-lg text-slate-700 flex gap-3 items-center justify-center">
+                  <Rate className="w-52 flex gap-2"
+                        value={parseFloat(detailDoctor[0]?.Star)}
+                        allowHalf
+                        style={{ fontSize: 28}}
+                        disabled={true}
+                  ></Rate>
+                  <div className="w-36 flex gap-2 items-center">
+                    <p className="font-medium text-xl text-teal-600">{detailDoctor[0]?.Star?.slice(0,3)}</p>
+                    <p className=" text-lg">({ratingDoctor?.length} đánh giá)</p>
+                  </div>
+                </div>
               </div>
             </div>
-            <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
-              <FaHome className="text-teal-600" />
-              <div className="text-slate-600">Khám tại nhà</div>
-            </div>
-            <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
-              <LuStethoscope className="text-teal-600" />
-              <div className="text-slate-600">
-                Chuyên khoa {detailDoctor[0]?.Major}
+           
+            <div className="flex flex-wrap gap-3 mb-2">
+              <div className="flex gap-3 items-center text-lg mb-2 lg:h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+                <FaRegAddressBook className="text-teal-600" />
+                <div className="text-slate-600">
+                  {detailDoctor[0]?.Degree}
+                </div>
+              </div>
+              <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+                <LuStethoscope className="text-teal-600" />
+                <div className="text-slate-600">
+                  Chuyên khoa: {detailDoctor[0]?.Major}
+                </div>
+              </div>
+            </div> 
+            <div className="flex flex-wrap gap-3">
+              <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+                <FaHome className="text-teal-600" />
+                <div className="text-slate-600">Khám tại nhà</div>
+              </div>
+              <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+                <LuStethoscope className="text-teal-600" />
+                <div className="text-slate-600">
+                  Email: {detailDoctor[0]?.Email}
+                </div>
               </div>
             </div>
-
-            <div className="flex gap-3 items-center text-lg mb-2 lg:h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
-              <FaRegAddressBook className="text-teal-600" />
-              <div className="text-slate-600">
-                1 Nơ Trang Long, Bình Thạnh, Hồ Chí Minh
-              </div>
-            </div>
+                  
           </div>
           <div className="w-full bg-white rounded-lg shadow-lg p-6">
             <p className="text-3xl font-medium text-slate-700 mb-5">

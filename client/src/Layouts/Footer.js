@@ -4,7 +4,7 @@ const Footer = () => {
   return (
     <div>
       <div className="bg-teal-600 text-center text-gray-100 dark:bg-neutral-600 dark:text-neutral-200 lg:text-left">
-        <div className="flex lg:gap-4 items-center justify-center border-b-[1.5px] border-neutral-200 p-6 dark:border-neutral-500 lg:justify-between">
+        <div className="flex lg:gap-4 items-center justify-center border-b-[1.5px] border-neutral-200 px-6 py-4 dark:border-neutral-500 lg:justify-between">
           <div className="mr-12 hidden lg:block">
             <span className="text-base font-medium">
               Liên hệ với chúng tôi thông qua
@@ -78,7 +78,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="mx-6 py-6 text-center md:text-left">
+        <div className="mx-6 py-3 text-center md:text-left">
           <div className="grid-1 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             <div className="">
               <h6 className="mb-4 flex items-center justify-center font-semibold uppercase md:justify-start">
@@ -123,14 +123,14 @@ const Footer = () => {
             </div>
             <div className="">
               <h6 className="mb-4 flex justify-center font-semibold uppercase md:justify-start">
-                HỖ TRỢ
+                Dịch vụ
               </h6>
               <p className="mb-4">
                 <a href="" className="text-gray-100 dark:text-neutral-200">
-                  Angular
+                  Hẹn Bác sĩ, Điều dưỡng đến nhà
                 </a>
               </p>
-              <p className="mb-4">
+              {/* <p className="mb-4">
                 <a href="" className="text-gray-100 dark:text-neutral-200">
                   React
                 </a>
@@ -144,7 +144,7 @@ const Footer = () => {
                 <a href="" className="text-gray-100 dark:text-neutral-200">
                   Laravel
                 </a>
-              </p>
+              </p> */}
             </div>
 
             <div>
@@ -209,7 +209,7 @@ const Footer = () => {
           </div>
         </div>
 
-        <div className="bg-teal-600 p-6 text-center dark:bg-neutral-700">
+        <div className="bg-teal-600 p-3 text-center dark:bg-neutral-700">
           <span>© 2024 Copyright: </span>
           <a
             className="font-semibold text-gray-100 dark:text-neutral-400"

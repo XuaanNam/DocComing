@@ -2,7 +2,7 @@ import ReactQuill from "react-quill";
 import { useMemo, useRef } from "react";
 import "react-quill/dist/quill.snow.css";
 
-export default function Editor({ value, onChange, className }) {
+export default function Editor({ value, onChange, className,readOnly }) {
   const inputRef = useRef(null);
   const quillRef = useRef(null);
 
@@ -54,7 +54,7 @@ export default function Editor({ value, onChange, className }) {
   }, []);
 
   return (
-    <div className="content md:w-[90%] max-md:w-full h-[50vh] mb-5 bg-white">
+    <div className="content md:w-[90%] max-md:w-full bg-white">
       <input ref={inputRef} hidden type="file" onChange={imageHandler} />
       <ReactQuill
         className={className}
@@ -64,6 +64,7 @@ export default function Editor({ value, onChange, className }) {
         onChange={onChange}
         modules={modules}
         preserveWhitespace
+        readOnly={readOnly}
       />
     </div>
   );

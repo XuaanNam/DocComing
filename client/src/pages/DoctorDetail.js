@@ -31,7 +31,7 @@ const DoctorDetail = () => {
 
     dispatch(getRatingDoctor(Id))
   }, [Id]);
- 
+  console.log(detailDoctor)
   return (
     <div className="pt-[70px]">
       <div className="relative w-full block">
@@ -68,16 +68,16 @@ const DoctorDetail = () => {
             />
           </div>
           <p className="w-[85%] flex gap-1 text-lg">
-            <p className="font-medium">12</p> năm kinh nghiệm
+            <p className="font-medium">{detailDoctor[0]?.Experience}</p> năm kinh nghiệm
           </p>
         </div>
         <div className="absolute left-20 top-60 min-h-12 px-5 py-3 mb-3 rounded-3xl bg-white bg-opacity-90 shadow-lg text-slate-700 flex gap-3 items-center">
           <Rate className="w-52 flex gap-2"
-                defaultValue={parseFloat(detailDoctor[0]?.Star)}
+                value={parseFloat(detailDoctor[0]?.Star)}
                 allowHalf
                 style={{ fontSize: 28}}
                 disabled={true}
-                ></Rate>
+          ></Rate>
           <div className="w-36 flex gap-2 items-center">
              <p className="font-medium text-xl text-teal-600">{detailDoctor[0]?.Star?.slice(0,3)}</p>
              <p className=" text-lg">({ratingDoctor?.length} đánh giá)</p>

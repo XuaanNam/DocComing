@@ -28,6 +28,7 @@ const Profile = () => {
   const filePickerRef = useRef();
   const dispatch = useDispatch();
   const Navigate = useNavigate();
+  console.log(user?.data)
   useEffect(() => {
     if (!currentUser) {
       Navigate("/");
@@ -35,7 +36,7 @@ const Profile = () => {
       if (currentUser.authentication == 1) {
         setData(user?.data);
         setFullName(
-          user?.data?.FirstName + user?.data?.LastName || currentUser?.FullName
+          user?.data?.FullName || currentUser?.FullName
         );
       } else Navigate("/");
     }
@@ -97,7 +98,7 @@ const Profile = () => {
     <div className="lg:pt-[90px] max-lg:pt-[80px] lg:min-h-screen">
       {currentUser?.authentication == 1 ? (
         <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10 lg:h-[90%]">
-          <div className="flex flex-col lg:gap-1 my-7 lg:w-1/5 lg:h-48 bg-white shadow-lg shadow-violet-200 rounded-lg">
+          <div className="flex flex-col lg:gap-1 my-7 lg:w-1/5 sm:max-lg:w-[30%] lg:h-48 bg-white shadow-lg shadow-violet-200 rounded-lg">
             <div
               onClick={() => setActived(1)}
               className={` ${
@@ -161,7 +162,7 @@ const Profile = () => {
                   <CiCamera></CiCamera>
                 </div>
                 <div className="max-lg:col-start-2 max-lg:col-span-1 max-lg:text-left max-lg:text-base max-lg:flex max-lg:items-center max-lg:justify-center font-medium lg:text-lg lg:text-center w-full">
-                  {data?.FirstName + data?.LastName || currentUser?.name} 
+                  {data?.FullName || currentUser?.name} 
                 </div>
               </div>
               <form className="lg:col-span-4 mb-16">

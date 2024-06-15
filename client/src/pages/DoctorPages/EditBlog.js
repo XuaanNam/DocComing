@@ -167,7 +167,7 @@ const EditBlog = () => {
                       </div>
                       )}
                       <Editor
-                      className={` ${!filled && data.Content === "" && "ql-error"}`}
+                      className={` ${!filled && data.Content === "" && "ql-error"} mb-5`}
                       value={data?.Content}
                       onChange={(value) => {setData({ ...data, Content: value })}}
                       />

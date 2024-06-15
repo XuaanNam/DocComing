@@ -29,6 +29,7 @@ import Appointment from "./pages/PatientPages/Appointment";
 import { ScrollToTop } from "./pages/ScrollToTop";
 import SearchPost from "./pages/SearchPost";
 import SimilarPost from "./pages/SimilarPost";
+import ResetPassword from "./pages/ResetPassword";
 function App() {
   return (
     <div>
@@ -40,6 +41,8 @@ function App() {
           <Route path="/" exact element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/reset/:token" element={<ResetPassword />} />
+          
           <Route path="/blog/:blogId" element={<BlogPage />} />
           <Route path="/doctors" element={<Doctors />} />
           <Route path="/doctors/:doctorId" element={<DoctorDetail />} />

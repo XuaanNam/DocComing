@@ -48,19 +48,20 @@ const CreateBlog = () => {
       files?.name
     ) {
       dispatch(createPost(data)).then(() => {
-        // setTitle("");
-        // setSummary("");
-        // setContent("");
-        // setsimilarCategoryId("");
-        // setFiles(null);
-        // ref.current.value = null;
+        setTitle("");
+        setSummary("");
+        setContent("");
+        setSimilarCategoryId("");
+        setFiles(null);
+        ref.current.value = null;
       });
     } else {
       setFilled(false);
     }
   };
+  console.log(category)
   return (
-    <div className="lg:pt-[70px] min-h-screen md:flex md:items-center md:justify-center ">
+    <div className="lg:pt-[70px] md:flex md:items-center md:justify-center ">
       <div className="lg:mt-10 max-lg:mt-5 mb-20 flex flex-col items-center justify-center md:w-3/4 max-md:w-[90%] md:p-8 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200 border">
         <div className="text-2xl font-bold opacity-70 mb-5">
           Thêm bài viết
@@ -101,14 +102,14 @@ const CreateBlog = () => {
             Chọn chuyên mục
           </option>
 
-          {category?.map((category) => (
+          {category?.map((cgr) => (
             <Select.OptGroup
               id="category"
-              value={category.id}
-              label={category.Categories}
-              key={category.id}
+              value={cgr.id}
+              label={cgr.Categories}
+              key={cgr.id}
             >
-              {category.Similar?.map((item) => (
+              {cgr.Similar?.map((item) => (
                 <Select.Option
                   value={item.id}
                   label={item.SimilarCategories}
@@ -134,12 +135,14 @@ const CreateBlog = () => {
             ref={ref}
           />
         </div>
-
+        <div className="w-full flex items-center justify-center">
         <Editor
-          className={` ${!filled && content === "" && "ql-error"}`}
+          className={` ${!filled && content === "" && "ql-error"} mb-5` }
           value={content}
           onChange={setContent}
         />
+        </div>
+        
         <button
           onClick={handleCreatePost}
           className="h-12 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"

@@ -144,7 +144,7 @@ const SimilarPost = () => {
         </div>
         }
         <p className="text-2xl text-slate-700 font-medium mb-5">Xem thêm về {similar || cgr} </p>
-        {post?.map((item) => 
+        {post?.slice(6).map((item) => 
         <div className="flex gap-7 mb-7 cursor-pointer w-full">
             <img
             className="h-[200px] w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg"

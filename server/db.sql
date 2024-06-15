@@ -348,7 +348,9 @@ BEGIN
     WHERE idPatient = old.id or idDoctor = old.id;
     DELETE FROM notification
     WHERE idAccount = old.id;
-END$$ -- drop TRIGGER TG_DELETE_ACCOUNT    chưa xử lý xonggg
+    DELETE FROM ratedoctor
+    WHERE idPatient = old.id or idDoctor = old.id;
+END$$ -- drop TRIGGER TG_DELETE_ACCOUNT    chưa xử lý xonggg use doccoming
 
 delimiter $$
 CREATE TRIGGER TG_INSERT_ACCOUNT_DOCTOR AFTER INSERT ON account FOR EACH ROW 
@@ -398,13 +400,22 @@ BEGIN
     delete from replycomment where idComment = old.id;
 END$$ -- drop trigger TG_DEL_REP_CMT
 
+delimiter $$
+CREATE TRIGGER TG_CHECK_RATE_DOCTOR BEFORE INSERT ON ratedoctor FOR EACH ROW 
+BEGIN
+    DECLARE Count int default 0;
+    SET Count = (SELECT COUNT(*) FROM ratedoctor WHERE idPatient = new.idPatient and idDoctor = new.idDoctor );
+    IF Count > 0
+    THEN SIGNAL sqlstate '45001' set message_text = "Bạn đã đánh giá bác sĩ này!";
+    END IF;
+END$$ -- drop trigger TG_CHECK_RATE_DOCTOR
 --------------------------------
-
+insert into ratedoctor set idPatient = 235523489, idDoctor = 235523487, Star = 5, Comment = 'bac si nay good'
 delimiter $$
 CREATE VIEW AllPost AS
 SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, c.Categories, s.Similar, p.Status
 FROM post p, account a, categories c, similarcategories s
-WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id order by p.DatePost;
+WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id order by p.DatePost desc;
 $$ -- drop view AllPost
  
 delimiter $$
@@ -415,7 +426,7 @@ CREATE VIEW AvailablePost AS
 $$
  -- drop view AvailablePost
 
- delimiter $$
+delimiter $$
 CREATE VIEW AllAccount AS
 SELECT ta.id, ta.FirstName, ta.LastName, ta.BirthDate, ta.Address, ta.Email, ta.Phone, ta.Avt, ta.Role, ta.CreatedAt , dm.Major
 FROM
@@ -426,8 +437,8 @@ LEFT JOIN
 (SELECT d.idAccount, m.Major
 FROM  inforDoctor d, major m
 WHERE d.idMajor = m.id) as dm
-ON ta.id = dm.idAccount where ta.Role != "Admin"
-$$ -- drop view AllAccount
+ON ta.id = dm.idAccount where ta.Role != "Admin" order by CreatedAt desc
+$$ -- drop view AllAccount 
 
 delimiter $$
 CREATE VIEW AllAppointment AS
@@ -632,9 +643,9 @@ END$$ -- drop PROCEDURE AllCmt call AllCmt(1) select idComment, idReplycomment, 
 
 delimiter $$
 CREATE procedure detailDoctor (IN id int)
-select aim.id, aim.FullName, aim.Gender, aim.Avt, aim.Email, aim.Degree, aim.Introduce, aim.idMajor, aim.Major, aim.Experience, aim.Training, r.Star
+select aim.id, aim.FullName, aim.Gender, aim.Avt, aim.Phone, aim.Address, aim.BirthDate, aim.Email, aim.Degree, aim.Introduce, aim.idMajor, aim.Major, aim.Experience, aim.Training, r.Star
 FROM
-(select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major, i.Experience, i.Training 
+(select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Phone, a.Address, a.BirthDate, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major, i.Experience, i.Training 
  FROM account a, inforDoctor i, major m
  where a.id = i.idAccount and m.id = i.idMajor and a.id = id) as aim
 left join
@@ -642,9 +653,51 @@ left join
 on aim.id = r.idDoctor;
 $$ -- drop procedure detailDoctor
 
+
+delimiter $$
+CREATE procedure getProfile (IN id int)
+select a.id, CONCAT(FirstName, ' ', LastName) as FullName, BirthDate, Gender, Address, Email, Phone, Avt from account a where a.id = id;
+$$ -- drop procedure getProfile	
+ 
 delimiter $$
 CREATE procedure RateDoctor (IN id int)
-select r.idPatient, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, r.idDoctor, r.Comment, r.Star
+select r.idPatient, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, r.Comment, r.Star
 from ratedoctor r, account a
 where r.idPatient = a.id and idDoctor = id 
 $$ -- drop procedure RateDoctor
+
+delimiter $$
+CREATE procedure getAccountByKeyword (IN search text )
+SELECT ta.id, ta.FirstName, ta.LastName, ta.BirthDate, ta.Address, ta.Email, ta.Phone, ta.Avt, ta.Role, ta.CreatedAt , dm.Major
+FROM
+(SELECT a.id, a.FirstName, a.LastName, a.BirthDate, a.Address, a.Email, a.Phone, a.Avt, t.Role, a.CreatedAt
+FROM account a, authorization t
+WHERE a.Authorization = t.id) as ta
+LEFT JOIN
+(SELECT d.idAccount, m.Major
+FROM  inforDoctor d, major m
+WHERE d.idMajor = m.id) as dm
+ON ta.id = dm.idAccount where ta.Role != "Admin" and (ta.FirstName like search or ta.LastName like search or ta.Phone like search)
+$$ -- drop procedure getAccountByKeyword
+
+delimiter $$
+CREATE procedure getAppointmentPatient (IN idP int)
+select acsv.id, acsv.Service, acsv.idDoctor, acsv.LastName, acsv.FirstName, acsv.Phone, acsv.Avt, acsv.DateBooking, acsv.TimeBooking, acsv.Price, acsv.Status, acsv.Information, acsv.Type, rd.rateid, rd.Star, rd.Comment
+from
+(select a.id, sv.Service, a.idDoctor, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type 
+from account ac, appointment a, appointmentstatus s, service sv 
+where ac.id = a.idDoctor 
+and a.Status = s.id and a.idService = sv.id and idPatient = idP 
+order by DateBooking, TimeBooking) as acsv
+left join 
+(select id as rateid, idDoctor, Star, Comment from ratedoctor where  idPatient = idP ) as rd
+on acsv.idDoctor = rd.idDoctor
+$$ -- drop procedure getAppointmentPatient
+
+delimiter $$
+CREATE procedure getAppointmentDoctor (IN idD int)
+select a.id, sv.Service, a.idPatient, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, ac.Address, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type 
+from account ac, appointment a, appointmentstatus s, service sv 
+where ac.id = a.idPatient and a.Status = s.id and a.idService = sv.id and idDoctor = idD
+order by DateBooking, TimeBooking
+$$ -- drop procedure getAppointmentDoctor

@@ -151,11 +151,11 @@ const BookingConfirm = () => {
           <div className="max-lg:mb-4">
             <p className="text-lg font-medium mb-2 text-gray-700">Họ và tên</p>
             <Input
-              disabled={data?.FirstName + data?.LastName !== null}
+              disabled={data?.FullName !== null}
               className={` ${
-                data?.FirstName !== null && "!bg-slate-100 !text-gray-500"
+                data?.FullName !== null && "!bg-slate-100 !text-gray-500"
               } h-12 w-full p-2.5 block items-center border outline-none rounded-xl text-lg `}
-              value={data?.FirstName + data?.LastName}
+              value={data?.FullName}
             ></Input>
           </div>
           <div className="max-lg:mb-4">

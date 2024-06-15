@@ -10,6 +10,7 @@ const createError = require("http-errors");
 const myOAuth2Client = require("../../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 const emailBody = require("../../util/sendmail");
+const { forEach } = require("../configs/muter");
 
 class API {
   // [POST] /api/execute/query
@@ -121,7 +122,10 @@ class API {
     let lastName = fn[fn.length - 1];
     let firstName = "";
     for (let i = 0; i < fn.length - 1; i++) {
-      firstName = firstName + fn[i] + " ";
+      firstName += fn[i];
+      if(i = fn.length - 2) {
+        firstName += " ";
+      }
     }
 
     let payload = {};
@@ -180,7 +184,7 @@ class API {
                     FullName: firstName + " " + lastName,
                     Authorization: "1",
                   };
-                  let linkFP = process.env.CLIENT_URL + "/reset/password?auth_token=" + encodeToken(payload);
+                  let linkFP = process.env.CLIENT_URL + `/reset/${encodeToken(payload)}`;
                   // mailOption là những thông tin gửi từ phía client lên thông qua API
                   const mailOptions = {
                     to: email,
@@ -250,7 +254,7 @@ class API {
               FullName: results[0].FirstName + " " + results[0].LastName,
               Authorization: results[0].Authorization,
             };
-            linkFP = process.env.CLIENT_URL + "/reset/password?auth_token=" + encodeToken(payload);
+            linkFP = process.env.CLIENT_URL + "/reset/" + encodeToken(payload);
             // mailOption là những thông tin gửi từ phía client lên thông qua API
             const mailOptions = {
               to: Email,
@@ -259,7 +263,7 @@ class API {
             };
             await transport.sendMail(mailOptions); // gửi email
             // Không có lỗi gì thì trả về success
-            res.status(200).json({ message: "Đã gửi mail về hộp thư. Vui lòng kiểm tra!"});
+            res.status(200).json({ message: "Đã gửi mail về hộp thư. Vui lòng kiểm tra!", checked: true});
           } else {
             res.status(200).send({ message: "Email chưa được đăng ký tài khoản Doccoming!", checked: false });
           }
@@ -272,7 +276,7 @@ class API {
     }
   }
 
-  //[GET] /api/reset/password
+  //[POST] /api/reset/password
   resetPassword(req, res, next) {
     const {NewPassWord} = req.body;
     const id = req.user.id;
@@ -295,26 +299,66 @@ class API {
       }})
   }
 
+  //[POST] /api/change/password
+  changePassword(req, res, next) {
+    const { OldPassWord, NewPassWord} = req.body; console.log(req.body)
+    const id = req.user.id;
+    const updateSql = "update account set PassWord = ? where id = ? ";
+    const selectSql = "select PassWord from account where id = ? ";
+    
+    pool.getConnection(function (err, connection) {
+      //if (err) throw err; // not connected!
+      connection.query(selectSql, id, function (error, results, fields) {
+        if (error) {
+            res.send({ message: "Kết nối DataBase thất bại" });
+        }
+        if (results.length > 0) { 
+          bcrypt.compare(OldPassWord, results[0].PassWord, (e, response) => {
+            if (response) {
+              bcrypt.hash(NewPassWord, saltRound, (err, hash) => {
+                connection.query(updateSql, [hash, id], function (err, results, fields) {
+                  connection.destroy();
+                  if (err) {
+                      res.status(200).send({ message: err.sqlMessage });
+                  } else {
+                      res.status(200).send({ message: "Đổi mật khẩu thành công!" });
+                  }
+                })
+              });
+            } else {
+                res.status(200).send({ message: "Mật khẩu cũ không chính xác!" });
+            }
+          });
+        } else {
+            res.status(200).send({ message: "Đổi mật khẩu thất bại!" });
+        }
+      });
+    });
+  }
 
   // Profile
   //[GET] /api/profile
   getProfile(req, res) {
-    const id = req.user.id;
-    const selectSql =
-      "select id, LastName, FirstName, BirthDate, Gender, Address, Email, Phone, Avt from account where id = ?";
+    const id = req.user.id; 
+    let selectSql = "";
     const errorMsg = "Lỗi hệ thống, không thể lấy thông tin!";
 
+    if(req.user.Authorization == 2){
+      selectSql = "call detailDoctor(?)";
+    } else{
+      selectSql = "call getProfile(?)";
+    }
     pool.query(selectSql, id, function (error, results, fields) {
       if (error) {
-        res.send({ message: errorMsg, checked: false });
+        res.send({ message: error, checked: false });
       } else {
         if (results.length > 0) {
-          if (results[0].BirthDate) {
-            const bd = results[0].BirthDate.split("-"); //yyyy-mm-dd
+          if (results[0][0]?.BirthDate) {
+            const bd = results[0][0].BirthDate.split("-"); //yyyy-mm-dd
             const birth = bd[2] + "/" + bd[1] + "/" + bd[0];
-            results[0].BirthDate = birth;
-          }
-          res.status(200).send({ data: results[0], checked: true });
+            results[0][0].BirthDate = birth;
+          } 
+          res.status(200).send({ data: results[0][0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
@@ -329,6 +373,12 @@ class API {
     const Address = req.body.Address ? req.body.Address : null;
     const Phone = req.body.Phone ? req.body.Phone : null;
     const Gender = req.body.Gender ? req.body.Gender : null;
+    const Degree = req.body.Degree ? req.body.Degree : null;
+    const Introduce = req.body.Introduce ? req.body.Introduce : null;
+    const idMajor = req.body.idMajor ? req.body.idMajor : null;
+    const Experience = req.body.Experience ? req.body.Experience : null;
+    const Training = req.body.Training ? req.body.Training : null;
+    
     let BirthDate = null;
     if (req.body.BirthDate !== "null") {
       let bd = req.body.BirthDate?.split("/"); // dd/mm/yyyy
@@ -342,7 +392,10 @@ class API {
     let FirstName = "";
     const LastName = fn[fn.length - 1];
     for (let i = 0; i < fn.length - 1; i++) {
-      FirstName = FirstName + fn[i] + " ";
+      FirstName += fn[i];
+      if(i !== fn.length - 2) {
+        FirstName += " ";
+      }
     }
     if (Avt === null) {
       data = [FirstName, LastName, BirthDate, Gender, Phone, Address, id];
@@ -354,17 +407,37 @@ class API {
         "update account set FirstName = ?, LastName = ?, BirthDate = ?, Gender = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
     }
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin!";
+    const updateInforDoctorSql = "update infordoctor set Degree = ?, Introduce =?, idMajor = ?, Experience = ?,Training = ? where idAccount = ?"
 
-    pool.query(updateSql, data, function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ checked: true });
-        } else {
-          res.status(200).send({ message: errorMsg, checked: false });
+    pool.getConnection(function (err, connection) {
+      if (err) throw err; // not connected!
+
+      connection.query(updateSql, data, function (error, results, fields) {
+        if (error) {
+          res.send({ message: errorMsg, checked: false });
         }
-      }
+        if (results) {
+          if(req.user.Authorization == 2){
+            connection.query(
+              updateInforDoctorSql,
+              [Degree, Introduce, idMajor, Experience, Training, id],
+              function (error, results, fields) {
+                connection.destroy();
+                if (error) {
+                  res.send({ message: error, checked: false });
+                }
+                if (results) {
+                  res.status(200).send({ checked:true });
+                }
+              }
+            );
+          } else {
+            res.status(200).send({ checked:true });
+          }
+        }
+      });
+
+      
     });
   }
 
@@ -372,11 +445,9 @@ class API {
   getAppointmentById(req, res) {
     let sql = "";
     if (req.user.Authorization == 1) {
-      sql =
-        "select a.id, sv.Service, a.idDoctor, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type from account ac, appointment a, appointmentstatus s, service sv where ac.id = a.idDoctor and a.Status = s.id and a.idService = sv.id and idPatient = ? order by DateBooking, TimeBooking";
+      sql = "call getAppointmentPatient(?)";
     } else if (req.user.Authorization == 2) {
-      sql =
-        "select a.id, sv.Service, a.idPatient, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, ac.Address, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type from account ac, appointment a, appointmentstatus s, service sv where ac.id = a.idPatient and a.Status = s.id and a.idService = sv.id and idDoctor = ? order by DateBooking, TimeBooking";
+      sql ="call getAppointmentDoctor(?)";
     }
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -384,8 +455,8 @@ class API {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
-        if (results) {
-          res.status(200).send({ AppointmentData: results, checked: true });
+        if (results[0].length>0) {
+          res.status(200).send({ AppointmentData: results[0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
@@ -720,7 +791,9 @@ class API {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
-        if (results[0]) {
+        if (results[0]) { 
+          const delCol = ["Phone", "Address", "BirthDate"];
+          delCol.forEach(col => delete results[0][0][col]);
           res.status(200).send({ data: results[0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
@@ -886,10 +959,30 @@ class API {
   createRateDoctor(req, res) {
     const { idDoctor, Star, Comment } = req.body;
     const idPatient = req.user.id
-    const insertSql ="insert into ratedoctor set idPatient = ?, idDoctor = ?, Star = ?, Comment = ?";
+    const insertSql ="insert into ratedoctor (idPatient, idDoctor, Star, Comment) values (?, ?, ?, ?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
    
     pool.query(insertSql, [idPatient, idDoctor, Star, Comment], function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // [POST] /api/rating/update
+  updateRateDoctor(req, res) {
+    const { id, Star, Comment } = req.body;
+    const idPatient = req.user.id
+    const updateSql ="Update ratedoctor set Star = ?, Comment = ? where id = ? and idPatient = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+   
+    pool.query(updateSql, [Star, Comment, id, idPatient], function (error, results, fields) {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
@@ -1453,21 +1546,32 @@ class API {
   getAllPost(req, res) {
     const selectSql = "select * from AllPost";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const date = new Date(); 
+    const countSql = "SELECT COUNT(*) as total FROM AllPost WHERE YEAR(DatePost) = " + date.getFullYear() + " and MONTH(DatePost)= " + (date.getMonth() + 1);
 
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
-      pool.query(selectSql, function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false });
-        } else {
-          if (results) {
-            res.status(200).send({ data: results, checked: true });
-          } else {
-            res.status(200).send({ message: errorMsg, checked: false });
+      pool.getConnection(function (err, connection) {
+        if (err) throw err; // not connected!
+  
+        connection.query(selectSql, function (error, results, fields) {
+          if (error) {
+            res.send({ message: errorMsg, checked: false });
           }
-        }
-      });
+          if (results.length > 0) {
+            connection.query(countSql, function (error, rs, fields) {
+              connection.destroy();
+              if (error) {
+                res.send({ message: error, checked: false });
+              }
+              if (rs) { console.log(rs);
+                res.status(200).send({ data: results, count: rs[0].total, checked: true });
+              }
+            });
+          }
+        });
+      })
     }
   }
 
@@ -1521,19 +1625,55 @@ class API {
   getAccount(req, res) {
     const selectSql = "select * from AllAccount";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const date = new Date(); 
+    const countSql = "SELECT COUNT(*) as total FROM AllAccount WHERE YEAR(CreatedAt) = " + date.getFullYear() + " and MONTH(CreatedAt)= " + (date.getMonth() + 1);
 
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
-      pool.query(selectSql, function (error, results, fields) {
+      pool.getConnection(function (err, connection) {
+        if (err) throw err; // not connected!
+  
+        connection.query(selectSql, function (error, results, fields) {
+          if (error) {
+            res.send({ message: errorMsg, checked: false });
+          }
+          if (results.length > 0) {
+            connection.query(countSql, function (error, rs, fields) {
+              connection.destroy();
+              if (error) {
+                res.send({ message: error, checked: false });
+              }
+              if (rs) { 
+                res.status(200).send({ data: results, count: rs[0].total, checked: true });
+              }
+            });
+          }
+        });
+      })
+    }
+  }
+
+  //[GET] /api/admin/account/search
+  getAccountByKeyword(req, res) {
+    
+    let { keywords } = req.body; 
+    keywords = "%" + keywords + "%";
+    const selectSql = "call getAccountByKeyword(?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    if (req.user.Authorization != 0) {
+      res.end("Unauthorized");
+    } else {
+      pool.query(selectSql, keywords, function (error, results, fields) {
         if (error) { 
           res.send({ message: error, checked: false });
         } else {
           
-          if (results) { 
+          if (results[0].length > 0) {  
             res
               .status(200)
-              .send({ data: results, TotalAcc: results.length, checked: true });
+              .send({ data: results[0], checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });
           }
@@ -1628,6 +1768,7 @@ class API {
   //[DELETE] /api/admin/account/delete
   deleteAccount(req, res) {
     const { id } = req.body;
+    
     const insertSql = "delete from account where id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -1635,7 +1776,7 @@ class API {
       res.end("Unauthorized");
     } else {
       pool.query(insertSql, id, function (error, results, fields) {
-        if (error) {
+        if (error) { 
           res.send({ message: error.sqlMessage, checked: false });
         } else {
           if (results) {

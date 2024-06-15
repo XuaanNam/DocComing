@@ -38,7 +38,7 @@ const AdminProfile = () => {
       if (currentUser.authentication == 0) {
         setData(user?.data);
         setFullName(
-          user?.data?.FirstName + user?.data?.LastName || currentUser?.FullName
+          user?.data?.FullName || currentUser?.FullName
         );
       } else Navigate("/");
     }
@@ -48,7 +48,6 @@ const AdminProfile = () => {
       });
     }
   }, [currentUser, user.data]);
-
   const handleEdit = () => {
     setEdit(true);
   };
@@ -94,7 +93,7 @@ const AdminProfile = () => {
   return (
     <div className="min-h-screen lg:pt-[70px] flex flex-col justify-center items-center">
       {currentUser?.authentication == 0 ? (
-        <div className="lg:mx-16 max-lg:px-3 text-gray-700 lg:flex lg:gap-10">
+        <div className="lg:mx-16 max-lg:px-3 lg:w-3/4 text-gray-700 lg:flex lg:gap-10">
           <div className="my-7 w-full rounded-xl bg-white shadow-lg shadow-violet-200 py-5 max-lg:px-6 lg:px-8">
             <div className="mb-5 grid grid-cols-5 items-center">
               <p className="font-semibold text-2xl max-lg:col-start-1 max-lg:col-span-2 col-span-1">Hồ sơ</p>
@@ -131,7 +130,7 @@ const AdminProfile = () => {
                   <CiCamera></CiCamera>
                 </div>
                 <div className="max-lg:col-start-2 max-lg:col-span-1 max-lg:text-left max-lg:text-base max-lg:flex max-lg:items-center max-lg:justify-center font-medium lg:text-lg lg:text-center w-full">
-                  {data?.FirstName + " " + data?.LastName || currentUser?.name}
+                  {data?.FullName || currentUser?.name}
                 </div>
               </div>
               <form className="lg:col-span-4 mb-16">

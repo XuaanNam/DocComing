@@ -227,7 +227,7 @@ const DoctorSchedule = () => {
 
   const getListData = (value) => {
     let listData = [];
-    for (let i = 0; i < AppointmentData.length; i++) {
+    for (let i = 0; i < AppointmentData?.length; i++) {
       let db = AppointmentData[i]?.DateBooking?.split("-");
       if (
         value.date() == db[2] &&

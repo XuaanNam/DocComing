@@ -22,11 +22,9 @@ const description = ['Quá tệ', 'Chưa tốt', 'Bình thường', 'Tốt', 'Tu
 const Appointment = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
-  const { AppointmentData, error, loading } =
-    useSelector((state) => state.appointment);
-  const { currentUser} = useSelector(
-    (state) => state.user
-  );  
+  const { AppointmentData, error, loading } = useSelector((state) => state.appointment);
+  const { currentUser} = useSelector((state) => state.user);  
+
   const [showModal, setShowModal] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
   const [actived, setActived] = useState(2);
@@ -36,16 +34,17 @@ const Appointment = () => {
   const [rating,setRating] = useState(0)
   const [comment,setComment] = useState("")
   const [isRated,setIsRated] = useState(false)
-  
+  console.log(AppointmentData)
   
   useEffect(() => {
     dispatch(fetchAppointment());
   }, []);
   useEffect(() => {
     if (currentUser) {
-      if (currentUser.authentication !== 1) Navigate("/");
+      if (currentUser.authentication != 1) Navigate("/");
     } else Navigate("/");
   }, [currentUser]);
+  console.log(currentUser);
   const handleRatingDoctor = () => {
     const data = {
       idDoctor: idDoctor,
@@ -56,6 +55,7 @@ const Appointment = () => {
       setComment("")
       setRating(0)
       setIsRated(true)
+      dispatch(fetchAppointment());
     })
     
   }
@@ -77,9 +77,9 @@ const Appointment = () => {
   }
   return (
     <div className="bg-white pt-[90px] max-lg:pt-[80px] min-h-screen">
-      {currentUser?.authentication === 1 && 
+      {currentUser?.authentication == 1 && 
       <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
-        <div className="flex flex-col lg:gap-1 my-7 lg:w-[25%] sm:max-lg:w-[30%] lg:h-48 bg-white shadow-lg shadow-violet-200 rounded-lg">
+        <div className="flex flex-col lg:gap-1 my-7 lg:w-1/5 sm:max-lg:w-[30%] lg:h-48 bg-white shadow-lg shadow-violet-200 rounded-lg">
           <div
             onClick={() => setActived(1)}
             className={` ${
@@ -144,7 +144,7 @@ const Appointment = () => {
                   <FaRegCalendarPlus />
                   <div>{appointment.DateBooking}</div>
                 </div>
-                <div className={` ${appointment.Status == 3 && "text-red-600"} max-lg:text-base lg:text-lg font-medium`}>
+                <div className={` ${appointment.Status == 3 ? "text-red-500" : appointment.Status == 2 && "text-green-500"} max-lg:text-base lg:text-lg font-medium`}>
                     {appointment.Status == 1
                       ? "Đã xác nhận"
                       : appointment.Status == 4
@@ -182,7 +182,7 @@ const Appointment = () => {
                     <div className="lg:flex w-full gap-10 mb-3">
                       <div className="flex gap-3 items-center max-lg:mb-3 lg:w-1/2">
                         <FaHome className="h-5 w-5 text-teal-600" />
-                        <p>Địa chỉ:</p>
+                        <p>Nơi khám:</p>
                         <div className="font-medium">
                           Khám tại nhà
                         </div>
@@ -204,6 +204,8 @@ const Appointment = () => {
                 </div>
                 <hr className="w-[98%] mx-auto border-[1px] border-lime-100 rounded-lg mb-5"></hr>
                 {appointment.Status === 2 && (
+                  <div>
+                  {appointment.Star === null ?
                   <Button
                     className="w-40 mx-auto rounded-2xl"
                     gradientDuoTone="greenToBlue"
@@ -215,6 +217,17 @@ const Appointment = () => {
                   >
                     Đánh giá
                   </Button>
+                  :
+                  <div className="flex flex-col items-center justify-center">
+                    <Rate className="w-52 flex gap-2"
+                          value={appointment.Star}
+                          style={{ fontSize: 28}}
+                          disabled={true}
+                    ></Rate>
+                    <p className="text-lg text-slate-600 mt-2">{appointment.Comment}</p>
+                  </div>
+                  }
+                  </div>
                 )}
                 {appointment.Status !== 2 && appointment.Status !== 3 && (
                   <Button
@@ -276,7 +289,7 @@ const Appointment = () => {
 
       <Modal
         show={showRatingModal}
-        onClose={() => setShowRatingModal(false)}
+        onClose={() => {setShowRatingModal(false); setIsRated(false)}}
         popup
         size="xl"
       >

@@ -9,6 +9,7 @@ const initialState = {
   img: "",
   checked: false,
   data: [],
+  countPost: 0,
   detailPost: {},
   category: [],
   post: [],
@@ -290,6 +291,7 @@ const postSlice = createSlice({
       })
       .addCase(fetchPost.fulfilled, (state, action) => {
         state.data = action.payload.data;
+        state.countPost = action.payload.count
       })
       .addCase(fetchPost.rejected, (state, action) => {
         state.loading = true;

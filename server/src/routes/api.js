@@ -15,9 +15,10 @@ router.get("/isauth", PassportCheck, api.isAuth);
 router.post("/auth/google/check", api.Google);
 
 router.post("/register", api.register);
-router.post("/send/otp", api.sendOTP);
+//router.post("/send/otp", api.sendOTP);
 router.post("/send/mail", api.sendMail);
-router.get("/reset/password", PassportCheck, api.resetPassword);
+router.post("/reset/password", PassportCheck, api.resetPassword);
+router.post("/change/password", PassportCheck, api.changePassword);
 
 // patient - doctor
 router.get("/profile", PassportCheck, api.getProfile);
@@ -55,6 +56,7 @@ router.get("/doctor/post/get", PassportCheck, api.getDoctorPost); // token --> l
 // #RATING DOCTOR
 router.get("/rating/:idDoctor", api.getRateDoctor); // idDoctor/idPatient --> params, idPatient không có -> null
 router.post("/rating", PassportCheck, api.createRateDoctor); //
+router.post("/rating/update", PassportCheck, api.updateRateDoctor); //
 
 // Blog
 router.post(
@@ -92,6 +94,7 @@ router.get("/admin/post", PassportCheck, api.getAllPost);
 router.post("/admin/post/accept", PassportCheck, api.acceptPost);
 router.post("/admin/post/status/change", PassportCheck, api.changeStatusPost);
 router.get("/admin/account", PassportCheck, api.getAccount);
+router.post("/admin/account/search", PassportCheck, api.getAccountByKeyword);
 router.post("/admin/account/create", PassportCheck, api.createAccount);
 router.patch("/admin/account/update", PassportCheck, api.updateAccount);
 router.delete("/admin/account/delete", PassportCheck, api.deleteAccount);
