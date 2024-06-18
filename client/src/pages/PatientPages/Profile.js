@@ -15,7 +15,14 @@ import { toast } from "react-toastify";
 
 const Profile = () => {
   const dateFormat = "DD/MM/YYYY";
-
+  const date = new Date();
+  console.log(date.getFullYear())
+  const maxDate =
+    (date.getDate() < 10 ? "0" + (date.getDate() - 1) : (date.getDate() - 1))
+    + "/" +
+    (date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) 
+    + "/" +
+    date.getFullYear();
   const { currentUser, user, checked, auth, error, loading, updated } =
     useSelector((state) => state.user);
   const [isSubmited, setIsSubmited] = useState(false);
@@ -260,6 +267,7 @@ const Profile = () => {
                         format={dateFormat}
                         disabled={!edit}
                         onChange={onChange}
+                        maxDate={dayjs(maxDate, dateFormat)}
                       />
                     </div>
                     <div className="lg:w-1/2">

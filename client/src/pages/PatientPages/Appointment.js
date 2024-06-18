@@ -12,7 +12,8 @@ import { Modal, Table, Button } from "flowbite-react";
 import { Rate,Input  } from 'antd';
 
 import {
-  fetchAppointment,cancelAppointment, ratingDoctor
+  fetchAppointment,cancelAppointment, ratingDoctor,
+  updateRatingDoctor
 } from "../../redux-toolkit/appointmentSlice";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -23,7 +24,7 @@ const Appointment = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const { AppointmentData, error, loading } = useSelector((state) => state.appointment);
-  const { currentUser} = useSelector((state) => state.user);  
+  const { currentUser,allNoti} = useSelector((state) => state.user);  
 
   const [showModal, setShowModal] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
@@ -34,7 +35,7 @@ const Appointment = () => {
   const [rating,setRating] = useState(0)
   const [comment,setComment] = useState("")
   const [isRated,setIsRated] = useState(false)
-  console.log(AppointmentData)
+  const [editRating,setEditRating] = useState(0)
   
   useEffect(() => {
     dispatch(fetchAppointment());
@@ -44,12 +45,12 @@ const Appointment = () => {
       if (currentUser.authentication != 1) Navigate("/");
     } else Navigate("/");
   }, [currentUser]);
-  console.log(currentUser);
   const handleRatingDoctor = () => {
     const data = {
       idDoctor: idDoctor,
       Star: rating,
-      Comment: comment
+      Comment: comment,
+      Patient: currentUser.FullName,
     }
     dispatch(ratingDoctor(data)).then(() => {
       setComment("")
@@ -57,10 +58,27 @@ const Appointment = () => {
       setIsRated(true)
       dispatch(fetchAppointment());
     })
-    
   }
+
+  const handleUpdateRatingDoctor = ({id,iddoctor}) => {
+    const data = {
+      id,
+      idDoctor: iddoctor,
+      Star: rating,
+      Comment: comment,
+      Patient: currentUser.FullName,
+    }
+    console.log(data)
+    dispatch(updateRatingDoctor(data)).then(() => {
+      setComment("")
+      setRating(0)
+      setEditRating(0)
+      dispatch(fetchAppointment());
+    })
+  }
+
   const handleCancelAppointment = (id) => {
-    const data = { id };
+    const data = { id, idAccount: idDoctor };
     dispatch(cancelAppointment(data)).then(() => {
       dispatch(fetchAppointment());
     });
@@ -175,7 +193,7 @@ const Appointment = () => {
                       <div className="flex gap-3 items-center lg:w-1/2">
                         <BsCash className="h-5 w-5 text-green-400"></BsCash>
                         <p>Giá dịch vụ:</p>
-                        <p className="font-medium">{appointment.Price} VND</p>
+                        <p className="font-medium text-green-400">{appointment.Price} đ</p>
                       </div>
                     </div>
                     
@@ -190,7 +208,7 @@ const Appointment = () => {
                       <div className="flex gap-3 items-center lg:w-1/2">
                         <FaPhoneAlt className="h-5 w-5 text-teal-600" />
                         <p>Số điện thoại:</p>
-                        <div className="font-medium">{appointment.Phone}</div>
+                        <div className="font-medium text-teal-500">{appointment.Phone}</div>
                       </div>
                     </div>
                     <div className="flex gap-3 items-center mb-3">
@@ -218,13 +236,43 @@ const Appointment = () => {
                     Đánh giá
                   </Button>
                   :
-                  <div className="flex flex-col items-center justify-center">
-                    <Rate className="w-52 flex gap-2"
-                          value={appointment.Star}
-                          style={{ fontSize: 28}}
-                          disabled={true}
-                    ></Rate>
-                    <p className="text-lg text-slate-600 mt-2">{appointment.Comment}</p>
+                  <div className="relative">
+                    {editRating === appointment.id ?
+                    <div className="flex flex-col items-center justify-center">
+                      <Rate className="w-52 flex gap-2"
+                            value={rating}
+                            style={{ fontSize: 28}}
+                            tooltips={description}
+                            onChange={(value)=>{setRating(value)}}>
+                      </Rate>
+                      <Input
+                        maxLength={100}
+                        value={comment}
+                        onChange={(e) =>{setComment(e.target.value)}}
+                        className="p-3 text-slate-600 mt-2 h-10 w-3/4 rounded-lg"
+                      />
+                      <div className="flex absolute top-0 right-0 text-sm ">
+                      <p className="cursor-pointer text-center w-16 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
+                         onClick={()=>{setEditRating(0);setComment("");setRating(0)}}>Hủy
+                      </p>
+                      <p className="cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
+                         onClick={()=>{handleUpdateRatingDoctor({id: appointment.rateid, iddoctor: appointment.idDoctor})}}>Xác nhận
+                      </p>
+                      </div>
+                    </div>
+                    :
+                    <div className="flex flex-col items-center justify-center">
+                      <Rate className="w-52 flex gap-2"
+                            value={appointment.Star}
+                            style={{ fontSize: 28}}
+                            disabled={true}
+                      ></Rate>
+                      <p className="text-lg text-slate-600 mt-2">{appointment.Comment}</p>
+                      <p className="absolute top-0 right-0 text-sm cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
+                         onClick={()=>{setEditRating(appointment.id);setComment(appointment.Comment);setRating(appointment.Star)}}>Chỉnh sửa
+                      </p>
+                    </div>
+                    } 
                   </div>
                   }
                   </div>
@@ -236,6 +284,7 @@ const Appointment = () => {
                     onClick={() => {
                       setShowModal(true);
                       setIdAppointment(appointment.id);
+                      setIdDoctor(appointment.idDoctor)
                     }}
                   >
                     Hủy
@@ -289,7 +338,7 @@ const Appointment = () => {
 
       <Modal
         show={showRatingModal}
-        onClose={() => {setShowRatingModal(false); setIsRated(false)}}
+        onClose={() => {setShowRatingModal(false); setIsRated(false);setRating(0);setComment("")}}
         popup
         size="xl"
       >

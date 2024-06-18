@@ -59,7 +59,7 @@ const CreateBlog = () => {
       setFilled(false);
     }
   };
-  console.log(category)
+  console.log(content)
   return (
     <div className="lg:pt-[70px] md:flex md:items-center md:justify-center ">
       <div className="lg:mt-10 max-lg:mt-5 mb-20 flex flex-col items-center justify-center md:w-3/4 max-md:w-[90%] md:p-8 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200 border">

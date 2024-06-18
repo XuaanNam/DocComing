@@ -116,6 +116,19 @@ export const fetchAppointment = createAsyncThunk(
     return await res.json();
   }
 );
+export const fetchAdminAppointment = createAsyncThunk(
+  "fetchAdminAppointment",
+  async () => {
+    const res = await fetch("http://localhost:5000/api/admin/appointment", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return await res.json();
+  }
+);
 export const acceptAppointment = createAsyncThunk(
   "acceptAppointment",
   async (body) => {
@@ -186,10 +199,23 @@ export const ratingDoctor = createAsyncThunk(
     return await res.json();
   }
 );
+export const updateRatingDoctor = createAsyncThunk(
+  "updateRatingDoctor",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/rating/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
 export const getRatingDoctor = createAsyncThunk(
   "getRatingDoctor",
   async (body) => {
-    console.log(body)
     const res = await fetch(`http://localhost:5000/api/rating/${body}`, {
       method: "GET",
       headers: {
@@ -294,6 +320,17 @@ const appointmentSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      .addCase(fetchAdminAppointment.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchAdminAppointment.fulfilled, (state, action) => {
+        state.AppointmentData = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(fetchAdminAppointment.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
       .addCase(acceptAppointment.pending, (state, action) => {
         state.loading = true;
       })
@@ -343,6 +380,17 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(ratingDoctor.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //updateRatingDoctor
+      .addCase(updateRatingDoctor.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(updateRatingDoctor.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(updateRatingDoctor.rejected, (state, action) => {
         state.loading = true;
       })
       //getRatingDoctor

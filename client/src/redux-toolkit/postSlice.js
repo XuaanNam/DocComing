@@ -134,7 +134,7 @@ export const hidePost = createAsyncThunk(
 export const fetchComment = createAsyncThunk(
   "fetchComment",
   async (body) => {
-    const res = await fetch(`http://localhost:5000/api/comments/${body.idPost}/${body.idAccount}`, {
+    const res = await fetch(`http://localhost:5000/api/comment/${body.idPost}/${body.idAccount}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -345,7 +345,6 @@ const postSlice = createSlice({
       })
       .addCase(getPostBySimilarCategory.fulfilled, (state, action) => {
         state.post = action.payload.data;
-        console.log(action.payload.data)
         state.loading = false;
       })
       .addCase(getPostBySimilarCategory.rejected, (state, action) => {

@@ -74,56 +74,81 @@ class API {
 
   // [POST] /api/login
   login(req, res, next) {
-    const sql =
+    const selectSql =
       "select id, Email, FirstName, LastName, PassWord, Authorization from account where Email = ? ";
+    const notiSql = "call getNotification(?)";
     const message = "Số điện thoại hoặc mật khẩu không chính xác!";
     const Email = req.body.Email;
     const PassWord = req.body.PassWord;
 
-    pool.query(sql, Email, function (error, results, fields) {
-      if (error) {
-        res.send({ message: error });
-      } else {
-        if (results.length > 0) {
-          bcrypt.compare(PassWord, results[0].PassWord, (err, response) => {
-            if (response) {
-              const payload = {
-                iss: "Doccoming",
-                id: results[0].id,
-                Authorization: results[0].Authorization,
-              };
-              const token = "Bearer " + encodeToken(payload);
-
-              //res.setHeader("isAuth", token);
-              res.send({
-                checked: true,
-                token,
-                id: results[0].id,
-                FullName: results[0].FirstName + " " + results[0].LastName,
-                authentication: results[0].Authorization,
-              });
-            } else {
-              res.status(200).send({ message, checked: false });
-            }
-          });
+    pool.getConnection(function (err, connection) {
+      if (err) throw err; // not connected!
+      connection.query(selectSql, Email, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error });
         } else {
-          res.status(200).send({ message, checked: false });
+          if (results.length > 0) {
+            bcrypt.compare(PassWord, results[0].PassWord, (err, response) => {
+              if (response) {
+                const payload = {
+                  iss: "Doccoming",
+                  id: results[0].id,
+                  Authorization: results[0].Authorization,
+                };
+                const token = "Bearer " + encodeToken(payload);
+
+                connection.query(notiSql, results[0].id, function (e, rs, fields) {
+                  connection.destroy();
+                  if (e) {
+                    res.send({ message: e });
+                  } 
+                  if(rs[0].length > 0) {
+                    const Unread = rs[0][0].Unread;
+                    rs[0].forEach(noti => delete noti["Unread"])
+                    res.send({
+                      checked: true,
+                      token,
+                      id: results[0].id,
+                      FullName: results[0].FirstName + " " + results[0].LastName,
+                      authentication: results[0].Authorization,
+                      notification: rs[0],
+                      Unread,
+                    });
+                  } else {
+                    res.send({ 
+                      checked: true,
+                      token,
+                      id: results[0].id,
+                      FullName: results[0].FirstName + " " + results[0].LastName,
+                      authentication: results[0].Authorization,
+                      notification: [],
+                      Unread: 0,
+                    });
+                  }
+                })
+              } else {
+                res.status(200).send({ message, checked: false });
+              }
+            });
+          } else {
+            res.status(200).send({ message, checked: false });
+          }
         }
-      }
+      });
     });
   }
 
   // [POST] /api/auth/google/check
   async Google(req, res) {
     const { email, name, googlePhotoUrl } = req.body;
-    const sql =
-      "select id, Authorization, FirstName, LastName, Avt from account where Email = ? ";
-    const fn = name.split(" ");
+    const sql ="select id, Authorization, FirstName, LastName, Avt from account where Email = ? ";
+    const notiSql = "call getNotification(?)";
+    const fn = name.split(" "); console.log(fn)// x n n 
     let lastName = fn[fn.length - 1];
     let firstName = "";
     for (let i = 0; i < fn.length - 1; i++) {
       firstName += fn[i];
-      if(i = fn.length - 2) {
+      if(i !== fn.length - 2) {
         firstName += " ";
       }
     }
@@ -132,80 +157,125 @@ class API {
     let token = "";
     const insertSql =
       "insert into account (Email, FirstName, LastName, Avt, PassWord, CreatedAt) values (?, ?, ?, ?, ?, now())";
-    const password =
-      "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici";
-
-    const myAccessTokenObject = await myOAuth2Client.getAccessToken();
-    const myAccessToken = myAccessTokenObject?.token;
-    const transport = nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        type: "OAuth2",
-        user: process.env.ADMIN_EMAIL_ADDRESS,
-        clientId: process.env.GOOGLE_MAILER_CLIENT_ID,
-        clientSecret: process.env.GOOGLE_MAILER_CLIENT_SECRET,
-        refresh_token: process.env.GOOGLE_MAILER_REFRESH_TOKEN,
-        accessToken: myAccessToken,
-      },
-    });
-
+    const password = "Default Password";
+    const insertNotiSql = "insert into notification (idAccount, Notification, Type) values (?,?,?)";
+    const NotiMsg = "Bạn vừa đăng nhập bằng Tài Khoản Google, vui lòng kiểm tra Email để thiết lập mật khẩu mới cho Tài khoản của bạn!"
+    
     try {
-      pool.query(sql, email, function (error, results, fields) {
-        if (error) {
-          res.send({ message: error });
-        } else {
-          if (results.length > 0) {
-            payload = {
-              iss: "Doccoming",
-              id: results[0].id,
-              Authorization: results[0].Authorization,
-            };
-            token = "Bearer " + encodeToken(payload);
-            res.send({
-              checked: true,
-              token,
-              id: results[0].id,
-              FullName: results[0].FirstName + " " + results[0].LastName,
-              authentication: results[0].Authorization,
-              Avt: results[0].Avt,
-            });
-          } else {
-            pool.query(
-              insertSql,
-              [email, firstName, lastName, googlePhotoUrl, password],
-              async function (error, results, fields) {
-                if (error) res.send({ message: error });
-                else if (results) {
-                  
-                  payload = {
-                    iss: "Doccoming",
-                    id: results.insertId,
-                    Avt: googlePhotoUrl,
-                    FullName: firstName + " " + lastName,
-                    Authorization: "1",
-                  };
-                  let linkFP = process.env.CLIENT_URL + `/reset/${encodeToken(payload)}`;
-                  // mailOption là những thông tin gửi từ phía client lên thông qua API
-                  const mailOptions = {
-                    to: email,
-                    subject: "Thiết lập mật khẩu mới cho tài khoản DocComming!", // Tiêu đề email
-                    html: emailBody(linkFP), // Nội dung email
-                  };
-                  await transport.sendMail(mailOptions); // gửi email
+      pool.getConnection(function (err, connection) {
+        if (err) throw err; // not connected!
+        connection.query(sql, email, function (error, results, fields) {
+          if (error) {
+            res.send({ message: error });
+          } else { 
+            if (results.length > 0) {
+              payload = {
+                iss: "Doccoming",
+                id: results[0].id,
+                Authorization: results[0].Authorization,
+              };
+              token = "Bearer " + encodeToken(payload);
+              connection.query(notiSql, results[0].id, function (e, rs, fields) {
+                connection.destroy();
+                if (e) {
+                  res.send({ message: e });
+                } 
+                if(rs[0].length > 0) { 
+                  const Unread = rs[0][0].Unread;
+                  rs[0].forEach(noti => delete noti["Unread"])
                   res.send({
                     checked: true,
-                    token: "Bearer " + encodeToken(payload),
-                    id: results.insertId,
-                    name,
-                    authentication: "1",
-                    googlePhotoUrl,
+                    token,
+                    id: results[0].id,
+                    FullName: results[0].FirstName + " " + results[0].LastName,
+                    authentication: results[0].Authorization,
+                    Avt: results[0].Avt,
+                    notification: rs[0],
+                    Unread,
+                  });
+                } else {
+                  res.send({ 
+                    checked: true,
+                    token,
+                    id: results[0].id,
+                    FullName: results[0].FirstName + " " + results[0].LastName,
+                    authentication: results[0].Authorization,
+                    Avt: results[0].Avt,
+                    notification: [],
+                    Unread: 0,
                   });
                 }
-              }
-            );
+              })
+            } else { 
+              connection.query(
+                insertSql,
+                [email, firstName, lastName, googlePhotoUrl, password],
+                async function (e, rs, fields) {
+                  if (e) res.send({ message: e });
+                  else if (rs) { 
+                    payload = {
+                      iss: "Doccoming",
+                      id: rs.insertId,
+                      Avt: googlePhotoUrl,
+                      FullName: firstName + " " + lastName,
+                      Authorization: "1",
+                    };
+                    let linkFP = process.env.CLIENT_URL + `/reset/${encodeToken(payload)}`;
+                    // const myAccessTokenObject = await myOAuth2Client.getAccessToken();
+                    // const myAccessToken = myAccessTokenObject?.token;
+                    // const transport = nodemailer.createTransport({
+                    //   service: "gmail",
+                    //   auth: {
+                    //     type: "OAuth2",
+                    //     user: process.env.ADMIN_EMAIL_ADDRESS,
+                    //     clientId: process.env.GOOGLE_MAILER_CLIENT_ID,
+                    //     clientSecret: process.env.GOOGLE_MAILER_CLIENT_SECRET,
+                    //     refresh_token: process.env.GOOGLE_MAILER_REFRESH_TOKEN,
+                    //     accessToken: myAccessToken,
+                    //   },
+                    // });
+                    // // mailOption là những thông tin gửi từ phía client lên thông qua API
+                    // const mailOptions = {
+                    //   to: email,
+                    //   subject: "Thiết lập mật khẩu mới cho tài khoản DocComming!", // Tiêu đề email
+                    //   html: emailBody(linkFP), // Nội dung email
+                    // };
+                    // await transport.sendMail(mailOptions); // gửi email
+
+                    connection.query(insertNotiSql,
+                      [rs.insertId, NotiMsg, "Email"],
+                      async function (notiErr, notiRs, fields) {
+                        connection.destroy();
+                        if (notiErr) res.send({ message: notiErr });
+                        else if (notiRs) { 
+                          const d = new Date();
+                          const NotiTime = d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+                          res.send({
+                            checked: true,
+                            token: "Bearer " + encodeToken(payload),
+                            id: rs.insertId,
+                            FullName: name,
+                            authentication: "1",
+                            Avt: googlePhotoUrl,
+                            notification: [
+                              {
+                                id: notiRs.insertId,
+                                Notification: NotiMsg,
+                                NotiTime,
+                                Status: 0,
+                              }
+                            ],
+                            Unread: 1,
+                          });
+                        }
+                    });
+                  }
+                }
+              );
+            }
           }
-        }
-      });
+        });
+      })
     } catch (error) {
       next(error);
     }
@@ -227,7 +297,7 @@ class API {
        * Vì vậy mỗi lần sử dụng Access Token, chúng ta sẽ generate ra một thằng mới là chắc chắn nhất.
        **/
       // Access Token sẽ nằm trong property 'token' trong Object mà chúng ta vừa get được ở trên
-      const myAccessToken = myAccessTokenObject?.token;
+      const myAccessToken = myAccessTokenObject?.token; 
       // Tạo một biến Transport từ Nodemailer với đầy đủ cấu hình, dùng để gọi hành động gửi mail
       const transport = nodemailer.createTransport({
         service: "gmail",
@@ -272,7 +342,7 @@ class API {
     } catch (error) {
       // Có lỗi thì các bạn log ở đây cũng như gửi message lỗi về phía client
 
-      res.status(500).json({ errors: error.message });
+      res.status(500).json({ errors: error });
     }
   }
 
@@ -281,33 +351,58 @@ class API {
     const {NewPassWord} = req.body;
     const id = req.user.id;
     const updateSql = "update account set PassWord = ? where id = ? ";
+    const insertNotiSql = "insert into notification (idAccount, Notification, Type) values (?,?,?)";
+    const NotiMsg = "Bạn đã thay đổi mật khẩu thành công!"
+    
     bcrypt.hash(NewPassWord, saltRound, (err, hash) => {
       if (err) {
         res.status(200).send({ message: err, checked: false });
       } else {
-        pool.query(updateSql, [hash, id], async function (error, results, fields) {
-          if (error) {
-            res.send({ message: "Có lỗi phát sinh!", checked: false });
-          } else { 
-            if (results) {
-              res.status(200).send({ checked: true });
-            } else {
-              res.status(200).send({ message: "Có lỗi phát sinh!", checked: false });
+        pool.getConnection(function (err, connection) {
+          if (err) throw err; // not connected!
+          connection.query(updateSql, [hash, id], async function (error, results, fields) {
+            if (error) {
+              res.send({ message: "Có lỗi phát sinh!", checked: false });
+            } else { 
+              if (results) {
+                connection.query(insertNotiSql, [id, NotiMsg, "Change PassWord"], async function (err, rs, fields) {
+                  connection.destroy();
+                  if (err) {
+                    res.send({ message: err, checked: false });
+                  } 
+                  else if(rs[0].length > 0) {
+                    const Unread = rs[0][0].Unread;
+                    rs[0].forEach(noti => delete noti["Unread"])
+                    res.send({
+                      checked: true,
+                      token,
+                      id: results[0].id,
+                      FullName: results[0].FirstName + " " + results[0].LastName,
+                      authentication: results[0].Authorization,
+                      notification: rs[0],
+                      Unread,
+                    });
+                  }
+                });
+              } else {
+                res.status(200).send({ message: "Có lỗi phát sinh!", checked: false });
+              }
             }
-          }
+          });
         });
+        
       }})
   }
 
   //[POST] /api/change/password
   changePassword(req, res, next) {
-    const { OldPassWord, NewPassWord} = req.body; console.log(req.body)
+    const { OldPassWord, NewPassWord} = req.body; 
     const id = req.user.id;
     const updateSql = "update account set PassWord = ? where id = ? ";
     const selectSql = "select PassWord from account where id = ? ";
     
     pool.getConnection(function (err, connection) {
-      //if (err) throw err; // not connected!
+      if (err) throw err; // not connected!
       connection.query(selectSql, id, function (error, results, fields) {
         if (error) {
             res.send({ message: "Kết nối DataBase thất bại" });
@@ -319,9 +414,10 @@ class API {
                 connection.query(updateSql, [hash, id], function (err, results, fields) {
                   connection.destroy();
                   if (err) {
-                      res.status(200).send({ message: err.sqlMessage });
+                    res.status(200).send({ message: err.sqlMessage });
                   } else {
-                      res.status(200).send({ message: "Đổi mật khẩu thành công!" });
+
+                    res.status(200).send({ message: "Đổi mật khẩu thành công!" });
                   }
                 })
               });
@@ -352,7 +448,7 @@ class API {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
-        if (results.length > 0) {
+        if (results[0].length > 0) {
           if (results[0][0]?.BirthDate) {
             const bd = results[0][0].BirthDate.split("-"); //yyyy-mm-dd
             const birth = bd[2] + "/" + bd[1] + "/" + bd[0];
@@ -468,39 +564,28 @@ class API {
   createAppointment(req, res) {
     const idPatient = req.user.id;
     const { idService, idDoctor, Price, Information, TimeBooking } = req.body;
+    
     const db = req.body.DateBooking.split("/");
     const DateBooking = db[2] + "-" + db[1] + "-" + db[0];
     const insertSql =
       "insert into appointment (idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information) values(?,?,?,?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const data = [idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information]
 
     if (req.user.Authorization != 1) {
       res.end("Unauthorized");
     } else {
-      pool.query(
-        insertSql,
-        [
-          idService,
-          idPatient,
-          idDoctor,
-          DateBooking,
-          TimeBooking,
-          Price,
-          Information,
-        ],
-        function (error, results, fields) {
-          if (error) {
-            console.log(error);
-            res.send({ message: error.sqlMessage, checked: false });
+      pool.query(insertSql, data, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error.sqlMessage, checked: false });
+        } else {
+          if (results) {
+            res.status(200).send({ checked: true });
           } else {
-            if (results) {
-              res.status(200).send({ checked: true });
-            } else {
-              res.status(200).send({ message: errorMsg, checked: false });
-            }
+            res.status(200).send({ message: errorMsg, checked: false });
           }
         }
-      );
+      });
     }
   }
 
@@ -554,63 +639,38 @@ class API {
 
   //[PATCH] /api/appointment/cancel
   cancelAppointment(req, res) {
-    const { id } = req.body;
+    const { id, idAccount} = req.body;
     const updateSql = "update appointment set status = 3 where id = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const insertNotiSql = "insert into notification (idAccount, Notification, Type) values (?,?,?)";
+    const Notification = "Cuộc hẹn của bạn đã bị hủy!";
+    let Type = "";
+    if(req.user.Authentication == 1) {
+      Type = "/doctor/appointment";
+    } else Type = "/patient/appointment";
+    
 
-    pool.query(updateSql, id, function (error, results, fields) {
-      if (error) {
-        res.send({ message: error.sqlMessage, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ checked: true });
+    pool.getConnection(function (err, connection) {
+      if (err) throw err; // not connected!
+      connection.query(updateSql, id, function (error, results, fields) {
+        if (error) {
+          res.send({ message: error.sqlMessage, checked: false });
         } else {
-          res.status(200).send({ message: errorMsg, checked: false });
+          if (results) {
+            connection.query(insertNotiSql, [idAccount, Notification, Type], function (err, rs, fields) {
+              if (err) { console.log(err);
+                res.send({ message: err, checked: false });
+              } else if(rs) {
+                res.status(200).send({ checked: true });
+              }
+            });
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
         }
-      }
+      });
     });
-  }
-
-  //[GET] /api/notification
-  getNotification(req, res) {
-    const id = req.user.id;
-
-    const selectSql =
-      "select * from notification n left join (select count(idAccount) as Unread, idAccount from notification where idAccount = ? and Status = 0) as c on n.idAccount = c.idAccount order by NotiTime desc";
-
-    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-
-    pool.query(selectSql, id, function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ data: results, checked: true });
-        } else {
-          res.status(200).send({ message: errorMsg, checked: false });
-        }
-      }
-    });
-  }
-
-  //[PATCH] /api/notification/read
-  readNotification(req, res) {
-    const { id } = req.body;
-
-    const updateSql = "update notification set status = 1 where id = ?";
-    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-
-    pool.query(updateSql, id, function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ checked: true });
-        } else {
-          res.status(200).send({ message: errorMsg, checked: false });
-        }
-      }
-    });
+    
   }
 
   //[GET] /api/schedule
@@ -642,7 +702,6 @@ class API {
         function (error, results, fields) {
           connection.destroy();
           if (error) {
-            console.log(error);
             res.send({ message: error, checked: false });
           }
           if (results[0]) {
@@ -853,7 +912,7 @@ class API {
     const deleteSql =
       "delete from servicedoctor where idService = ? and idDoctor = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    console.log(idService);
+    
 
     if (req.user.Authorization != 2) {
       res.end("Unauthorized");
@@ -866,7 +925,7 @@ class API {
             if (error) {
               res.send({ message: error, checked: false, i });
             }
-            console.log(fields);
+            
           }
         );
         if (i == idService.length - 1) {
@@ -890,6 +949,71 @@ class API {
       } else {
         if (results) {
           res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  //[GET] /api/notification
+  getNotification(req, res) {
+    const id = req.user.id;
+
+    const selectSql =
+      "call getNotification(?)";
+
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, id, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results[0].length > 0) {
+          const Unread = results[0][0].Unread;
+          results[0].forEach(noti => delete noti["Unread"]);
+          res.status(200).send({ notification: results[0], Unread, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  //[POST] /api/notification/create
+  createNotification(req, res, next) {
+    const { noti, Type } = req.body;
+    const id = req.user.id;
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+    const insertSql =
+      "insert into notification (idAccount, Notification, Type) values (?,?,?)";
+
+    pool.query(insertSql, [id, noti, Type], function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  //[POST] /api/notification/read
+  readNotification(req, res) {
+    const { id } = req.body;
+
+    const updateSql = "update notification set status = 1 where id = ?";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(updateSql, id, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results) {
+          res.status(200).send({ checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
@@ -957,62 +1081,69 @@ class API {
 
   // [POST] /api/rating
   createRateDoctor(req, res) {
-    const { idDoctor, Star, Comment } = req.body;
+    const { idDoctor, Star, Comment, Patient } = req.body;
     const idPatient = req.user.id
     const insertSql ="insert into ratedoctor (idPatient, idDoctor, Star, Comment) values (?, ?, ?, ?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-   
-    pool.query(insertSql, [idPatient, idDoctor, Star, Comment], function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ checked: true });
+    const insertNotiSql = "insert into notification (idAccount, Notification, Type) values (?,?,?)";
+    const Notification = "Bệnh nhân " + Patient + " đã đánh giá " + Star + " sao cho bạn!";
+    const Type = "/doctors/" + idDoctor;
+    
+    pool.getConnection(function (err, connection) {
+      if (err) throw err; // not connected!
+      connection.query(insertSql, [idPatient, idDoctor, Star, Comment], function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
         } else {
-          res.status(200).send({ message: errorMsg, checked: false });
+          if (results) {
+            connection.query(insertNotiSql, [idDoctor, Notification, Type], function (e, rs, fields) {
+              connection.destroy();
+              if (e) {
+                res.send({ message: e });
+              } 
+              else if(rs) { 
+                res.status(200).send({ checked: true });
+              }
+            });      
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
         }
-      }
+      });
     });
   }
 
   // [POST] /api/rating/update
   updateRateDoctor(req, res) {
-    const { id, Star, Comment } = req.body;
+    const { id, Star, Comment, Patient, idDoctor } = req.body;
     const idPatient = req.user.id
     const updateSql ="Update ratedoctor set Star = ?, Comment = ? where id = ? and idPatient = ?";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-   
-    pool.query(updateSql, [Star, Comment, id, idPatient], function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ checked: true });
-        } else {
-          res.status(200).send({ message: errorMsg, checked: false });
-        }
-      }
-    });
-  }
+    const insertNotiSql = "insert into notification (idAccount, Notification, Type) values (?,?,?)";
+    const Notification = "Bệnh nhân " + Patient + " đã (chỉnh sửa) đánh giá " + Star + " sao cho bạn!";
+    const Type = "/doctors/" + idDoctor;
 
-  //[POST] /api/notification/create
-  createNotification(req, res, next) {
-    const { noti } = req.body;
-    const id = req.user.id;
-    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    const insertSql =
-      "insert into notification (idAccount, Notification, NotiTime) values (?,?,now())";
-
-    pool.query(insertSql, [id, noti], function (error, results, fields) {
-      if (error) {
-        res.send({ message: error, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({checked: true });
+    pool.getConnection(function (err, connection) {
+      if (err) throw err; // not connected!
+      connection.query(updateSql, [Star, Comment, id, idPatient], function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
         } else {
-          res.status(200).send({ message: errorMsg, checked: false });
+          if (results) {
+            connection.query(insertNotiSql, [idDoctor, Notification, Type], function (e, rs, fields) {
+              connection.destroy();
+              if (e) {
+                res.send({ message: e });
+              } 
+              else if(rs) { 
+                res.status(200).send({ checked: true });
+              }
+            });      
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
         }
-      }
+      });
     });
   }
 
@@ -1378,28 +1509,44 @@ class API {
   // [POST] /api/comment/create
   createComment(req, res) {
     const idAccount = req.user.id;
-    const { id, Cmt, Status } = req.body;
+    const { id, Cmt, Status, idPost, idAuthor, FullName } = req.body;
     let insertSql = "";
-      
+    const insertNotiSql = "insert into notification (idAccount, Notification, Type) values (?,?,?)";
+    const Notification = FullName + " vừa bình luận vào bài viết của bạn: " + Cmt;
+    const Type = "/blog/" + idPost;
+
     if(Status == "CMT") {
       insertSql = "insert into comment (idAccount, idPost, Cmt, CmtTime) values (?,?,?, now())";
     } else {
       insertSql = "insert into replycomment (idAccount, idComment, Cmt, CmtTime) values (?,?,?, now())";
     }
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-   
-    pool.query( insertSql, [idAccount, id, Cmt], function (error, results, fields) {
-        if (error) {
-          res.send({ message: error, checked: false });
-        } else {
-          if (results) {
-            res.status(200).send({ checked: true });
+    
+    pool.getConnection(function (err, connection) {
+      if (err) throw err; // not connected!
+        connection.query( insertSql, [idAccount, id, Cmt], function (error, results, fields) {
+          if (error) {
+            res.send({ message: error, checked: false });
           } else {
-            res.status(200).send({ message: errorMsg, checked: false });
+            if (results) {
+              connection.query(insertNotiSql, [idAuthor, Notification, Type], function (e, rs, fields) {
+                connection.destroy();
+                if (e) {
+                  res.send({ message: e });
+                } 
+                if(rs) { 
+                  res.status(200).send({ checked: true });
+                }
+              });
+              
+            } else {
+              res.status(200).send({ message: errorMsg, checked: false });
+            }
           }
         }
-      }
-    );
+      );
+    });
+    
   }
 
   // [POST] /api/comment/update
@@ -1457,8 +1604,11 @@ class API {
   // [POST] /api/comment/love
   loveComment(req, res) {
     const idAccount = req.user.id;
-    const { id, Status, idPost } = req.body;
+    const { id, Status, idPost, NameUser, idAcc } = req.body;
     let SQL = "";
+    const insertNotiSql = "insert into notification (idAccount, Notification, Type) values (?,?,?)";
+    const Notification = NameUser + " đã thích bình luận của bạn!";
+    const Type = "/blog/" + idPost;
       
     if(Status == "CMT") {
       SQL = "insert into lovecomment (idAccount, idComment, idPost) values (?,?,?)";
@@ -1466,17 +1616,28 @@ class API {
       SQL = "insert into lovecomment (idAccount, idReplycomment, idPost, Status) values (?,?,?, 1)";
     }
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-
-    pool.query(SQL, [idAccount, id, idPost], function (error, results, fields) {
-      if (error) {
-        res.send({ message: error.sqlMessage, checked: false });
-      } else {
-        if (results) {
-          res.status(200).send({ checked: true });
+    
+    pool.getConnection(function (err, connection) {
+      if (err) throw err; // not connected!
+      connection.query(SQL, [idAccount, id, idPost], function (error, results, fields) {
+        if (error) {
+          res.send({ message: error, checked: false });
         } else {
-          res.status(200).send({ message: errorMsg, checked: false });
+          if (results) {
+            connection.query(insertNotiSql, [idAcc, Notification, Type], function (e, rs, fields) {
+              connection.destroy();
+              if (e) {
+                res.send({ message: e });
+              } 
+              else if(rs) { 
+                res.status(200).send({ checked: true });
+              }
+            });      
+          } else {
+            res.status(200).send({ message: errorMsg, checked: false });
+          }
         }
-      }
+      });
     });
   }
 
@@ -1565,7 +1726,7 @@ class API {
               if (error) {
                 res.send({ message: error, checked: false });
               }
-              if (rs) { console.log(rs);
+              if (rs) { 
                 res.status(200).send({ data: results, count: rs[0].total, checked: true });
               }
             });
@@ -1578,7 +1739,7 @@ class API {
   //[PATCH] /api/admin/post/accept
   acceptPost(req, res) {
     const { id } = req.body;
-    const updateSql = "update post set Status = 1 where id = ? ";
+    const updateSql = "update post set Status = 1 where id = ? and Status = 0";
     const errorMsg = "Có lỗi bất thường, không thể chấp nhận bài viết!";
 
     if (req.user.Authorization != 0) {
@@ -1801,7 +1962,7 @@ class API {
         if (error) {
           res.send({ message: error, checked: false });
         } else {
-          if (results) {
+          if (results) { 
             res.status(200).send({ data: results, checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });

@@ -6,22 +6,26 @@ import { GoBellFill } from "react-icons/go";
 import { FaRegUserCircle } from "react-icons/fa";
 import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
-import { logout } from "../redux-toolkit/authSlice";
+import { getAllNotification, logout, readNotification } from "../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
 import logo from "../logo.png";
 import { fetchProfile } from "../redux-toolkit/authSlice";
 import { persistor } from "../redux-toolkit/configureStore";
+import { searchPost } from "../redux-toolkit/postSlice";
+
 import { Input } from 'antd';
 import { Button } from "flowbite-react";
 import { CiSearch } from "react-icons/ci";
-import { searchPost } from "../redux-toolkit/postSlice";
+import { GoDotFill } from "react-icons/go";
+import { Dropdown, Space } from 'antd';
 const Header = () => {
-  const { currentUser, user } = useSelector((state) => state.user);
+  const { currentUser, user, allNoti } = useSelector((state) => state.user);
   const [actived, setActived] = useState(false);
+  const [noti, setNoti] = useState(false);
+  const [numberElement, setNumberElement] = useState(5)
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const authentication = currentUser?.authentication;
-  
   const { allSearchPost, error, loading } = useSelector((state) => state.post);
   const [search, setSearch] = useState("")
   const handleSearch = () => {
@@ -39,6 +43,31 @@ const Header = () => {
       persistor.purge();
     }, 200);
   };
+  const handleRead = (id) => {
+    dispatch(readNotification({id})).then(() => {
+      dispatch(getAllNotification())
+    })
+  }
+  const handleNavigate = (url) => {
+    if(url == "Email")
+      window.open("https://mail.google.com")
+    else
+      Navigate(url)
+  }
+  useEffect(()=>{
+    if(currentUser){
+      dispatch(getAllNotification())
+    }
+  },[currentUser,dispatch])
+  useEffect(()=>{
+    if(currentUser){
+      const interval = setInterval(() => {
+        dispatch(getAllNotification())
+      }, 300000);
+      return () => clearInterval(interval);
+    }
+  },[currentUser,dispatch])
+  const slice = allNoti?.notification?.slice(0,numberElement);
   return (
     <div className="h-[70px] fixed w-screen z-50 max-sm:h-[80px]">
       {actived && (
@@ -46,6 +75,14 @@ const Header = () => {
           className="absolute inset-0 w-screen h-screen overlay"
           onClick={() => {
             setActived(false);
+          }}
+        ></div>
+      )}
+      {noti && (
+        <div
+          className="absolute inset-0 w-screen h-screen overlay"
+          onClick={() => {
+            setNoti(false);
           }}
         ></div>
       )}
@@ -96,7 +133,7 @@ const Header = () => {
             <div className="flex gap-1 items-center w-full">
               <div
                 className="flex lg:gap-3 items-center justify-center cursor-pointer lg:w-[81%] max-lg:w-full"
-                onClick={() => setActived(!actived)}
+                onClick={() => {setActived(!actived); setNoti(false)}}
               >
                 <div className="rounded-full h-11 w-11 max-sm:h-6 max-sm:w-6 bg-white flex items-center justify-center">
                   <img
@@ -120,9 +157,45 @@ const Header = () => {
                 ></IoMdArrowDropdown>
               </div>
               <GoBellFill
-                onClick={() => setActived(false)}
-                className="max-sm:h-5 max-sm:w-5 h-7 w-7 text-lime-100  cursor-pointer transition-transform duration-500 hover:scale-110"
+                onClick={() => {setNoti(!noti);setActived(false)}}
+                className="max-sm:h-5 max-sm:w-5 h-7 w-7 text-lime-100  cursor-pointer transition-all duration-500 hover:scale-110"
               />
+              {noti && (
+                <div className={`flex flex-col gap-2 max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:top-[62px] lg:w-full py-3 px-5 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition ease-in-out duration-1000 z-50`}>
+                  <p className="">Thông báo</p>
+                  <hr className="w-full"></hr>
+                  {slice?.map((noti) =>(
+                    <div className="flex flex-col gap-2">
+                      <div className="hover:bg-slate-100 w-full p-2 cursor-pointer rounded-lg flex flex-col gap-2"
+                          onClick={() => {handleNavigate(noti.Type);setNoti(false);handleRead(noti.id)}}
+                      >
+                        <div className="flex gap-3 items-center">
+                          <div className="w-[90%]">
+                            <div className={`text-sm ${noti.Status === 0 ? "text-black" : "text-gray-500"}`}>
+                              {noti.Notification}
+                            </div>
+                            <p className="text-sm self-start text-sky-600">{noti.NotiTime}</p>
+                          </div>  
+                          {noti.Status === 0 &&
+                            <GoDotFill className="text-sky-600 h-4 w-4"/>
+                          }
+                        </div>
+                      </div>
+                      <hr className="w-[95%]"></hr>
+                    </div>
+                  ))}
+                  {allNoti?.notification?.length > 5 &&
+                    <Button
+                        className="my-3 w-32 rounded-2xl mx-auto h-9 text-slate-700"
+                        gradientDuoTone="tealToLime"
+                        onClick={()=>{setNumberElement(numberElement+numberElement)}}
+                    >
+                    Xem thêm
+                    </Button>
+                    }
+                </div>
+              )}
+
               {actived && (
                 <div
                   className={`max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:top-[62px] lg:w-60 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-50`}

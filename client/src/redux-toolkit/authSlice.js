@@ -18,6 +18,8 @@ const initialState = {
   message: "",
   doctors: [],
   detailDoctor: {},
+  allNoti: {},
+  checkRead: false
 };
 
 export const userRegister = createAsyncThunk("userRegister", async (body) => {
@@ -94,7 +96,6 @@ export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
 export const searchUser = createAsyncThunk(
   "searchUser",
   async (body) => {
-    console.log(body)
     const res = await fetch(`http://localhost:5000/api/admin/account/search`, {
       method: "POST",
       headers: {
@@ -158,6 +159,27 @@ export const getDetailDoctor = createAsyncThunk(
     return await res.json();
   }
 );
+export const getAllNotification = createAsyncThunk("getAllNotification", async () => {
+  const res = await fetch("http://localhost:5000/api/notification", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
+  return await res.json();
+});
+export const readNotification = createAsyncThunk("readNotification", async (body) => {
+  const res = await fetch("http://localhost:5000/api/notification/read", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
 const authSlice = createSlice({
   name: "user",
   initialState,
@@ -169,6 +191,7 @@ const authSlice = createSlice({
       state.user = {};
       state.isLogin = false;
       state.auth = "";
+      state.allNoti = {}
       localStorage.clear();
     },
   },
@@ -276,7 +299,6 @@ const authSlice = createSlice({
       .addCase(searchUser.fulfilled, (state, action) => {
         state.loading = false;
         state.allSearchUsers = action.payload;
-        console.log(action.payload)
         state.updated = true;
       })
       .addCase(searchUser.rejected, (state, action) => {
@@ -354,7 +376,28 @@ const authSlice = createSlice({
       })
       .addCase(getDetailDoctor.rejected, (state, action) => {
         state.loading = true;
-      });
+      })
+      .addCase(getAllNotification.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getAllNotification.fulfilled, (state, { payload }) => {
+        state.allNoti = payload;
+        state.loading = false;
+      })
+      .addCase(getAllNotification.rejected, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(readNotification.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(readNotification.fulfilled, (state, { payload }) => {
+        state.checkRead = payload.checked;
+        state.loading = false;
+      })
+      .addCase(readNotification.rejected, (state, action) => {
+        state.loading = true;
+      })
+      ;
   },
 });
 export const { addToken, addUser, logout } = authSlice.actions;

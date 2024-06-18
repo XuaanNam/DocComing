@@ -13,6 +13,7 @@ import {
   completeAppointment,
   cancelAppointment,
 } from "../../redux-toolkit/appointmentSlice";
+import { Rate } from "antd";
 const DoctorAppointment = () => {
   const dispatch = useDispatch();
   const { AppointmentData, ScheduleData, allService, service, error, loading } =
@@ -20,7 +21,7 @@ const DoctorAppointment = () => {
   const [passed, setPassed] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [idAppointment, setIdAppointment] = useState();
-  console.log(AppointmentData)
+  const [idPatient, setIdPatient] = useState();
   useEffect(() => {
     dispatch(fetchAppointment());
   }, []);
@@ -37,7 +38,7 @@ const DoctorAppointment = () => {
     });
   };
   const handleCancelAppointment = (id) => {
-    const data = { id };
+    const data = { id, idAccount: idPatient};
     dispatch(cancelAppointment(data)).then(() => {
       dispatch(fetchAppointment());
     });
@@ -57,15 +58,17 @@ const DoctorAppointment = () => {
         <div className="md:my-7 lg:max-xl:w-full max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-200 py-5 lg:px-8">
           <div className="lg:mb-5 max-lg:my-5 lg:h-10 max-lg:h-auto grid lg:grid-cols-6 max-lg:grid-cols-12 lg:gap-3 max-lg:gap-1 font-semibold">
             <p className="max-md:mb-3 md:text-2xl max-md:text-3xl lg:col-span-2 max-lg:col-start-1 max-lg:col-span-12">Lịch khám</p>
-            <div
-              onClick={() => {
-                setPassed(4);
-              }}
-              className={` ${
-                passed === 4 && "bg-white shadow-md shadow-violet-300"
-              } max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-2 max-lg:col-span-5 lg:col-span-2 lg:col-start-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
-            >
-              CHƯA XÁC NHẬN
+            <div className = "lg:w-full lg:flex lg:justify-end lg:col-start-3 lg:col-span-2">
+              <div
+                onClick={() => {
+                  setPassed(4);
+                }}
+                className={` ${
+                  passed === 4 && "bg-white shadow-md shadow-violet-300"
+                } first-letter:max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-2 max-lg:col-span-5 lg:col-span-2 lg:col-start-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 max-lg:w-full lg:w-1/2 h-full`}
+              > 
+                CHƯA XÁC NHẬN
+              </div>
             </div>
             <div
               onClick={() => {
@@ -134,7 +137,7 @@ const DoctorAppointment = () => {
                         <div className="flex gap-3 lg:w-1/2">
                           <BsCash className="h-5 w-5 text-green-400"></BsCash>
                           <p className="min-w-20">Giá dịch vụ:</p>
-                          <p className="font-medium">{appointment.Price} VND</p>
+                          <p className="font-medium text-green-400">{appointment.Price} đ</p>
                         </div>
                       </div>
 
@@ -142,7 +145,7 @@ const DoctorAppointment = () => {
                         <div className="flex gap-3 lg:w-1/2">
                           <FaPhoneAlt className="h-5 w-5 text-teal-600" />
                           <p className="min-w-20">Số điện thoại:</p>
-                          <div className="font-medium">{appointment.Phone}</div>
+                          <div className="font-medium text-teal-500">{appointment.Phone}</div>
                         </div>
                         <div className="flex gap-3 max-lg:mb-3 lg:w-1/2">
                           <FaHome className="h-5 w-5 text-teal-600" />
@@ -162,6 +165,17 @@ const DoctorAppointment = () => {
                     </div>
                   </div>
                   <hr className="w-[98%] mx-auto border-[1px] border-lime-100 rounded-lg mb-5"></hr>
+                  {/* {appointment.Star !== null &&
+                    <div className="flex flex-col items-center justify-center">
+                  
+                      <Rate className="w-52 flex gap-2"
+                            value={appointment.Star}
+                            style={{ fontSize: 28}}
+                            disabled={true}
+                      ></Rate>
+                      <p className="text-lg text-slate-600 mt-2">{appointment.Comment}</p>
+                    </div>
+                  } */}
                   <div className="flex max-md:justify-center max-md:items-center mx-auto md:w-3/4 max-md:w-full max-md:px-3 gap-10">
                     {appointment.Status != 2 && appointment.Status != 3 && (
                       <Button
@@ -170,6 +184,7 @@ const DoctorAppointment = () => {
                         onClick={() => {
                           setShowModal(true);
                           setIdAppointment(appointment.id);
+                          setIdPatient(appointment.idPatient)
                         }}
                       >
                         Hủy

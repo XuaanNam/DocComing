@@ -24,7 +24,6 @@ const DashSidebar = ({ param }) => {
       persistor.purge();
     }, 200);
   };
-  console.log(param)
   return (
     <div className="shadow-xl bg-white lg:min-h-screen">
       <div className="w-full lg:w-56 max-lg:flex max-lg:flex-col max-lg:gap-2 font-medium lg:pt-[70px] max-lg:pt-[80px] max-lg:px-2">
@@ -63,6 +62,18 @@ const DashSidebar = ({ param }) => {
               to="/admin/profile"
             >
               Profile
+            </Link>
+            <Link
+              onClick={() => {
+                setActived("appointment");
+              }}
+              className={` ${
+                param === "appointment" &&
+                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
+              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              to="/admin/appointment"
+            >
+              Appointment
             </Link>
             <Link
               onClick={() => {

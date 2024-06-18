@@ -8,6 +8,7 @@ import EditBlog from "./EditBlog";
 import Dashboard from "./Dashboard";
 import AdminProfile from "./AdminProfile";
 import { useDispatch, useSelector } from "react-redux";
+import AdminAppointment from "./AdminAppointment";
 
 const AdminPage = () => {
   const { currentUser, error, loading } = useSelector(
@@ -34,8 +35,8 @@ const AdminPage = () => {
               onClick={() => setActived(false)}
             >
               {adminpage === "profile" && <AdminProfile />}
+              {adminpage === "appointment" && <AdminAppointment />}
               {adminpage === "create-post" && <CreateBlog />}
-              {/* {adminpage === "update-post/:postId" && <EditBlog />} */}
               {adminpage === "manage-post" && <ManageBlog />}
               {adminpage === "dashboard" && <Dashboard />}
               {adminpage === "users" && <UserList />}

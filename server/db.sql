@@ -14,7 +14,7 @@ Role varchar(20) not null CHECK (Role !="")
 insert into authorization (id, Role) values 
 (0, 'Admin'),
 (1, 'Patient'),
-(2, 'doctor'); 
+(2, 'doctor');
 
 create table account(
 id int not null primary key AUTO_INCREMENT,
@@ -34,7 +34,7 @@ foreign key (Authorization) references authorization(id)
 ; 
 ALTER TABLE account AUTO_INCREMENT = 235523484;
 insert into account (LastName, FirstName, Email, PassWord, Phone, Authorization, CreatedAt) value 
-('Anh', 'Quốc', 'admin@doccoming.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 0, now()),
+('SUPER', 'ADMIMN', 'admin@doccoming.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 0, now()),
 ('Dung', 'Nguyễn Thị Kim', 'kimdung@gmail.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 2, now()),
 ('Lâm', 'Nguyễn Sơn', 'sonlamg@gmail.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 2, now()),
 ('Nghi', 'Lê Hoàng Hạnh', 'hanhnghig@gmail.com', "$2b$07$agI47Yp3nBMhrz7oNNkMA.hfqPTbmWpnxGCuqmm8k11bbSr.1Zici", 0123456789, 2, now()),
@@ -283,10 +283,11 @@ create table notification(
 id int not null primary key AUTO_INCREMENT,
 idAccount int not null CHECK (idAccount !=""),
 Notification text(500),
-NotiTime datetime,
+Type varchar(100),
+NotiTime datetime default now(),
 Status int default 0, -- 0 chưa đọc, 1 đọc rồi
 foreign key (idAccount) references account(id)
-);
+); -- drop table notification
 
 create table comment(
 id int not null primary key AUTO_INCREMENT,
@@ -364,6 +365,16 @@ BEGIN
 END$$ -- drop trigger TG_INSERT_ACCOUNT_DOCTOR
 
 delimiter $$
+CREATE TRIGGER TG_INSERT_ACCOUNT_PATIENT AFTER INSERT ON account FOR EACH ROW 
+BEGIN
+	if (new.Authorization = 1)
+    then
+    insert into notification (idAccount, Notification, Type) values  
+	(new.id, "Thiết Lập thông tin cá nhân của bạn để đặt lịch khám và khám phá nhiều tính năng hơn trên Doctor Comming!", "Profile");
+    end if;
+END$$ -- drop trigger TG_INSERT_ACCOUNT_PATIENT
+
+delimiter $$
 CREATE TRIGGER TG_CHECK_EMAIL BEFORE INSERT ON account FOR EACH ROW 
 BEGIN
     DECLARE Count int default 0;
@@ -409,6 +420,60 @@ BEGIN
     THEN SIGNAL sqlstate '45001' set message_text = "Bạn đã đánh giá bác sĩ này!";
     END IF;
 END$$ -- drop trigger TG_CHECK_RATE_DOCTOR
+
+delimiter $$
+CREATE TRIGGER TG_INSERT_APPOINTMENT AFTER INSERT ON appointment FOR EACH ROW 
+BEGIN
+    insert into notification (idAccount, Notification, Type) values 
+	(new.idPatient, "Bạn đã đặt lịch hẹn khám thành công, vui lòng đợi bác sĩ chấp nhận cuộc hẹn này", "/patient/appointment"),
+    (new.idDoctor, "Bạn có một cuộc hẹn mới! Nhanh chóng chấp nhận cuộc hẹn này nào!", "/doctor/appointment");
+END$$ -- drop trigger TG_INSERT_APPOINTMENT
+
+delimiter $$
+CREATE TRIGGER TG_UPDATE_APPOINTMENT_STATUS AFTER UPDATE ON appointment FOR EACH ROW 
+BEGIN
+	if (new.Status = 1 and  old.Status = 4)
+    then
+    insert into notification (idAccount, Notification, Type) values 
+	(new.idPatient, "Cuộc hẹn của bạn đã được bác sĩ chấp nhận!", "/patient/appointment");
+    elseif (new.Status = 2 and  old.Status = 1)
+    then
+    insert into notification (idAccount, Notification, Type) values 
+	(new.idPatient, "Cuộc hẹn của bạn đã hoàn thành!", "/patient/appointment");
+    end if;
+END$$ -- drop trigger TG_UPDATE_APPOINTMENT_STATUS
+
+delimiter $$
+CREATE TRIGGER TG_INSERT_POST AFTER INSERT ON post FOR EACH ROW 
+BEGIN
+	if (new.idAuthor != 235523484)
+    then
+    insert into notification (idAccount, Notification, Type) values 
+    (235523484, CONCAT('Có một bài viết mới cần kiểm duyệt: ', new.Title), "/admin/manage-post");
+    end if;
+END$$ -- drop trigger TG_INSERT_POST
+
+delimiter $$
+CREATE TRIGGER TG_UPDATE_POST_STATUS AFTER UPDATE ON post FOR EACH ROW 
+BEGIN
+	DECLARE idAuthor INT;
+    DECLARE Title varchar(500);
+    SET idAuthor = (SELECT idAuthor FROM post WHERE id = new.id);
+    SET Title = (SELECT Title FROM post WHERE id = new.id);
+	if (new.Status = 1 and  old.Status = 0)
+    then
+    insert into notification (idAccount, Notification, Type) values 
+	(idAuthor, "Bài viết của bạn đã được Admin chấp nhận. Mau đến xem nào!", CONCAT("/blog/", new.id));
+    elseif (new.Status = 2 and  old.Status = 1)
+    then
+    insert into notification (idAccount, Notification, Type) values 
+	(new.idAuthor, CONCAT("Bài viết ", Title, " của bạn đã bị Admin ẩn khỏi hệ thống!"), "None");
+    elseif (new.Status = 1 and  old.Status = 2)
+    then
+    insert into notification (idAccount, Notification, Type) values 
+	(new.idAuthor, CONCAT("Bài viết ", Title, " của bạn đã được Admin khôi phục và hiển thị lại trên hệ thống!"), CONCAT("/blog/", new.id));
+    end if;
+END$$ -- drop trigger TG_UPDATE_POST_STATUS
 --------------------------------
 insert into ratedoctor set idPatient = 235523489, idDoctor = 235523487, Star = 5, Comment = 'bac si nay good'
 delimiter $$
@@ -439,7 +504,7 @@ FROM  inforDoctor d, major m
 WHERE d.idMajor = m.id) as dm
 ON ta.id = dm.idAccount where ta.Role != "Admin" order by CreatedAt desc
 $$ -- drop view AllAccount 
-
+	
 delimiter $$
 CREATE VIEW AllAppointment AS
 SELECT *
@@ -453,7 +518,7 @@ FROM categories c
 LEFT JOIN similarCategories s 
 on c.id = s.idCategories 
 ORDER BY c.id, idsimilar
-$$
+$$ USE DOCCOMING
 
 delimiter $$
 CREATE VIEW AllDoctor AS
@@ -549,9 +614,9 @@ END$$ -- drop PROCEDURE ListSearch
 DELIMITER $$
 CREATE PROCEDURE SearchDoctor(IN search text )
 BEGIN
-	SELECT aim.id, aim.LastName, aim.FirstName, aim.Gender, aim.Email, aim.Degree, aim.Introduce, aim.major, aim.Experience, aim.Training, r.Star
+	SELECT aim.id, aim.LastName, aim.FirstName, aim.Avt, aim.Gender, aim.Email, aim.Degree, aim.Introduce, aim.major, aim.Experience, aim.Training, r.Star
     FROM
-    (SELECT a.id, a.LastName, a.FirstName, a.Gender, a.Email, i.Degree, i.Introduce, m.major, i.Experience, i.Training
+    (SELECT a.id, a.LastName, a.FirstName, a.Avt, a.Gender, a.Email, i.Degree, i.Introduce, m.major, i.Experience, i.Training
     FROM  account a, infordoctor i, major m
     WHERE a.id = i.idAccount
     AND i.idMajor = m.id
@@ -564,9 +629,9 @@ END$$ -- drop PROCEDURE SearchDoctor
 DELIMITER $$
 CREATE PROCEDURE SearchMajor(IN search text )
 BEGIN
-    SELECT aim.id, aim.LastName, aim.FirstName, aim.Gender, aim.Email, aim.Degree, aim.Introduce, aim.major, aim.Experience, aim.Training, r.Star
+    SELECT aim.id, aim.LastName, aim.FirstName, aim.Avt, aim.Gender, aim.Email, aim.Degree, aim.Introduce, aim.major, aim.Experience, aim.Training, r.Star
     FROM
-    (SELECT a.id, a.LastName, a.FirstName, a.Gender, a.Email, i.Degree, i.Introduce, m.major, i.Experience, i.Training
+    (SELECT a.id, a.LastName, a.FirstName, a.Avt, a.Gender, a.Email, i.Degree, i.Introduce, m.major, i.Experience, i.Training
     FROM  account a, infordoctor i, major m
     WHERE a.id = i.idAccount
     AND i.idMajor = m.id
@@ -696,8 +761,92 @@ $$ -- drop procedure getAppointmentPatient
 
 delimiter $$
 CREATE procedure getAppointmentDoctor (IN idD int)
-select a.id, sv.Service, a.idPatient, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, ac.Address, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type 
+select acsv.id, acsv.Service, acsv.idPatient, acsv.LastName, acsv.FirstName, acsv.Phone, acsv.Avt, acsv.Address, acsv.DateBooking, acsv.TimeBooking, acsv.Price, acsv.Status, acsv.Information, acsv.Type, rd.rateid, rd.Star, rd.Comment
+from
+(select a.id, sv.Service, a.idPatient, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, ac.Address, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type 
 from account ac, appointment a, appointmentstatus s, service sv 
-where ac.id = a.idPatient and a.Status = s.id and a.idService = sv.id and idDoctor = idD
-order by DateBooking, TimeBooking
-$$ -- drop procedure getAppointmentDoctor
+where ac.id = a.idPatient 
+and a.Status = s.id and a.idService = sv.id and idDoctor = idD
+order by DateBooking, TimeBooking) as acsv
+left join 
+(select id as rateid, idPatient, Star, Comment from ratedoctor where  idDoctor = idD ) as rd
+on acsv.idPatient = rd.idPatient
+$$ -- drop procedure getAppointmentDoctor   call getAppointmentDoctor(?)
+
+delimiter $$
+CREATE procedure getNotification (IN idA int)
+select n.id, n.Notification, n.NotiTime, n.Status, c.Unread 
+from notification n 
+left join 
+(select count(idAccount) as Unread, idAccount from notification where idAccount = idA and Status = 0) as c
+on n.idAccount = c.idAccount 
+where n.idAccount = idA
+order by NotiTime desc 
+limit 10
+$$ -- drop procedure getNotification    call getNotification(235523500)
+
+-- ================================ ADD DB ===============================================================
+insert into similarcategories (idCategories, Similar, Image, Description) values 
+('1', 'Tiểu đường type 1', 'https://res.cloudinary.com/doccomming/image/upload/v1717327128/Category1_nva3da.webp', 'Bệnh tiểu đường type 1 là một bệnh tự miễn, do hệ thống miễn dịch tấn công nhầm vào các tế bào beta sản xuất insulin trong tuyến tụy, làm tuyến này mất dần khả năng sản xuất insulin. Do đó, người bệnh phải phụ thuộc vào việc tiêm insulin.'),
+('1', 'Tiểu đường type 1', 'https://res.cloudinary.com/doccomming/image/upload/v1717327128/Category1_nva3da.webp', 'Bệnh tiểu đường type 1 là một bệnh tự miễn, do hệ thống miễn dịch tấn công nhầm vào các tế bào beta sản xuất insulin trong tuyến tụy, làm tuyến này mất dần khả năng sản xuất insulin. Do đó, người bệnh phải phụ thuộc vào việc tiêm insulin.'),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+(),
+()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

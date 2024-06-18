@@ -33,17 +33,12 @@ router.post("/appointment/create", PassportCheck, api.createAppointment); //
 router.post("/appointment/accept", PassportCheck, api.acceptAppointment); // 4 api này gửi id appointment cần đổi status
 router.post("/appointment/complete", PassportCheck, api.completeAppointment); //
 router.post("/appointment/cancel", PassportCheck, api.cancelAppointment); //
-router.get("/notification", PassportCheck, api.getNotification);
-router.post("/notification/create", PassportCheck, api.createNotification);
-router.patch("/notification/read", PassportCheck, api.readNotification);
-router.get("/schedule/:idDoctor/:date/:month/:year", api.getSchedule);
-// lấy lich bac si cua ngay cu the + eTime (chỉ dùng cho patient) booking
+router.get("/schedule/:idDoctor/:date/:month/:year", api.getSchedule);// lấy lich bac si ở ngay cu the + eTime (chỉ dùng cho patient)
 router.post("/schedule", PassportCheck, api.setSchedule);
 router.get("/service", api.getService); // lấy all service
 router.get("/doctor", api.getDoctor); // lay all bsi
 router.post("/doctor/service", api.getServiceDoctor); // lay dich vu cua bsi với idDoctor
 router.get("/doctor/:id", api.getDetailDoctor); // lay bsi với id (danh cho patient)
-
 router.get(
   "/doctor/schedule/:date/:month/:year",
   PassportCheck,
@@ -52,6 +47,12 @@ router.get(
 router.post("/doctor/service/create", PassportCheck, api.createServiceDoctor); //theem service cho moi bac si -- gửi data
 router.post("/doctor/service/delete", PassportCheck, api.deleteServiceDoctor); //xóa service cho moi bac si -- gửi idService và token
 router.get("/doctor/post/get", PassportCheck, api.getDoctorPost); // token --> là đc
+
+//notification
+router.get("/notification", PassportCheck, api.getNotification);
+router.post("/notification/create", PassportCheck, api.createNotification);
+router.post("/notification/read", PassportCheck, api.readNotification);
+
 
 // #RATING DOCTOR
 router.get("/rating/:idDoctor", api.getRateDoctor); // idDoctor/idPatient --> params, idPatient không có -> null
@@ -78,7 +79,7 @@ router.get("/post/categories/:id", api.getPostByCategories); // truyền tới i
 router.get("/post/categories/similar/:id", api.getPostBySimilarCategories); // truyền tới id similar
 
 router.get("/category", api.getCategory);
-router.get("/comments/:idPost/:idAccount", api.getComment); // lấy tất cả cmt dựa trên idPost -> truyền idPost/ nếu k có idAcc -> idAcc = null
+router.get("/comment/:idPost/:idAccount", api.getComment); // lấy tất cả cmt dựa trên idPost -> truyền idPost/ nếu k có idAcc -> idAcc = null
 router.post("/comment/create", PassportCheck, api.createComment); // thêm cmt vào 1 post ->truyền idPost
 router.post("/comment/update", PassportCheck, api.updateComment); // chỉnh sửa cmt ->truyền id, Cmt (id này là id comment)
 router.post("/comment/delete", PassportCheck, api.deleteComment); // xóa cmt dựa trên id comment -> truyền id

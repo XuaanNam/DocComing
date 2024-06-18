@@ -12,6 +12,13 @@ import Editor from "../AdminPages/Editor";
 
 const DoctorProfile = () => {
   const dateFormat = "DD/MM/YYYY";
+  const date = new Date();
+  const maxDate =
+    (date.getDate() < 10 ? "0" + (date.getDate()) : (date.getDate()))
+    + "/" +
+    (date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) 
+    + "/" + (date.getFullYear() - 23);
+    console.log(maxDate)
   const { currentUser, user, checked, auth, error, loading, updated } =
     useSelector((state) => state.user);
   const [isSubmited, setIsSubmited] = useState(false);
@@ -307,6 +314,7 @@ const DoctorProfile = () => {
                         format={dateFormat}
                         disabled={!edit}
                         onChange={onChange}
+                        maxDate={dayjs(maxDate, dateFormat)}
                       />
                     </div>
                     <div className="lg:w-1/2">

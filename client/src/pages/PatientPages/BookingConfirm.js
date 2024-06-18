@@ -36,7 +36,7 @@ const BookingConfirm = () => {
       setActived(false);
     }
   }, []);
-  console.log(appointment.idDoctor);
+  console.log(appointment.idDoctor); console.log(data)
   const handleBooking = () => {
     const body = {
       idService: appointment.idService,
@@ -49,9 +49,9 @@ const BookingConfirm = () => {
     dispatch(createAppointment(body)).then(() => {
       Navigate("/booking/success");
     });
-    if (!actived) {
+    if (!actived) { 
       const profile = new FormData();
-      profile.append("FullName", data?.FirstName + data?.LastName);
+      profile.append("FullName", data?.FullName);
       profile.append("Phone", data.Phone);
       profile.append("Address", data.Address);
       profile.append("BirthDate", data.BirthDate);

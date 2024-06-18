@@ -36,7 +36,7 @@ const BlogPage = () => {
     dispatch(getDetailPost(blogId));
     dispatch(fetchComment(data))
   }, [dispatch]);
-
+  console.log(currentUser)
   const handleAction = (id) => {
     if(currentUser)
       setReply(id);
@@ -51,7 +51,9 @@ const BlogPage = () => {
       const data = {
         id : id,
         Status: status,
-        idPost: blogId
+        idPost: blogId,
+        NameUser: currentUser.FullName,
+        // idAcc: 
       }
       dispatch(likeComment(data)).then(()=>{
         const data = {
@@ -70,7 +72,10 @@ const BlogPage = () => {
     const data = {
       id : reply !== 0 ? reply : blogId,
       Cmt : reply !== 0 ? repCmtData : cmtData,
-      Status: status
+      Status: status,
+      idPost: blogId,
+      // idAuthor: 
+      FullName: currentUser.FullName
     }
     dispatch(createComment(data)).then(()=>{
       const data = {
