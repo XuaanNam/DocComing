@@ -3,8 +3,11 @@ import { FiSearch } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { GoBellFill } from "react-icons/go";
-import { FaRegUserCircle } from "react-icons/fa";
-import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
+import { FaRegUserCircle,FaUsersCog  } from "react-icons/fa";
+import { LuCalendarDays } from "react-icons/lu";
+import { GrSchedule } from "react-icons/gr";
+import { AiOutlineSchedule, AiOutlineDashboard } from "react-icons/ai";
+import { MdOutlinePostAdd, MdManageSearch } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
 import { getAllNotification, logout, readNotification } from "../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +20,7 @@ import { Input } from 'antd';
 import { Button } from "flowbite-react";
 import { CiSearch } from "react-icons/ci";
 import { GoDotFill } from "react-icons/go";
-import { Dropdown, Space } from 'antd';
+import { MdOutlineNoteAlt } from "react-icons/md";
 const Header = () => {
   const { currentUser, user, allNoti } = useSelector((state) => state.user);
   const [actived, setActived] = useState(false);
@@ -57,16 +60,17 @@ const Header = () => {
   useEffect(()=>{
     if(currentUser){
       dispatch(getAllNotification())
+      dispatch(fetchProfile())
     }
   },[currentUser,dispatch])
-  useEffect(()=>{
-    if(currentUser){
-      const interval = setInterval(() => {
-        dispatch(getAllNotification())
-      }, 300000);
-      return () => clearInterval(interval);
-    }
-  },[currentUser,dispatch])
+  // useEffect(()=>{
+  //   if(currentUser){
+  //     const interval = setInterval(() => {
+  //       dispatch(getAllNotification())
+  //     }, 300000);
+  //     return () => clearInterval(interval);
+  //   }
+  // },[currentUser,dispatch])
   const slice = allNoti?.notification?.slice(0,numberElement);
   return (
     <div className="h-[70px] fixed w-screen z-50 max-sm:h-[80px]">
@@ -86,7 +90,7 @@ const Header = () => {
           }}
         ></div>
       )}
-      <div className="text-sm h-full px-5 max-sm:px-2 text-gray-700 bg-teal-600 grid grid-cols-4 max-lg:grid-cols-11 max-lg:gap-1 drop-shadow-lg">
+      <div className="text-sm h-full px-5 font-medium text-teal-800 max-sm:px-2 text-gray-700 bg-teal-600 grid grid-cols-4 max-lg:grid-cols-11 max-lg:gap-1 drop-shadow-lg">
         <div className="max-lg:col-start-1 max-lg:col-span-3 col-start-1 col-span-1 lg:pl-5 text-xl flex items-center font-bold text-teal-500">
           <img className="rounded-full h-12 w-12 mr-3 max-sm:h-10 max-sm:w-10 max-sm:mr-1 " alt="logo" src={logo}></img>
           <a className="text-gray-100 max-sm:text-sm" href="/">
@@ -104,7 +108,7 @@ const Header = () => {
                       if (e.key === "Enter") 
                         handleSearch(); 
                     }} />
-                <CiSearch className="h-6 w-6 sm:absolute sm:top-[10px] lg:left-4 max-sm:bg-slate-100 max-sm:rounded-lg"></CiSearch>
+                <CiSearch className="h-6 w-6 text-teal-300 sm:absolute sm:top-[10px] lg:left-4 max-sm:bg-slate-100 max-sm:rounded-lg"></CiSearch>
                 
             </div>
         </div>
@@ -161,7 +165,7 @@ const Header = () => {
                 className="max-sm:h-5 max-sm:w-5 h-7 w-7 text-lime-100  cursor-pointer transition-all duration-500 hover:scale-110"
               />
               {noti && (
-                <div className={`flex flex-col gap-2 max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:top-[62px] lg:w-full py-3 px-5 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition ease-in-out duration-1000 z-50`}>
+                <div className={`flex flex-col gap-2 max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:top-[62px] lg:w-full py-3 px-5 font-medium text-teal-800 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition ease-in-out duration-1000 z-50`}>
                   <p className="">Thông báo</p>
                   <hr className="w-full"></hr>
                   {slice?.map((noti) =>(
@@ -201,16 +205,58 @@ const Header = () => {
                   className={`max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:top-[62px] lg:w-60 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-50`}
                 >
                   {authentication == 2 && (
-                    <div
-                      onClick={() => {
-                        setActived(false);
-                        Navigate("/doctor/schedule");
-                      }}
-                      className="flex gap-3 account-link rounded-lg items-center hover:text-white pl-3 pr-2 cursor-pointer"
-                    >
-                      <FaRegUserCircle className="h-5 w-5 "></FaRegUserCircle>
-                      <div className="block py-3 max-sm:xs">Lịch làm việc</div>
-                    </div>
+                    <>
+                      <div
+                        onClick={() => {
+                          setActived(false);
+                          Navigate("/doctor/profile");
+                        }}
+                        className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                      >
+                        <FaRegUserCircle className="h-5 w-5 "></FaRegUserCircle>
+                        <div className="block py-3 max-sm:xs">Hồ sơ</div>
+                      </div>
+                      <div
+                        onClick={() => {
+                          setActived(false);
+                          Navigate("/doctor/schedule");
+                        }}
+                        className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                      >
+                        <GrSchedule className="h-4 w-5 "></GrSchedule>
+                        <div className="block py-3 max-sm:xs">Lịch làm việc</div>
+                      </div>
+                      <div
+                        onClick={() => {
+                          setActived(false);
+                          Navigate("/doctor/appointment");
+                        }}
+                        className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                      >
+                        <AiOutlineSchedule className="h-5 w-5 "></AiOutlineSchedule>
+                        <div className="block py-3 max-sm:xs">Lịch khám</div>
+                      </div>
+                      <div
+                        onClick={() => {
+                          setActived(false);
+                          Navigate("/doctor/create-post");
+                        }}
+                        className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                      >
+                        <MdOutlinePostAdd className="h-5 w-5 "></MdOutlinePostAdd>
+                        <div className="block py-3 max-sm:xs">Thêm bài viết</div>
+                      </div>
+                      <div
+                        onClick={() => {
+                          setActived(false);
+                          Navigate("/doctor/manage-post");
+                        }}
+                        className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                      >
+                        <MdManageSearch className="h-5 w-5 "></MdManageSearch>
+                        <div className="block py-3 max-sm:xs">Quản lý bài viết</div>
+                      </div>
+                  </>
                   )}
                   {authentication == 1 && (
                     <div>
@@ -219,7 +265,7 @@ const Header = () => {
                           setActived(false);
                           Navigate("/patient/profile");
                         }}
-                        className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer"
+                        className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
                       >
                         <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
                         <div className="block py-3 max-sm:xs">Hồ sơ</div>
@@ -229,27 +275,89 @@ const Header = () => {
                           setActived(false);
                           Navigate("/patient/appointment");
                         }}
-                        className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer"
+                        className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
                       >
                         <LuCalendarDays className="h-5 w-5"></LuCalendarDays>
-                        <div className="block py-3 max-sm:xs">Lịch khám của tôi</div>
+                        <div className="block py-3 max-sm:xs">Lịch khám</div>
+                      </div>
+                      <div
+                        onClick={() => {
+                          setActived(false);
+                          Navigate("/patient/health-record");
+                        }}
+                        className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                      >
+                        <MdOutlineNoteAlt className="h-5 w-5"></MdOutlineNoteAlt>
+                        <div className="block py-3 max-sm:xs">Bệnh án</div>
                       </div>
                     </div>
                   )}
                   {authentication == 0 && (
+                    <>
                     <div
                       onClick={() => {
                         setActived(false);
                         Navigate("/admin/dashboard");
                       }}
-                      className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer"
+                      className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
                     >
-                      <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
+                      <AiOutlineDashboard className="h-5 w-5"></AiOutlineDashboard>
                       <div className="block py-3 max-sm:xs">Bảng điều khiển</div>
                     </div>
+                    <div
+                      onClick={() => {
+                        setActived(false);
+                        Navigate("/admin/profile");
+                      }}
+                      className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                    >
+                      <FaRegUserCircle className="h-5 w-5 "></FaRegUserCircle>
+                      <div className="block py-3 max-sm:xs">Hồ sơ</div>
+                    </div>
+                    <div
+                      onClick={() => {
+                        setActived(false);
+                        Navigate("/admin/appointment");
+                      }}
+                      className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                    >
+                      <AiOutlineSchedule className="h-5 w-5 "></AiOutlineSchedule>
+                      <div className="block py-3 max-sm:xs">Lịch khám</div>
+                    </div>
+                    <div
+                      onClick={() => {
+                        setActived(false);
+                        Navigate("/admin/users");
+                      }}
+                      className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                    >
+                      <FaUsersCog className="h-5 w-5 "></FaUsersCog>
+                      <div className="block py-3 max-sm:xs">Quản lý người dùng</div>
+                    </div>
+                    <div
+                      onClick={() => {
+                        setActived(false);
+                        Navigate("/admin/create-post");
+                      }}
+                      className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                    >
+                      <MdOutlinePostAdd className="h-5 w-5 "></MdOutlinePostAdd>
+                      <div className="block py-3 max-sm:xs">Thêm bài viết</div>
+                    </div>
+                    <div
+                      onClick={() => {
+                        setActived(false);
+                        Navigate("/admin/manage-post");
+                      }}
+                      className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
+                    >
+                      <MdManageSearch className="h-5 w-5 "></MdManageSearch>
+                      <div className="block py-3 max-sm:xs">Quản lý bài viết</div>
+                    </div>
+                  </>
                   )}
                   <div
-                    className="flex gap-3 account-link rounded-lg items-center hover:text-white px-4 cursor-pointer"
+                    className="flex gap-3 account-link rounded-lg items-center hover:text-white px-5 font-medium text-teal-800 cursor-pointer"
                     onClick={handleLogout}
                   >
                     <FiLogOut className="h-5 w-5"></FiLogOut>

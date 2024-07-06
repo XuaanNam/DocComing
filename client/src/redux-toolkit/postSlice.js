@@ -11,6 +11,8 @@ const initialState = {
   data: [],
   countPost: 0,
   detailPost: {},
+  SimilarDoctor: [],
+  major: [],
   category: [],
   post: [],
   allPost: [],
@@ -39,8 +41,8 @@ export const updatePost = createAsyncThunk("updatePost", async (body) => {
   });
   return await res.json();
 });
-export const fetchPost = createAsyncThunk("fetchPost", async () => {
-  const res = await fetch("http://localhost:5000/api/admin/post", {
+export const fetchPost = createAsyncThunk("fetchPost", async ({filter, orderby}) => {
+  const res = await fetch(`http://localhost:5000/api/admin/post/${filter}/${orderby}`, {
     method: "GET",
     headers: {
       Authorization: localStorage.getItem("token"),
@@ -60,6 +62,15 @@ export const fetchDoctorPost = createAsyncThunk("fetchDoctorPost", async () => {
 //user
 export const fetchCategories = createAsyncThunk("fetchCategories", async () => {
   const res = await fetch("http://localhost:5000/api/category", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  return await res.json();
+});
+export const fetchMajor = createAsyncThunk("fetchMajor", async () => {
+  const res = await fetch("http://localhost:5000/api/major", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -275,6 +286,16 @@ const postSlice = createSlice({
       .addCase(updatePost.rejected, (state, action) => {
         state.loading = true;
       })
+      //fetchMajor
+      .addCase(fetchMajor.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchMajor.fulfilled, (state, action) => {
+        state.major = action.payload.data;
+      })
+      .addCase(fetchMajor.rejected, (state, action) => {
+        state.loading = true;
+      })
       //fetchCategories
       .addCase(fetchCategories.pending, (state, action) => {
         state.loading = true;
@@ -312,6 +333,7 @@ const postSlice = createSlice({
       })
       .addCase(getDetailPost.fulfilled, (state, action) => {
         state.detailPost = action.payload.data;
+        state.SimilarDoctor = action.payload.SimilarDoctor
         state.loading = false;
       })
       .addCase(getDetailPost.rejected, (state, action) => {

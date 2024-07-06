@@ -19,7 +19,8 @@ const initialState = {
   doctors: [],
   detailDoctor: {},
   allNoti: {},
-  checkRead: false
+  checkRead: false,
+  dashboardData: []
 };
 
 export const userRegister = createAsyncThunk("userRegister", async (body) => {
@@ -62,6 +63,17 @@ export const sendMail = createAsyncThunk("sendMail", async (body) => {
   });
   return await res.json();
 });
+export const changePassword = createAsyncThunk("changePassword", async (body) => {
+  const res = await fetch("http://localhost:5000/api/change/password", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
 export const resetPassword = createAsyncThunk("resetPassword", async (body) => {
   const res = await fetch("http://localhost:5000/api/reset/password", {
     method: "POST",
@@ -83,8 +95,8 @@ export const authentication = createAsyncThunk("authentication", async () => {
   });
   return await res.json();
 });
-export const fetchUsers = createAsyncThunk("fetchUsers", async () => {
-  const res = await fetch("http://localhost:5000/api/admin/account", {
+export const fetchUsers = createAsyncThunk("fetchUsers", async ({filter, orderby}) => {
+  const res = await fetch(`http://localhost:5000/api/admin/account/${filter}/${orderby}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -180,6 +192,16 @@ export const readNotification = createAsyncThunk("readNotification", async (body
   });
   return await res.json();
 });
+export const getTotalDashboard = createAsyncThunk("getTotalDashboard", async () => {
+  const res = await fetch("http://localhost:5000/api/admin/dashboard", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+  });
+  return await res.json();
+});
 const authSlice = createSlice({
   name: "user",
   initialState,
@@ -254,19 +276,39 @@ const authSlice = createSlice({
       })
       .addCase(resetPassword.fulfilled, (state, action) => {
         state.checked = action.payload.checked;
-        if (action.payload.checked) {
-          toast.success("Đổi mật khẩu thành công", {
-            position: "top-right",
-          });
-        } else {
-          toast.error(action.payload.message, {
-            position: "top-right",
-          });
-          state.message = action.payload.message;
-        }
+        // if (action.payload.checked) {
+        //   toast.success("Đổi mật khẩu thành công", {
+        //     position: "top-right",
+        //   });
+        // } else {
+        //   toast.error(action.payload.message, {
+        //     position: "top-right",
+        //   });
+        //   state.message = action.payload.message;
+        // }
         state.loading = false;
       })
       .addCase(resetPassword.rejected, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(changePassword.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(changePassword.fulfilled, (state, action) => {
+        state.message = action.payload.message;
+        // if (action.payload.checked) {
+        //   toast.success("Đổi mật khẩu thành công", {
+        //     position: "top-right",
+        //   });
+        // } else {
+        //   toast.error(action.payload.message, {
+        //     position: "top-right",
+        //   });
+        //   state.message = action.payload.message;
+        // }
+        state.loading = false;
+      })
+      .addCase(changePassword.rejected, (state, action) => {
         state.loading = true;
       })
       .addCase(authentication.pending, (state, action) => {
@@ -395,6 +437,16 @@ const authSlice = createSlice({
         state.loading = false;
       })
       .addCase(readNotification.rejected, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getTotalDashboard.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(getTotalDashboard.fulfilled, (state, { payload }) => {
+        state.dashboardData = payload.data;
+        state.loading = false;
+      })
+      .addCase(getTotalDashboard.rejected, (state, action) => {
         state.loading = true;
       })
       ;

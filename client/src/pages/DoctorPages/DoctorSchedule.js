@@ -34,7 +34,7 @@ const DoctorSchedule = () => {
   const [optimized, setOptimized] = useState(false);
   const [serviceChange, setServiceChange] = useState(false)
   const [scheduleChange, setScheduleChange] = useState(false)
-
+  console.log(AppointmentData)
   const dateFormat = "DD/MM/YYYY";
   const currentDate = new Date();
   const today =
@@ -60,9 +60,32 @@ const DoctorSchedule = () => {
       EstimatedTime: service[i]?.EstimatedTime,
       Price: service[i]?.Price,
     });
-  const time1 = ["7:00:00", "8:00:00", "9:00:00", "10:00:00", "11:00:00"];
-  const time2 = ["13:00:00", "14:00:00", "15:00:00", "16:00:00", "17:00:00"];
-  const time3 = ["18:00:00", "19:00:00", "20:00:00", "21:00:00", "22:00:00"];
+  let time1 = ["7:00:00"];
+  let time2 = ["13:00:00"];
+  let time3 = ["18:00:00"];
+  let first = 6;
+  let second = 12;
+  let third = 17;
+  for (let i = 0; i < 4; i++){
+    let min = 0;
+    first+=1;
+    second+=1;
+    third+=1;
+    for(let j = 0 ; j < 4; j++){
+      min+=15
+      if(min === 60){
+        time1.push(first + 1 + ":" + "00" + ":" + "00")
+        time2.push(second + 1 + ":" + "00" + ":" + "00")
+        time3.push(third + 1 + ":" + "00" + ":" + "00")
+      }
+      else{
+        time1.push(first + ":" + min + ":" + "00")
+        time2.push(second + ":" + min + ":" + "00")
+        time3.push(third + ":" + min + ":" + "00")
+      }  
+    }
+  }
+  // console.log(time4,time5,time6)
   const handleChange = (value) => {
     setServiceChange(true);
     let service = [];
@@ -207,10 +230,10 @@ const DoctorSchedule = () => {
   };
   useEffect(() => {
     setDate(today);
-    dispatch(fetchDoctorSchedule(today)); //bệnh nhân -> idDOctor, ngày  {appointment{timebdau, 1:30:00} , schedule }
+    dispatch(fetchDoctorSchedule(today)); 
     dispatch(fetchService({ idDoctor: currentUser?.id }));
     dispatch(fetchAllService());
-    dispatch(fetchAppointment()); // doctor -> appointment {cuộc hẹn 1{}, cuọ<!--  --> 2}
+    dispatch(fetchAppointment()); 
     if (currentUser) {
       dispatch(fetchProfile());
     }
@@ -228,17 +251,17 @@ const DoctorSchedule = () => {
   const getListData = (value) => {
     let listData = [];
     for (let i = 0; i < AppointmentData?.length; i++) {
-      let db = AppointmentData[i]?.DateBooking?.split("-");
+      let db = AppointmentData[i]?.DateBooking?.split("/");
       if (
-        value.date() == db[2] &&
+        value.date() == db[0] &&
         value.month() + 1 == db[1] &&
-        value.year() == db[0]
+        value.year() == db[2]
       ) {
         listData = [
           ...listData,
           {
             type: AppointmentData[i].Type,
-            content: AppointmentData[i].TimeBooking,
+            content: AppointmentData[i].TimeBooking + " - " + AppointmentData[i].Service,
           },
         ];
       }

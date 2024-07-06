@@ -10,6 +10,11 @@ const userPersistConfig = {
   storage,
   blacklist: ["checked", "message"],
 };
+const postPersistConfig = {
+  key: "post",
+  storage,
+  blacklist: ["checked", "message"],
+};
 const persistConfig = {
   key: "root",
   storage,
@@ -18,8 +23,7 @@ const persistConfig = {
 };
 const reducer = combineReducers({
   user: persistReducer(userPersistConfig, authReducer),
-  post: postReducer,
-  // appointment: persistReducer(appointmentPersistConfig, appointmentReducer),
+  post: persistReducer(postPersistConfig, postReducer),
   appointment: appointmentReducer,
 });
 

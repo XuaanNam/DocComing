@@ -20,16 +20,15 @@ import EditBlogAdmin from "./pages/AdminPages/EditBlog";
 import DoctorPage from "./pages/DoctorPages/DoctorPage";
 import EditBlogDoctor from "./pages/DoctorPages/EditBlog";
 
-import Profile from "./pages/PatientPages/Profile";
 import BookingDoctor from "./pages/PatientPages/BookingDoctor";
 import BookingConfirm from "./pages/PatientPages/BookingConfirm";
 import BookingSuccess from "./pages/PatientPages/BookingSuccess";
-import Appointment from "./pages/PatientPages/Appointment";
 
 import { ScrollToTop } from "./pages/ScrollToTop";
 import SearchPost from "./pages/SearchPost";
 import SimilarPost from "./pages/SimilarPost";
 import ResetPassword from "./pages/ResetPassword";
+import PatientPage from "./pages/PatientPages/PatientPage";
 function App() {
   return (
     <div>
@@ -40,6 +39,7 @@ function App() {
         <Routes>
           <Route path="/" exact element={<HomePage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
           <Route path="/register" element={<Register />} />
           <Route path="/reset/:token" element={<ResetPassword />} />
           
@@ -51,20 +51,16 @@ function App() {
           <Route path="/categories/:cgr/:similar" element={<SimilarPost />} />
           <Route path="/admin/update-post/:postId" element={<EditBlogAdmin />} />
           <Route path="/doctor/update-post/:postId" element={<EditBlogDoctor />} />
-          <Route path="/patient/profile" element={<Profile />} />
-          <Route path="/patient/appointment" element={<Appointment />} />
 
+          <Route path="/patient/:patientpage" element={<PatientPage />} />
+          <Route path="/doctor/:doctorpage" element={<DoctorPage />} />
           <Route path="/admin/:adminpage" element={<AdminPage />} />
-          <Route path="/admin/login" element={<AdminLogin />} />
           
           <Route path="/booking/:doctorId" element={<BookingDoctor />} />
           <Route path="/booking/confirm" element={<BookingConfirm />} />
           <Route path="/booking/success" element={<BookingSuccess />} />
           <Route path="/search" element={<SearchPost />} />
           
-
-          {/* <Route path="/doctor/schedule" element={<DoctorSchedule />} /> */}
-          <Route path="/doctor/:doctorpage" element={<DoctorPage />} />
         </Routes>
         <Footer></Footer>
       </Router>

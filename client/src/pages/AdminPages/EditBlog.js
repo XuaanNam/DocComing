@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import Editor from "./Editor";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost,updatePost, fetchCategories,getDetailPost } from "../../redux-toolkit/postSlice";
+import { createPost,updatePost, fetchCategories,getDetailPost, fetchMajor } from "../../redux-toolkit/postSlice";
 import { Select, Input } from "antd";
 import { FileInput, Button } from "flowbite-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -13,7 +13,7 @@ const EditBlog = () => {
   const { currentUser, error, loading } = useSelector(
     (state) => state.user
   );
-  const { detailPost, category, checked } = useSelector((state) => state.post);
+  const { detailPost, category,major, checked } = useSelector((state) => state.post);
   const [actived, setActived] = useState(false);
   const [filled, setFilled] = useState(true);
   const [data,setData] = useState({});
@@ -21,34 +21,23 @@ const EditBlog = () => {
   const {postId} = useParams();
   const ref = useRef();
   useEffect(() => {
-    dispatch(getDetailPost(postId));
-  }, [dispatch,postId]);
-  useEffect(() => {
+    dispatch(getDetailPost(postId)).then((results) => {
+      setData(results.payload.data[0])
+    })
     dispatch(fetchCategories());
-    setData(detailPost[0])
-  }, [detailPost]);
-  console.log(data);
-
+    dispatch(fetchMajor());
+  }, [postId]);
   useEffect(() => {
-    for (let i = 0; i < category?.length; i++) {
-      if(data?.Categories == category[i].Categories){
-        for (let j = 0; j < category[i]?.Similar?.length; j++) {
-          if (category[i].Similar[j].SimilarCategories == data?.Similar) {
-            setData({...data, Similar: category[i].Similar[j].id, Categories: category[i].id})
-            break;
-          }
-        }
-      }
-    }
     if (currentUser) {
-      if (currentUser.authentication !== 0) Navigate("/");
+      if (currentUser.authentication != 0) Navigate("/");
     } else Navigate("/");
-  }, [currentUser,category]);
+  }, [currentUser]);
+
   const handleChange = (value) => {
     for (let i = 0; i < category?.length; i++) {
       for (let j = 0; j < category[i]?.Similar?.length; j++) {
         if (category[i].Similar[j].id === value) {
-          setData({ ...data, Categories: category[i].id, Similar: value })
+          setData({ ...data, idCategories: category[i].id, idSimilar: value })
           break;
         }
       }
@@ -59,8 +48,9 @@ const EditBlog = () => {
     body.append("Title", data.Title);
     body.append("Brief", data.Brief);
     body.append("Content", data.Content);
-    body.append("idCategories", data.Categories);
-    body.append("idSimilar", data.Similar);
+    body.append("idCategories", data.idCategories);
+    body.append("idMajor", data.idMajor);
+    body.append("idSimilar", data.idSimilar);
     body.append("id", postId); //id post
     if(files != null )
       body.append("FeaturedImage", files);
@@ -78,7 +68,7 @@ const EditBlog = () => {
   };
   return (
     <div>
-        {currentUser?.authentication === 0 ? (
+        {currentUser?.authentication == 0 ? (
         <div className="min-h-screen flex">
             <DashSidebar param="manage-post"></DashSidebar>
             <div className="overflow-auto pt-[70px] w-full">
@@ -108,20 +98,19 @@ const EditBlog = () => {
                       />
                       </div>
                       <Select
-                      id="categories"
-                      className={` ${
-                          !filled && data?.Similar === ""
-                          ? "border-red-400 border-[1.5px]"
-                          : "border-gray-400"
-                      } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
-                      value={data?.Similar}
-                      onChange={handleChange}
-                      >
-                      <option disabled value="" className="text-white">
-                          Chọn chuyên mục
-                      </option>
-
-                      {category?.map((category) => (
+                        id="categories"
+                        className={` ${
+                            !filled && data?.idSimilar === ""
+                            ? "border-red-400 border-[1.5px]"
+                            : "border-gray-400"
+                        } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+                        value={data?.idSimilar}
+                        onChange={handleChange}
+                        >
+                        <option disabled value="" className="text-white">
+                            Chọn chuyên mục
+                        </option>
+                        {category?.map((category) => (
                           <Select.OptGroup
                           id="category"
                           value={category.id}
@@ -139,6 +128,31 @@ const EditBlog = () => {
                           ))}
                           </Select.OptGroup>
                       ))}
+                      </Select>
+                      <Select
+                        id="major"
+                        className={` ${
+                          !filled && data?.idMajor === ""
+                            ? "border-red-400 border-[1.5px]"
+                            : "border-gray-400"
+                        } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+                        value={data?.idMajor}
+                        onChange={(value)=>{setData({ ...data, idMajor: value})}}
+                      >
+                        <option disabled value="" className="text-white">
+                          Chọn chuyên khoa
+                        </option>
+
+                        {major?.map((major) => (
+                          <Select
+                            id="major"
+                            value={major.id}
+                            label={major.Major}
+                            key={major.id}
+                          >
+                            {major.Major}
+                          </Select>
+                        ))}
                       </Select>
                       {actived ? (
                       <div
@@ -173,14 +187,13 @@ const EditBlog = () => {
                       />
                       <button
                       onClick={handleCreatePost}
-                      className="h-12 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
+                      className="h-12 mt-5 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
                       >
                         Đăng
                       </button>
                   </div>
               </div>
             </div>
-
         </div>
         ) : (
             <div className="h-screen bg-white"></div>

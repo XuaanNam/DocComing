@@ -1,6 +1,6 @@
 create database doccoming -- drop database doccoming
 ;
-use doccoming 
+use doccoming
 ;
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '123123123';
 flush privileges;
@@ -206,15 +206,16 @@ idAuthor int,
 DatePost datetime,
 idCategories int,
 idSimilar int,
+idMajor int default null,
 Status int default 0, -- 0 chờ duyệt, 1 hiển thị trên site, 2 ẩn
 foreign key (idAuthor) references account(id),
 foreign key (idCategories) references categories(id),
-foreign key (idSimilar) references similarCategories(id)
+foreign key (idSimilar) references similarCategories(id),
+foreign key (idMajor) references major(id)
 );
-INSERT INTO `doccoming`.`post` (`FeaturedImage`, `Title`, `Brief`, `Content`, `idAuthor`, `DatePost`, `idCategories`, `idSimilar`, `Status`) VALUES ('https://res.cloudinary.com/doccomming/image/upload/v1715935949/hiwx3crgn1z8knaoxlh4.webp', 'Thuốc huyết áp uống ngày 2 lần được không?', 'Huyết áp cao là bệnh lý mạn tính cần phải điều trị suốt đời để ngăn ngừa các biến chứng nguy hiểm như bệnh tim, đột quỵ, giảm thị lực, bệnh thận mạn tính hay các bệnh về mạch máu khác. Trong một số trường hợp, bác sĩ sẽ chỉ định dùng một hoặc kết hợp nhiều loại thuốc điều trị cao huyết áp khác nhau cho bệnh nhân. Nhiều bệnh nhân vì phải dùng quá nhiều loại thuốc cùng lúc nên thắc mắc không biết thuốc huyết áp uống ngày 2 lần được không? Cùng Hello Bacsi đi tìm lời giải đáp trong bài viết ngay sau đây nhé!', '<h2><strong>Huyết áp cao bao nhiêu thì phải uống thuốc?</strong></h2><p><br></p><p>Bạn có thể cần dùng thuốc để hạ huyết áp nếu các biện pháp thay đổi lối sống không đủ để đưa huyết áp về mức mục tiêu. Vậy, huyết áp 140/90 mmHg có phải uống thuốc không? Việc có nên dùng thuốc hay không còn phụ thuộc vào chỉ số huyết áp ban đầu, tình trạng sức khỏe tổng thể và nguy cơ phát triển các vấn đề như đau tim hoặc đột quỵ trong tương lai. Bác sĩ sẽ xem xét và quyết định có nên kê đơn thuốc hay không.</p><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/huyet-ap-bao-nhieu-thi-phai-uong-thuoc.jpg\" alt=\"huyết áp cao bao nhiêu thì phải uống thuốc?\" height=\"563\" width=\"1000\"></p><p><br></p><p>Cụ thể như sau:</p><ul><li>Nếu huyết áp của bạn từ&nbsp;140/90 mmHg&nbsp;trở lên, có sức khỏe tổng thể tốt, nguy cơ bị đau tim và đột quỵ nói chung là thấp, việc thay đổi lối sống đơn thuần có thể là đủ mà không cần dùng thuốc. Tuy nhiên, nếu huyết áp luôn cao hơn 140/90 mmHg và nguy cơ mắc các vấn đề sức khỏe nghiêm trọng cao hơn, chẳng hạn như nếu bạn thừa cân hoặc mắc bệnh tiểu đường, bác sĩ sẽ cần chỉ định bắt đầu dùng thuốc kiểm soát huyết áp kết hợp với thay đổi lối sống.</li></ul><p><br></p><ul><li>Nếu huyết áp của bạn luôn trên 160/100 mmHg thì nguy cơ mắc các vấn đề nghiêm trọng sẽ càng cao hơn, bác sĩ sẽ kê cho bạn đơn thuốc hạ áp tích cực hơn, cũng như trao đổi về những thay đổi trong lối sống buộc phải áp dụng để kiểm soát huyết áp.</li></ul><p><br></p><p>Nếu bạn có nguy cơ mắc bệnh tim, tiểu đường hoặc có tiền sử đột quỵ, thuốc có thể được bắt đầu sử dụng ngay cả khi chỉ số huyết áp thấp hơn. Mục tiêu huyết áp được sử dụng phổ biến nhất cho những người mắc các vấn đề sức khỏe này là duy trì dưới 130/80 mmHg.</p><p><br></p><h2><strong>Thuốc huyết áp uống ngày 2 lần được không?</strong></h2><p><br></p><p>Chỉ định dùng nhiều loại thuốc huyết áp cùng lúc là khá phổ biến vì mỗi loại thuốc có tác dụng kiểm soát huyết áp theo những cơ chế khác nhau. Điều này khiến nhiều người bệnh không biết thuốc huyết áp uống ngày 2 lần được không? <strong>Câu trả lời là ĐƯỢC nhưng tùy vào thời gian bán thải của từng loại thuốc và chỉ định của bác sĩ</strong>.</p><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/thuoc-huyet-ap-uong-ngay-2-lan-duoc-khong-tuy-vao-loai-thuoc.jpg\" alt=\"thuốc huyết áp uống ngày 2 lần được không tùy vào loại thuốc\" height=\"667\" width=\"1000\"></p><p><br></p><p>Thời gian bán thải của thuốc sẽ quyết định đến số lần uống thuốc đó trong ngày. Nếu thời gian bán thải của thuốc càng ngắn thì số lần uống thuốc sẽ càng nhiều và ngược lại, nếu thời gian bán thải càng dài thì số lần uống thuốc càng ít. Vì vậy, một số loại thuốc chỉ cần uống với liều dùng 1 lần/ngày trong khi vẫn có một số thuốc huyết áp sẽ được chỉ định uống 2-3 lần/ngày hoặc hơn tùy trường hợp cụ thể.</p><p><br></p><p>Thông thường, bác sĩ sẽ chỉ định uống 2 viên/ngày chia 2 lần uống hoặc 3 viên/ngày chia 3 lần uống (đối với thuốc tác dụng ngắn) hoặc 1 viên/ngày (đối với thuốc tác dụng kéo dài).</p><p><br></p><p>Nếu thắc mắc thuốc huyết áp uống ngày 2 lần được không, người bệnh nên biết là ở một số đối tượng được chỉ định dùng thuốc một lần mỗi ngày, tác dụng kiểm soát huyết áp có thể giảm dần vào cuối khoảng thời gian dùng thuốc. Vì vậy, nên đo huyết áp ngay trước khi dùng thuốc để xác định xem bản thân có đạt được mức kiểm soát huyết áp mong muốn hay không. Sau đó, hỏi ý kiến bác sĩ về việc tăng liều lượng hoặc tần suất dùng thuốc lên 2 lần/ngày có nên hay không nếu chỉ số huyết áp chưa đạt mục tiêu.</p><p><br></p><p><br></p><h2>Một số lưu ý khác khi dùng thuốc huyết áp</h2><p><br></p><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/thuoc-huyet-ap-uong-ngay-2-lan-duoc-khong-va-nhung-luu-y.jpg\" alt=\"thuốc huyết áp uống ngày 2 lần được không và những lưu ý khác\" height=\"667\" width=\"1000\"></p><p><br></p><p><br></p><p><br></p><p><strong><em>Dùng thuốc huyết áp liên tục, suốt đời.</em></strong> Nếu bạn bắt đầu dùng thuốc điều trị huyết áp cao, bạn nên ý thức rằng sẽ cần phải dùng thuốc trong thời gian dài, thậm chí là suốt đời để có thể kiểm soát tốt huyết áp và sống lâu hơn. Ngay cả khi huyết áp đã hạ xuống mức mục tiêu, người bệnh vẫn phải tuân thủ nguyên tắc điều trị liên tục. Nếu huyết áp được kiểm soát tốt trong vài năm, bạn có thể dùng liều thấp hơn hoặc ngừng dùng thuốc hoàn toàn mà vẫn đảm bảo chỉ số huyết áp vẫn ổn định. Tuy nhiên, điều này sẽ cần sự chỉ định và theo dõi chặt chẽ của bác sĩ.</p><p><br></p><p><strong><em>Dùng thuốc đúng giờ mỗi ngày.</em></strong> Tập thói quen dùng tất cả các loại thuốc huyết áp vào cùng một thời điểm mỗi ngày để giúp bạn nhớ uống thuốc và hạn chế nguy cơ bỏ quên liều. Uống thuốc đúng giờ, không nên nhớ lúc nào uống lúc nấy, uống thuốc thất thường sẽ khiến huyết áp cao không được kiểm soát, dễ gây ra các biến chứng nguy hiểm, như đột quỵ.</p><p><br></p><p><strong><em>Dùng thuốc đủ liều lượng và tần suất được chỉ định.</em></strong> Đối với thuốc dùng một lần trong ngày, cần uống vào một thời điểm cố định. Đối với thuốc uống 2 lần trong ngày, cần chia đều trong 24 giờ (tức là cứ cách 12 giờ uống thuốc một lần). Ví dụ: nếu uống thuốc lần đầu tiên trong ngày vào 8 giờ sáng thì uống lần 2 sẽ vào 8 giờ tối. Tuân thủ liều lượng và tần suất dùng thuốc được chỉ định để đảm bảo thuốc có hiệu quả kiểm soát huyết áp tốt nhất.</p><p><br></p><p><strong><em>Không tự ý giảm liều hay ngừng dùng thuốc.</em></strong> Khi thấy huyết áp ổn định, cảm thấy khỏe hơn và vì sợ gặp phải tác dụng phụ nên một số người bệnh tự ý giảm liều (uống thuốc cách ngày hoặc chia đôi viên thuốc để uống) hoặc thậm chí là ngừng dùng thuốc mà không hỏi ý kiến bác sĩ. Điều này hết sức nguy hiểm vì làm cho nồng độ thuốc trong máu không đủ để kiểm soát huyết áp. Hậu quả dẫn đến là huyết áp nhanh chóng tăng trở lại, tăng nguy cơ đột quỵ và tử vong.</p><p><br></p><p><strong><em>Không tự ý tăng liều thuốc.</em></strong> Thuốc huyết áp uống ngày 2 lần được không? Một số bệnh nhân được chỉ định chỉ dùng thuốc một lần/ngày nhưng vì không biết tại sao uống thuốc rồi mà huyết áp vẫn tăng nên tự ý tăng liều lên uống 2 lần/ngày. Khi dùng quá liều có thể gây tụt huyết áp quá mức, thậm chí gây trụy mạch, tử vong… và các tác dụng phụ khác của thuốc.</p><p><br></p><p><strong><em>Xử trí khi quên liều.</em></strong> Quên uống thuốc huyết áp 1 ngày có sao không? Nếu bạn bỏ lỡ một liều, đừng dùng gấp đôi liều. Điều quan trọng là không dùng quá nhiều thuốc huyết áp cùng một lúc vì huyết áp của bạn có thể giảm quá thấp. Nếu bạn quên uống một viên, hãy uống ngay khi nhớ ra, trừ khi đã gần đến liều tiếp theo, trong trường hợp đó, chỉ cần uống một viên rồi tiếp tục dùng thuốc như bình thường theo kế hoạch.</p><p><br></p><p><strong><em>Lưu ý đến tác dụng phụ của thuốc.</em></strong> Thuốc huyết áp có thể gây ra một số tác dụng phụ nhưng hầu hết trường hợp đều không gặp phải bất kỳ tác dụng phụ nghiêm trọng nào. Hãy báo cho bác sĩ điều trị càng sớm càng tốt nếu bạn gặp phải tác dụng phụ bất kỳ, nhất là các tác dụng phụ đang gây ra vấn đề sức khỏe làm ảnh hưởng đến cuộc sống hàng ngày. Trong hầu hết các trường hợp, việc thay đổi liều lượng thuốc hoặc thời điểm dùng thuốc có thể giúp giảm tác dụng phụ nhưng cần phải được bác sĩ chỉ định.</p><p><br></p><p><strong><em>Trao đổi với bác sĩ điều trị.</em></strong> Hãy cho bác sĩ điều trị biết về tất cả các loại thuốc kê đơn, thuốc không kê đơn và thực phẩm chức năng mà bạn đang dùng. Một số loại thuốc có thể gây tác dụng phụ là làm tăng huyết áp và/hoặc cản trở hiệu quả của thuốc huyết áp.</p><p><br></p><p><strong><em>Đo huyết áp và thăm khám sức khỏe định kỳ.</em></strong> Thăm khám sức khỏe định kỳ và tái khám theo đúng lịch hẹn của bác sĩ để được theo dõi tình trạng sức khỏe, điều chỉnh thuốc và liều lượng kịp thời nếu cần. Đồng thời, người bệnh phải biết cách tự theo dõi chỉ số huyết áp tại nhà thường xuyên.</p><p><br></p><p><strong><em>Kết hợp thay đổi lối sống lành mạnh.</em></strong> Giảm huyết áp bằng lối sống lành mạnh đồng nghĩa là bạn có thể ít phụ thuộc vào thuốc hơn. Một lối sống lành mạnh cũng có thể giúp thuốc huyết áp cho tác dụng hiệu quả hơn. Các biện pháp này cụ thể là: ăn nhạt, ăn nhiều trái cây và rau quả tươi, giảm stress, bỏ thuốc lá, hạn chế rượu bia, tập thể dục vừa sức và duy trì cân nặng phù hợp.</p><p><br></p><p><span style=\"color: rgb(38, 38, 38);\">Tóm lại, bác sĩ sẽ cho bạn biết bạn cần uống bao nhiêu viên thuốc huyết áp mỗi ngày, thuốc huyết áp uống ngày 2 lần được không, cũng như bất kỳ điều gì khác mà bạn còn thắc mắc trong quá trình điều trị. Chẳng hạn như: liệu bạn có thể dùng chúng vào một thời điểm cụ thể trong ngày hay không, liệu bạn có thể dùng chúng cùng với thức ăn hay không và liệu bạn có thể dùng tất cả các loại thuốc của mình cùng nhau hay không. Điều bạn cần làm duy nhất là thẳng thắn trao đổi trực tiếp để thấu hiểu và tuân thủ đúng theo chỉ định điều trị từ bác sĩ của mình.</span></p>', '235523484', '2024-05-17 15:52:30', '2', '5', '1');
-INSERT INTO `doccoming`.`post` (`FeaturedImage`, `Title`, `Brief`, `Content`, `idAuthor`, `DatePost`, `idCategories`, `idSimilar`, `Status`) VALUES ('https://res.cloudinary.com/doccomming/image/upload/v1715936788/rpscgogoo9ojvjun0jzr.jpg', 'Tìm hiểu về các loại insulin điều trị tiểu đường và cách sử dụng', 'Insulin đã được sử dụng từ hơn 100 năm trước để điều trị đái tháo đường nhằm giúp kiểm soát đường huyết và cải thiện chất lượng cuộc sống cho bệnh nhân. Các loại insulin hiện có được chia thành 5 loại dựa vào thời gian tác động, bao gồm: insulin tác dụng nhanh, ngắn, trung bình, kéo dài và cuối cùng là insulin hỗn hợp.', '<p>Các loại insulin khác nhau có thời gian khởi đầu, thời gian đạt đỉnh và thời gian hoạt động khác nhau. Vì vậy, tác dụng và thời điểm sử dụng cũng khác nhau ở từng loại. Nắm thông tin về chúng giúp người bệnh sử dụng insulin một cách an toàn và hiệu quả.</p><p><br></p><h2><strong>Insulin và đái tháo đường</strong></h2><p>Insulin là một hormone tạo ra bởi các tế bào beta tuyến tụy để giữ đường huyết ở mức bình thường. Chức năng của insulin là chuyển glucose (đường) từ máu vào tế bào để tạo năng lượng. Nếu thiếu insulin, đường sẽ tích tụ quá nhiều trong máu và theo thời gian sẽ gây ra bệnh đái tháo đường.</p><p>Với bệnh tiểu đường tuýp 1, cơ thể không tạo ra insulin nên người bệnh phải bổ sung insulin từ bên ngoài hàng ngày để duy trì sự sống. Với tiểu đường tuýp 2, cơ thể không sản xuất đủ insulin hoặc insulin không hoạt động tốt. Trong một vài trường hợp cụ thể, người bệnh tiểu đường tuýp 2 sẽ được bác sĩ chỉ định tiêm insulin để kiểm soát lượng đường trong máu.</p><p><br></p><h2>Các loại insulin: Phân loại insulin theo thời gian tác động</h2><p>Hầu hết người bệnh tiểu đường tuýp 1 và một số trường hợp mắc tiểu đường tuýp 2 được bác sĩ chỉ định dùng 2 loại insulin sau đây:&nbsp;</p><p><br></p><p>Insulin bữa ăn (insulin bolus): loại tác dụng nhanh dùng trong bữa ăn.</p><p><br></p><p>Insulin nền (insulin basal): loại tác dụng chậm hơn, thường dùng 1 hoặc 2 lần trong một ngày, có tác dụng trong suốt cả ngày.</p><p><br></p><p>Một số bệnh nhân khác được kê đơn một loại insulin duy nhất những loại này được kết hợp giữa loại tác dụng nhanh/ngắn và loại tác dụng trung bình/chậm, được gọi là insulin hỗn hợp.</p><p><br></p><p>Cụ thể như sau:</p><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/01/cac-loai-insulin-theo-thoi-gian-tac-dong.jpg\" alt=\"các loại insulin theo thời gian tác động\" height=\"667\" width=\"1000\"></p><p><br></p><h3><strong>Insulin bữa ăn (insulin bolus)</strong></h3><p>Insulin bolus cung cấp insulin một cách nhanh chóng để xử lý lượng đường tạo ra từ bữa ăn. Có 2 loại chính bao gồm:</p><p><br></p><ul><li><strong>Insulin nhanh</strong>&nbsp;(Insulin tác dụng tức thời): dùng ngay trước hoặc sau bữa ăn. Thuốc bắt đầu có tác dụng trong vòng vài phút và kéo dài từ 3 đến 5 giờ tùy nhãn hiệu.</li></ul><p><br></p><ul><li><strong>Insulin regular</strong>&nbsp;(Insulin tác dụng ngắn): tương tự như insulin tác dụng nhanh nhưng tác dụng chậm hơn. Dùng trước khi ăn khoảng 30 đến 60 phút. Loại này mất khoảng 30 đến 60 phút để bắt đầu có tác dụng và kéo dài từ 5 đến 8 giờ.</li></ul><p><br></p><h3><strong>Insulin nền (insulin basal)</strong></h3><p>Insulin nền thường được dùng 1 hoặc 2 lần trong ngày. Nó giúp xử lý lượng đường mà cơ thể tạo ra hoặc chuyển hóa thành. Các loại insulin này bao gồm:</p><p><br></p><ul><li><strong>Insulin NPH</strong>&nbsp;(Insulin tác dụng trung bình): là hỗn dịch insulin kết tinh với protamine và kẽm nên có màu đục, cần được trộn đều, dùng 1 – 2 lần trong ngày.</li></ul><p><br></p><ul><li><strong>Insulin chậm</strong>&nbsp;(Insulin tác dụng kéo dài): có thời gian khởi phát tác dụng chậm hơn insulin NPH, thường dùng 1 lần một ngày, vào cùng một thời điểm mỗi ngày.</li></ul><p><br></p><h3><strong>Insulin dạng hỗn hợp (pre-mix)</strong></h3><p>Insulin hỗn hợp là sự kết hợp giữa insulin tác dụng nhanh/ngắn với loại tác dụng trung bình/chậm. Thường được sử dụng trước bữa ăn mà không cần đến insulin nền, tần suất tiêm khoảng 1 – 2 lần trong ngày.</p><p><br></p><h2>Các loại insulin theo nguồn gốc sản xuất</h2><p><br></p><p>Insulin được sản xuất theo nhiều cách khác nhau.&nbsp;Phân tử insulin giống như hai chuỗi hạt được nối với nhau. Các loại insulin theo nguồn gốc sản xuất bao gồm:</p><p><br></p><p><strong>Insulin người:</strong>&nbsp;Đây là loại insulin tổng hợp và được sản xuất trong phòng thí nghiệm giống như insulin được tạo ra trong cơ thể người.</p><p><br></p><p><strong>Insulin analog:</strong> Đây cũng là loại insulin tổng hợp và được sản xuất trong phòng thí nghiệm nhưng các nhà khoa học đã tìm cách thay đổi vị trí của một số hạt để tạo ra insulin biến đổi gen được gọi là insulin analog.</p><p><br></p><p><strong>Insulin động vật:</strong> Hiện nay, loại này không còn được sử dụng nhiều nữa, nhưng một số người thấy rằng insulin tinh khiết (đã được làm sạch) từ động vật (bò hoặc lợn) có tác dụng tốt nhất đối với họ.</p><p><br></p><h2><strong>Cách sử dụng và bảo quản các loại insulin</strong></h2><h3>Thời điểm tiêm</h3><ul><li><strong>Insulin nhanh</strong>&nbsp;dùng ngay trước hoặc sau bữa ăn.&nbsp;</li></ul><p><br></p><ul><li><strong>Insulin regular</strong>&nbsp;dùng trước khi ăn khoảng 30-60 phút.&nbsp;</li></ul><p><br></p><ul><li><strong>Insulin NPH</strong>&nbsp;dùng 1 – 2 lần trong ngày.</li></ul><p><br></p><ul><li><strong>Insulin chậm, tác dụng kéo dài</strong>&nbsp;dùng 1 lần, vào cùng một thời điểm mỗi ngày.</li></ul><p><br></p><ul><li><strong>Insulin hỗn hợp</strong>&nbsp;dùng trước bữa ăn.</li></ul><h3><strong>Vị trí tiêm</strong></h3><p>Các loại insulin tiêm được tiêm dưới da, không được tiêm vào cơ hoặc vào mạch máu vì điều này sẽ làm thay đổi tốc độ hấp thụ và hoạt động của insulin.</p><p><br></p><p>Sự hấp thu insulin thay đổi tùy theo vị trí được tiêm vào cơ thể. Bụng là vị trí tiêm hấp thụ insulin tốt và ổn định nhất. Cánh tay trên, mông và đùi có tốc độ hấp thụ ít ổn định hơn.</p><p><br></p><p><strong><em>Các yếu tố làm tăng tốc độ hấp thụ insulin:</em></strong></p><p><br></p><ul><li>Tiêm vào vùng vận động nhiều như đùi hoặc cánh tay</li></ul><p><br></p><ul><li>Nhiệt độ cao do tắm nước nóng, spa hoặc phòng tắm hơi</li></ul><p><br></p><ul><li>Xoa bóp vùng xung quanh chỗ tiêm</li></ul><p><br></p><ul><li>Tiêm vào cơ&nbsp;khiến insulin được hấp thụ nhanh hơn và có thể khiến lượng đường trong máu hạ quá thấp.</li></ul><p><br></p><p><strong><em>Các yếu tố làm chậm sự hấp thu insulin:</em></strong></p><p><br></p><ul><li>Tiêm quá nhiều cùng một vị trí, khiến vùng da bị sần hoặc có sẹo (được gọi là chứng loạn dưỡng mô mỡ)</li></ul><p><br></p><ul><li>Insulin lạnh (ví dụ: nếu insulin được tiêm ngay sau khi lấy từ tủ lạnh)</li></ul><p><br></p><ul><li>Hút thuốc lá.</li></ul><p><br></p><h3><strong>Kỹ thuật tiêm</strong></h3><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/01/cach-tiem-cac-loai-insulin.jpg\" alt=\"cách tiêm insulin\" height=\"667\" width=\"1000\"></p><p><br></p><p><strong><em>Chuẩn bị lọ insulin và ống tiêm:</em></strong></p><p><br></p><ul><li>Nếu insulin ở dạng hỗn dịch (đục), cần lắc nhẹ và làm ấm khoảng 10 – 15 lần để làm đều hỗn dịch.</li></ul><p><br></p><ul><li>Khử trùng nắp lọ insulin với một miếng bông có dung dịch sát khuẩn.</li></ul><p><br></p><ul><li>Trước khi rút insulin, hút không khí vào trong bơm kim tiêm một thể tích khí bằng với liều insulin cần lấy.</li></ul><p><br></p><ul><li>Bơm không khí đã hút vào lọ insulin.</li></ul><p><br></p><ul><li>Lấy insulin nhẹ nhàng, tránh làm xoáy dung dịch trong lọ.</li></ul><p><br></p><ul><li>Loại bỏ bọt khí.</li></ul><p><br></p><p><strong><em>Chuẩn bị bút tiêm insulin:</em></strong></p><p><br></p><ul><li>Đầu tiên vẫn là làm ấm và đồng nhất thuốc bằng cách lăn trong lòng bàn tay và lắc lên xuống 10-15 lần.</li></ul><p><br></p><ul><li>Lắp mũi tiêm vào bút tiêm.</li></ul><p><br></p><ul><li>Vặn bút tiêm&nbsp;ở mức 2 đơn vị. Bơm hết 2 đơn vị này để loại bọt khí. Nếu nhìn thấy có giọt nước ở đầu bút tiêm là được. Nếu không, làm lại một lần nữa, cho đến khi thấy giọt nước ở đầu mũi tiêm.</li></ul><p><br></p><ul><li>Chọn mức liều insulin tương ứng và tiêm.</li></ul><p><strong><em>Thực hiện tiêm</em>:</strong></p><ul><li>Chú ý sử dụng cồn để sát khuẩn da trước khi tiêm.</li><li>Chọn vị trí tiêm. Lưu ý phải thay đổi vị trí tiêm thường xuyên để tránh bị sần cứng vùng da nơi tiêm</li><li>Tiêm một góc 90° (đối với bút tiêm) hoặc 45° và véo da (đối với lọ tiêm), có thể tiêm tại trạng thái bình thường hoặc kéo nhẹ da ở vùng tiêm.</li><li>Đợi 10 giây trước khi rút mũi tiêm để insulin có thể khuếch tán.</li><li>Rút nhanh kim tiêm để tránh làm cho insulin thoát ra ở vị trí tiêm.</li><li>Không xoa bóp ở vùng đã tiêm do có thể làm thay đổi mức độ giải phóng của insulin.</li></ul><h3><strong>Bảo quản</strong></h3><ul><li>Bảo quản các loại insulin chưa mở gọn gàng ở một bên trong tủ lạnh, tránh để quá gần bộ phận làm lạnh, không để ở ngăn đá. Giữ nhiệt độ tủ lạnh từ 2 đến 8°C. Đảm bảo rằng insulin không bị đông cứng.</li></ul><p><br></p><ul><li>Sau khi mở, bảo quản ở nhiệt độ phòng (dưới 25°C) không quá 1 tháng. Tránh để insulin dưới ánh nắng trực tiếp, nhiệt độ trên 30°C để đảm bảo insulin tiêm dưới da sẽ gần với nhiệt độ cơ thể, giúp giảm đau và điều hòa quá trình khuếch tán dưới da.</li></ul><p><br></p><ul><li>Ống tiêm, kim bút, kim bơm đã qua sử dụng phải được vứt bỏ trong hộp đựng chống thủng và có nắp đậy an toàn.</li></ul><p><br></p><ul><li>Không sử dụng insulin nếu:</li></ul><p><br></p><ul><li class=\"ql-indent-1\">Insulin trong suốt chuyển sang màu đục</li></ul><p><br></p><ul><li class=\"ql-indent-1\">Insulin đục (loại có tác dụng trung bình) bị vón cục hoặc đóng cặn bên trong lọ, ống bút hoặc hộp mực và không thể hòa tan bằng cách xoay nhẹ</li></ul><p><br></p><ul><li class=\"ql-indent-1\">Sản phẩm hết hạn</li></ul><p><br></p><ul><li class=\"ql-indent-1\">Sản phẩm bị đóng băng hoặc tiếp xúc với nhiệt độ cao</li></ul><p><br></p><ul><li class=\"ql-indent-1\">Lọ đựng, bút hoặc hộp mực đã được sử dụng hoặc đã để ngoài tủ lạnh lâu hơn 1 tháng</li></ul><p><br></p><h2><strong>Một số lưu ý khi sử dụng các loại insulin</strong></h2><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/01/mot-so-luu-y-khi-dung-cac-loai-insulin.jpg\" alt=\"một số lưu ý khác khi dùng insulin\" height=\"667\" width=\"1000\"></p><p><br></p><ul><li>Hầu hết insulin đều trong suốt nhưng một số loại lại có màu đục (do được thêm hợp chất giúp làm chậm tốc độ hấp thu). Nếu bạn dùng các loại insulin này, nên lắc kỹ trước khi sử dụng bằng cách nhẹ nhàng lộn ngược 10-15 lần. Không nên lắc mạnh vì sẽ tạo ra bọt khí dẫn đến chia liều lượng không chính xác.</li></ul><p><br></p><ul><li>Liều insulin có thể cần thay đổi theo thời gian và vì nhiều lý do, chẳng hạn thay đổi chế độ tập luyện, ăn uống, thuốc, bệnh mắc kèm, tăng cân hoặc giảm cân,… Tái khám thường xuyên để bác sĩ đánh giá và hiệu chỉnh liều.</li></ul><p><br></p><ul><li>Ghi lại mức đường huyết thường xuyên (ít nhất 1 lần trước bữa ăn, nhiều hơn nếu được yêu cầu) giúp bạn và bác sĩ biết khi nào cần điều chỉnh liều lượng insulin.</li><li>Trước khi sử dụng bệnh nhân cần học cách tính toán lượng carbohydrate nạp vào để tính toán lượng insulin.</li></ul><p><br></p><ul><li>Tác dụng không mong muốn thường gặp là hạ đường huyết, phản ứng dị ứng, loạn dưỡng mô mỡ và tăng cân.&nbsp;Hạ đường huyết&nbsp;là một tác dụng phụ nguy hiểm đến tính mạng, bệnh nhân và người chăm sóc cần nắm rõ về tình trạng này để nhận biết và xử trí kịp thời.</li></ul><p><br></p><p><span style=\"color: rgb(38, 38, 38);\">Nếu bắt đầu sử dụng, người bệnh có thể cảm thấy choáng ngợp vì có quá nhiều các loại insulin. Hãy từ từ làm quen và trao đổi với bác sĩ khi có bất kỳ thắc mắc hay khó khăn nào để đảm bảo liệu trình điều trị hiệu quả, an toàn nhé!</span></p>', '235523484', '2024-05-17 16:02:01', '1', '6', '1');
-INSERT INTO `doccoming`.`post` (`FeaturedImage`, `Title`, `Brief`, `Content`, `idAuthor`, `DatePost`, `idCategories`, `idSimilar`, `Status`) VALUES ('https://res.cloudinary.com/doccomming/image/upload/v1715937057/enzccmw4ofqhjugeskqw.webp', 'Bệnh tiểu đường nguy hiểm như thế nào?', 'Tiểu đường là một căn bệnh mạn tính và ngày càng trở nên phổ biến trên toàn thế giới. Bệnh ảnh hưởng đến hàng triệu người, có thể gây ra nhiều biến chứng và nguy hiểm đáng kể nếu không được kiểm soát tốt. Trên thực tế, tiểu đường có thể ảnh hưởng đến nhiều cơ quan và hệ thống trong cơ thể, gây ra nhiều vấn đề sức khỏe nghiêm trọng. Trong bài viết này, chúng ta sẽ tìm hiểu bệnh tiểu đường nguy hiểm như thế nào và tại sao nó cần được kiểm soát một cách nghiêm túc?', '<h2><strong>Bệnh tiểu đường là gì?</strong></h2><p><br></p><p>Bệnh tiểu đường (đái tháo đường) là một căn bệnh mạn tính ảnh hưởng đến cách cơ thể sử dụng đường (glucose). Glucose là nguồn cung cấp năng lượng chính cho cơ thể và đến từ thực phẩm bạn ăn. Insulin – một loại hormone được sản xuất bởi tuyến tụy – giúp glucose từ máu đi vào tế bào để sử dụng làm năng lượng. Nếu mắc bệnh tiểu đường, cơ thể không thể hấp thụ đường (glucose) vào tế bào và sử dụng nó làm năng lượng. Điều này dẫn đến sự tích tụ đường trong máu.</p><p>Có 2 loại bệnh tiểu đường chính:</p><p><br></p><ul><li><strong>Tiểu đường tuýp 1:</strong>&nbsp;Cơ thể không thể sản xuất insulin. Điều này thường xảy ra ở trẻ em và thanh thiếu niên, nhưng cũng có thể xảy ra ở người lớn.</li></ul><p><br></p><ul><li><strong>Tiểu đường tuýp 2:</strong>&nbsp;Cơ thể không sử dụng insulin hiệu quả hoặc không sản xuất đủ insulin. Đây là dạng bệnh tiểu đường phổ biến nhất.</li></ul><p><br></p><h2><strong>Bệnh tiểu đường nguy hiểm như thế nào?</strong></h2><p><br></p><h3><strong>Biến chứng của bệnh tiểu đường</strong></h3><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/Benh-tieu-duong-nguy-hiem-nhu-the-nao-va-cac-bien-chung.jpg\" alt=\"Bệnh tiểu đường nguy hiểm như thế nào và các biến chứng\" height=\"667\" width=\"1000\"></p><p><br></p><p>Bệnh tiểu đường nguy hiểm như thế nào? Bệnh ảnh hưởng đến nhiều cơ quan và hệ thống trong cơ thể, cụ thể như sau:</p><ul><li><strong>Tác động lên hệ thống tim mạch:</strong>&nbsp;Một trong những tác động nguy hiểm nhất của bệnh là tác động lên hệ thống&nbsp;tim mạch. Người mắc bệnh tiểu đường có nguy cơ cao mắc bệnh động mạch vành, đau tim, suy tim, tăng huyết áp và đột quỵ. Bệnh tim mạch là nguyên nhân hàng đầu gây tử vong ở người mắc bệnh tiểu đường.</li></ul><p><br></p><ul><li><strong>Tác động lên hệ thống thần kinh:&nbsp;</strong>Tiểu đường có thể gây tổn thương dây thần kinh, gọi là&nbsp;bệnh thần kinh tiểu đường. Điều này gây ra các triệu chứng như đau nhức, tê bì, ngứa ran và giảm cảm giác ở các chi (bàn tay, bàn chân). Tổn thương thần kinh ở bàn chân có thể dẫn đến cắt cụt chi. Tổn thương dây thần kinh liên quan đến hệ thống tiêu hóa có thể gây ra vấn đề với dạ dày và ruột.</li></ul><p><br></p><ul><li><strong>Tác động lên thận:</strong>&nbsp;Bệnh tiểu đường có thể gây suy thận, một biến chứng nguy hiểm khác. Khi thận bị tổn thương, chức năng lọc và loại bỏ chất thải khỏi cơ thể bị suy giảm, dẫn đến tăng nguy cơ mắc&nbsp;bệnh thận&nbsp;mạn tính và thậm chí là suy thận hoàn toàn.</li></ul><p><br></p><ul><li><strong>Tác động lên mắt:</strong>&nbsp;Bệnh tiểu đường có thể gây tổn thương mạch máu và thần kinh trong mắt, gây ra các vấn đề về thị lực. Một trong những biến chứng phổ biến nhất của bệnh tiểu đường là đục thủy tinh thể, một tình trạng mờ mắt có thể dẫn đến mất thị lực (mù lòa).&nbsp;Bệnh tiểu đường là nguyên nhân hàng đầu gây mù lòa ở người lớn tuổi.</li></ul><p><br></p><h3><strong>Bệnh tiểu đường nguy hiểm như thế nào? Bệnh làm suy yếu hệ thống miễn dịch</strong></h3><p><br></p><p>Bệnh tiểu đường cũng có thể làm suy yếu hệ miễn dịch trong cơ thể, làm tăng nguy cơ mắc các bệnh nhiễm trùng. Người bệnh tiểu đường thường dễ bị nhiễm trùng da, nhiễm trùng nướu răng, nhiễm trùng đường tiết niệu và viêm phổi. Nếu không được điều trị kịp thời, các nhiễm trùng này có thể lan rộng và gây ra thêm nhiều biến chứng nguy hiểm khác.</p><p><br></p><h3><strong>Ảnh hưởng tâm lý</strong></h3><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/Benh-tieu-duong-nguy-hiem-nhu-the-nao-anh-huong-tam-ly.jpg\" alt=\"Bệnh tiểu đường nguy hiểm như thế nào? Ảnh hưởng tâm lý\" height=\"667\" width=\"1000\"></p><p><br></p><p>Bệnh tiểu đường nguy hiểm như thế nào? Bệnh tiểu đường còn liên quan mật thiết đến các vấn đề sức khỏe tâm lý. Các nghiên cứu cho thấy người mắc tiểu đường có nguy cơ cao hơn mắc các rối loạn tâm lý như trầm cảm và lo âu. Thêm vào đó, căng thẳng trong quá trình điều trị và kiểm soát đường huyết, cũng như đối mặt với các biến chứng có thể tạo ra áp lực lớn cho người bệnh.</p><p><br></p><h3><strong>Giảm chất lượng cuộc sống</strong></h3><p><br></p><p>Sự nguy hiểm của bệnh tiểu đường cũng được thể hiện qua việc tác động tiêu cực đến chất lượng cuộc sống. Đây là một căn bệnh mạn tính nên người bệnh tiểu đường thường phải tuân thủ chế độ ăn uống nghiêm ngặt, kiểm soát mức đường huyết hàng ngày và thường xuyên uống thuốc trong suốt quãng đời còn lại. Điều này có thể gây ra nhiều khó khăn trong sinh hoạt và căng thẳng trong cuộc sống hàng ngày. Bên cạnh đó, bệnh tiểu đường có thể dẫn đến giảm chất lượng cuộc sống do các biến chứng và hạn chế về hoạt động thể chất.</p><p><br></p><h2><strong>Hiểu rõ bệnh tiểu đường nguy hiểm như thế nào để chủ động kiểm soát bệnh</strong></h2><p><br></p><p>Để giảm mức độ nguy hiểm của bệnh tiểu đường, việc kiểm soát bệnh là vô cùng quan trọng. Mục tiêu là luôn duy trì mức đường huyết ổn định. Bệnh nhân nên thực hiện kiểm soát bệnh bằng cách:</p><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/Benh-tieu-duong-nguy-hiem-nhu-the-nao-va-cach-kiem-soat.jpg\" alt=\"Bệnh tiểu đường nguy hiểm như thế nào và cách kiểm soát\" height=\"667\" width=\"1000\"></p><p><br></p><ul><li><strong><em>Duy trì chế độ ăn uống lành mạnh:&nbsp;</em></strong>Một chế độ ăn uống lành mạnh và cân đối là yếu tố quan trọng trong việc kiểm soát bệnh tiểu đường. Hãy tăng cường tiêu thụ các loại thực phẩm giàu chất xơ, ít tinh bột, ít đường và ít chất béo trong khẩu phần ăn hàng ngày. Đồng thời, quan tâm đến lượng calo tiêu thụ để duy trì cân nặng và cân bằng mức đường huyết.</li></ul><p><br></p><ul><li><strong><em>Tập thể dục đều đặn:</em></strong>&nbsp;Hoạt động thể chất đều đặn giúp cải thiện độ nhạy insulin trong cơ thể, giúp kiểm soát đường huyết và giảm nguy cơ mắc các biến chứng của bệnh tiểu đường. Tập thể dục thường xuyên cũng giúp duy trì cân nặng hợp lý, cải thiện sức khỏe tim mạch và tăng cường sức khỏe tổng thể.</li></ul><p><br></p><ul><li><strong><em>Đo đường huyết định kỳ:</em></strong>&nbsp;Việc đo đường huyết định kỳ và theo dõi mức độ kiểm soát bệnh tiểu đường là rất quan trọng. Điều này giúp phát hiện sớm các biến chứng có thể xảy ra và điều chỉnh phương pháp điều trị một cách thích hợp.&nbsp;Mục tiêu là ngăn chặn hoặc giảm thiểu mức độ nguy hiểm của bệnh tiểu đường.</li></ul><p><br></p><ul><li><strong><em>Tuân thủ điều trị:</em></strong>&nbsp;Việc tuân thủ đúng chỉ định điều trị bệnh tiểu đường của bác sĩ là rất quan trọng. Điều này bao gồm việc sử dụng thuốc đường uống, tiêm insulin (nếu cần), kiểm soát cân nặng, tuân thủ chế độ ăn uống và lịch tập thể dục. Đồng thời, thăm khám sức khỏe định kỳ thường xuyên để phát hiện và điều trị các vấn đề sức khỏe liên quan đến bệnh tiểu đường nếu có.</li></ul><p><br></p><ul><li><strong><em>Chuẩn bị tâm lý và kiến thức:</em></strong>&nbsp;Người bệnh cần có kiến thức đúng về bệnh, hiểu rõ tác động của nó và biết cách xử lý các biến chứng có thể xảy ra.&nbsp;Việc thông tin và giáo dục về bệnh tiểu đường cũng rất quan trọng để nâng cao nhận thức và khả năng tự quản lý cho bệnh nhân.&nbsp;Đồng thời, người bệnh cũng nên tham gia vào các nhóm hỗ trợ và kết nối với&nbsp;cộng đồng&nbsp;người bệnh tiểu đường để có thêm sự hỗ trợ và khích lệ trong quá trình điều trị bệnh.</li></ul><p><br></p><p>Tóm lại, nếu thắc mắc bệnh tiểu đường nguy hiểm như thế nào thì đây là một căn bệnh nguy hiểm có thể gây ra nhiều biến chứng và ảnh hưởng đến nhiều cơ quan, hệ thống trong cơ thể. Việc quản lý bệnh tiểu đường một cách nghiêm túc và kiểm soát tốt đường huyết là cần thiết để giảm nguy cơ các biến chứng và duy trì sức khỏe tổng thể. Bằng cách tuân thủ chế độ ăn uống lành mạnh, tập thể dục đều đặn và tuân thủ đúng quy trình điều trị, người mắc bệnh tiểu đường có thể sống một cuộc sống khỏe mạnh và giảm mức độ nguy hiểm của bệnh ở mức tối thiểu.</p>', '235523484', '2024-05-17 16:10:58', '1', '4', '1');
-
+INSERT INTO `doccoming`.`post` (`FeaturedImage`, `Title`, `Brief`, `Content`, `idAuthor`, `DatePost`, `idCategories`, `idSimilar`, `idMajor`, `Status`) VALUES ('https://res.cloudinary.com/doccomming/image/upload/v1715935949/hiwx3crgn1z8knaoxlh4.webp', 'Thuốc huyết áp uống ngày 2 lần được không?', 'Huyết áp cao là bệnh lý mạn tính cần phải điều trị suốt đời để ngăn ngừa các biến chứng nguy hiểm như bệnh tim, đột quỵ, giảm thị lực, bệnh thận mạn tính hay các bệnh về mạch máu khác. Trong một số trường hợp, bác sĩ sẽ chỉ định dùng một hoặc kết hợp nhiều loại thuốc điều trị cao huyết áp khác nhau cho bệnh nhân. Nhiều bệnh nhân vì phải dùng quá nhiều loại thuốc cùng lúc nên thắc mắc không biết thuốc huyết áp uống ngày 2 lần được không? Cùng Hello Bacsi đi tìm lời giải đáp trong bài viết ngay sau đây nhé!', '<h2><strong>Huyết áp cao bao nhiêu thì phải uống thuốc?</strong></h2><p><br></p><p>Bạn có thể cần dùng thuốc để hạ huyết áp nếu các biện pháp thay đổi lối sống không đủ để đưa huyết áp về mức mục tiêu. Vậy, huyết áp 140/90 mmHg có phải uống thuốc không? Việc có nên dùng thuốc hay không còn phụ thuộc vào chỉ số huyết áp ban đầu, tình trạng sức khỏe tổng thể và nguy cơ phát triển các vấn đề như đau tim hoặc đột quỵ trong tương lai. Bác sĩ sẽ xem xét và quyết định có nên kê đơn thuốc hay không.</p><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/huyet-ap-bao-nhieu-thi-phai-uong-thuoc.jpg\" alt=\"huyết áp cao bao nhiêu thì phải uống thuốc?\" height=\"563\" width=\"1000\"></p><p><br></p><p>Cụ thể như sau:</p><ul><li>Nếu huyết áp của bạn từ&nbsp;140/90 mmHg&nbsp;trở lên, có sức khỏe tổng thể tốt, nguy cơ bị đau tim và đột quỵ nói chung là thấp, việc thay đổi lối sống đơn thuần có thể là đủ mà không cần dùng thuốc. Tuy nhiên, nếu huyết áp luôn cao hơn 140/90 mmHg và nguy cơ mắc các vấn đề sức khỏe nghiêm trọng cao hơn, chẳng hạn như nếu bạn thừa cân hoặc mắc bệnh tiểu đường, bác sĩ sẽ cần chỉ định bắt đầu dùng thuốc kiểm soát huyết áp kết hợp với thay đổi lối sống.</li></ul><p><br></p><ul><li>Nếu huyết áp của bạn luôn trên 160/100 mmHg thì nguy cơ mắc các vấn đề nghiêm trọng sẽ càng cao hơn, bác sĩ sẽ kê cho bạn đơn thuốc hạ áp tích cực hơn, cũng như trao đổi về những thay đổi trong lối sống buộc phải áp dụng để kiểm soát huyết áp.</li></ul><p><br></p><p>Nếu bạn có nguy cơ mắc bệnh tim, tiểu đường hoặc có tiền sử đột quỵ, thuốc có thể được bắt đầu sử dụng ngay cả khi chỉ số huyết áp thấp hơn. Mục tiêu huyết áp được sử dụng phổ biến nhất cho những người mắc các vấn đề sức khỏe này là duy trì dưới 130/80 mmHg.</p><p><br></p><h2><strong>Thuốc huyết áp uống ngày 2 lần được không?</strong></h2><p><br></p><p>Chỉ định dùng nhiều loại thuốc huyết áp cùng lúc là khá phổ biến vì mỗi loại thuốc có tác dụng kiểm soát huyết áp theo những cơ chế khác nhau. Điều này khiến nhiều người bệnh không biết thuốc huyết áp uống ngày 2 lần được không? <strong>Câu trả lời là ĐƯỢC nhưng tùy vào thời gian bán thải của từng loại thuốc và chỉ định của bác sĩ</strong>.</p><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/thuoc-huyet-ap-uong-ngay-2-lan-duoc-khong-tuy-vao-loai-thuoc.jpg\" alt=\"thuốc huyết áp uống ngày 2 lần được không tùy vào loại thuốc\" height=\"667\" width=\"1000\"></p><p><br></p><p>Thời gian bán thải của thuốc sẽ quyết định đến số lần uống thuốc đó trong ngày. Nếu thời gian bán thải của thuốc càng ngắn thì số lần uống thuốc sẽ càng nhiều và ngược lại, nếu thời gian bán thải càng dài thì số lần uống thuốc càng ít. Vì vậy, một số loại thuốc chỉ cần uống với liều dùng 1 lần/ngày trong khi vẫn có một số thuốc huyết áp sẽ được chỉ định uống 2-3 lần/ngày hoặc hơn tùy trường hợp cụ thể.</p><p><br></p><p>Thông thường, bác sĩ sẽ chỉ định uống 2 viên/ngày chia 2 lần uống hoặc 3 viên/ngày chia 3 lần uống (đối với thuốc tác dụng ngắn) hoặc 1 viên/ngày (đối với thuốc tác dụng kéo dài).</p><p><br></p><p>Nếu thắc mắc thuốc huyết áp uống ngày 2 lần được không, người bệnh nên biết là ở một số đối tượng được chỉ định dùng thuốc một lần mỗi ngày, tác dụng kiểm soát huyết áp có thể giảm dần vào cuối khoảng thời gian dùng thuốc. Vì vậy, nên đo huyết áp ngay trước khi dùng thuốc để xác định xem bản thân có đạt được mức kiểm soát huyết áp mong muốn hay không. Sau đó, hỏi ý kiến bác sĩ về việc tăng liều lượng hoặc tần suất dùng thuốc lên 2 lần/ngày có nên hay không nếu chỉ số huyết áp chưa đạt mục tiêu.</p><p><br></p><p><br></p><h2>Một số lưu ý khác khi dùng thuốc huyết áp</h2><p><br></p><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/thuoc-huyet-ap-uong-ngay-2-lan-duoc-khong-va-nhung-luu-y.jpg\" alt=\"thuốc huyết áp uống ngày 2 lần được không và những lưu ý khác\" height=\"667\" width=\"1000\"></p><p><br></p><p><br></p><p><br></p><p><strong><em>Dùng thuốc huyết áp liên tục, suốt đời.</em></strong> Nếu bạn bắt đầu dùng thuốc điều trị huyết áp cao, bạn nên ý thức rằng sẽ cần phải dùng thuốc trong thời gian dài, thậm chí là suốt đời để có thể kiểm soát tốt huyết áp và sống lâu hơn. Ngay cả khi huyết áp đã hạ xuống mức mục tiêu, người bệnh vẫn phải tuân thủ nguyên tắc điều trị liên tục. Nếu huyết áp được kiểm soát tốt trong vài năm, bạn có thể dùng liều thấp hơn hoặc ngừng dùng thuốc hoàn toàn mà vẫn đảm bảo chỉ số huyết áp vẫn ổn định. Tuy nhiên, điều này sẽ cần sự chỉ định và theo dõi chặt chẽ của bác sĩ.</p><p><br></p><p><strong><em>Dùng thuốc đúng giờ mỗi ngày.</em></strong> Tập thói quen dùng tất cả các loại thuốc huyết áp vào cùng một thời điểm mỗi ngày để giúp bạn nhớ uống thuốc và hạn chế nguy cơ bỏ quên liều. Uống thuốc đúng giờ, không nên nhớ lúc nào uống lúc nấy, uống thuốc thất thường sẽ khiến huyết áp cao không được kiểm soát, dễ gây ra các biến chứng nguy hiểm, như đột quỵ.</p><p><br></p><p><strong><em>Dùng thuốc đủ liều lượng và tần suất được chỉ định.</em></strong> Đối với thuốc dùng một lần trong ngày, cần uống vào một thời điểm cố định. Đối với thuốc uống 2 lần trong ngày, cần chia đều trong 24 giờ (tức là cứ cách 12 giờ uống thuốc một lần). Ví dụ: nếu uống thuốc lần đầu tiên trong ngày vào 8 giờ sáng thì uống lần 2 sẽ vào 8 giờ tối. Tuân thủ liều lượng và tần suất dùng thuốc được chỉ định để đảm bảo thuốc có hiệu quả kiểm soát huyết áp tốt nhất.</p><p><br></p><p><strong><em>Không tự ý giảm liều hay ngừng dùng thuốc.</em></strong> Khi thấy huyết áp ổn định, cảm thấy khỏe hơn và vì sợ gặp phải tác dụng phụ nên một số người bệnh tự ý giảm liều (uống thuốc cách ngày hoặc chia đôi viên thuốc để uống) hoặc thậm chí là ngừng dùng thuốc mà không hỏi ý kiến bác sĩ. Điều này hết sức nguy hiểm vì làm cho nồng độ thuốc trong máu không đủ để kiểm soát huyết áp. Hậu quả dẫn đến là huyết áp nhanh chóng tăng trở lại, tăng nguy cơ đột quỵ và tử vong.</p><p><br></p><p><strong><em>Không tự ý tăng liều thuốc.</em></strong> Thuốc huyết áp uống ngày 2 lần được không? Một số bệnh nhân được chỉ định chỉ dùng thuốc một lần/ngày nhưng vì không biết tại sao uống thuốc rồi mà huyết áp vẫn tăng nên tự ý tăng liều lên uống 2 lần/ngày. Khi dùng quá liều có thể gây tụt huyết áp quá mức, thậm chí gây trụy mạch, tử vong… và các tác dụng phụ khác của thuốc.</p><p><br></p><p><strong><em>Xử trí khi quên liều.</em></strong> Quên uống thuốc huyết áp 1 ngày có sao không? Nếu bạn bỏ lỡ một liều, đừng dùng gấp đôi liều. Điều quan trọng là không dùng quá nhiều thuốc huyết áp cùng một lúc vì huyết áp của bạn có thể giảm quá thấp. Nếu bạn quên uống một viên, hãy uống ngay khi nhớ ra, trừ khi đã gần đến liều tiếp theo, trong trường hợp đó, chỉ cần uống một viên rồi tiếp tục dùng thuốc như bình thường theo kế hoạch.</p><p><br></p><p><strong><em>Lưu ý đến tác dụng phụ của thuốc.</em></strong> Thuốc huyết áp có thể gây ra một số tác dụng phụ nhưng hầu hết trường hợp đều không gặp phải bất kỳ tác dụng phụ nghiêm trọng nào. Hãy báo cho bác sĩ điều trị càng sớm càng tốt nếu bạn gặp phải tác dụng phụ bất kỳ, nhất là các tác dụng phụ đang gây ra vấn đề sức khỏe làm ảnh hưởng đến cuộc sống hàng ngày. Trong hầu hết các trường hợp, việc thay đổi liều lượng thuốc hoặc thời điểm dùng thuốc có thể giúp giảm tác dụng phụ nhưng cần phải được bác sĩ chỉ định.</p><p><br></p><p><strong><em>Trao đổi với bác sĩ điều trị.</em></strong> Hãy cho bác sĩ điều trị biết về tất cả các loại thuốc kê đơn, thuốc không kê đơn và thực phẩm chức năng mà bạn đang dùng. Một số loại thuốc có thể gây tác dụng phụ là làm tăng huyết áp và/hoặc cản trở hiệu quả của thuốc huyết áp.</p><p><br></p><p><strong><em>Đo huyết áp và thăm khám sức khỏe định kỳ.</em></strong> Thăm khám sức khỏe định kỳ và tái khám theo đúng lịch hẹn của bác sĩ để được theo dõi tình trạng sức khỏe, điều chỉnh thuốc và liều lượng kịp thời nếu cần. Đồng thời, người bệnh phải biết cách tự theo dõi chỉ số huyết áp tại nhà thường xuyên.</p><p><br></p><p><strong><em>Kết hợp thay đổi lối sống lành mạnh.</em></strong> Giảm huyết áp bằng lối sống lành mạnh đồng nghĩa là bạn có thể ít phụ thuộc vào thuốc hơn. Một lối sống lành mạnh cũng có thể giúp thuốc huyết áp cho tác dụng hiệu quả hơn. Các biện pháp này cụ thể là: ăn nhạt, ăn nhiều trái cây và rau quả tươi, giảm stress, bỏ thuốc lá, hạn chế rượu bia, tập thể dục vừa sức và duy trì cân nặng phù hợp.</p><p><br></p><p><span style=\"color: rgb(38, 38, 38);\">Tóm lại, bác sĩ sẽ cho bạn biết bạn cần uống bao nhiêu viên thuốc huyết áp mỗi ngày, thuốc huyết áp uống ngày 2 lần được không, cũng như bất kỳ điều gì khác mà bạn còn thắc mắc trong quá trình điều trị. Chẳng hạn như: liệu bạn có thể dùng chúng vào một thời điểm cụ thể trong ngày hay không, liệu bạn có thể dùng chúng cùng với thức ăn hay không và liệu bạn có thể dùng tất cả các loại thuốc của mình cùng nhau hay không. Điều bạn cần làm duy nhất là thẳng thắn trao đổi trực tiếp để thấu hiểu và tuân thủ đúng theo chỉ định điều trị từ bác sĩ của mình.</span></p>', '235523484', '2024-05-17 15:52:30', '2', '5', '1');
+INSERT INTO `doccoming`.`post` (`FeaturedImage`, `Title`, `Brief`, `Content`, `idAuthor`, `DatePost`, `idCategories`, `idSimilar`, `idMajor`, `Status`) VALUES ('https://res.cloudinary.com/doccomming/image/upload/v1715936788/rpscgogoo9ojvjun0jzr.jpg', 'Tìm hiểu về các loại insulin điều trị tiểu đường và cách sử dụng', 'Insulin đã được sử dụng từ hơn 100 năm trước để điều trị đái tháo đường nhằm giúp kiểm soát đường huyết và cải thiện chất lượng cuộc sống cho bệnh nhân. Các loại insulin hiện có được chia thành 5 loại dựa vào thời gian tác động, bao gồm: insulin tác dụng nhanh, ngắn, trung bình, kéo dài và cuối cùng là insulin hỗn hợp.', '<p>Các loại insulin khác nhau có thời gian khởi đầu, thời gian đạt đỉnh và thời gian hoạt động khác nhau. Vì vậy, tác dụng và thời điểm sử dụng cũng khác nhau ở từng loại. Nắm thông tin về chúng giúp người bệnh sử dụng insulin một cách an toàn và hiệu quả.</p><p><br></p><h2><strong>Insulin và đái tháo đường</strong></h2><p>Insulin là một hormone tạo ra bởi các tế bào beta tuyến tụy để giữ đường huyết ở mức bình thường. Chức năng của insulin là chuyển glucose (đường) từ máu vào tế bào để tạo năng lượng. Nếu thiếu insulin, đường sẽ tích tụ quá nhiều trong máu và theo thời gian sẽ gây ra bệnh đái tháo đường.</p><p>Với bệnh tiểu đường tuýp 1, cơ thể không tạo ra insulin nên người bệnh phải bổ sung insulin từ bên ngoài hàng ngày để duy trì sự sống. Với tiểu đường tuýp 2, cơ thể không sản xuất đủ insulin hoặc insulin không hoạt động tốt. Trong một vài trường hợp cụ thể, người bệnh tiểu đường tuýp 2 sẽ được bác sĩ chỉ định tiêm insulin để kiểm soát lượng đường trong máu.</p><p><br></p><h2>Các loại insulin: Phân loại insulin theo thời gian tác động</h2><p>Hầu hết người bệnh tiểu đường tuýp 1 và một số trường hợp mắc tiểu đường tuýp 2 được bác sĩ chỉ định dùng 2 loại insulin sau đây:&nbsp;</p><p><br></p><p>Insulin bữa ăn (insulin bolus): loại tác dụng nhanh dùng trong bữa ăn.</p><p><br></p><p>Insulin nền (insulin basal): loại tác dụng chậm hơn, thường dùng 1 hoặc 2 lần trong một ngày, có tác dụng trong suốt cả ngày.</p><p><br></p><p>Một số bệnh nhân khác được kê đơn một loại insulin duy nhất những loại này được kết hợp giữa loại tác dụng nhanh/ngắn và loại tác dụng trung bình/chậm, được gọi là insulin hỗn hợp.</p><p><br></p><p>Cụ thể như sau:</p><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/01/cac-loai-insulin-theo-thoi-gian-tac-dong.jpg\" alt=\"các loại insulin theo thời gian tác động\" height=\"667\" width=\"1000\"></p><p><br></p><h3><strong>Insulin bữa ăn (insulin bolus)</strong></h3><p>Insulin bolus cung cấp insulin một cách nhanh chóng để xử lý lượng đường tạo ra từ bữa ăn. Có 2 loại chính bao gồm:</p><p><br></p><ul><li><strong>Insulin nhanh</strong>&nbsp;(Insulin tác dụng tức thời): dùng ngay trước hoặc sau bữa ăn. Thuốc bắt đầu có tác dụng trong vòng vài phút và kéo dài từ 3 đến 5 giờ tùy nhãn hiệu.</li></ul><p><br></p><ul><li><strong>Insulin regular</strong>&nbsp;(Insulin tác dụng ngắn): tương tự như insulin tác dụng nhanh nhưng tác dụng chậm hơn. Dùng trước khi ăn khoảng 30 đến 60 phút. Loại này mất khoảng 30 đến 60 phút để bắt đầu có tác dụng và kéo dài từ 5 đến 8 giờ.</li></ul><p><br></p><h3><strong>Insulin nền (insulin basal)</strong></h3><p>Insulin nền thường được dùng 1 hoặc 2 lần trong ngày. Nó giúp xử lý lượng đường mà cơ thể tạo ra hoặc chuyển hóa thành. Các loại insulin này bao gồm:</p><p><br></p><ul><li><strong>Insulin NPH</strong>&nbsp;(Insulin tác dụng trung bình): là hỗn dịch insulin kết tinh với protamine và kẽm nên có màu đục, cần được trộn đều, dùng 1 – 2 lần trong ngày.</li></ul><p><br></p><ul><li><strong>Insulin chậm</strong>&nbsp;(Insulin tác dụng kéo dài): có thời gian khởi phát tác dụng chậm hơn insulin NPH, thường dùng 1 lần một ngày, vào cùng một thời điểm mỗi ngày.</li></ul><p><br></p><h3><strong>Insulin dạng hỗn hợp (pre-mix)</strong></h3><p>Insulin hỗn hợp là sự kết hợp giữa insulin tác dụng nhanh/ngắn với loại tác dụng trung bình/chậm. Thường được sử dụng trước bữa ăn mà không cần đến insulin nền, tần suất tiêm khoảng 1 – 2 lần trong ngày.</p><p><br></p><h2>Các loại insulin theo nguồn gốc sản xuất</h2><p><br></p><p>Insulin được sản xuất theo nhiều cách khác nhau.&nbsp;Phân tử insulin giống như hai chuỗi hạt được nối với nhau. Các loại insulin theo nguồn gốc sản xuất bao gồm:</p><p><br></p><p><strong>Insulin người:</strong>&nbsp;Đây là loại insulin tổng hợp và được sản xuất trong phòng thí nghiệm giống như insulin được tạo ra trong cơ thể người.</p><p><br></p><p><strong>Insulin analog:</strong> Đây cũng là loại insulin tổng hợp và được sản xuất trong phòng thí nghiệm nhưng các nhà khoa học đã tìm cách thay đổi vị trí của một số hạt để tạo ra insulin biến đổi gen được gọi là insulin analog.</p><p><br></p><p><strong>Insulin động vật:</strong> Hiện nay, loại này không còn được sử dụng nhiều nữa, nhưng một số người thấy rằng insulin tinh khiết (đã được làm sạch) từ động vật (bò hoặc lợn) có tác dụng tốt nhất đối với họ.</p><p><br></p><h2><strong>Cách sử dụng và bảo quản các loại insulin</strong></h2><h3>Thời điểm tiêm</h3><ul><li><strong>Insulin nhanh</strong>&nbsp;dùng ngay trước hoặc sau bữa ăn.&nbsp;</li></ul><p><br></p><ul><li><strong>Insulin regular</strong>&nbsp;dùng trước khi ăn khoảng 30-60 phút.&nbsp;</li></ul><p><br></p><ul><li><strong>Insulin NPH</strong>&nbsp;dùng 1 – 2 lần trong ngày.</li></ul><p><br></p><ul><li><strong>Insulin chậm, tác dụng kéo dài</strong>&nbsp;dùng 1 lần, vào cùng một thời điểm mỗi ngày.</li></ul><p><br></p><ul><li><strong>Insulin hỗn hợp</strong>&nbsp;dùng trước bữa ăn.</li></ul><h3><strong>Vị trí tiêm</strong></h3><p>Các loại insulin tiêm được tiêm dưới da, không được tiêm vào cơ hoặc vào mạch máu vì điều này sẽ làm thay đổi tốc độ hấp thụ và hoạt động của insulin.</p><p><br></p><p>Sự hấp thu insulin thay đổi tùy theo vị trí được tiêm vào cơ thể. Bụng là vị trí tiêm hấp thụ insulin tốt và ổn định nhất. Cánh tay trên, mông và đùi có tốc độ hấp thụ ít ổn định hơn.</p><p><br></p><p><strong><em>Các yếu tố làm tăng tốc độ hấp thụ insulin:</em></strong></p><p><br></p><ul><li>Tiêm vào vùng vận động nhiều như đùi hoặc cánh tay</li></ul><p><br></p><ul><li>Nhiệt độ cao do tắm nước nóng, spa hoặc phòng tắm hơi</li></ul><p><br></p><ul><li>Xoa bóp vùng xung quanh chỗ tiêm</li></ul><p><br></p><ul><li>Tiêm vào cơ&nbsp;khiến insulin được hấp thụ nhanh hơn và có thể khiến lượng đường trong máu hạ quá thấp.</li></ul><p><br></p><p><strong><em>Các yếu tố làm chậm sự hấp thu insulin:</em></strong></p><p><br></p><ul><li>Tiêm quá nhiều cùng một vị trí, khiến vùng da bị sần hoặc có sẹo (được gọi là chứng loạn dưỡng mô mỡ)</li></ul><p><br></p><ul><li>Insulin lạnh (ví dụ: nếu insulin được tiêm ngay sau khi lấy từ tủ lạnh)</li></ul><p><br></p><ul><li>Hút thuốc lá.</li></ul><p><br></p><h3><strong>Kỹ thuật tiêm</strong></h3><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/01/cach-tiem-cac-loai-insulin.jpg\" alt=\"cách tiêm insulin\" height=\"667\" width=\"1000\"></p><p><br></p><p><strong><em>Chuẩn bị lọ insulin và ống tiêm:</em></strong></p><p><br></p><ul><li>Nếu insulin ở dạng hỗn dịch (đục), cần lắc nhẹ và làm ấm khoảng 10 – 15 lần để làm đều hỗn dịch.</li></ul><p><br></p><ul><li>Khử trùng nắp lọ insulin với một miếng bông có dung dịch sát khuẩn.</li></ul><p><br></p><ul><li>Trước khi rút insulin, hút không khí vào trong bơm kim tiêm một thể tích khí bằng với liều insulin cần lấy.</li></ul><p><br></p><ul><li>Bơm không khí đã hút vào lọ insulin.</li></ul><p><br></p><ul><li>Lấy insulin nhẹ nhàng, tránh làm xoáy dung dịch trong lọ.</li></ul><p><br></p><ul><li>Loại bỏ bọt khí.</li></ul><p><br></p><p><strong><em>Chuẩn bị bút tiêm insulin:</em></strong></p><p><br></p><ul><li>Đầu tiên vẫn là làm ấm và đồng nhất thuốc bằng cách lăn trong lòng bàn tay và lắc lên xuống 10-15 lần.</li></ul><p><br></p><ul><li>Lắp mũi tiêm vào bút tiêm.</li></ul><p><br></p><ul><li>Vặn bút tiêm&nbsp;ở mức 2 đơn vị. Bơm hết 2 đơn vị này để loại bọt khí. Nếu nhìn thấy có giọt nước ở đầu bút tiêm là được. Nếu không, làm lại một lần nữa, cho đến khi thấy giọt nước ở đầu mũi tiêm.</li></ul><p><br></p><ul><li>Chọn mức liều insulin tương ứng và tiêm.</li></ul><p><strong><em>Thực hiện tiêm</em>:</strong></p><ul><li>Chú ý sử dụng cồn để sát khuẩn da trước khi tiêm.</li><li>Chọn vị trí tiêm. Lưu ý phải thay đổi vị trí tiêm thường xuyên để tránh bị sần cứng vùng da nơi tiêm</li><li>Tiêm một góc 90° (đối với bút tiêm) hoặc 45° và véo da (đối với lọ tiêm), có thể tiêm tại trạng thái bình thường hoặc kéo nhẹ da ở vùng tiêm.</li><li>Đợi 10 giây trước khi rút mũi tiêm để insulin có thể khuếch tán.</li><li>Rút nhanh kim tiêm để tránh làm cho insulin thoát ra ở vị trí tiêm.</li><li>Không xoa bóp ở vùng đã tiêm do có thể làm thay đổi mức độ giải phóng của insulin.</li></ul><h3><strong>Bảo quản</strong></h3><ul><li>Bảo quản các loại insulin chưa mở gọn gàng ở một bên trong tủ lạnh, tránh để quá gần bộ phận làm lạnh, không để ở ngăn đá. Giữ nhiệt độ tủ lạnh từ 2 đến 8°C. Đảm bảo rằng insulin không bị đông cứng.</li></ul><p><br></p><ul><li>Sau khi mở, bảo quản ở nhiệt độ phòng (dưới 25°C) không quá 1 tháng. Tránh để insulin dưới ánh nắng trực tiếp, nhiệt độ trên 30°C để đảm bảo insulin tiêm dưới da sẽ gần với nhiệt độ cơ thể, giúp giảm đau và điều hòa quá trình khuếch tán dưới da.</li></ul><p><br></p><ul><li>Ống tiêm, kim bút, kim bơm đã qua sử dụng phải được vứt bỏ trong hộp đựng chống thủng và có nắp đậy an toàn.</li></ul><p><br></p><ul><li>Không sử dụng insulin nếu:</li></ul><p><br></p><ul><li class=\"ql-indent-1\">Insulin trong suốt chuyển sang màu đục</li></ul><p><br></p><ul><li class=\"ql-indent-1\">Insulin đục (loại có tác dụng trung bình) bị vón cục hoặc đóng cặn bên trong lọ, ống bút hoặc hộp mực và không thể hòa tan bằng cách xoay nhẹ</li></ul><p><br></p><ul><li class=\"ql-indent-1\">Sản phẩm hết hạn</li></ul><p><br></p><ul><li class=\"ql-indent-1\">Sản phẩm bị đóng băng hoặc tiếp xúc với nhiệt độ cao</li></ul><p><br></p><ul><li class=\"ql-indent-1\">Lọ đựng, bút hoặc hộp mực đã được sử dụng hoặc đã để ngoài tủ lạnh lâu hơn 1 tháng</li></ul><p><br></p><h2><strong>Một số lưu ý khi sử dụng các loại insulin</strong></h2><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/01/mot-so-luu-y-khi-dung-cac-loai-insulin.jpg\" alt=\"một số lưu ý khác khi dùng insulin\" height=\"667\" width=\"1000\"></p><p><br></p><ul><li>Hầu hết insulin đều trong suốt nhưng một số loại lại có màu đục (do được thêm hợp chất giúp làm chậm tốc độ hấp thu). Nếu bạn dùng các loại insulin này, nên lắc kỹ trước khi sử dụng bằng cách nhẹ nhàng lộn ngược 10-15 lần. Không nên lắc mạnh vì sẽ tạo ra bọt khí dẫn đến chia liều lượng không chính xác.</li></ul><p><br></p><ul><li>Liều insulin có thể cần thay đổi theo thời gian và vì nhiều lý do, chẳng hạn thay đổi chế độ tập luyện, ăn uống, thuốc, bệnh mắc kèm, tăng cân hoặc giảm cân,… Tái khám thường xuyên để bác sĩ đánh giá và hiệu chỉnh liều.</li></ul><p><br></p><ul><li>Ghi lại mức đường huyết thường xuyên (ít nhất 1 lần trước bữa ăn, nhiều hơn nếu được yêu cầu) giúp bạn và bác sĩ biết khi nào cần điều chỉnh liều lượng insulin.</li><li>Trước khi sử dụng bệnh nhân cần học cách tính toán lượng carbohydrate nạp vào để tính toán lượng insulin.</li></ul><p><br></p><ul><li>Tác dụng không mong muốn thường gặp là hạ đường huyết, phản ứng dị ứng, loạn dưỡng mô mỡ và tăng cân.&nbsp;Hạ đường huyết&nbsp;là một tác dụng phụ nguy hiểm đến tính mạng, bệnh nhân và người chăm sóc cần nắm rõ về tình trạng này để nhận biết và xử trí kịp thời.</li></ul><p><br></p><p><span style=\"color: rgb(38, 38, 38);\">Nếu bắt đầu sử dụng, người bệnh có thể cảm thấy choáng ngợp vì có quá nhiều các loại insulin. Hãy từ từ làm quen và trao đổi với bác sĩ khi có bất kỳ thắc mắc hay khó khăn nào để đảm bảo liệu trình điều trị hiệu quả, an toàn nhé!</span></p>', '235523484', '2024-05-17 16:02:01', '1', '6', '1', '20');
+INSERT INTO `doccoming`.`post` (`FeaturedImage`, `Title`, `Brief`, `Content`, `idAuthor`, `DatePost`, `idCategories`, `idSimilar`, `idMajor`, `Status`) VALUES ('https://res.cloudinary.com/doccomming/image/upload/v1715937057/enzccmw4ofqhjugeskqw.webp', 'Bệnh tiểu đường nguy hiểm như thế nào?', 'Tiểu đường là một căn bệnh mạn tính và ngày càng trở nên phổ biến trên toàn thế giới. Bệnh ảnh hưởng đến hàng triệu người, có thể gây ra nhiều biến chứng và nguy hiểm đáng kể nếu không được kiểm soát tốt. Trên thực tế, tiểu đường có thể ảnh hưởng đến nhiều cơ quan và hệ thống trong cơ thể, gây ra nhiều vấn đề sức khỏe nghiêm trọng. Trong bài viết này, chúng ta sẽ tìm hiểu bệnh tiểu đường nguy hiểm như thế nào và tại sao nó cần được kiểm soát một cách nghiêm túc?', '<h2><strong>Bệnh tiểu đường là gì?</strong></h2><p><br></p><p>Bệnh tiểu đường (đái tháo đường) là một căn bệnh mạn tính ảnh hưởng đến cách cơ thể sử dụng đường (glucose). Glucose là nguồn cung cấp năng lượng chính cho cơ thể và đến từ thực phẩm bạn ăn. Insulin – một loại hormone được sản xuất bởi tuyến tụy – giúp glucose từ máu đi vào tế bào để sử dụng làm năng lượng. Nếu mắc bệnh tiểu đường, cơ thể không thể hấp thụ đường (glucose) vào tế bào và sử dụng nó làm năng lượng. Điều này dẫn đến sự tích tụ đường trong máu.</p><p>Có 2 loại bệnh tiểu đường chính:</p><p><br></p><ul><li><strong>Tiểu đường tuýp 1:</strong>&nbsp;Cơ thể không thể sản xuất insulin. Điều này thường xảy ra ở trẻ em và thanh thiếu niên, nhưng cũng có thể xảy ra ở người lớn.</li></ul><p><br></p><ul><li><strong>Tiểu đường tuýp 2:</strong>&nbsp;Cơ thể không sử dụng insulin hiệu quả hoặc không sản xuất đủ insulin. Đây là dạng bệnh tiểu đường phổ biến nhất.</li></ul><p><br></p><h2><strong>Bệnh tiểu đường nguy hiểm như thế nào?</strong></h2><p><br></p><h3><strong>Biến chứng của bệnh tiểu đường</strong></h3><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/Benh-tieu-duong-nguy-hiem-nhu-the-nao-va-cac-bien-chung.jpg\" alt=\"Bệnh tiểu đường nguy hiểm như thế nào và các biến chứng\" height=\"667\" width=\"1000\"></p><p><br></p><p>Bệnh tiểu đường nguy hiểm như thế nào? Bệnh ảnh hưởng đến nhiều cơ quan và hệ thống trong cơ thể, cụ thể như sau:</p><ul><li><strong>Tác động lên hệ thống tim mạch:</strong>&nbsp;Một trong những tác động nguy hiểm nhất của bệnh là tác động lên hệ thống&nbsp;tim mạch. Người mắc bệnh tiểu đường có nguy cơ cao mắc bệnh động mạch vành, đau tim, suy tim, tăng huyết áp và đột quỵ. Bệnh tim mạch là nguyên nhân hàng đầu gây tử vong ở người mắc bệnh tiểu đường.</li></ul><p><br></p><ul><li><strong>Tác động lên hệ thống thần kinh:&nbsp;</strong>Tiểu đường có thể gây tổn thương dây thần kinh, gọi là&nbsp;bệnh thần kinh tiểu đường. Điều này gây ra các triệu chứng như đau nhức, tê bì, ngứa ran và giảm cảm giác ở các chi (bàn tay, bàn chân). Tổn thương thần kinh ở bàn chân có thể dẫn đến cắt cụt chi. Tổn thương dây thần kinh liên quan đến hệ thống tiêu hóa có thể gây ra vấn đề với dạ dày và ruột.</li></ul><p><br></p><ul><li><strong>Tác động lên thận:</strong>&nbsp;Bệnh tiểu đường có thể gây suy thận, một biến chứng nguy hiểm khác. Khi thận bị tổn thương, chức năng lọc và loại bỏ chất thải khỏi cơ thể bị suy giảm, dẫn đến tăng nguy cơ mắc&nbsp;bệnh thận&nbsp;mạn tính và thậm chí là suy thận hoàn toàn.</li></ul><p><br></p><ul><li><strong>Tác động lên mắt:</strong>&nbsp;Bệnh tiểu đường có thể gây tổn thương mạch máu và thần kinh trong mắt, gây ra các vấn đề về thị lực. Một trong những biến chứng phổ biến nhất của bệnh tiểu đường là đục thủy tinh thể, một tình trạng mờ mắt có thể dẫn đến mất thị lực (mù lòa).&nbsp;Bệnh tiểu đường là nguyên nhân hàng đầu gây mù lòa ở người lớn tuổi.</li></ul><p><br></p><h3><strong>Bệnh tiểu đường nguy hiểm như thế nào? Bệnh làm suy yếu hệ thống miễn dịch</strong></h3><p><br></p><p>Bệnh tiểu đường cũng có thể làm suy yếu hệ miễn dịch trong cơ thể, làm tăng nguy cơ mắc các bệnh nhiễm trùng. Người bệnh tiểu đường thường dễ bị nhiễm trùng da, nhiễm trùng nướu răng, nhiễm trùng đường tiết niệu và viêm phổi. Nếu không được điều trị kịp thời, các nhiễm trùng này có thể lan rộng và gây ra thêm nhiều biến chứng nguy hiểm khác.</p><p><br></p><h3><strong>Ảnh hưởng tâm lý</strong></h3><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/Benh-tieu-duong-nguy-hiem-nhu-the-nao-anh-huong-tam-ly.jpg\" alt=\"Bệnh tiểu đường nguy hiểm như thế nào? Ảnh hưởng tâm lý\" height=\"667\" width=\"1000\"></p><p><br></p><p>Bệnh tiểu đường nguy hiểm như thế nào? Bệnh tiểu đường còn liên quan mật thiết đến các vấn đề sức khỏe tâm lý. Các nghiên cứu cho thấy người mắc tiểu đường có nguy cơ cao hơn mắc các rối loạn tâm lý như trầm cảm và lo âu. Thêm vào đó, căng thẳng trong quá trình điều trị và kiểm soát đường huyết, cũng như đối mặt với các biến chứng có thể tạo ra áp lực lớn cho người bệnh.</p><p><br></p><h3><strong>Giảm chất lượng cuộc sống</strong></h3><p><br></p><p>Sự nguy hiểm của bệnh tiểu đường cũng được thể hiện qua việc tác động tiêu cực đến chất lượng cuộc sống. Đây là một căn bệnh mạn tính nên người bệnh tiểu đường thường phải tuân thủ chế độ ăn uống nghiêm ngặt, kiểm soát mức đường huyết hàng ngày và thường xuyên uống thuốc trong suốt quãng đời còn lại. Điều này có thể gây ra nhiều khó khăn trong sinh hoạt và căng thẳng trong cuộc sống hàng ngày. Bên cạnh đó, bệnh tiểu đường có thể dẫn đến giảm chất lượng cuộc sống do các biến chứng và hạn chế về hoạt động thể chất.</p><p><br></p><h2><strong>Hiểu rõ bệnh tiểu đường nguy hiểm như thế nào để chủ động kiểm soát bệnh</strong></h2><p><br></p><p>Để giảm mức độ nguy hiểm của bệnh tiểu đường, việc kiểm soát bệnh là vô cùng quan trọng. Mục tiêu là luôn duy trì mức đường huyết ổn định. Bệnh nhân nên thực hiện kiểm soát bệnh bằng cách:</p><p><br></p><p><img src=\"https://cdn.hellobacsi.com/wp-content/uploads/2024/04/Benh-tieu-duong-nguy-hiem-nhu-the-nao-va-cach-kiem-soat.jpg\" alt=\"Bệnh tiểu đường nguy hiểm như thế nào và cách kiểm soát\" height=\"667\" width=\"1000\"></p><p><br></p><ul><li><strong><em>Duy trì chế độ ăn uống lành mạnh:&nbsp;</em></strong>Một chế độ ăn uống lành mạnh và cân đối là yếu tố quan trọng trong việc kiểm soát bệnh tiểu đường. Hãy tăng cường tiêu thụ các loại thực phẩm giàu chất xơ, ít tinh bột, ít đường và ít chất béo trong khẩu phần ăn hàng ngày. Đồng thời, quan tâm đến lượng calo tiêu thụ để duy trì cân nặng và cân bằng mức đường huyết.</li></ul><p><br></p><ul><li><strong><em>Tập thể dục đều đặn:</em></strong>&nbsp;Hoạt động thể chất đều đặn giúp cải thiện độ nhạy insulin trong cơ thể, giúp kiểm soát đường huyết và giảm nguy cơ mắc các biến chứng của bệnh tiểu đường. Tập thể dục thường xuyên cũng giúp duy trì cân nặng hợp lý, cải thiện sức khỏe tim mạch và tăng cường sức khỏe tổng thể.</li></ul><p><br></p><ul><li><strong><em>Đo đường huyết định kỳ:</em></strong>&nbsp;Việc đo đường huyết định kỳ và theo dõi mức độ kiểm soát bệnh tiểu đường là rất quan trọng. Điều này giúp phát hiện sớm các biến chứng có thể xảy ra và điều chỉnh phương pháp điều trị một cách thích hợp.&nbsp;Mục tiêu là ngăn chặn hoặc giảm thiểu mức độ nguy hiểm của bệnh tiểu đường.</li></ul><p><br></p><ul><li><strong><em>Tuân thủ điều trị:</em></strong>&nbsp;Việc tuân thủ đúng chỉ định điều trị bệnh tiểu đường của bác sĩ là rất quan trọng. Điều này bao gồm việc sử dụng thuốc đường uống, tiêm insulin (nếu cần), kiểm soát cân nặng, tuân thủ chế độ ăn uống và lịch tập thể dục. Đồng thời, thăm khám sức khỏe định kỳ thường xuyên để phát hiện và điều trị các vấn đề sức khỏe liên quan đến bệnh tiểu đường nếu có.</li></ul><p><br></p><ul><li><strong><em>Chuẩn bị tâm lý và kiến thức:</em></strong>&nbsp;Người bệnh cần có kiến thức đúng về bệnh, hiểu rõ tác động của nó và biết cách xử lý các biến chứng có thể xảy ra.&nbsp;Việc thông tin và giáo dục về bệnh tiểu đường cũng rất quan trọng để nâng cao nhận thức và khả năng tự quản lý cho bệnh nhân.&nbsp;Đồng thời, người bệnh cũng nên tham gia vào các nhóm hỗ trợ và kết nối với&nbsp;cộng đồng&nbsp;người bệnh tiểu đường để có thêm sự hỗ trợ và khích lệ trong quá trình điều trị bệnh.</li></ul><p><br></p><p>Tóm lại, nếu thắc mắc bệnh tiểu đường nguy hiểm như thế nào thì đây là một căn bệnh nguy hiểm có thể gây ra nhiều biến chứng và ảnh hưởng đến nhiều cơ quan, hệ thống trong cơ thể. Việc quản lý bệnh tiểu đường một cách nghiêm túc và kiểm soát tốt đường huyết là cần thiết để giảm nguy cơ các biến chứng và duy trì sức khỏe tổng thể. Bằng cách tuân thủ chế độ ăn uống lành mạnh, tập thể dục đều đặn và tuân thủ đúng quy trình điều trị, người mắc bệnh tiểu đường có thể sống một cuộc sống khỏe mạnh và giảm mức độ nguy hiểm của bệnh ở mức tối thiểu.</p>', '235523484', '2024-05-17 16:10:58', '1', '4', '1', '20');
 ;-- drop table post;
 
 create table appointmentstatus(
@@ -240,7 +241,6 @@ foreign key (idDoctor) references account(id),
 foreign key (Status) references appointmentstatus(id)
 )
 ; -- drop table appointment
-
 
 create table servicedoctor(
 id int not null primary key AUTO_INCREMENT,
@@ -278,6 +278,8 @@ foreign key (idDoctor) references account(id)
 ; -- drop table schedule
 
 insert into schedule (idDoctor, Status) values (235523486, 0) ,(235523487, 0) ,(235523488, 0) ,(235523485, 0) ;
+
+
 
 create table notification(
 id int not null primary key AUTO_INCREMENT,
@@ -329,15 +331,41 @@ foreign key (idReplycomment) references replycomment(id)
 
 create table ratedoctor(
 id int not null primary key AUTO_INCREMENT,
-idPatient int not null, 
-idDoctor int not null, 
+idAppointment int not null, 
 Star int,
 Comment text(1000),
+foreign key (idAppointment) references appointment(id)
+); -- drop table ratedoctor
 
+create table appointmentnote( 
+id int not null primary key AUTO_INCREMENT,
+idAppointment int not null unique, 
+Advice text(1000),
+ReExaminationDate datetime,
+Price double,
+foreign key (idAppointment) references appointment(id)
+); -- drop table appointmentnote
+
+create table medicalrecord( 
+id int not null primary key AUTO_INCREMENT,
+idPatient int not null unique, 
+idDoctor int not null unique, 
+Record text(1000),
+IllnessDate date,
 foreign key (idPatient) references account(id),
 foreign key (idDoctor) references account(id)
-); -- drop table ratedoctor
+); -- drop table medicalrecord
+
 -- ------------------------------------------------------------------------------------------------------
+delimiter $$
+CREATE TRIGGER TG_DELETE_APPOINTMENT before DELETE ON appointment FOR EACH ROW 
+BEGIN
+    DELETE FROM ratedoctor
+    WHERE idAppointment = old.id;
+    DELETE FROM appointmentnote
+    WHERE idAppointment = old.id;
+END$$ -- drop TRIGGER TG_DELETE_APPOINTMENT    
+
 delimiter $$
 CREATE TRIGGER TG_DELETE_ACCOUNT before DELETE ON account FOR EACH ROW 
 BEGIN
@@ -349,9 +377,7 @@ BEGIN
     WHERE idPatient = old.id or idDoctor = old.id;
     DELETE FROM notification
     WHERE idAccount = old.id;
-    DELETE FROM ratedoctor
-    WHERE idPatient = old.id or idDoctor = old.id;
-END$$ -- drop TRIGGER TG_DELETE_ACCOUNT    chưa xử lý xonggg use doccoming
+END$$ -- drop TRIGGER TG_DELETE_ACCOUNT   
 
 delimiter $$
 CREATE TRIGGER TG_INSERT_ACCOUNT_DOCTOR AFTER INSERT ON account FOR EACH ROW 
@@ -373,6 +399,30 @@ BEGIN
 	(new.id, "Thiết Lập thông tin cá nhân của bạn để đặt lịch khám và khám phá nhiều tính năng hơn trên Doctor Comming!", "Profile");
     end if;
 END$$ -- drop trigger TG_INSERT_ACCOUNT_PATIENT
+
+delimiter $$
+CREATE TRIGGER TG_INSERT_APPOINTMENTNOTE AFTER INSERT ON appointmentnote FOR EACH ROW 
+BEGIN
+    DECLARE Notification varchar(200);
+    DECLARE idP int;
+    -- DECLARE idS int;
+    -- DECLARE idD int;
+    set Notification = CONCAT("Bác sĩ ", (select FullNameDoctor from AllAppointment where id = new.idAppointment), " đã gửi cho bạn một ghi chú sau lần khám vừa qua!");
+    set idP = (select idPatient from appointment where id = new.idAppointment);
+    -- set idS = (select idService from appointment where id = new.idAppointment);
+	-- set idD = (select idDoctor from appointment where id = new.idAppointment);
+    insert into notification (idAccount, Notification, Type) values  
+	(idP, Notification, "/patient/appointment");
+END$$ -- drop trigger TG_INSERT_APPOINTMENTNOTE	
+
+delimiter $$
+CREATE TRIGGER TG_INSERT_MEDICALRECORD AFTER INSERT ON medicalrecord FOR EACH ROW 
+BEGIN
+    DECLARE Notification varchar(200);
+    set Notification = CONCAT("Bác sĩ ", (select CONCAT(FirstName, ' ', LastName) from account where id = new.idDoctor), " đã thêm dữ liệu vào lịch sử bệnh án của bạn!");
+    insert into notification (idAccount, Notification, Type) values  
+	(new.idPatient, Notification, "/patient/medical/record");
+END$$ -- drop trigger TG_INSERT_MEDICALRECORD	
 
 delimiter $$
 CREATE TRIGGER TG_CHECK_EMAIL BEFORE INSERT ON account FOR EACH ROW 
@@ -411,15 +461,15 @@ BEGIN
     delete from replycomment where idComment = old.id;
 END$$ -- drop trigger TG_DEL_REP_CMT
 
-delimiter $$
-CREATE TRIGGER TG_CHECK_RATE_DOCTOR BEFORE INSERT ON ratedoctor FOR EACH ROW 
-BEGIN
-    DECLARE Count int default 0;
-    SET Count = (SELECT COUNT(*) FROM ratedoctor WHERE idPatient = new.idPatient and idDoctor = new.idDoctor );
-    IF Count > 0
-    THEN SIGNAL sqlstate '45001' set message_text = "Bạn đã đánh giá bác sĩ này!";
-    END IF;
-END$$ -- drop trigger TG_CHECK_RATE_DOCTOR
+-- delimiter $$
+-- CREATE TRIGGER TG_CHECK_RATE_DOCTOR BEFORE INSERT ON ratedoctor FOR EACH ROW 
+-- BEGIN
+--     DECLARE Count int default 0;
+--     SET Count = (SELECT COUNT(*) FROM ratedoctor WHERE idPatient = new.idPatient and idDoctor = new.idDoctor );
+--     IF Count > 0
+--     THEN SIGNAL sqlstate '45001' set message_text = "Bạn đã đánh giá cuộc hẹn này!";
+--     END IF;
+-- END$$ -- drop trigger TG_CHECK_RATE_DOCTOR
 
 delimiter $$
 CREATE TRIGGER TG_INSERT_APPOINTMENT AFTER INSERT ON appointment FOR EACH ROW 
@@ -463,7 +513,7 @@ BEGIN
 	if (new.Status = 1 and  old.Status = 0)
     then
     insert into notification (idAccount, Notification, Type) values 
-	(idAuthor, "Bài viết của bạn đã được Admin chấp nhận. Mau đến xem nào!", CONCAT("/blog/", new.id));
+	(new.idAuthor, "Bài viết của bạn đã được Admin chấp nhận. Mau đến xem nào!", CONCAT("/blog/", new.id));
     elseif (new.Status = 2 and  old.Status = 1)
     then
     insert into notification (idAccount, Notification, Type) values 
@@ -474,22 +524,30 @@ BEGIN
 	(new.idAuthor, CONCAT("Bài viết ", Title, " của bạn đã được Admin khôi phục và hiển thị lại trên hệ thống!"), CONCAT("/blog/", new.id));
     end if;
 END$$ -- drop trigger TG_UPDATE_POST_STATUS
+
+
 --------------------------------
-insert into ratedoctor set idPatient = 235523489, idDoctor = 235523487, Star = 5, Comment = 'bac si nay good'
 delimiter $$
 CREATE VIEW AllPost AS
-SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, c.Categories, s.Similar, p.Status
+select pacs.id, pacs.FeaturedImage, pacs.Title, pacs.Brief, pacs.Content, pacs.DatePost, pacs.idAuthor, pacs.FirstName, pacs.LastName, pacs.Avt, pacs.Categories, pacs.Similar, pacs.idMajor, m.Major, pacs.Status
+from
+(SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.id as idAuthor, a.FirstName, a.LastName, a.Avt, c.Categories, s.Similar, p.idMajor, p.Status
 FROM post p, account a, categories c, similarcategories s
-WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id order by p.DatePost desc;
+WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id order by p.DatePost desc) as pacs
+left join major m
+on pacs.idMajor = m.id
 $$ -- drop view AllPost
  
 delimiter $$
 CREATE VIEW AvailablePost AS
-	SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, c.Categories, s.Similar
-    FROM post p, account a, categories c, similarcategories s
-    WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id AND p.Status = 1 order by p.DatePost;
-$$
- -- drop view AvailablePost
+select pacs.id, pacs.FeaturedImage, pacs.Title, pacs.Brief, pacs.Content, pacs.DatePost, pacs.idAuthor, pacs.FirstName, pacs.LastName, pacs.Avt, pacs.Categories, pacs.Similar, pacs.idMajor, m.Major
+from
+(SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.id as idAuthor, a.FirstName, a.LastName, a.Avt, c.Categories, s.Similar, p.idMajor
+FROM post p, account a, categories c, similarcategories s
+WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id AND p.Status = 1 order by p.DatePost desc) as pacs
+left join major m
+on pacs.idMajor = m.id
+$$ -- drop view AvailablePost
 
 delimiter $$
 CREATE VIEW AllAccount AS
@@ -507,10 +565,23 @@ $$ -- drop view AllAccount
 	
 delimiter $$
 CREATE VIEW AllAppointment AS
-SELECT *
-FROM appointment;
-$$
- 
+SELECT acs.id, acs.idService, acs.Service, acs.idPatient, acs.FullNamePatient, 
+acs.GenderPatient, acs.AddressPatient, acs.EmailPatient, acs.PhonePatient, acs.AvtPatient, 
+acs.idDoctor, CONCAT(acc.FirstName, " ", acc.LastName) as FullNameDoctor, acc.Gender as GenderDoctor, acc.Email as EmailDoctort, 
+acc.Phone as PhoneDoctor, acc.Avt as AvtDoctor, acs.DateBooking, acs.TimeBooking, acs.Price, acs.Status, acs.Information, apptn.Advice, apptn.ReExaminationDate
+From
+(SELECT a.id, a.idService, s.Service, a.idPatient, a.idDoctor, CONCAT(ac.FirstName, " ", ac.LastName) as FullNamePatient, 
+ac.Gender as GenderPatient, ac.Address as AddressPatient, ac.Email as EmailPatient, ac.Phone as PhonePatient, ac.Avt as AvtPatient, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information
+FROM appointment a, account ac, service s
+where a.idPatient = ac.id and a.idService = s.id) as acs
+left join account acc
+on acs.idDoctor = acc.id 
+left join appointmentnote apptn
+on apptn.idAppointment = acs.id
+$$ -- drop view AllAppointment
+
+
+
 delimiter $$
 CREATE VIEW AllCategory AS
 SELECT c.id, c.Categories, c.Image, c.Description, s.id as idSimilar, s.Similar, s.Image as ImageSimilar, s.Description as DescriptionSimilar
@@ -518,23 +589,35 @@ FROM categories c
 LEFT JOIN similarCategories s 
 on c.id = s.idCategories 
 ORDER BY c.id, idsimilar
-$$ USE DOCCOMING
+$$ 
 
 delimiter $$
 CREATE VIEW AllDoctor AS
-select aim.id, aim.FirstName, aim.LastName, aim.Gender, aim.Avt, aim.Email, aim.Degree, aim.Introduce, aim.idMajor, aim.Major, aim.Experience, aim.Training, r.Star
+select aim.id, aim.FirstName, aim.LastName, aim.Gender, aim.Avt, aim.Email, aim.Degree, aim.Introduce, aim.idMajor, aim.Major, aim.Experience, aim.Training, ra.Star
 FROM
 (select a.id, a.FirstName, a.LastName, a.Gender, a.Avt, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major, i.Experience, i.Training 
 FROM account a, inforDoctor i, major m 
 where a.id = i.idAccount 
 and m.id = i.idMajor) as aim
 left join
-(select idDoctor, avg(Star) as Star from ratedoctor group by idDoctor) as r
-on aim.id = r.idDoctor;
+(select idDoctor, avg(Star) as Star from ratedoctor r, appointment a where r.idAppointment = a.id group by a.idDoctor) as ra
+on aim.id = ra.idDoctor;
 $$ -- drop view AllDoctor
  
-
+delimiter $$
+CREATE VIEW AllMajorDoctor AS
+SELECT *
+FROM major
+$$
  
+delimiter $$
+CREATE VIEW getAvgPriceService AS
+select s.id, s.Service, avg(sd.Price) as FriceFloor
+from servicedoctor sd, service s
+where sd.idService = s.id
+group by s.id
+order by s.id
+$$ -- drop VIEW getAvgPriceService    
 
  -------------------------------------------------
 DELIMITER $$ 
@@ -563,22 +646,32 @@ BEGIN
     SET Auth = (select a.Authorization from post p, account a where p.idAuthor = a.id and p.id = id );
     IF (Auth = 2)
     THEN
-    SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, i.Degree, c.Categories, s.Similar
+    SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.id as idAuthor, a.FirstName, a.LastName, a.Avt, i.Degree, c.id as idCategories, c.Categories, s.id as idSimilar, s.Similar, p.idMajor
     FROM post p, account a, categories c, inforDoctor i, similarcategories s
     WHERE p.idAuthor = a.id and p.idCategories = c.id and a.id = i.idAccount and p.idSimilar = s.id and p.id = id AND p.Status = 1;
     else
-    SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.FirstName, a.LastName, a.Avt, c.Categories, s.Similar
+    SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, a.id as idAuthor, a.FirstName, a.LastName, a.Avt, c.id as idCategories, c.Categories, s.id as idSimilar, s.Similar, p.idMajor
     FROM post p, account a, categories c, similarcategories s
     WHERE p.idAuthor = a.id and p.idCategories = c.id and p.idSimilar = s.id and p.id = id AND p.Status = 1;
     END IF;
 END$$ -- drop PROCEDURE PostDetailById
 
+DELIMITER $$ 
+CREATE PROCEDURE SimilarDoctorById (IN idP int)
+BEGIN
+    declare idM INT default 0;
+    SET idM = (select idMajor from post where id = idP );
+    SELECT a.FirstName, a.LastName, a.Avt, i.Degree
+    FROM account a, inforDoctor i
+    WHERE a.id = i.idAccount and i.idMajor = idM;
+END$$ -- drop PROCEDURE SimilarDoctorById
+
 DELIMITER $$
 CREATE PROCEDURE PostByCategories(IN id int )
 BEGIN
-	SELECT  pa.id, pa.FeaturedImage, pa.Title, pa.Brief, pa.Content, pa.DatePost, pa.Similar, pa.FirstName, pa.LastName, pa.Avt, i.Degree
+	SELECT  pa.id, pa.FeaturedImage, pa.Title, pa.Brief, pa.Content, pa.DatePost, pa.Similar, pa.FirstName, pa.LastName, pa.Avt, i.Degree, pa.idMajor
     FROM
-    (SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, s.Similar, a.FirstName, a.LastName, a.Avt
+    (SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, s.Similar, a.FirstName, a.LastName, a.Avt, p.idMajor
     FROM post p, account a, similarcategories s
     WHERE p.idAuthor = a.id and p.idCategories = id and p.idSimilar = s.id AND p.Status = 1) as pa
     LEFT JOIN infordoctor i
@@ -589,9 +682,9 @@ END$$ -- drop procedure PostByCategories -- call PostBySimilarCategories(1)
 DELIMITER $$
 CREATE PROCEDURE PostBySimilarCategories(IN id int )
 BEGIN
-	SELECT  pa.id, pa.FeaturedImage, pa.Title, pa.Brief, pa.Content, pa.DatePost, pa.Categories, pa.FirstName, pa.LastName, pa.Avt, i.Degree
+	SELECT  pa.id, pa.FeaturedImage, pa.Title, pa.Brief, pa.Content, pa.DatePost, pa.Categories, pa.FirstName, pa.LastName, pa.Avt, i.Degree, pa.idMajor
     FROM
-    (SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, c.Categories, a.FirstName, a.LastName, a.Avt
+    (SELECT p.id, p.FeaturedImage, p.Title, p.Brief, p.Content, p.DatePost, c.Categories, a.FirstName, a.LastName, a.Avt, p.idMajor
     FROM post p, account a, categories c
     WHERE p.idAuthor = a.id and p.idSimilar = id and p.idCategories = c.id AND p.Status = 1 ) as pa
     LEFT JOIN infordoctor i
@@ -601,7 +694,7 @@ END$$ -- drop procedure PostBySimilarCategories
 DELIMITER $$
 CREATE PROCEDURE ListSearch(IN search text )
 BEGIN
-    SELECT a.LastName, a.FirstName, c.Categories,p.FeaturedImage, s.Similar, p.Title, p.Brief, p.Content, p.id, p.idAuthor, p.DatePost
+    SELECT a.LastName, a.FirstName, c.Categories,p.FeaturedImage, s.Similar, p.Title, p.Brief, p.Content, p.id, p.idAuthor, p.DatePost, p.idMajor
     FROM  account a, categories c, post p, similarcategories s
     WHERE p.Status = 1 
     AND p.idCategories = c.id 
@@ -614,7 +707,7 @@ END$$ -- drop PROCEDURE ListSearch
 DELIMITER $$
 CREATE PROCEDURE SearchDoctor(IN search text )
 BEGIN
-	SELECT aim.id, aim.LastName, aim.FirstName, aim.Avt, aim.Gender, aim.Email, aim.Degree, aim.Introduce, aim.major, aim.Experience, aim.Training, r.Star
+	SELECT aim.id, aim.LastName, aim.FirstName, aim.Avt, aim.Gender, aim.Email, aim.Degree, aim.Introduce, aim.major, aim.Experience, aim.Training, ra.Star
     FROM
     (SELECT a.id, a.LastName, a.FirstName, a.Avt, a.Gender, a.Email, i.Degree, i.Introduce, m.major, i.Experience, i.Training
     FROM  account a, infordoctor i, major m
@@ -622,14 +715,14 @@ BEGIN
     AND i.idMajor = m.id
     AND (a.LastName like search or a.FirstName like  search )) as aim
     left join
-	(select idDoctor, avg(Star) as Star from ratedoctor where idDoctor = id) as r
-	on aim.id = r.idDoctor;
+    (select idDoctor, avg(Star) as Star from ratedoctor r, appointment a where r.idAppointment = a.id group by a.idDoctor) as ra 
+	on aim.id = ra.idDoctor;
 END$$ -- drop PROCEDURE SearchDoctor
 
 DELIMITER $$
 CREATE PROCEDURE SearchMajor(IN search text )
 BEGIN
-    SELECT aim.id, aim.LastName, aim.FirstName, aim.Avt, aim.Gender, aim.Email, aim.Degree, aim.Introduce, aim.major, aim.Experience, aim.Training, r.Star
+    SELECT aim.id, aim.LastName, aim.FirstName, aim.Avt, aim.Gender, aim.Email, aim.Degree, aim.Introduce, aim.major, aim.Experience, aim.Training, ra.Star
     FROM
     (SELECT a.id, a.LastName, a.FirstName, a.Avt, a.Gender, a.Email, i.Degree, i.Introduce, m.major, i.Experience, i.Training
     FROM  account a, infordoctor i, major m
@@ -637,8 +730,8 @@ BEGIN
     AND i.idMajor = m.id
     AND m.major like search) as aim
     left join
-	(select idDoctor, avg(Star) as Star from ratedoctor where idDoctor = id) as r
-	on aim.id = r.idDoctor;
+	(select idDoctor, avg(Star) as Star from ratedoctor r, appointment a where r.idAppointment = a.id group by a.idDoctor) as ra 
+	on aim.id = ra.idDoctor;
 END$$ -- drop PROCEDURE SearchMajor
 
 DELIMITER $$
@@ -708,16 +801,15 @@ END$$ -- drop PROCEDURE AllCmt call AllCmt(1) select idComment, idReplycomment, 
 
 delimiter $$
 CREATE procedure detailDoctor (IN id int)
-select aim.id, aim.FullName, aim.Gender, aim.Avt, aim.Phone, aim.Address, aim.BirthDate, aim.Email, aim.Degree, aim.Introduce, aim.idMajor, aim.Major, aim.Experience, aim.Training, r.Star
+select aim.id, aim.FullName, aim.Gender, aim.Avt, aim.Phone, aim.Address, aim.BirthDate, aim.Email, aim.Degree, aim.Introduce, aim.idMajor, aim.Major, aim.Experience, aim.Training, ra.Star
 FROM
 (select a.id, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, a.Phone, a.Address, a.BirthDate, a.Email, i.Degree, i.Introduce, i.idMajor, m.Major, i.Experience, i.Training 
  FROM account a, inforDoctor i, major m
  where a.id = i.idAccount and m.id = i.idMajor and a.id = id) as aim
 left join
-(select idDoctor, avg(Star) as Star from ratedoctor where idDoctor = id) as r
-on aim.id = r.idDoctor;
+(select idDoctor, avg(Star) as Star from ratedoctor r, appointment a where r.idAppointment = a.id and a.idDoctor = id) as ra 
+on aim.id = ra.idDoctor;
 $$ -- drop procedure detailDoctor
-
 
 delimiter $$
 CREATE procedure getProfile (IN id int)
@@ -726,10 +818,10 @@ $$ -- drop procedure getProfile
  
 delimiter $$
 CREATE procedure RateDoctor (IN id int)
-select r.idPatient, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, r.Comment, r.Star
-from ratedoctor r, account a
-where r.idPatient = a.id and idDoctor = id 
-$$ -- drop procedure RateDoctor
+select ap.id as idAppointment, ap.idPatient, CONCAT(a.FirstName, ' ', a.LastName) as FullName, a.Gender, a.Avt, r.Comment, r.Star
+from ratedoctor r, account a, appointment ap
+where r.idAppointment = ap.id and a.id = ap.idPatient and ap.idDoctor = id
+$$ -- drop procedure RateDoctor use doccoming
 
 delimiter $$
 CREATE procedure getAccountByKeyword (IN search text )
@@ -747,35 +839,39 @@ $$ -- drop procedure getAccountByKeyword
 
 delimiter $$
 CREATE procedure getAppointmentPatient (IN idP int)
-select acsv.id, acsv.Service, acsv.idDoctor, acsv.LastName, acsv.FirstName, acsv.Phone, acsv.Avt, acsv.DateBooking, acsv.TimeBooking, acsv.Price, acsv.Status, acsv.Information, acsv.Type, rd.rateid, rd.Star, rd.Comment
+select acsv.id, acsv.idService, acsv.Service, acsv.idDoctor, acsv.LastName, acsv.FirstName, acsv.Phone, acsv.Avt, acsv.DateBooking, acsv.TimeBooking, acsv.Price, acsv.Status,
+ acsv.Information, acsv.Type, r.id as rateid, r.Star, r.Comment, apptn.Advice, apptn.ReExaminationDate, apptn.Price as ReExaminationPrice
 from
-(select a.id, sv.Service, a.idDoctor, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type 
-from account ac, appointment a, appointmentstatus s, service sv 
+(select a.id, sv.id as idService, sv.Service, a.idDoctor, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type
+from account ac, appointment a, appointmentstatus s, service sv
 where ac.id = a.idDoctor 
-and a.Status = s.id and a.idService = sv.id and idPatient = idP 
+and a.Status = s.id and a.idService = sv.id and a.idPatient = idP 
 order by DateBooking, TimeBooking) as acsv
-left join 
-(select id as rateid, idDoctor, Star, Comment from ratedoctor where  idPatient = idP ) as rd
-on acsv.idDoctor = rd.idDoctor
+left join appointmentnote apptn
+on apptn.idAppointment = acsv.id
+left join ratedoctor r
+on r.idAppointment = acsv.id 
 $$ -- drop procedure getAppointmentPatient
 
 delimiter $$
 CREATE procedure getAppointmentDoctor (IN idD int)
-select acsv.id, acsv.Service, acsv.idPatient, acsv.LastName, acsv.FirstName, acsv.Phone, acsv.Avt, acsv.Address, acsv.DateBooking, acsv.TimeBooking, acsv.Price, acsv.Status, acsv.Information, acsv.Type, rd.rateid, rd.Star, rd.Comment
+select acsv.id, acsv.idService, acsv.Service, acsv.idPatient, acsv.LastName, acsv.FirstName, acsv.Phone, acsv.Avt, acsv.Address, acsv.DateBooking, acsv.TimeBooking, acsv.Price, acsv.Status,
+ acsv.Information, acsv.Type, r.id as rateid, r.Star, r.Comment, apptn.Advice, apptn.ReExaminationDate, apptn.Price as ReExaminationPrice
 from
-(select a.id, sv.Service, a.idPatient, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, ac.Address, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type 
-from account ac, appointment a, appointmentstatus s, service sv 
+(select a.id, sv.id as idService, sv.Service, a.idPatient, ac.LastName, ac.FirstName, ac.Phone, ac.Avt, ac.Address, a.DateBooking, a.TimeBooking, a.Price, a.Status, a.Information, s.Type
+from account ac, appointment a, appointmentstatus s, service sv
 where ac.id = a.idPatient 
-and a.Status = s.id and a.idService = sv.id and idDoctor = idD
+and a.Status = s.id and a.idService = sv.id and a.idDoctor = idD
 order by DateBooking, TimeBooking) as acsv
-left join 
-(select id as rateid, idPatient, Star, Comment from ratedoctor where  idDoctor = idD ) as rd
-on acsv.idPatient = rd.idPatient
+left join appointmentnote apptn
+on apptn.idAppointment = acsv.id
+left join ratedoctor r
+on r.idAppointment = acsv.id 
 $$ -- drop procedure getAppointmentDoctor   call getAppointmentDoctor(?)
 
 delimiter $$
 CREATE procedure getNotification (IN idA int)
-select n.id, n.Notification, n.NotiTime, n.Status, c.Unread 
+select n.id, n.Notification, n.Type, n.NotiTime, n.Status, c.Unread 
 from notification n 
 left join 
 (select count(idAccount) as Unread, idAccount from notification where idAccount = idA and Status = 0) as c
@@ -784,6 +880,15 @@ where n.idAccount = idA
 order by NotiTime desc 
 limit 10
 $$ -- drop procedure getNotification    call getNotification(235523500)
+
+delimiter $$
+CREATE procedure getMedicalRecord (IN idP int)
+select m.id, m.idDoctor, CONCAT(acc.FirstName, ' ', acc.LastName) as FullNameDoctor, m.Record, m.IllnessDate
+from medicalrecord m
+left join 
+account acc 
+on m.idDoctor = acc.id and m.idPatient = idP
+$$ -- drop procedure getMedicalRecord 
 
 -- ================================ ADD DB ===============================================================
 insert into similarcategories (idCategories, Similar, Image, Description) values 
@@ -823,30 +928,3 @@ insert into similarcategories (idCategories, Similar, Image, Description) values
 (),
 (),
 ()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

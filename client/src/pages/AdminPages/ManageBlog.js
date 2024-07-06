@@ -3,24 +3,38 @@ import { Modal, Table, Button } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { fetchPost,fetchDoctorPost, acceptPost,hidePost } from "../../redux-toolkit/postSlice";
+import { fetchPost,fetchDoctorPost, acceptPost,hidePost, fetchCategories } from "../../redux-toolkit/postSlice";
+import { TbFilterSearch  } from "react-icons/tb";
+import { DatePicker, Select } from "antd";
+import dayjs from "dayjs";
+const { RangePicker } = DatePicker;
+
 const ManageBlog = () => {
+  const dateFormat = "DD/MM/YYYY";
   const { currentUser } = useSelector((state) => state.user);
-  const {data} = useSelector((state) => state.post);
+  const {data, category} = useSelector((state) => state.post);
   const [confirmedPost, setConfirmPost] = useState(1);
   const [showMore, setShowMore] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [postId, setPostId] = useState();
   const [numberElement, setNumberElement] = useState(6)
-
+  const [showFilterModal,setShowFilterModal] = useState(false)
+  const [arrange, setArrange] = useState("Mới nhất xếp trước")
+  const [categoryId, setCategoryId] = useState("");
+  const [similarCategoryId, setSimilarCategoryId] = useState("");
   const dispatch = useDispatch();
   useEffect(() => {
-    if(currentUser.authentication == 2)
-      {
+    if(currentUser.authentication == 2){
       dispatch(fetchDoctorPost())
     }
-    else
-      dispatch(fetchPost());
+    else{
+      const data = {
+        filter: "DatePost",
+        orderby: "asc"
+      }
+      dispatch(fetchPost(data));
+      dispatch(fetchCategories());
+    }
   }, [currentUser]);
   const handleAcceptPost = (id) => {
     const data = {id};
@@ -28,6 +42,17 @@ const ManageBlog = () => {
       dispatch(fetchPost());
     })
   }
+  const handleChangeCategory = (value) => {
+    setSimilarCategoryId(value);
+    for (let i = 0; i < category?.length; i++) {
+      for (let j = 0; j < category[i]?.Similar?.length; j++) {
+        if (category[i].Similar[j].id === value) {
+          setCategoryId(category[i].id);
+          break;
+        }
+      }
+    }
+  };
   const handleHidePost = (id) => {
     const data = {id};
     dispatch(hidePost(data)).then(() => {
@@ -35,7 +60,12 @@ const ManageBlog = () => {
     })
     setShowModal(false)
   }
-
+  const handleDatePickerChange = (date, dateString) => {
+    console.log(dateString);
+  };
+  const handleClose = () => {
+    setShowFilterModal(false)
+  }
   let posts = [];
   for (let i = 0; i < data?.length; i++) {
     if (data[i].Status === confirmedPost)
@@ -47,14 +77,12 @@ const ManageBlog = () => {
   console.log(data, confirmedPost);
   return (
     <div className="lg:pt-[70px] table-auto md:mx-auto md:p-10 max-md:px-5 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-      {/* {currentUser.isAdmin && userPosts.length > 0 ? (
-        <> */}
-      <div className="pt-[30px] flex md:w-[50%] max-md:w-full gap-3 mb-5 font-medium text-base text-gray-500">
+      <div className="pt-[30px] grid grid-cols-3 items-center md:w-[50%] max-md:w-full gap-3 mb-5 font-medium text-base text-gray-500">
         <div
           onClick={() => setConfirmPost(1)}
           className={` ${
             confirmedPost === 1 ? "bg-gray-100" : "bg-white"
-          } h-[40px]  drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
+          } h-10 drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
         >
           Bài viết đã được duyệt
         </div>
@@ -62,10 +90,15 @@ const ManageBlog = () => {
           onClick={() => setConfirmPost(0)}
           className={` ${
             confirmedPost === 0 ? "bg-gray-100" : "bg-white"
-          } h-[40px]  drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
+          } h-10 drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
         >
           Bài viết đang chờ duyệt
         </div>
+        {!showFilterModal &&
+        <TbFilterSearch className="h-6 w-6 text-teal-500 cursor-pointer transition-transform duration-500 hover:scale-110"
+                        onClick={()=>setShowFilterModal(true)}
+        />
+        }
       </div>
       <Table hoverable className="shadow-lg shadow-violet-200 rounded-lg">
         <Table.Head>
@@ -84,7 +117,7 @@ const ManageBlog = () => {
         </Table.Head>
         {slice?.map((post) => (
           <Table.Body className="divide-y">
-            <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+            <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800 cursor-pointer">
               <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs ">
                 {new Date(post?.DatePost).toLocaleDateString()}
               </Table.Cell>
@@ -203,6 +236,69 @@ const ManageBlog = () => {
               
             </div>
           </div>
+        </Modal.Body>
+      </Modal>
+      <Modal
+        show={showFilterModal}
+        onClose={handleClose}
+        popup
+        size="lg"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="flex flex-col gap-3 px-4 items-center justify-center">
+            <h3 className="mb-2 text-lg font-medium dark:text-gray-400">
+              Bộ lọc
+            </h3>
+            <div className="flex items-center w-full">
+              <p className="font-medium min-w-[35%]">Chọn ngày</p>
+              <RangePicker className="h-10 md:w-[65%] max-md:w-[65%]" 
+                           format={dateFormat}
+                           onChange={handleDatePickerChange}
+              />
+            </div>
+            <div className="flex items-center w-full">
+              <p className="font-medium min-w-[35%]">Chuyên mục</p>
+              <Select
+                id="categories"
+                className="h-10 md:w-[65%] max-md:w-[65%] border rounded-md bg-white text-slate-800 cursor-pointer"
+                value={similarCategoryId}
+                onChange={handleChangeCategory}
+              >
+                <option disabled value="" className="text-white">
+                  Chọn chuyên mục
+                </option>
+                {category?.map((cgr) => (
+                  <Select.OptGroup
+                    id="category"
+                    value={cgr.id}
+                    label={cgr.Categories}
+                    key={cgr.id}
+                  >
+                    {cgr.Similar?.map((item) => (
+                      <Select.Option
+                        value={item.id}
+                        label={item.SimilarCategories}
+                        key={item.id}
+                      >
+                        {item.SimilarCategories}
+                      </Select.Option>
+                    ))}
+                  </Select.OptGroup>
+                ))}
+              </Select>
+            </div>                       
+            <Button
+              // disabled={record === "" || recordNote === ""}
+              className="w-full h-10 mt-2"
+              gradientDuoTone="purpleToPink"
+              // onClick={() => {
+              //   idRecord !== null ? handleUpdateHealthRecord() : handleHealthRecord()         
+              // }}
+            >
+              Xác nhận
+            </Button>
+            </div>
         </Modal.Body>
       </Modal>
     </div>

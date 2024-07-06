@@ -14,7 +14,8 @@ const initialState = {
   schedule: {},
   AppointmentData: [],
   ScheduleData: [],
-  ratingDoctor: []
+  ratingDoctor: [],
+  HealthRecordData: []
 };
 export const fetchService = createAsyncThunk("fetchService", async (body) => {
   const res = await fetch("http://localhost:5000/api/doctor/service", {
@@ -225,6 +226,103 @@ export const getRatingDoctor = createAsyncThunk(
     return await res.json();
   }
 );
+export const noteAppointment = createAsyncThunk(
+  "noteAppointment",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/appointment/note", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const editNoteAppointment = createAsyncThunk(
+  "editNoteAppointment",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/appointment/note/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const acceptNoteAppointment = createAsyncThunk(
+  "acceptNoteAppointment",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/appointment/note/accept", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const cancelNoteAppointment = createAsyncThunk(
+  "cancelNoteAppointment",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/appointment/note/cancel", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const fetchHealthRecord = createAsyncThunk(
+  "fetchHealthRecord",
+  async () => {
+    const res = await fetch("http://localhost:5000/api/medical/record", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+    });
+    return await res.json();
+  }
+);
+export const healthRecord = createAsyncThunk(
+  "healthRecord",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/medical/record", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const updateHealthRecord = createAsyncThunk(
+  "updateHealthRecord",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/medical/record/update", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
 const appointmentSlice = createSlice({
   name: "appointment",
   initialState,
@@ -281,7 +379,6 @@ const appointmentSlice = createSlice({
         state.AppointmentData = action.payload.AppointmentData;
         state.ScheduleData = action.payload.ScheduleData;
         state.loading = false;
-        // state.checked = action.payload.checked;
       })
       .addCase(fetchSchedule.rejected, (state, action) => {
         state.loading = false;
@@ -324,6 +421,7 @@ const appointmentSlice = createSlice({
         state.loading = true;
       })
       .addCase(fetchAdminAppointment.fulfilled, (state, action) => {
+        state.countAppointment = action.payload.count
         state.AppointmentData = action.payload.data;
         state.loading = false;
       })
@@ -402,6 +500,83 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(getRatingDoctor.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //noteAppointment
+      .addCase(noteAppointment.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(noteAppointment.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(noteAppointment.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //editNoteAppointment
+      .addCase(editNoteAppointment.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(editNoteAppointment.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(editNoteAppointment.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //acceptNoteAppointment
+      .addCase(acceptNoteAppointment.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(acceptNoteAppointment.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(acceptNoteAppointment.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //cancelNoteAppointment
+      .addCase(cancelNoteAppointment.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(cancelNoteAppointment.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(cancelNoteAppointment.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //fetchHealthRecord
+      .addCase(fetchHealthRecord.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(fetchHealthRecord.fulfilled, (state, action) => {
+        state.HealthRecordData = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(fetchHealthRecord.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //healthRecord
+      .addCase(healthRecord.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(healthRecord.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(healthRecord.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //updateHealthRecord
+      .addCase(updateHealthRecord.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(updateHealthRecord.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+      })
+      .addCase(updateHealthRecord.rejected, (state, action) => {
         state.loading = true;
       })
       ;

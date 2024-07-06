@@ -4,12 +4,15 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { logout } from "../redux-toolkit/authSlice";
 import { persistor } from "../redux-toolkit/configureStore";
+import { MdManageSearch, MdOutlinePostAdd } from "react-icons/md";
+import { FaRegUserCircle, FaUsersCog } from "react-icons/fa";
+import { BsPostcard } from "react-icons/bs";
+import { FiLogOut } from "react-icons/fi";
+
+import { AiOutlineDashboard, AiOutlineSchedule } from "react-icons/ai";
 
 const DashSidebar = ({ param }) => {
-  const { currentUser, user, auth } = useSelector((state) => state.user);
-  const Navigate = useNavigate();
   const dispatch = useDispatch();
-  const [blogActived, setBlogActived] = useState(false);
   const [actived, setActived] = useState("");
   useEffect(() => {
     if (param === "manage-post" || param === "create-post") {
@@ -17,7 +20,7 @@ const DashSidebar = ({ param }) => {
     } else {
       setActived(param);
     }
-  }, []);
+  }, [param]);
   const handleLogout = () => {
     dispatch(logout());
     setTimeout(() => {
@@ -38,54 +41,59 @@ const DashSidebar = ({ param }) => {
         </div>
         <div className="max-lg:overflow-x-auto max-lg:w-[100vw]">
           <div className="flex lg:flex-col max-lg:w-[96%] gap-1 font-medium">
-            {/* {currentUser && currentUser.isAdmin && ( */}
+            
             <Link
-              onClick={() => {
-                setActived("dashboard");
-              }}
               className={` ${
-                param === "dashboard" &&
+                param === "dashboard" && actived === "dashboard" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center px-4 mb-3`}
               to="/admin/dashboard"
             >
-              Dashboard
+              <div className="flex gap-2 items-center">
+                <AiOutlineDashboard className="h-5 w-5"></AiOutlineDashboard>
+                <p>Dashboard</p>
+              </div>
+
             </Link>
+            
             <Link
-              onClick={() => {
-                setActived("profile");
-              }}
               className={` ${
-                param === "profile" &&
+                param === "profile" && actived === "profile" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center px-4 mb-3`}
               to="/admin/profile"
             >
-              Profile
+              <div className="flex gap-2 items-center">
+                <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
+                <p>Profile</p>
+              </div>
             </Link>
+            
             <Link
-              onClick={() => {
-                setActived("appointment");
-              }}
               className={` ${
-                param === "appointment" &&
+                param === "appointment" && actived === "appointment" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center px-4 mb-3`}
               to="/admin/appointment"
             >
-              Appointment
+              <div className="flex gap-2 items-center">
+                <AiOutlineSchedule className="h-5 w-5"></AiOutlineSchedule>
+                Appointment
+              </div>
+
             </Link>
+            
             <Link
-              onClick={() => {
-                setActived("users");
-              }}
               className={` ${
-                param === "users" &&
+                param === "users" && actived === "users" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center mb-3`}
+              } max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center px-4 mb-3`}
               to="/admin/users"
             >
-              User
+              <div className="flex gap-2 items-center">
+                <FaUsersCog className="h-5 w-5"></FaUsersCog>
+                User
+              </div>
             </Link>
             <div
               onClick={() => {
@@ -96,39 +104,53 @@ const DashSidebar = ({ param }) => {
                   param === "manage-post" ||
                   param === "create-post") &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } ${actived === "blog" && "max-lg:hidden"} max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center justify-center  cursor-pointer`}
+              } ${actived === "blog" && "max-lg:hidden"} max-lg:text-sm w-48 h-11 rounded-lg shadow-md flex items-center px-4  cursor-pointer`}
             >
-              Blog
+              <div className="flex gap-2 items-center">
+                <BsPostcard className="h-5 w-5"></BsPostcard>
+                <p>Blog</p>
+              </div>
             </div>
             {actived === "blog" && (
               <div className="transition-all duration-500 max-lg:flex max-lg:gap-2">
-                <Link
-                  className={` ${
-                    param === "manage-post" &&
-                    "bg-gradient-to-r from-green-400 to-teal-400 text-white"
-                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-md flex items-center justify-center mb-1`}
-                  to="/admin/manage-post"
-                >
-                  <div>Manage Blog</div>
-                </Link>
+                
                 <Link
                   className={` ${
                     param === "create-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
-                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-md flex items-center justify-center `}
+                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-md flex items-center px-4 `}
                   to="/admin/create-post"
                 >
-                  <div>Create Blog</div>
+                  <div className="flex gap-2 items-center">
+                    <MdOutlinePostAdd className="h-5 w-5"></MdOutlinePostAdd>
+                    <p>Create Blog</p>
+                  </div>
                 </Link>
+                
+                <Link
+                  className={` ${
+                    param === "manage-post" &&
+                    "bg-gradient-to-r from-green-400 to-teal-400 text-white"
+                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-md flex items-center px-4 mb-1`}
+                  to="/admin/manage-post"
+                >
+                  <div className="flex gap-2 items-center">
+                    <MdManageSearch className="h-5 w-5"></MdManageSearch>
+                    <p>Manage Blog</p>
+                  </div>               
+                </Link> 
               </div>
             )}
             <Link
               onClick={handleLogout}
               to="/admin/login"
               className="
-              max-lg:hidden w-48 h-11 rounded-lg cursor-pointer shadow-md flex items-center justify-center mt-3 mb-10 cursor-pointet"
+              max-lg:hidden w-48 h-11 rounded-lg cursor-pointer shadow-md flex items-center px-4 mt-3 mb-10 cursor-pointet"
             >
-              Log out
+              <div className="flex gap-2 items-center">
+                <FiLogOut className="h-5 w-5"></FiLogOut>
+                <p>Log out</p>
+              </div> 
             </Link>
           </div>
         </div>

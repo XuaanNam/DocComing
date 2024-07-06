@@ -12,7 +12,6 @@ function Login() {
   const blogId = JSON.parse(localStorage.getItem("blog"));
   const { currentUser, detailDoctor, sendMailMessage, message, loading, updated } =
     useSelector((state) => state.user);
-  console.log(detailDoctor);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
 
@@ -87,7 +86,12 @@ function Login() {
       {!currentUser ? (
         <div>
           <div className="flex items-center justify-center min-h-screen lg:p-6 max-lg:px-7 max-lg:pt-20">
-            <div className="lg:w-2/5 lg:h-[400px] rounded-xl lg:pt-[30px] max-lg:w-full max-lg:px-10">
+            <div className="lg:w-2/5 lg:h-[400px] rounded-xl lg:pt-[30px] max-lg:w-full max-lg:px-10"
+                 onKeyDown={(e) => { 
+                  if (e.key === "Enter") 
+                    handleLogin(); 
+                 }} 
+            >
               <div className="text-2xl font-bold text-teal-800 mb-9 max-lg:text-center ">
                 Đăng nhập tài khoản Bệnh nhân/Bác sĩ
               </div>
@@ -124,7 +128,7 @@ function Login() {
                 <Button
                   onClick={handleLogin}
                   className="w-60 mx-auto h-[48px] mb-4 text-center"
-                  gradientDuoTone="greenToBlue"
+                  gradientDuoTone="greenToBlue"                 
                 >
                   <p className="text-lg">Đăng nhập</p>
                 </Button>

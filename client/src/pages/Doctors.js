@@ -44,7 +44,6 @@ const Doctors = () => {
   };
   const slice1 = doctors?.slice(0,numberElement);
   const slice2 = allSearchData?.slice(0,numberElement);
-  console.log(slice2)
 
   return (
     <div className="lg:pt-[70px] max-lg:pt-[70px]">
@@ -133,7 +132,7 @@ const Doctors = () => {
             onClick={() =>
               Navigate(
                 `/doctors/${path(
-                  doctor?.FirstName + doctor?.LastName,
+                  doctor?.FirstName + " " + doctor?.LastName,
                   doctor?.id
                 )}`
               )
@@ -189,7 +188,7 @@ const Doctors = () => {
               onClick={() =>
                 Navigate(
                   `/doctors/${path(
-                    doctor?.FirstName + doctor?.LastName,
+                    doctor?.FirstName + " " + doctor?.LastName,
                     doctor?.id
                   )}`
                 )

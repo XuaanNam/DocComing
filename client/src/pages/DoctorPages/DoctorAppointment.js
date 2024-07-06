@@ -1,30 +1,181 @@
 import React, { useEffect, useRef, useState } from "react";
-import { FaRegCalendarPlus, FaHome } from "react-icons/fa";
+import { FaRegCalendarPlus, FaRegAddressBook, FaHome } from "react-icons/fa";
 import { RiServiceFill } from "react-icons/ri";
 import { BsCash } from "react-icons/bs";
 import { FaPhoneAlt } from "react-icons/fa";
 import { TbFileDescription } from "react-icons/tb";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { Modal, Table, Button } from "flowbite-react";
+import { Modal, Button } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointment,
   acceptAppointment,
   completeAppointment,
   cancelAppointment,
+  fetchService,
+  noteAppointment,
+  editNoteAppointment,
+  fetchHealthRecord,
+  healthRecord,
+  updateHealthRecord,
 } from "../../redux-toolkit/appointmentSlice";
-import { Rate } from "antd";
+import { DatePicker, Input, TimePicker  } from "antd";
+import dayjs from "dayjs";
+const { TextArea } = Input;
+
 const DoctorAppointment = () => {
   const dispatch = useDispatch();
-  const { AppointmentData, ScheduleData, allService, service, error, loading } =
+  const { AppointmentData, ScheduleData, healthRecordData, service, error, loading } =
     useSelector((state) => state.appointment);
+  const { currentUser } = useSelector((state) => state.user);
+  const [date, setDate] = useState("");
   const [passed, setPassed] = useState(1);
   const [showModal, setShowModal] = useState(false);
+  const [showExaminationModal, setShowExaminationModal] = useState(false);
+  const [ReExaminationDate, setReExaminationDate] = useState(null)
+  const [showNoteModal, setShowNoteModal] = useState(false);
+  const [showRecordModal, setShowRecordModal] = useState(false);
+  const [record,setRecord] = useState("");
+  const [recordNote,setRecordNote] = useState("");
+  const [note, setNote] = useState("");
+  const [editNote, setEditNote] = useState(false);
   const [idAppointment, setIdAppointment] = useState();
-  const [idPatient, setIdPatient] = useState();
+  const [idPatient, setIdPatient] = useState(null);
+  const [idRecord, setIdRecord] = useState(null)
+  const [time, setTime] = useState("");
+  const [price,setPrice] = useState("")
+  const format = 'HH:mm';
+  const dateFormat = "DD/MM/YYYY";
+  const currentDate = new Date();
+  const today =
+    (currentDate.getDate() < 10 ? "0" + currentDate.getDate() : currentDate.getDate())
+    + "/" +
+    (currentDate.getMonth() + 1 < 10 ? "0" + (currentDate.getMonth() + 1) : currentDate.getMonth() + 1) 
+    + "/" +
+    currentDate.getFullYear();
+
+    
   useEffect(() => {
+    setDate(today);
+    dispatch(fetchHealthRecord());
     dispatch(fetchAppointment());
+    dispatch(fetchService({ idDoctor: currentUser?.id })); 
   }, []);
+  let appointment = [];
+  let isBooked = [];
+  for (let i = 0; i < AppointmentData?.length; i++) {
+    if (AppointmentData[i].Status === passed)
+      appointment.push({ ...AppointmentData[i] });
+    if (AppointmentData[i].Status === 3 && passed === 2)
+      appointment.push({ ...AppointmentData[i] });
+    if(AppointmentData[i].Status === 1)
+      isBooked.push({DateBooking: AppointmentData[i].DateBooking, TimeBooking: AppointmentData[i].TimeBooking, EstimatedTime: AppointmentData[i].EstimatedTime})
+  }
+  const parse = (time) => {
+    const split = time.split(":");
+    let curr = parseInt(split[0]) + parseInt(split[1]) / 60;
+    return curr;
+  };
+  const disabledMinutes = (selectedHour) => {
+    let hour = selectedHour
+    let disabledMin = []
+    if(selectedHour < 10)
+      hour = "0" + selectedHour
+    for(let i=0;i<isBooked.length;i++){
+      if(date === isBooked[i].DateBooking){
+        let time = 0;
+        for(let j=0;j<=45;j+=15){
+          if(j===0)
+            time = hour+":0"+ j +":00"
+          else
+            time = hour+":"+ j +":00"
+          if(parse(time) < parse(isBooked[i].TimeBooking) + parse(isBooked[i].EstimatedTime) && parse(time) > parse(isBooked[i].TimeBooking) - parse(isBooked[i].EstimatedTime)){
+            disabledMin.push(j)
+          }
+        }
+      }
+    }
+    return disabledMin;
+  };
+  const handleBooking = () => {
+    const data = {
+      idAppointment,
+      ReExaminationDate: date,
+      ReExaminationTime: time,
+      Price: price
+    }
+    if(note !== null)
+      dispatch(editNoteAppointment(data)).then(() => {
+        handleClose()
+        dispatch(fetchAppointment())
+      })
+    else
+      dispatch(noteAppointment(data)).then(() => {
+        handleClose()
+        dispatch(fetchAppointment())
+      })
+  }
+  const handleNote = () => {
+    const data = {
+      idAppointment,
+      Advice: note,
+    }
+    if(editNote || ReExaminationDate !== null)
+      dispatch(editNoteAppointment(data)).then(() => {
+        handleClose()
+        dispatch(fetchAppointment())
+      })
+    else
+      dispatch(noteAppointment(data)).then(() => {
+        handleClose()
+        dispatch(fetchAppointment())
+      })
+  }
+  const handleHealthRecord = () => {
+    const data = {
+      idAppointment,
+      Record: record,
+      Note: recordNote,
+      IllnessDate: date
+    }
+    dispatch(healthRecord(data)).then(() => {
+      handleClose()
+      dispatch(fetchAppointment())
+    })
+  }
+  const handleUpdateHealthRecord = () => {
+    const data = {
+      idRecord,
+      Record: record,
+      Note: recordNote,
+      IllnessDate: date
+    }
+    dispatch(updateHealthRecord(data)).then(() => {
+      handleClose()
+      dispatch(fetchAppointment())
+    })
+  }
+  console.log(healthRecordData)
+  const handleClose = () => {
+    setShowExaminationModal(false);
+    setShowNoteModal(false);
+    setShowRecordModal(false);
+    setEditNote(false)
+    setReExaminationDate(null)
+    setNote("")
+    setRecord("")
+    setIdRecord(null)
+    setRecordNote("")
+    setPrice("")
+    setTime("")
+    setDate(today);
+  }
+  const handleDatePickerChange = (date, dateString) => {
+    setDate(dateString);
+  };
+  const handleTimePickerChange = (time, timeString) => {
+    setTime(timeString);
+  }
   const handleAcceptAppointment = (id) => {
     const data = { id };
     dispatch(acceptAppointment(data)).then(() => {
@@ -43,15 +194,9 @@ const DoctorAppointment = () => {
       dispatch(fetchAppointment());
     });
     setShowModal(false);
+    setIdPatient(null)
   };
-  let appointment = [];
-  for (let i = 0; i < AppointmentData?.length; i++) {
-    if (AppointmentData[i].Status === passed)
-      appointment.push({ ...AppointmentData[i] });
-    if (AppointmentData[i].Status === 3 && passed === 2)
-      appointment.push({ ...AppointmentData[i] });
-  }
-
+  console.log(AppointmentData)
   return (
     <div className="lg:pt-[70px] min-h-screen">
       <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
@@ -117,66 +262,136 @@ const DoctorAppointment = () => {
                 </div>
                 <div className="p-5">
                   <div className="lg:flex lg:gap-5">
-                    <div className="flex md:w-[10%] max-md:w-full">
+                    <div className="flex md:w-[5%] max-md:w-full">
                       <img
                         className="h-14 w-14 rounded-full object-contain border border-lime-200"
                         alt=""
                         src={require("../../Images/doctorBackground2.jpg")}
                       ></img>
                     </div>
-                    <div className="w-[90%]">
+                    <div className="w-[80%]">
                       <p className="font-medium lg:text-lg max-lg:mt-3 max-lg:text-base text-gray-600 mb-3">
                         {appointment.FirstName + " " + appointment.LastName}
                       </p>
-                      <div className="lg:flex w-full gap-10 mb-3">
-                        <div className="flex gap-3 max-lg:mb-3 lg:w-1/2">
-                          <RiServiceFill className="h-5 w-5 text-red-500"></RiServiceFill>
-                          <p className="min-w-14">Dịch vụ:</p>
+                      <div className="lg:flex w-full gap-5 mb-3">
+                        <div className="flex gap-2 items-center max-lg:mb-3 lg:w-[40%]">
+                          <RiServiceFill className="h-5 min-w-5 text-red-500"></RiServiceFill>
+                          <p className="">Dịch vụ:</p>
                           <p className="font-medium">{appointment.Service}</p>
                         </div>
-                        <div className="flex gap-3 lg:w-1/2">
-                          <BsCash className="h-5 w-5 text-green-400"></BsCash>
-                          <p className="min-w-20">Giá dịch vụ:</p>
+                        <div className="flex gap-2 items-center lg:w-[60%]">
+                          <BsCash className="h-5 min-w-5 text-green-400"></BsCash>
+                          <p className="">Giá dịch vụ:</p>
                           <p className="font-medium text-green-400">{appointment.Price} đ</p>
                         </div>
                       </div>
 
-                      <div className="lg:flex w-full gap-10 mb-3">
-                        <div className="flex gap-3 lg:w-1/2">
-                          <FaPhoneAlt className="h-5 w-5 text-teal-600" />
+                      <div className="lg:flex w-full gap-5 mb-3">
+                        <div className="flex gap-2 items-center lg:w-[40%]">
+                          <FaPhoneAlt className="h-4 min-w-5 text-teal-600" />
                           <p className="min-w-20">Số điện thoại:</p>
                           <div className="font-medium text-teal-500">{appointment.Phone}</div>
                         </div>
-                        <div className="flex gap-3 max-lg:mb-3 lg:w-1/2">
-                          <FaHome className="h-5 w-5 text-teal-600" />
+                        <div className="flex gap-2 items-center max-lg:mb-3 lg:w-[60%]">
+                          <FaHome className="h-5 min-w-5 text-teal-600" />
                           <p className="min-w-14">Địa chỉ:</p>
-                          <div className="font-medium">
+                          <div className="font-medium lg:w-full">
                             {appointment.Address}
                           </div>
                         </div>
                       </div>
-                      <div className="flex gap-3 mb-3">
-                        <TbFileDescription className="h-5 w-5 text-teal-600" />
-                        <p>Triệu chứng:</p>
-                        <div className="font-medium text-red-400">
+                      <div className="flex gap-2 mb-3">
+                        <TbFileDescription className="h-5 min-w-5 text-teal-600" />
+                        <p className="min-w-fit">Triệu chứng:</p>
+                        <div className="font-medium text-red-500">
                           {appointment.Information}
                         </div>
                       </div>
+                      {appointment?.Advice &&
+                      <div className="flex gap-2 mb-3">
+                        <TbFileDescription className="h-5 min-w-5 text-teal-600" />
+                        <p className="font-medium">Ghi chú:</p>
+                        <div className="font-medium italic text-red-500">
+                          {appointment.Advice}
+                        </div>                  
+                      </div>
+                      }
                     </div>
+                    {appointment.Status == 2 && (
+                      <div className="w-[15%] mx-auto flex flex-col gap-2 place-items-center relative">   
+                        {appointment.Record === null &&   
+                        <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowRecordModal(true);setIdAppointment(appointment.id);setDate(appointment.DateBooking)}}>
+                          Thêm bệnh án
+                        </Button>
+                        }
+                        {appointment.ReExaminationDate === null &&
+                        <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowExaminationModal(true);setIdAppointment(appointment.id);setNote(appointment.Advice)}}>
+                          Hẹn tái khám
+                        </Button>
+                        } 
+                        {appointment.Advice === null ?
+                          <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowNoteModal(true);setIdAppointment(appointment.id);setReExaminationDate(appointment.ReExaminationDate)}}>
+                            Ghi chú
+                          </Button>
+                        :
+                          <p className="absolute bottom-1 text-sm cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
+                            onClick={()=>{setEditNote(true);setShowNoteModal(true);setIdAppointment(appointment.id);setNote(appointment.Advice)}}>Chỉnh sửa
+                          </p>
+                        }
+                      </div>
+                    )}
                   </div>
-                  <hr className="w-[98%] mx-auto border-[1px] border-lime-100 rounded-lg mb-5"></hr>
-                  {/* {appointment.Star !== null &&
-                    <div className="flex flex-col items-center justify-center">
-                  
-                      <Rate className="w-52 flex gap-2"
-                            value={appointment.Star}
-                            style={{ fontSize: 28}}
-                            disabled={true}
-                      ></Rate>
-                      <p className="text-lg text-slate-600 mt-2">{appointment.Comment}</p>
-                    </div>
-                  } */}
-                  <div className="flex max-md:justify-center max-md:items-center mx-auto md:w-3/4 max-md:w-full max-md:px-3 gap-10">
+                  <div className="flex max-md:justify-center max-md:items-center mx-auto md:w-full max-md:w-full max-md:px-3 gap-10">
+                    {appointment.Status === 2 && 
+                      <div className="w-full flex flex-col gap-3">
+                        {appointment.NoteRecord !== null && appointment.ReExaminationDate !== null &&
+                          <hr className="w-[98%] mx-auto border-[1px] border-lime-50 rounded-lg"></hr>
+                        }
+                        <div className="grid grid-cols-2 gap-5">
+                          {appointment.NoteRecord !== null &&
+                            <div className="flex flex-col col-start-1 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                              <div className="flex items-center">                             
+                                <p className="font-medium text-black text-lg w-1/2">Bệnh án</p>   
+                                <div className="w-1/2 flex justify-end text-green-500 font-medium">
+                                  <Button className="w-24" size="xs" outline gradientDuoTone="tealToLime" onClick={()=>{setShowRecordModal(true);setIdRecord(appointment.idMedicalRecord);setRecord(appointment.Record);setRecordNote(appointment.NoteRecord  )}}>
+                                    Chỉnh sửa
+                                  </Button>
+                                </div>
+                              </div>             
+                              <div className="flex gap-3">
+                                <div className="flex flex-col gap-1 w-full">
+                                  <p>Chẩn đoán: <span className="text-teal-600 font-medium">{appointment.Record}</span></p>
+                                  <p>Mô tả: <span className="text-teal-600 font-medium">{appointment.NoteRecord}</span></p>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                          {appointment.ReExaminationDate !== null &&
+                            <div className="flex flex-col col-start-2 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                              <div className="flex items-center">
+                                <p className="font-medium text-black text-lg w-1/2">Lịch hẹn tái khám</p>
+                                {appointment.NoteStatus === 0 && 
+                                  <div className="w-1/2 mr-4 flex justify-end text-green-500 font-medium">Chưa xác nhận</div>
+                                }
+                                {appointment.NoteStatus === 1 && 
+                                  <div className="w-1/2 mr-4 flex justify-end text-green-500 font-medium">Đã xác nhận</div>
+                                }
+                                {appointment.NoteStatus === 2 && 
+                                  <div className="w-1/2 mr-4 flex justify-end text-rose-500 font-medium">Đã hủy</div>
+                                }
+                              </div>
+                              <div className="flex gap-3">
+                                <div className="flex flex-col gap-1 w-full">
+                                  <p>Ngày tái khám: <span className="text-green-500 font-medium">{appointment.ReExaminationDate.slice(0,10)}</span></p>
+                                  <p>Thời gian: <span className="text-green-500 font-medium">{appointment.ReExaminationDate.slice(11,16)}</span></p>
+                                  <p>Chi phí dự kiến: <span className="text-green-500 font-medium">{appointment.ReExaminationPrice} đ</span></p>
+                                </div>
+                              </div>
+                            </div>
+                          }
+                        </div>
+                      </div>
+                    }
                     {appointment.Status != 2 && appointment.Status != 3 && (
                       <Button
                         className="md:w-40 max-md:w-48 md:mx-auto rounded-2xl"
@@ -212,6 +427,7 @@ const DoctorAppointment = () => {
                         Hoàn thành
                       </Button>
                     )}
+                    
                   </div>
                 </div>
               </div>
@@ -257,8 +473,148 @@ const DoctorAppointment = () => {
           </div>
         </Modal.Body>
       </Modal>
+      <Modal
+        show={showExaminationModal}
+        onClose={handleClose}
+        popup
+        size="xl"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="flex flex-col gap-3 items-center justify-center">
+            <h3 className="mb-5 text-lg font-medium dark:text-gray-400">
+              Lên lịch tái khám
+            </h3>
+            <DatePicker
+              id="DateBooking"
+              className="h-11 w-[90%] bg-white border border-gray-300 !text-lg rounded-lg px-4 p-1"
+              value={dayjs(date, dateFormat)}
+              format={dateFormat}
+              onChange={handleDatePickerChange}
+              minDate={dayjs(today, dateFormat)}
+            />
+            <TimePicker className="h-11 w-[90%] px-4" minuteStep={15} hourStep={1} format={format} disabledMinutes={disabledMinutes} onChange={handleTimePickerChange}  placeholder="Chọn thời gian"/>
+            <Input className="h-11 w-[90%] px-4 rounded-md border-gray-300" placeholder="Chi phí dự kiến" value={price} onChange={(e)=> setPrice(e.target.value)}></Input>
+            <Button
+              disabled={date === "" || time === "" || price === ""}
+              className="w-[90%] h-11"
+              gradientDuoTone="purpleToPink"
+              onClick={() => {
+                handleBooking();
+              }}
+            >
+              Xác nhận
+            </Button>
+            <hr className="w-[90%] border-[1px] border-lime-100 rounded-lg"></hr>
+            <Button
+            className="mt-3 w-[90%] h-11"
+            outline gradientDuoTone="tealToLime"
+            onClick={handleClose}
+            >
+              Để sau
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+      <Modal
+        show={showNoteModal}
+        onClose={handleClose}
+        popup
+        size="xl"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="flex flex-col gap-3 items-center justify-center">
+            <h3 className="mb-5 text-lg font-medium dark:text-gray-400">
+              {editNote ? "Chỉnh sửa ghi chú" : "Thêm ghi chú" }
+            </h3>
+            <TextArea
+              maxLength={100}
+              value={note}
+              onChange={(e) =>{setNote(e.target.value)}}
+              placeholder="Dặn dò của bác sĩ"
+              className="h-28 w-[90%] px-4 rounded-md border-gray-300"
+              style={{
+                height: 72,
+                resize: 'none',
+              }}
+            />
+            <Button
+              disabled={note === ""}
+              className="w-[90%] h-11"
+              gradientDuoTone="purpleToPink"
+              onClick={() => {
+                handleNote();
+              }}
+            >
+              Xác nhận
+            </Button>
+            <hr className="w-[90%] border-[1px] border-lime-100 rounded-lg"></hr>
+            <Button
+            className="mt-3 w-[90%] h-11"
+            outline gradientDuoTone="tealToLime"
+            onClick={handleClose}
+            >
+              Để sau
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+      <Modal
+        show={showRecordModal}
+        onClose={handleClose}
+        popup
+        size="xl"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="flex flex-col gap-3 items-center justify-center">
+            <h3 className="mb-5 text-lg font-medium dark:text-gray-400">
+              {idRecord !== null ? "Chỉnh sửa bệnh án" : "Thêm bệnh án"}
+            </h3>
+            <Input className="h-11 w-[90%] px-4 rounded-md border-gray-300" placeholder="Bệnh án" value={record} onChange={(e)=> setRecord(e.target.value)}></Input>
+            <TextArea
+              maxLength={100}
+              value={recordNote}
+              onChange={(e) =>{setRecordNote(e.target.value)}}
+              placeholder="Mô tả bệnh án"
+              className="h-28 w-[90%] px-4 rounded-md border-gray-300"
+              style={{
+                height: 72,
+                resize: 'none',
+              }}
+            />
+            {/* <DatePicker
+              id="DateBooking"
+              className="h-11 w-[90%] bg-white border border-gray-300 !text-lg rounded-lg px-4 p-1"
+              value={dayjs(date, dateFormat)}
+              format={dateFormat}
+              onChange={handleDatePickerChange}
+              minDate={dayjs(today, dateFormat)}
+            /> */}
+            <Button
+              disabled={record === "" || recordNote === ""}
+              className="w-[90%] h-11"
+              gradientDuoTone="purpleToPink"
+              onClick={() => {
+                idRecord !== null ? handleUpdateHealthRecord() : handleHealthRecord()         
+              }}
+            >
+              Xác nhận
+            </Button>
+            <hr className="w-[90%] border-[1px] border-lime-100 rounded-lg"></hr>
+            <Button
+            className="mt-3 w-[90%] h-11"
+            outline gradientDuoTone="tealToLime"
+            onClick={handleClose}
+            >
+              Để sau
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
 
-export default DoctorAppointment;
+export default DoctorAppointment; 

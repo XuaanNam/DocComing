@@ -1,12 +1,9 @@
 import React, { useEffect, useRef, useState, useContext } from "react";
-import { FaRegUserCircle } from "react-icons/fa";
-import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
-import { FiLogOut } from "react-icons/fi";
 import { CiCamera } from "react-icons/ci";
 import { MdEdit } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { Button } from "flowbite-react";
-import { fetchProfile, updateProfile } from "../../redux-toolkit/authSlice";
+import { Button, Modal } from "flowbite-react";
+import { changePassword, fetchProfile, updateProfile } from "../../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
 import { DatePicker, Space, Input, Select } from "antd";
 import dayjs from "dayjs";
@@ -25,12 +22,15 @@ const AdminProfile = () => {
     (state) => state.user
   );
   const [isSubmited, setIsSubmited] = useState(false);
-  const [actived, setActived] = useState(1);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({});
   const [FullName, setFullName] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [formData, setFormData] = useState({});
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [showModal, setShowModal] = useState(false)
+  const [errorMessage, setErrorMessage] = useState("")
   const filePickerRef = useRef();
   const dispatch = useDispatch();
   const Navigate = useNavigate();
@@ -96,10 +96,31 @@ const AdminProfile = () => {
     setData({ ...data, BirthDate: dateString });
     setFormData({ ...formData, BirthDate: dateString });
   };
+  const handleChangePassword = () => {
+    const data = {
+      OldPassWord: oldPassword,
+      NewPassWord: newPassword
+    }
+    if(newPassword.length < 6)
+      setErrorMessage("Mật khẩu phải chứa ít nhất 6 kí tự!")
+    else
+      dispatch(changePassword(data)).then((result) => {
+        if(result.payload.message == "Đổi mật khẩu thành công!")
+          handleClose()
+        else
+          setErrorMessage(result.payload.message);
+      })
+  }
+  const handleClose = () => {
+    setOldPassword("")
+    setNewPassword("")
+    setErrorMessage("");
+    setShowModal(false)
+  }
   return (
-    <div className="min-h-screen lg:pt-[70px] flex flex-col justify-center items-center">
+    <div className="min-h-screen bg-gray-50 lg:pt-[70px] flex flex-col justify-center items-center">
       {currentUser?.authentication == 0 ? (
-        <div className="lg:mx-16 max-lg:px-3 lg:w-3/4 text-gray-700 lg:flex lg:gap-10">
+        <div className="lg:mx-16 max-lg:px-3 lg:w-[80%] lg:h-[600px] text-gray-700 lg:flex lg:gap-10">
           <div className="my-7 w-full rounded-xl bg-white shadow-lg shadow-violet-200 py-5 max-lg:px-6 lg:px-8">
             <div className="mb-5 grid grid-cols-5 items-center">
               <p className="font-semibold text-2xl max-lg:col-start-1 max-lg:col-span-2 col-span-1">Hồ sơ</p>
@@ -123,22 +144,25 @@ const AdminProfile = () => {
                 disabled={!edit}
                 hidden
               />
+              <div className="lg:col-span-1 flex flex-col items-center gap-3">
               <div
-                className="max-lg:grid max-lg:grid-cols-2 max-lg:gap-1 max-lg:w-full relative lg:w-32 lg:h-32 cursor-pointer shadow-md rounded-full lg:col-span-1"
+                className="max-lg:w-full relative lg:w-32 lg:h-32 cursor-pointer shadow-md rounded-full"
                 onClick={() => filePickerRef.current.click()}
               >
                 <img
                   src={data?.Avt || require("../../Images/pattientavt.png")}
                   alt="userImage"
-                  className="max-lg:col-start-1 max-lg:col-span-1 rounded-full w-full h-full object-cover border-4 border-[lightgray]"
+                  className=" rounded-full w-full h-full object-cover border-4 border-[lightgray]"
                 />
                 <div className="absolute w-8 h-8 rounded-full bg-gray-300 right-1 bottom-1  flex justify-center items-center">
                   <CiCamera></CiCamera>
                 </div>
-                <div className="max-lg:col-start-2 max-lg:col-span-1 max-lg:text-left max-lg:text-base max-lg:flex max-lg:items-center max-lg:justify-center font-medium lg:text-lg lg:text-center w-full">
-                  {data?.FullName || currentUser?.name}
-                </div>
               </div>
+              <div className=" max-lg:text-left max-lg:text-base max-lg:flex max-lg:items-center max-lg:justify-center font-medium lg:text-lg lg:text-center w-full">
+                {data?.FullName || currentUser?.name}
+              </div>
+              <Button className="h-9 w-36" size="sm" outline gradientDuoTone="purpleToPink" onClick={()=>setShowModal(true)}>Đổi mật khẩu</Button>
+            </div>
               <form className="lg:col-span-4 mb-16">
                 <div className="p-5 bg-white shadow-md rounded-lg">
                   <div className="lg:flex lg:gap-5 mb-5">
@@ -286,6 +310,41 @@ const AdminProfile = () => {
       ) : (
         <div className="h-screen bg-white"></div>
       )}
+      <Modal
+        className="transition-all duration-500"
+        show={showModal}
+        onClose={handleClose}
+        popup
+        size="xl"
+      >
+      <Modal.Header />
+        <Modal.Body>
+          <div className="flex flex-col gap-3 items-center justify-center">
+            <h3 className="mb-5 text-lg font-medium dark:text-gray-400">
+              Đổi mật khẩu
+            </h3>
+            <Input type="password" className="h-11 w-[90%] px-4 rounded-md border-gray-300" placeholder="Mật khẩu cũ" value={oldPassword} onChange={(e)=> setOldPassword(e.target.value)}></Input>
+            <Input type="password" className="h-11 w-[90%] px-4 rounded-md border-gray-300" placeholder="Mật khẩu mới" value={newPassword} onChange={(e)=> setNewPassword(e.target.value)}></Input>
+            <p className="text-rose-500">{errorMessage}</p>
+            <Button
+              disabled={oldPassword === "" || newPassword === ""}
+              className="w-[90%] h-11"
+              gradientDuoTone="purpleToPink"
+              onClick={handleChangePassword}
+            >
+              Xác nhận
+            </Button>
+            <hr className="w-[90%] border-[1px] border-lime-100 rounded-lg"></hr>
+            <Button
+            className="mt-3 w-[90%] h-11"
+            outline gradientDuoTone="tealToLime"
+            onClick={handleClose}
+            >
+              Để sau
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };

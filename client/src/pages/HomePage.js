@@ -55,9 +55,6 @@ const HomePage = () => {
   };
 
   useEffect(() => {
-    if (currentUser) {
-      dispatch(fetchProfile());
-    }
     dispatch(getAllPost());
     dispatch(getAllDoctors());
   }, [currentUser]);
@@ -182,7 +179,7 @@ const HomePage = () => {
                 <div className="font-medium">
                   {allPost[1]?.FirstName + " " + allPost[1]?.LastName} -
                 </div>
-                <div>{allPost[1]?.DatePost}</div>
+                <div>{allPost[1]?.DatePost.slice(0, 10)}</div>
               </div>
             </div>
 
@@ -202,9 +199,9 @@ const HomePage = () => {
                       alt=""
                     ></img>
                     <div className="overflow-hidden text-ellipsis font-medium">
-                      {allPost[2]?.FirstName + " " + allPost[2]?.LastName}
+                      {allPost[2]?.FirstName + " " + allPost[2]?.LastName} -
                     </div>
-                    <div>{allPost[2]?.DatePost}</div>
+                    <div>{allPost[2]?.DatePost.slice(0, 10)}</div>
                   </div>
                 </div>
                 <img

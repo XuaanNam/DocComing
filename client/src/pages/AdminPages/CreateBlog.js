@@ -2,25 +2,28 @@ import React, { useEffect, useRef, useState } from "react";
 import "react-quill/dist/quill.snow.css";
 import Editor from "./Editor";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost, fetchCategories } from "../../redux-toolkit/postSlice";
+import { createPost, fetchCategories, fetchMajor } from "../../redux-toolkit/postSlice";
 import { Select, Input } from "antd";
 import { FileInput } from "flowbite-react";
 const CreateBlog = () => {
   const dispatch = useDispatch();
-  const { category, checked } = useSelector((state) => state.post);
+  const { category,major, checked } = useSelector((state) => state.post);
   const [filled, setFilled] = useState(true);
   const [title, setTitle] = useState("");
   const [summary, setSummary] = useState("");
   const [content, setContent] = useState("");
   const [files, setFiles] = useState(null);
+  const [majorId, setMajorId] = useState("")
   const [categoryId, setCategoryId] = useState("");
   const [similarCategoryId, setSimilarCategoryId] = useState("");
 
   const ref = useRef();
   useEffect(() => {
     dispatch(fetchCategories());
+    dispatch(fetchMajor());
+
   }, [dispatch]);
-  const handleChange = (value) => {
+  const handleChangeCategory = (value) => {
     setSimilarCategoryId(value);
     for (let i = 0; i < category?.length; i++) {
       for (let j = 0; j < category[i]?.Similar?.length; j++) {
@@ -37,6 +40,7 @@ const CreateBlog = () => {
     data.append("Title", title);
     data.append("Brief", summary);
     data.append("Content", content);
+    data.append("idMajor", majorId);
     data.append("idCategories", categoryId);
     data.append("idSimilar", similarCategoryId);
     data.append("FeaturedImage", files);
@@ -51,6 +55,7 @@ const CreateBlog = () => {
         setTitle("");
         setSummary("");
         setContent("");
+        setMajorId("")
         setSimilarCategoryId("");
         setFiles(null);
         ref.current.value = null;
@@ -59,10 +64,10 @@ const CreateBlog = () => {
       setFilled(false);
     }
   };
-  console.log(content)
+  console.log(majorId)
   return (
     <div className="lg:pt-[70px] md:flex md:items-center md:justify-center ">
-      <div className="lg:mt-10 max-lg:mt-5 mb-20 flex flex-col items-center justify-center md:w-3/4 max-md:w-[90%] md:p-8 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200 border">
+      <div className="lg:mt-10 max-lg:mt-5 mb-20 flex flex-col items-center justify-center md:w-3/4 max-md:w-[90%] md:p-8 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200">
         <div className="text-2xl font-bold opacity-70 mb-5">
           Thêm bài viết
         </div>
@@ -96,7 +101,7 @@ const CreateBlog = () => {
               : "border-gray-400"
           } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
           value={similarCategoryId}
-          onChange={handleChange}
+          onChange={handleChangeCategory}
         >
           <option disabled value="" className="text-white">
             Chọn chuyên mục
@@ -119,6 +124,32 @@ const CreateBlog = () => {
                 </Select.Option>
               ))}
             </Select.OptGroup>
+          ))}
+        </Select>
+        
+        <Select
+          id="major"
+          className={` ${
+            !filled && majorId === ""
+              ? "border-red-400 border-[1.5px]"
+              : "border-gray-400"
+          } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+          value={majorId}
+          onChange={(value)=>{setMajorId(value)}}
+        >
+          <option disabled value="" className="text-white">
+            Chọn chuyên khoa
+          </option>
+
+          {major?.map((major) => (
+            <Select
+              id="major"
+              value={major.id}
+              label={major.Major}
+              key={major.id}
+            >
+              {major.Major}
+            </Select>
           ))}
         </Select>
 

@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LuStethoscope } from "react-icons/lu";
 import { FaRegAddressBook, FaHome } from "react-icons/fa";
-import { IoIosArrowDown } from "react-icons/io";
 import { GiSunrise, GiSun, GiSunset } from "react-icons/gi";
 import { Button } from "flowbite-react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -14,6 +13,9 @@ import {
   getRatingDoctor
 } from "../../redux-toolkit/appointmentSlice";
 import { fetchProfile } from "../../redux-toolkit/authSlice";
+import { yellow,grey } from '@mui/material/colors';
+import StarIcon from '@mui/icons-material/Star';
+
 const BookingDoctor = () => {
   const check = JSON.parse(localStorage.getItem("check"));
   const dateFormat = "DD/MM/YYYY";
@@ -27,17 +29,12 @@ const BookingDoctor = () => {
   const { service, ScheduleData, AppointmentData,ratingDoctor, error, loading, updated } =
     useSelector((state) => state.appointment);
   const { currentUser, detailDoctor } = useSelector((state) => state.user);
-  // const ScheduleData = schedule?.ScheduleData;
-  // const AppointmentData = schedule?.AppointmentData;
-  console.log(detailDoctor)
   const [index, setIndex] = useState("");
   const [estimatedTime, setEstimatedTime] = useState("");
-  const [currentService, setCurrentService] = useState("");
   const [step, setStep] = useState(0);
   const [step1, setStep1] = useState(0);
   const [step2, setStep2] = useState(0);
   const [step3, setStep3] = useState(0);
-
   const [currenTime1, setCurrenTime1] = useState("");
   const [currenTime2, setCurrenTime2] = useState("");
   const [currenTime3, setCurrenTime3] = useState("");
@@ -46,6 +43,10 @@ const BookingDoctor = () => {
   const [time3, setTime3] = useState([]);
   const [actived, setActived] = useState();
   const [data, setData] = useState({});
+  const [rating,setRating] = useState([0,0,0,0,0])
+  const [count ,setCount] = useState(0)
+  const [star,setStar] = useState(0)
+  const max = Math.max(...rating);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const { doctorId } = useParams();
@@ -87,12 +88,18 @@ const BookingDoctor = () => {
     dispatch(getRatingDoctor(Id))
     setData({ ...data, DateBooking: today });
   }, []);
+  console.log(detailDoctor)
   useEffect(() => {
     if (!data?.Service && ScheduleData && service.length > 0) {
       if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
         let first = parse(currenTime1) + parse(service[0]?.EstimatedTime);
         if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
-          if(parse(currenTime1) > parse(date.toLocaleTimeString())) {
+          if(data.DateBooking === today){
+            if(parse(currenTime1) > parse(date.toLocaleTimeString())) {
+              setTime1([...time1, { id: step1, value: currenTime1 }]);
+            }
+          }
+          else{
             setTime1([...time1, { id: step1, value: currenTime1 }]);
           }
           setStep1(step1 + 1);
@@ -134,7 +141,12 @@ const BookingDoctor = () => {
         let second = parse(currenTime2) + parse(service[0]?.EstimatedTime);
 
         if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
-          if(parse(currenTime2) > parse(date.toLocaleTimeString())) {
+          if(data.DateBooking === today){
+            if(parse(currenTime2) > parse(date.toLocaleTimeString())) {
+              setTime2([...time2, { id: step2, value: currenTime2 }]);
+            }
+          }
+          else{
             setTime2([...time2, { id: step2, value: currenTime2 }]);
           }
           setStep2(step2 + 1);
@@ -175,6 +187,14 @@ const BookingDoctor = () => {
           if(parse(currenTime3) > parse(date.toLocaleTimeString())) {
             setTime3([...time3, { id: step3, value: currenTime3 }]);
           }
+          if(data.DateBooking === today){
+            if(parse(currenTime3) > parse(date.toLocaleTimeString())) {
+              setTime3([...time3, { id: step3, value: currenTime3 }]);
+            }
+          }
+          else{
+            setTime3([...time3, { id: step3, value: currenTime3 }]);
+          }
           setStep3(step3 + 1);
           setTimeout(
             setCurrenTime3(addTime(currenTime3, service[0]?.EstimatedTime)),
@@ -210,9 +230,13 @@ const BookingDoctor = () => {
     } else if (data?.Service && ScheduleData && service.length > 0) {
       if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
         let first = parse(currenTime1) + parse(estimatedTime);
-
         if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
-          if(parse(currenTime1) > parse(date.toLocaleTimeString())) {
+          if(data.DateBooking === today){
+            if(parse(currenTime1) > parse(date.toLocaleTimeString())) {
+              setTime1([...time1, { id: step1, value: currenTime1 }]);
+            }
+          }
+          else{
             setTime1([...time1, { id: step1, value: currenTime1 }]);
           }
           setStep1(step1 + 1);
@@ -249,9 +273,13 @@ const BookingDoctor = () => {
         currenTime2 !== undefined
       ) {
         let second = parse(currenTime2) + parse(estimatedTime);
-
         if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
-          if(parse(currenTime2) > parse(date.toLocaleTimeString())) {
+          if(data.DateBooking === today){
+            if(parse(currenTime2) > parse(date.toLocaleTimeString())) {
+              setTime2([...time2, { id: step2, value: currenTime2 }]);
+            }
+          }
+          else{
             setTime2([...time2, { id: step2, value: currenTime2 }]);
           }
           setStep2(step2 + 1);
@@ -287,7 +315,12 @@ const BookingDoctor = () => {
         let third = parse(currenTime3) + parse(estimatedTime);
 
         if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
-          if(parse(currenTime3) > parse(date.toLocaleTimeString())) {
+          if(data.DateBooking === today){
+            if(parse(currenTime3) > parse(date.toLocaleTimeString())) {
+              setTime3([...time3, { id: step3, value: currenTime3 }]);
+            }
+          }
+          else{
             setTime3([...time3, { id: step3, value: currenTime3 }]);
           }
           setStep3(step3 + 1);
@@ -343,11 +376,24 @@ const BookingDoctor = () => {
     }
     changeData();
   };
-  console.log(detailDoctor)
   useEffect(() => {
     changeData();
   }, [ScheduleData]);
 
+  useEffect(()=>{
+    let rate = [];
+    let count = 0;
+    if(ratingDoctor){
+      for(let i=ratingDoctor.length-1;i>=0;i--){
+        rate.push(ratingDoctor[i].Rate.length);
+        count += ratingDoctor[i].Rate.length
+        if(i === ratingDoctor.length - 1){
+          setRating(rate)
+          setCount(count)
+        }
+      }
+    }
+  },[ratingDoctor, Id]);
   const handleDatePickerChange = (date, dateString) => {
     setData({ ...data, DateBooking: dateString });
     dispatch(fetchSchedule({ ...body, DateBooking: dateString }));
@@ -430,7 +476,7 @@ const BookingDoctor = () => {
             </div>
                   
           </div>
-          <div className="w-full bg-white rounded-lg shadow-lg p-6">
+          <div className="w-full bg-white rounded-lg shadow-lg p-10">
             <p className="text-3xl font-medium text-slate-700 mb-5">
               Giới thiệu
             </p>
@@ -439,40 +485,92 @@ const BookingDoctor = () => {
               dangerouslySetInnerHTML={{ __html: detailDoctor[0]?.Introduce }}
             ></div>
           </div>
-          <div className="w-full bg-white rounded-lg shadow-lg p-6">
+          
+          <div className="text-base mb-8 text-slate-600 bg-white p-10 rounded-xl shadow-xl shadow-violet-200">
             <p className="text-3xl font-medium text-slate-700 mb-5">
               Phản hồi từ bệnh nhân
             </p>
-            <p className="italic text-slate-600 mb-5">
+            <p className="italic mb-5 text-slate-500">
               Phản hồi từ bệnh nhân đã thực sự được khám từ bác sĩ
             </p>
-            {ratingDoctor?.map((item) =>
-          <div className="mb-5">
-            <div className="flex gap-3 mb-3">
-              <div className="rounded-full h-12 w-12 bg-slate-200 flex items-center justify-center">
-                <img
-                  className="rounded-full h-10 w-10 object-cover"
-                  alt=""
-                  src={item.Avt || require("../../Images/pattientavt.png")}
-                ></img>
-              </div>
-              <div className="flex flex-col gap-1">
-                <div className="text-lg font-medium text-slate-700 mb-1">
-                  {item.FullName}
-                </div>
-                <Rate className="w-full" 
-                      defaultValue={item.Star}
-                      style={{ fontSize: 18}}
-                      disabled={true}
-                      >
-                </Rate>
-                <p className="text-lg text-slate-600 mt-2">{item.Comment}</p>
-              </div>
+            <div className="w-[50%]">
             </div>
-            <hr className="w-full border-slate-200 rounded-lg my-2"></hr>
-          </div>
-          )}
-          </div>
+            {ratingDoctor.length > 0 &&
+              <div className="flex items-center gap-3 mb-8">
+                {rating.map((item,index) => (
+                <div className="flex gap-1 items-center justify-center w-20 h-8 bg-white hover:bg-slate-100 rounded-2xl shadow-md cursor-pointer"
+                    onClick={()=>{setStar(index+1)}}>
+                {index + 1}
+                <StarIcon className="text-[#fdd835] h-4" />
+                </div>
+                ))}
+              </div>
+            }
+            {star === 0 ?
+            ratingDoctor?.map((item) => (
+              item.Rate.map((rate) => 
+                <div className="mb-5">
+                  <div className="flex gap-3 mb-3">
+                    <div className="rounded-full h-12 w-12 bg-slate-200 flex items-center justify-center">
+                      <img
+                        className="rounded-full h-10 w-10 object-cover"
+                        alt=""
+                        src={rate.Avt || require("../../Images/pattientavt.png")}
+                      ></img>
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <div className="text-lg font-medium text-slate-700 mb-1">
+                        {rate.FullName}
+                      </div>
+                      <Rate className="w-full" 
+                            defaultValue={item.Star}
+                            style={{ fontSize: 18}}
+                            disabled={true}
+                            >
+                      </Rate>
+                      <p className="text-lg text-slate-600 mt-2">{rate.Comment}</p>
+                    </div>
+                  </div>
+                  <hr className="w-full border-slate-200 rounded-lg my-2"></hr>
+                </div>
+            )))
+            : 
+            ratingDoctor[star-1].Rate.length > 0
+            ?
+            ratingDoctor?.map((item) => (
+              item.Star === star &&
+              item.Rate.map((rate) => 
+                <div className="mb-5">
+                  <div>
+                    <div className="flex gap-3 mb-3">
+                      <div className="rounded-full h-12 w-12 bg-slate-200 flex items-center justify-center">
+                        <img
+                          className="rounded-full h-10 w-10 object-cover"
+                          alt=""
+                          src={rate.Avt || require("../../Images/pattientavt.png")}
+                        ></img>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <div className="text-lg font-medium text-slate-700 mb-1">
+                          {rate.FullName}
+                        </div>
+                        <Rate className="w-full" 
+                              defaultValue={item.Star}
+                              style={{ fontSize: 18}}
+                              disabled={true}
+                              >
+                        </Rate>
+                        <p className="text-lg text-slate-600 mt-2">{rate.Comment}</p>
+                      </div>
+                    </div>
+                    <hr className="w-full border-slate-200 rounded-lg my-2"></hr>
+                  </div>
+                </div>
+            )))
+            :
+            <div className="text-lg text-slate-800 italic font-medium">Bác sĩ chưa có đánh giá {star} sao</div>
+            }
+        </div>
         </div>
         <div className="lg:w-[40%] flex flex-col gap-y-5 max-lg:mt-10">
           <div className="w-full bg-white rounded-lg shadow-xl p-6">

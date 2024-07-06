@@ -4,19 +4,23 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { logout } from "../redux-toolkit/authSlice";
 import { persistor } from "../redux-toolkit/configureStore";
+import { MdManageSearch, MdOutlinePostAdd } from "react-icons/md";
+import { AiOutlineSchedule } from "react-icons/ai";
+import { GrSchedule } from "react-icons/gr";
+import { FaRegUserCircle } from "react-icons/fa";
+import { BsPostcard } from "react-icons/bs";
+import { FiLogOut } from "react-icons/fi";
 
-const DoctorSidebar = ({ param }) => {
-  const { currentUser, user, auth } = useSelector((state) => state.user);
-  const Navigate = useNavigate();
+const DoctorSidebar = ({param}) => {
   const dispatch = useDispatch();
   const [actived, setActived] = useState("");
   useEffect(() => {
     if (param === "manage-post" || param === "create-post") {
       setActived("blog");
-    } else {
-      setActived(param);
     }
-  }, []);
+    else
+      setActived(param)
+  }, [param]);
   const handleLogout = () => {
     dispatch(logout());
     setTimeout(() => {
@@ -38,43 +42,42 @@ const DoctorSidebar = ({ param }) => {
         </div>
         <div className="max-lg:overflow-x-auto max-lg:w-[100vw]">
           <div className="flex lg:flex-col max-lg:w-[96%] gap-1 font-medium">
-            {/* {currentUser && currentUser.isdoctor && ( */}
             <Link
-              onClick={() => {
-                setActived("schedule");
-              }}
               className={` ${
-                actived === "schedule" &&
+                param === "profile" && actived === "profile" &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } max-lg:text-sm w-48 h-11 bg-white rounded-lg shadow-lg flex items-center justify-center mb-3`}
-              to="/doctor/schedule"
-            >
-              Schedule
-            </Link>
-            <Link
-              onClick={() => {
-                setActived("appointment");
-              }}
-              className={` ${
-                actived === "appointment" &&
-                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } max-lg:text-sm w-48 h-11 bg-white rounded-lg shadow-lg flex items-center justify-center mb-3`}
-              to="/doctor/appointment"
-            >
-              Appointment
-            </Link>
-            <Link
-              onClick={() => {
-                setActived("profile");
-              }}
-              className={` ${
-                actived === "profile" &&
-                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } max-lg:text-sm w-48 h-11 bg-white rounded-lg shadow-lg flex items-center justify-center mb-3`}
+              } max-lg:text-sm w-48 h-11 bg-white rounded-lg shadow-lg flex items-center px-4 mb-3`}
               to="/doctor/profile"
             >
-              Profile
+              <div className="flex gap-2 items-center">
+                <FaRegUserCircle className="h-5 w-5"></FaRegUserCircle>
+                <p>Profile</p>
+              </div>
             </Link>
+            <Link
+              className={` ${
+                param === "schedule" && actived === "schedule" &&
+                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
+              } max-lg:text-sm w-48 h-11 bg-white rounded-lg shadow-lg flex items-center px-4 mb-3`}
+              to="/doctor/schedule"
+            >
+              <div className="flex gap-2 items-center">
+                <GrSchedule className="h-5 w-5"></GrSchedule>
+                <p>Schedule</p>
+              </div>
+            </Link>
+            <Link
+              className={` ${
+                param === "appointment" && actived === "appointment" &&
+                "bg-gradient-to-r from-green-400 to-teal-500 text-white"
+              } max-lg:text-sm w-48 h-11 bg-white rounded-lg shadow-lg flex items-center px-4 mb-3`}
+              to="/doctor/appointment"
+            >
+              <div className="flex gap-2 items-center">
+                <AiOutlineSchedule className="h-5 w-5"></AiOutlineSchedule>
+                <p>Appointment</p>
+              </div>
+            </Link>            
             <div
               onClick={() => {
                 setActived("blog");
@@ -84,39 +87,52 @@ const DoctorSidebar = ({ param }) => {
                   param === "manage-post" ||
                   param === "create-post") &&
                 "bg-gradient-to-r from-green-400 to-teal-500 text-white"
-              } ${actived === "blog" && "max-lg:hidden"} max-lg:text-sm w-48 h-11 bg-white rounded-lg shadow-lg flex items-center justify-center  cursor-pointer`}
+              } ${actived === "blog" && "max-lg:hidden"} max-lg:text-sm w-48 h-11 bg-white rounded-lg shadow-lg flex items-center px-4  cursor-pointer`}
             >
-              Blog
+              <div className="flex gap-2 items-center">
+                <BsPostcard className="h-5 w-5"></BsPostcard>
+                <p>Blog</p>
+              </div>
             </div>
             {actived === "blog" && (
               <div className="transition-all duration-500 max-lg:flex max-lg:gap-2">
                 <Link
                   className={` ${
-                    param === "manage-post" &&
+                    param === "create-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
-                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-lg flex items-center justify-center mb-1`}
-                  to="/doctor/manage-post"
+                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-lg flex items-center px-4 `}
+                  to="/doctor/create-post"
                 >
-                  <div>Manage Blog</div>
+                  <div className="flex gap-2 items-center">
+                    <MdOutlinePostAdd className="h-5 w-5"></MdOutlinePostAdd>
+                    <p>Create Blog</p>
+                  </div>
                 </Link>
                 <Link
                   className={` ${
-                    param === "create-post" &&
+                    param === "manage-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
-                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-lg flex items-center justify-center `}
-                  to="/doctor/create-post"
+                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-lg flex items-center px-4 mb-1`}
+                  to="/doctor/manage-post"
                 >
-                  <div>Create Blog</div>
+                  <div className="flex gap-2 items-center">
+                    <MdManageSearch className="h-5 w-5"></MdManageSearch>
+                    <p>Manage Blog</p>
+                  </div>
                 </Link>
+                
               </div>
             )}
             <Link
               onClick={handleLogout}
               to="/doctor/login"
               className="
-              max-lg:hidden w-48 h-11 bg-white rounded-lg cursor-pointer shadow-lg flex items-center justify-center mt-3 mb-10 cursor-pointet"
+              max-lg:hidden w-48 h-11 bg-white rounded-lg cursor-pointer shadow-lg flex items-center px-4 mt-3 mb-10 cursor-pointet"
             >
-              Log out
+              <div className="flex gap-2 items-center">
+                <FiLogOut className="h-5 w-5"></FiLogOut>
+                <p>Log out</p>
+              </div> 
             </Link>
           </div>
         </div>

@@ -1,21 +1,24 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaRegUserCircle, FaRegCalendarPlus, FaHome } from "react-icons/fa";
-import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
+import { FaRegCalendarPlus, FaHome } from "react-icons/fa";
 import { RiServiceFill } from "react-icons/ri";
 import { BsCash } from "react-icons/bs";
-import { FiLogOut } from "react-icons/fi";
 import { FaPhoneAlt } from "react-icons/fa";
 import { TbFileDescription } from "react-icons/tb";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { Modal, Table, Button } from "flowbite-react";
-import { Rate,Input  } from 'antd';
-
+import { MdOutlineNoteAlt } from "react-icons/md";
+import { Modal, Button } from "flowbite-react";
+import { Rate, Input, Badge, Calendar } from 'antd';
+import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointment,cancelAppointment, ratingDoctor,
-  updateRatingDoctor
+  updateRatingDoctor,
+  acceptNoteAppointment,
+  cancelNoteAppointment,
+  createAppointment,
 } from "../../redux-toolkit/appointmentSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { getAllNotification } from "../../redux-toolkit/authSlice";
+import SelectForm from "../../components/SelectForm";
 
 const { TextArea } = Input;
 const description = ['Quá tệ', 'Chưa tốt', 'Bình thường', 'Tốt', 'Tuyệt vời'];
@@ -23,12 +26,10 @@ const description = ['Quá tệ', 'Chưa tốt', 'Bình thường', 'Tốt', 'Tu
 const Appointment = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
-  const { AppointmentData, error, loading } = useSelector((state) => state.appointment);
+  const { AppointmentData, healthRecordData, error, loading } = useSelector((state) => state.appointment);
   const { currentUser,allNoti} = useSelector((state) => state.user);  
-
   const [showModal, setShowModal] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
-  const [actived, setActived] = useState(2);
   const [passed, setPassed] = useState(1);
   const [idAppointment, setIdAppointment] = useState();
   const [idDoctor, setIdDoctor] = useState();
@@ -40,6 +41,7 @@ const Appointment = () => {
   useEffect(() => {
     dispatch(fetchAppointment());
   }, []);
+  console.log(healthRecordData, AppointmentData)
   useEffect(() => {
     if (currentUser) {
       if (currentUser.authentication != 1) Navigate("/");
@@ -47,10 +49,9 @@ const Appointment = () => {
   }, [currentUser]);
   const handleRatingDoctor = () => {
     const data = {
-      idDoctor: idDoctor,
+      idAppointment,
       Star: rating,
       Comment: comment,
-      Patient: currentUser.FullName,
     }
     dispatch(ratingDoctor(data)).then(() => {
       setComment("")
@@ -62,13 +63,10 @@ const Appointment = () => {
 
   const handleUpdateRatingDoctor = ({id,iddoctor}) => {
     const data = {
-      id,
-      idDoctor: iddoctor,
+      idAppointment: id,
       Star: rating,
       Comment: comment,
-      Patient: currentUser.FullName,
     }
-    console.log(data)
     dispatch(updateRatingDoctor(data)).then(() => {
       setComment("")
       setRating(0)
@@ -84,6 +82,26 @@ const Appointment = () => {
     });
     setShowModal(false);
   };
+  const handleAcceptNoteAppointment = ({idAppointment,idService,idDoctor,Price,DateBooking,TimeBooking,Information}) => {
+    const body = {
+      idService,
+      idDoctor,
+      Price,
+      DateBooking,
+      TimeBooking,
+      Information,
+    };
+    dispatch(createAppointment(body))
+    dispatch(getAllNotification())
+    dispatch(acceptNoteAppointment({idAppointment})).then(() => {
+      dispatch(fetchAppointment());
+    });
+  };
+  const handleCancelNoteAppointment = (idAppointment) => {
+    dispatch(cancelNoteAppointment({idAppointment})).then(() => {
+      dispatch(fetchAppointment());
+    });
+  };
   let appointment = [];
   for (let i = 0; i < AppointmentData?.length; i++) {
     if (AppointmentData[i].Status === passed)
@@ -93,43 +111,46 @@ const Appointment = () => {
     if (AppointmentData[i].Status === 3 && passed === 2)
       appointment.push({ ...AppointmentData[i] });
   }
+
+  const getListData = (value) => {
+    let listData = [];
+    for (let i = 0; i < AppointmentData?.length; i++) {
+      let db = AppointmentData[i]?.DateBooking?.split("/");
+      if (
+        value.date() == db[0] &&
+        value.month() + 1 == db[1] &&
+        value.year() == db[2]
+      ) {
+        listData = [
+          ...listData,
+          {
+            type: AppointmentData[i].Type,
+            content: AppointmentData[i].TimeBooking + " - " + AppointmentData[i].Service,
+          },
+        ];
+      }
+    }
+    return listData || [];
+  };
+  const dateCellRender = (value) => {
+    const listData = getListData(value);
+    return (
+      <ul className="events">
+        {listData.map((item) => (
+          <li key={item.content}>
+            <Badge status={item.type} text={item.content} />
+          </li>
+        ))}
+      </ul>
+    );
+  };
+  const cellRender = (current, info) => {
+    if (info.type === "date") return dateCellRender(current);
+    return info.originNode;
+  };
   return (
-    <div className="bg-white pt-[90px] max-lg:pt-[80px] min-h-screen">
-      {currentUser?.authentication == 1 && 
-      <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
-        <div className="flex flex-col lg:gap-1 my-7 lg:w-1/5 sm:max-lg:w-[30%] lg:h-48 bg-white shadow-lg shadow-violet-200 rounded-lg">
-          <div
-            onClick={() => setActived(1)}
-            className={` ${
-              actived === 1 && "bg-[#14b8a6] text-white"
-            } flex  gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer`}
-          >
-            <FaRegUserCircle className="h-7 w-7"></FaRegUserCircle>
-            <Link to="/patient/profile" className="block py-2 w-full">
-              Hồ sơ
-            </Link>
-          </div>
-          <div
-            className={` ${
-              actived === 2 && "bg-[#14b8a6] text-white"
-            } flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer`}
-          >
-            <LuCalendarDays className="h-7 w-7"></LuCalendarDays>
-            <Link to="/patient/appointment" className="block py-2 w-full">
-              Lịch khám của tôi
-            </Link>
-          </div>
-          <div
-            className="max-lg:hidden flex gap-4 account-link rounded-lg items-center hover:text-white px-4 py-2 cursor-pointer"
-            // onClick={handleLogout}
-          >
-            <FiLogOut className="h-7 w-7"></FiLogOut>
-            <a href="/" className="block py-2 w-full">
-              Đăng xuất
-            </a>
-          </div>
-        </div>
-        <div className="my-7 lg:w-4/5 max-lg:h-full max-lg:px-3 rounded-xl bg-white shadow-lg text-slate-600 shadow-violet-200 py-5 lg:px-8">
+    <div className="">
+        <div className="my-7 lg:w-full max-lg:h-full max-lg:px-3 rounded-xl bg-white shadow-lg text-slate-600 shadow-violet-200 py-5 lg:px-8">
           <div className="mb-5 h-10 grid grid-cols-5 max-lg:grid-cols-10 gap-3 font-semibold">
             <p className="text-2xl lg:col-span-2 max-lg:col-start-1 max-lg:col-span-4">Lịch khám</p>
             <div
@@ -178,103 +199,160 @@ const Appointment = () => {
                     className="h-14 w-14 rounded-full object-contain border border-lime-200"
                     alt=""
                     src={appointment.Avt !== null ? appointment.Avt : require("../../Images/pattientavt.png")}
-                  ></img>
-                  
+                  ></img>              
                   <div className="w-[90%]">
+                    <div className="relative flex items-center">
                     <p className="font-medium lg:text-lg max-lg:mt-3 max-lg:text-base text-gray-600 mb-3">
                       {appointment.FirstName + " " + appointment.LastName}
                     </p>
+                    {appointment.Status === 2 && appointment.Star === null && 
+                      <Button
+                        outline 
+                        size="xs"
+                        gradientDuoTone="tealToLime"
+                        className="w-28 absolute right-0"
+                        onClick={() => {
+                          setShowRatingModal(true);
+                          setIdAppointment(appointment.id);
+                        }}
+                      >
+                        Đánh giá
+                      </Button>
+                    }
+                    </div>
                     <div className="lg:flex w-full gap-10 mb-3">
-                      <div className="flex gap-3 items-center max-lg:mb-3 lg:w-1/2">
-                        <RiServiceFill className="h-5 w-5 text-red-500"></RiServiceFill>
+                      <div className="flex gap-2 items-center max-lg:mb-3 lg:w-1/2">
+                        <RiServiceFill className="h-5 min-w-5 text-red-500"></RiServiceFill>
                         <p>Dịch vụ:</p>
                         <p className="font-medium">{appointment.Service}</p>
                       </div>
-                      <div className="flex gap-3 items-center lg:w-1/2">
-                        <BsCash className="h-5 w-5 text-green-400"></BsCash>
+                      <div className="flex gap-2 items-center lg:w-1/2">
+                        <BsCash className="h-5 min-w-5 text-green-400"></BsCash>
                         <p>Giá dịch vụ:</p>
                         <p className="font-medium text-green-400">{appointment.Price} đ</p>
                       </div>
                     </div>
                     
                     <div className="lg:flex w-full gap-10 mb-3">
-                      <div className="flex gap-3 items-center max-lg:mb-3 lg:w-1/2">
-                        <FaHome className="h-5 w-5 text-teal-600" />
+                      <div className="flex gap-2 items-center max-lg:mb-3 lg:w-1/2">
+                        <FaHome className="h-5 min-w-5 text-teal-600" />
                         <p>Nơi khám:</p>
                         <div className="font-medium">
                           Khám tại nhà
                         </div>
                       </div>
-                      <div className="flex gap-3 items-center lg:w-1/2">
-                        <FaPhoneAlt className="h-5 w-5 text-teal-600" />
+                      <div className="flex gap-2 items-center lg:w-1/2">
+                        <FaPhoneAlt className="h-4 min-w-5 text-teal-600" />
                         <p>Số điện thoại:</p>
                         <div className="font-medium text-teal-500">{appointment.Phone}</div>
                       </div>
                     </div>
-                    <div className="flex gap-3 items-center mb-3">
-                        <TbFileDescription className="h-5 w-5 text-teal-600" />
-                        <p>Triệu chứng:</p>
-                        <div className="font-medium text-red-400">
+                    <div className="flex gap-2 items-center mb-3">
+                        <TbFileDescription className="h-5 min-w-5 text-teal-600" />
+                        <p className="min-w-fit">Triệu chứng:</p>
+                        <div className="font-medium text-red-500">
                           {appointment.Information}
                         </div>
+                    </div>
+                    {appointment?.Advice &&
+                      <div className="flex gap-2 mb-3">
+                        <MdOutlineNoteAlt className="h-5 mt-1 min-w-5 text-teal-600" />
+                        <p className="font-medium min-w-fit">Dặn dò của bác sĩ:</p>
+                        <div className="font-medium italic text-red-500">
+                          {appointment.Advice}
+                        </div>                  
                       </div>
-                  </div>
+                    }
+                  </div>     
                 </div>
-                <hr className="w-[98%] mx-auto border-[1px] border-lime-100 rounded-lg mb-5"></hr>
                 {appointment.Status === 2 && (
-                  <div>
-                  {appointment.Star === null ?
-                  <Button
-                    className="w-40 mx-auto rounded-2xl"
-                    gradientDuoTone="greenToBlue"
-                    onClick={() => {
-                      setShowRatingModal(true);
-                      setIdAppointment(appointment.id);
-                      setIdDoctor(appointment.idDoctor)
-                    }}
-                  >
-                    Đánh giá
-                  </Button>
-                  :
-                  <div className="relative">
-                    {editRating === appointment.id ?
-                    <div className="flex flex-col items-center justify-center">
-                      <Rate className="w-52 flex gap-2"
-                            value={rating}
-                            style={{ fontSize: 28}}
-                            tooltips={description}
-                            onChange={(value)=>{setRating(value)}}>
-                      </Rate>
-                      <Input
-                        maxLength={100}
-                        value={comment}
-                        onChange={(e) =>{setComment(e.target.value)}}
-                        className="p-3 text-slate-600 mt-2 h-10 w-3/4 rounded-lg"
-                      />
-                      <div className="flex absolute top-0 right-0 text-sm ">
-                      <p className="cursor-pointer text-center w-16 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
-                         onClick={()=>{setEditRating(0);setComment("");setRating(0)}}>Hủy
-                      </p>
-                      <p className="cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
-                         onClick={()=>{handleUpdateRatingDoctor({id: appointment.rateid, iddoctor: appointment.idDoctor})}}>Xác nhận
-                      </p>
+                  <div className="flex flex-col gap-4">
+                    {appointment.NoteRecord !== null && appointment.ReExaminationDate !== null &&
+                      <hr className="w-[98%] mx-auto border-[1px] border-lime-50 rounded-lg"></hr>
+                    }
+                    <div className="grid grid-cols-2 gap-5">
+                      {appointment.NoteRecord !== null && 
+                        <div className="flex flex-col col-start-1 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                          <p className="font-medium text-black text-lg w-1/2">Bệnh án</p>   
+                          <div className="flex gap-3">
+                            <div className="flex flex-col gap-1 w-full">
+                              <p>Chẩn đoán: <span className="text-teal-600 font-medium">{appointment.Record}</span></p>
+                              <p>Mô tả: <span className="text-teal-600 font-medium">{appointment.NoteRecord}</span></p>
+                            </div>
+                          </div>
+                        </div>
+                      }
+                      {appointment.ReExaminationDate !== null &&
+                        <div className="w-full flex flex-col self-end gap-3">
+                          <div className="flex flex-col col-start-2 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                            <div className="flex items-center">
+                              <p className="font-medium text-black text-lg w-1/2">Lịch hẹn tái khám từ bác sĩ</p>
+                              {appointment.NoteStatus === 1 && 
+                                <div className="w-1/2 mr-4 flex justify-end text-green-500 font-medium">Đã xác nhận</div>
+                              }
+                              {appointment.NoteStatus === 2 && 
+                                <div className="w-1/2 mr-4 flex justify-end text-rose-500 font-medium">Đã hủy</div>
+                              }
+                            </div>
+                            <div className="flex gap-3">
+                              <div className="flex flex-col gap-1 w-3/4">
+                                <p>Ngày tái khám: <span className="text-green-500 font-medium">{appointment.ReExaminationDate.slice(0,10)}</span></p>
+                                <p>Thời gian: <span className="text-green-500 font-medium">{appointment.ReExaminationDate.slice(11,16)}</span></p>
+                                <p>Chi phí dự kiến: <span className="text-green-500 font-medium">{appointment.ReExaminationPrice} đ</span></p>
+                              </div>
+                              {(appointment.NoteStatus !== 1 && appointment.NoteStatus !== 2) &&
+                              <div className="flex flex-col gap-3 w-1/4">
+                                <Button className="h-8 w-24 p-0" size="sm" gradientDuoTone="tealToLime"
+                                onClick={()=>{handleAcceptNoteAppointment({idAppointment: appointment.id,idService: appointment.idService,idDoctor: appointment.idDoctor, Price: appointment.ReExaminationPrice,DateBooking: appointment.ReExaminationDate.slice(0,10),TimeBooking: appointment.ReExaminationDate.slice(11,16),Information: appointment.Information})}}>Đồng ý</Button>
+                                <Button className="h-8 w-24 p-0" size="sm" gradientDuoTone="pinkToOrange" onClick={()=>{handleCancelNoteAppointment(appointment.id)}}>Từ chối</Button>
+                              </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      }
+                    </div>
+                    {appointment.Star !== null &&
+                    <div className="relative">
+                      <hr className="w-[98%] mx-auto mb-3 border-[1px] border-lime-50 rounded-lg"></hr>
+                      {editRating === appointment.id ?
+                      <div className="flex flex-col items-center justify-center">
+                        <Rate className="w-fit flex gap-2"
+                              value={rating}
+                              style={{ fontSize: 24}}
+                              tooltips={description}
+                              onChange={(value)=>{setRating(value)}}>
+                        </Rate>
+                        <Input
+                          maxLength={100}
+                          value={comment}
+                          onChange={(e) =>{setComment(e.target.value)}}
+                          className="p-3 text-slate-600 mt-2 h-10 w-3/4 rounded-lg"
+                        />
+                        <div className="flex absolute top-0 right-0 text-sm ">
+                        <p className="cursor-pointer text-center w-16 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
+                          onClick={()=>{setEditRating(0);setComment("");setRating(0)}}>Hủy
+                        </p>
+                        <p className="cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
+                          onClick={()=>{handleUpdateRatingDoctor({id: appointment.id})}}>Xác nhận
+                        </p>
+                        </div>
                       </div>
+                      :
+                      <div className="flex flex-col items-center justify-center">
+                        <Rate className="w-fit flex gap-2"
+                              value={appointment.Star}
+                              style={{ fontSize: 24}}
+                              disabled={true}
+                        ></Rate>
+                        <p className="text-lg text-slate-600 mt-2">{appointment.Comment}</p>
+                        <p className="absolute top-3 right-0 text-sm cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
+                          onClick={()=>{setEditRating(appointment.id);setComment(appointment.Comment);setRating(appointment.Star)}}>Chỉnh sửa
+                        </p>
+                      </div>
+                      } 
                     </div>
-                    :
-                    <div className="flex flex-col items-center justify-center">
-                      <Rate className="w-52 flex gap-2"
-                            value={appointment.Star}
-                            style={{ fontSize: 28}}
-                            disabled={true}
-                      ></Rate>
-                      <p className="text-lg text-slate-600 mt-2">{appointment.Comment}</p>
-                      <p className="absolute top-0 right-0 text-sm cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
-                         onClick={()=>{setEditRating(appointment.id);setComment(appointment.Comment);setRating(appointment.Star)}}>Chỉnh sửa
-                      </p>
-                    </div>
-                    } 
-                  </div>
-                  }
+                    }
                   </div>
                 )}
                 {appointment.Status !== 2 && appointment.Status !== 3 && (
@@ -298,9 +376,13 @@ const Appointment = () => {
               Bạn chưa có cuộc hẹn mới
             </p>
           )}
+          <div>
+            <Calendar
+              className="shadow-lg shadow-blue-300 p-3 rounded-lg border font-medium"
+              cellRender={cellRender}
+            />
+          </div>
         </div>
-      </div>
-      } 
       <Modal
         show={showModal}
         onClose={() => setShowModal(false)}
@@ -356,7 +438,7 @@ const Appointment = () => {
         ></img>
         </div> :     
         <div>
-          <div className="h-80 text-center bg-slate-100 rounded-lg p-5">
+          <div className="h-80 text-center bg-slate-50 rounded-lg p-5">
             <h3 className="p-5 text-lg text-gray-500 dark:text-gray-400">
               Bạn hài lòng về dịch vụ này chứ?
             </h3>
@@ -376,15 +458,15 @@ const Appointment = () => {
               }}
             />
             <Button
-                disabled={rating===0}
-                className="w-3/4 h-11 mx-auto"
-                gradientDuoTone="purpleToPink"
-                onClick={() => {
-                  handleRatingDoctor();
-                }}
-              >
-                Gửi
-              </Button>
+              disabled={rating===0}
+              className="w-3/4 h-11 mx-auto"
+              gradientDuoTone="purpleToPink"
+              onClick={() => {
+                handleRatingDoctor();
+              }}
+            >
+              Gửi
+            </Button>
           </div>
           <Button
             className="mt-3 w-full mx-auto h-11"

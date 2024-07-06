@@ -40,7 +40,12 @@ const AdminLogin = () => {
   return (
     <div className="md:pt-[150px] max-md:pt-[80px] md:py-20 mb-40 w-full">
       {!currentUser ? (
-        <div className="shadow-lg bg-gradient-to-r p-5 rounded-xl from-lime-50 to-white lg:w-1/3 sm:max-lg:w-1/2 max-sm:w-2/3 lg:h-80 mx-auto max-sm:mt-4">
+        <div className="shadow-lg bg-gradient-to-r p-5 rounded-xl from-lime-50 to-white lg:w-1/3 sm:max-lg:w-1/2 max-sm:w-2/3 lg:h-80 mx-auto max-sm:mt-4"
+             onKeyDown={(e) => { 
+                if (e.key === "Enter") 
+                  handleLogin(); 
+             }} 
+        >
           <div className="text-center text-xl font-medium my-2 opacity-70">
             Đăng nhập bằng tài khoản
           </div>

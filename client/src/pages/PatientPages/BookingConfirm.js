@@ -83,12 +83,12 @@ const BookingConfirm = () => {
             <LuStethoscope className="text-teal-600" />
             <div className="text-slate-600">{detailDoctor[0]?.Major}</div>
           </div>
-          <div className="flex gap-3 items-center text-lg mb-2">
+          {/* <div className="flex gap-3 items-center text-lg mb-2">
             <FaRegAddressBook className="text-teal-600" />
             <div className="text-slate-600">
               1 Nơ Trang Long, Bình Thạnh, Hồ Chí Minh
             </div>
-          </div>
+          </div> */}
           <div className="flex gap-3 items-center text-lg mb-3">
             <FaHome className="text-teal-600" />
             <div className="text-slate-600">Khám tại nhà</div>

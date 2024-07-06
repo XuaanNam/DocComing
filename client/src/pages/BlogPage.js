@@ -15,7 +15,7 @@ const BlogPage = () => {
   const { currentUser, auth, user } = useSelector(
     (state) => state.user
   );
-  const { detailPost, comment, error, loading } = useSelector((state) => state.post);
+  const { detailPost,SimilarDoctor, comment, error, loading } = useSelector((state) => state.post);
   const { blogId } = useParams();
   const Navigate = useNavigate();
   const dispatch = useDispatch();
@@ -26,8 +26,11 @@ const BlogPage = () => {
   const [idComment, setIdComment] = useState(0)
   const [update,setUpdate] = useState("")
   const [status,setStatus] = useState("CMT")
-  const [reply, setReply] = useState(false);
-
+  const [reply, setReply] = useState(0);
+  const path = (name, id) => {
+    const x = name + "_" + id;
+    return x;
+  };
   useEffect(() => {
     const data = {
       idPost: blogId,
@@ -36,7 +39,7 @@ const BlogPage = () => {
     dispatch(getDetailPost(blogId));
     dispatch(fetchComment(data))
   }, [dispatch]);
-  console.log(currentUser)
+  console.log(SimilarDoctor)
   const handleAction = (id) => {
     if(currentUser)
       setReply(id);
@@ -45,15 +48,13 @@ const BlogPage = () => {
       localStorage.setItem("blog", JSON.stringify(blogId))
     }
   }
-  const handleLike = ({id,status}) => {
+  const handleLike = ({id,status,idAccount}) => {
     if(currentUser)
     {
       const data = {
         id : id,
         Status: status,
         idPost: blogId,
-        NameUser: currentUser.FullName,
-        // idAcc: 
       }
       dispatch(likeComment(data)).then(()=>{
         const data = {
@@ -73,9 +74,6 @@ const BlogPage = () => {
       id : reply !== 0 ? reply : blogId,
       Cmt : reply !== 0 ? repCmtData : cmtData,
       Status: status,
-      idPost: blogId,
-      // idAuthor: 
-      FullName: currentUser.FullName
     }
     dispatch(createComment(data)).then(()=>{
       const data = {
@@ -107,7 +105,6 @@ const BlogPage = () => {
       setIdComment(0)
       setStatus("CMT")
     })
-    
   }
   const handleDeleteComment = () => {
     let id = settingCmt
@@ -127,6 +124,10 @@ const BlogPage = () => {
       setSettingCmt(0)
       setStatus("CMT")
     })
+  }
+  const handleNavigate = (firstName,lastName,id) => {
+    if(id !== 235523484)
+      Navigate(`/doctors/${path(firstName + " " + lastName,id)}`)
   }
   return (
     <div className="relative bg-white">
@@ -225,9 +226,9 @@ const BlogPage = () => {
                   <div className="flex gap-5 mb-4">
                     <div className="flex gap-2">
                       {cmt.IsLoved ? 
-                          <FaHeart className="cursor-pointer w-5 h-5 text-rose-500 transition-full" onClick={()=>{handleLike({id:cmt.id, status: "CMT"})}}></FaHeart>
+                          <FaHeart className="cursor-pointer w-5 h-5 text-rose-500 transition-full" onClick={()=>{handleLike({id:cmt.id, status: "CMT", idAccount: cmt.idAccount})}}></FaHeart>
                           :
-                          <FaRegHeart className="cursor-pointer w-5 h-5 text-gray-600 transition-full" onClick={()=>{handleLike({id:cmt.id, status: "CMT"})}}></FaRegHeart>
+                          <FaRegHeart className="cursor-pointer w-5 h-5 text-gray-600 transition-full" onClick={()=>{handleLike({id:cmt.id, status: "CMT", idAccount: cmt.idAccount})}}></FaRegHeart>
                           } 
                       <p>{cmt.Love}</p>
                     </div>
@@ -279,9 +280,9 @@ const BlogPage = () => {
                         {/* <p className="cursor-pointer hover:underline text-slate-600">Thích</p> */}
                         <div className="flex gap-2">
                           {replyCmt.repIsLoved ? 
-                          <FaHeart className="cursor-pointer w-5 h-5 text-rose-500 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP"})}}></FaHeart>
+                          <FaHeart className="cursor-pointer w-5 h-5 text-rose-500 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP", idAccount: replyCmt.repidAccount})}}></FaHeart>
                           :
-                          <FaRegHeart className="cursor-pointer w-5 h-5 text-gray-700 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP"})}}></FaRegHeart>
+                          <FaRegHeart className="cursor-pointer w-5 h-5 text-gray-700 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP", idAccount: replyCmt.repidAccount})}}></FaRegHeart>
                           } 
                           <p>{replyCmt.repLove}</p>
                         </div>
@@ -306,28 +307,50 @@ const BlogPage = () => {
               </div>  
             </div>
           </div>
-
-          <div className="max-lg:my-7 max-lg:w-full bg-white border rounded-xl drop-shadow-lg w-[25%] max-h-[180px] px-2 grid grid-rows-3 justify-items-center">
-            <img
-              className="rounded-full w-[60px] h-[60px] mt-2 object-contain drop-shadow-sm"
-              src={detailPost[0]?.Avt || require("../Images/pattientavt.png")}
-              alt=""
-            ></img>
-            <div className="grid place-items-center py-2">
-              <span className="">Tác giả:</span>
-              <div className="text-slate-800 text-lg font-medium">
-                {detailPost[0]?.FirstName + " " + detailPost[0]?.LastName}
+          <div className="w-[25%]">
+            <div className="max-lg:my-7 max-lg:w-full w-full mb-8 bg-white hover:bg-slate-50 cursor-pointer border rounded-xl drop-shadow-lg p-2 grid grid-rows-3 justify-items-center"
+                 onClick={() => handleNavigate(detailPost[0]?.FirstName,detailPost[0]?.LastName,detailPost[0]?.idAuthor)}>
+              <img
+                className="rounded-full w-[60px] h-[60px] object-contain drop-shadow-sm"
+                src={detailPost[0]?.Avt || require("../Images/pattientavt.png")}
+                alt=""
+              ></img>
+              <div className="grid place-items-center">
+                <span className="">Tác giả:</span>
+                <div className="text-slate-800 text-lg font-medium">
+                  {detailPost[0]?.FirstName + " " + detailPost[0]?.LastName}
+                </div>
+              </div>
+              <div className="grid place-items-center w-full">
+                <hr className="w-[90%]"></hr>
+                <div className="text-sm text-center">
+                  <div>Ngày đăng: {detailPost[0]?.DatePost.slice(0, 10)}</div>
+                </div>
               </div>
             </div>
-            <div className="grid place-items-center w-full py-2">
-              <hr className="w-[90%]"></hr>
-              <div className="text-sm text-center">
-                <div>Ngày đăng: {detailPost[0]?.DatePost.slice(0, 10)}</div>
+            <div className="w-full">
+              <div className="text-xl font-medium text-black italic mb-4">Bác sĩ điều trị</div>
+              {SimilarDoctor?.map((item) =>
+              <div className="bg-white hover:bg-slate-50 cursor-pointer rounded-xl shadow-md p-4 flex gap-2 items-center"
+                  //  onClick={()=> Navigate(`/doctors/${path(item.FirstName + " " + item.LastName,item.id)}`)}
+              >
+                <img
+                  className="rounded-full w-14 h-14 object-contain drop-shadow-sm"
+                  src={item.Avt}
+                  alt=""
+                ></img>
+                <div>
+                  <div className="font-medium  text-lg">{item.FirstName + " " + item.LastName}</div>
+                  <div className="flex gap-1">
+                    Chuyên khoa: <p className="font-medium">Đa khoa</p>
+                  </div>
+                  <div>12 năm kinh nghiệm</div>
+                </div>
               </div>
+              )}
             </div>
           </div>
         </div>
-        
       </div>
     </div>
   );
