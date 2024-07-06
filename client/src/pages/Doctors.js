@@ -8,7 +8,7 @@ import { Button } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { getAllDoctors } from "../redux-toolkit/authSlice";
-import { searchDoctor, searchMajor } from "../redux-toolkit/postSlice";
+import { searchDisease, searchDoctor, searchMajor } from "../redux-toolkit/postSlice";
 import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const Doctors = () => {
@@ -17,23 +17,17 @@ const Doctors = () => {
   const Navigate = useNavigate();
   const { allSearchData, error, loading } = useSelector((state) => state.post);
   const [keywordDoctor, setKeywordDoctor] = useState("")
-  const [keywordMajor, setKeywordMajor] = useState("")
+  const [keywordDisease, setKeywordDisease] = useState("")
   const [isSearched, setIsSearched] = useState(false)
   const [numberElement, setNumberElement] = useState(8)
 
   const handleSearchDoctor = () => {
     setIsSearched(true)
     dispatch(searchDoctor({keywords: keywordDoctor}))
-    // .then(()=>{
-    //   setKeywordDoctor(searchDoctor)
-    // })
   }
   const handleSearchMajor = () => {
     setIsSearched(true)
-    dispatch(searchMajor({keywords: keywordMajor}))
-    // .then(()=>{
-    //   setKeywordMajor(searchMajor)
-    // })
+    dispatch(searchDisease({keywords: keywordDisease}))
   }
   useEffect(() => {
     dispatch(getAllDoctors());
@@ -44,7 +38,7 @@ const Doctors = () => {
   };
   const slice1 = doctors?.slice(0,numberElement);
   const slice2 = allSearchData?.slice(0,numberElement);
-
+  console.log(allSearchData)
   return (
     <div className="lg:pt-[70px] max-lg:pt-[70px]">
       <div className="relative w-full">
@@ -102,7 +96,7 @@ const Doctors = () => {
               className="bg-slate-100 p-3 h-full w-full rounded-lg outline-none text-base"
               placeholder="Tìm theo tên..."
               value={keywordDoctor}
-              onChange={(e)=>{setKeywordDoctor(e.target.value);setKeywordMajor("")}}
+              onChange={(e)=>{setKeywordDoctor(e.target.value);setKeywordDisease("")}}
               onKeyDown={(e) => { 
                 if (e.key === "Enter") 
                   handleSearchDoctor(); 
@@ -112,9 +106,9 @@ const Doctors = () => {
           <div className="bg-slate-100 flex items-center col-span-2 h-[48px] lg:w-[30%] max-lg:w-[45%] rounded-lg hover:ring-1 hover:ring-teal-400">
             <input
               className="bg-slate-100 p-3 h-full w-full rounded-lg outline-none text-base"
-              placeholder="Tìm theo chuyên khoa..."
-              value={keywordMajor}
-              onChange={(e)=>{setKeywordMajor(e.target.value);setKeywordDoctor("")}}
+              placeholder="Tìm theo bệnh..."
+              value={keywordDisease}
+              onChange={(e)=>{setKeywordDisease(e.target.value);setKeywordDoctor("")}}
               onKeyDown={(e) => { 
                 if (e.key === "Enter") 
                   handleSearchMajor(); 
@@ -122,7 +116,7 @@ const Doctors = () => {
             <FiSearch className="mr-4 h-[24px] w-[24px] text-teal-300"></FiSearch>
           </div>
           {isSearched && 
-          <IoIosCloseCircleOutline className="h-8 w-8 text-rose-500 cursor-pointer" onClick={()=>{setIsSearched(false);setKeywordDoctor("");setKeywordMajor("")}}></IoIosCloseCircleOutline>}
+          <IoIosCloseCircleOutline className="h-8 w-8 text-rose-500 cursor-pointer" onClick={()=>{setIsSearched(false);setKeywordDoctor("");setKeywordDisease("")}}></IoIosCloseCircleOutline>}
         </div>
 
         <div className="flex flex-wrap max-lg:w-full gap-6">

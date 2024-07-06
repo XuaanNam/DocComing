@@ -11,6 +11,7 @@ const initialState = {
   checked: false,
   token: "",
   data: [],
+  filter: [],
   countUser: 0,
   allSearchUsers: [],
   user: {},
@@ -102,6 +103,17 @@ export const fetchUsers = createAsyncThunk("fetchUsers", async ({filter, orderby
       "Content-Type": "application/json",
       Authorization: localStorage.getItem("token"),
     },
+  });
+  return await res.json();
+});
+export const usersFilter = createAsyncThunk("usersFilter", async (body) => {
+  const res = await fetch(`http://localhost:5000/api/admin/account/filter`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
   });
   return await res.json();
 });
@@ -334,13 +346,27 @@ const authSlice = createSlice({
         state.loading = false;
         state.error = action.payload;
       })
+      
+      .addCase(usersFilter.pending, (state, action) => {
+        state.loading = true;
+        state.error = false;
+      })
+      .addCase(usersFilter.fulfilled, (state, action) => {
+        state.loading = false;
+        state.filter = action.payload.data;
+      })
+      .addCase(usersFilter.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      })
+
       .addCase(searchUser.pending, (state, action) => {
         state.loading = true;
         state.error = false;
       })
       .addCase(searchUser.fulfilled, (state, action) => {
         state.loading = false;
-        state.allSearchUsers = action.payload;
+        state.allSearchUsers = action.payload.data;
         state.updated = true;
       })
       .addCase(searchUser.rejected, (state, action) => {

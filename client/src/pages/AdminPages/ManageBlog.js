@@ -3,25 +3,28 @@ import { Modal, Table, Button } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { fetchPost,fetchDoctorPost, acceptPost,hidePost, fetchCategories } from "../../redux-toolkit/postSlice";
+import { fetchPost,fetchDoctorPost, acceptPost,hidePost, fetchCategories, searchPostAdmin, postsFilter } from "../../redux-toolkit/postSlice";
 import { TbFilterSearch  } from "react-icons/tb";
 import { DatePicker, Select } from "antd";
 import dayjs from "dayjs";
+import { FiSearch } from "react-icons/fi";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 const { RangePicker } = DatePicker;
 
 const ManageBlog = () => {
   const dateFormat = "DD/MM/YYYY";
   const { currentUser } = useSelector((state) => state.user);
-  const {data, category} = useSelector((state) => state.post);
+  const {data, category,allSearchPostAdmin, filter} = useSelector((state) => state.post);
   const [confirmedPost, setConfirmPost] = useState(1);
-  const [showMore, setShowMore] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [postId, setPostId] = useState();
   const [numberElement, setNumberElement] = useState(6)
   const [showFilterModal,setShowFilterModal] = useState(false)
-  const [arrange, setArrange] = useState("Mới nhất xếp trước")
-  const [categoryId, setCategoryId] = useState("");
   const [similarCategoryId, setSimilarCategoryId] = useState("");
+  const [keywordUser, setKeywordUser] = useState("")
+  const [isSearched, setIsSearched] = useState("")
+  const [arrange, setArrange] = useState("desc")
+  const [date, setDate] = useState("")
   const dispatch = useDispatch();
   useEffect(() => {
     if(currentUser.authentication == 2){
@@ -30,59 +33,94 @@ const ManageBlog = () => {
     else{
       const data = {
         filter: "DatePost",
-        orderby: "asc"
+        orderby: "desc"
       }
       dispatch(fetchPost(data));
       dispatch(fetchCategories());
     }
   }, [currentUser]);
   const handleAcceptPost = (id) => {
-    const data = {id};
-    dispatch(acceptPost(data)).then(() => {
-      dispatch(fetchPost());
+    const data = {
+      filter: "DatePost",
+      orderby: "desc"
+    }
+    dispatch(acceptPost({id})).then(() => {
+      dispatch(fetchPost(data));
     })
   }
   const handleChangeCategory = (value) => {
     setSimilarCategoryId(value);
-    for (let i = 0; i < category?.length; i++) {
-      for (let j = 0; j < category[i]?.Similar?.length; j++) {
-        if (category[i].Similar[j].id === value) {
-          setCategoryId(category[i].id);
-          break;
-        }
-      }
-    }
   };
   const handleHidePost = (id) => {
-    const data = {id};
-    dispatch(hidePost(data)).then(() => {
-      dispatch(fetchPost());
+    const data = {
+      filter: "DatePost",
+      orderby: "desc"
+    }
+    dispatch(hidePost({id})).then(() => {
+      dispatch(fetchPost(data));
     })
     setShowModal(false)
   }
   const handleDatePickerChange = (date, dateString) => {
-    console.log(dateString);
+    setDate(dateString);
   };
   const handleClose = () => {
     setShowFilterModal(false)
+    setSimilarCategoryId("")
+    setDate("")
   }
-  let posts = [];
-  for (let i = 0; i < data?.length; i++) {
-    if (data[i].Status === confirmedPost)
-      posts.push({ ...data[i] });
-    if (data[i].Status === 2 && confirmedPost === 1)
-      posts.push({ ...data[i] });
+  const handleSearchPost = () => {
+    dispatch(searchPostAdmin({keywords: keywordUser}))
+    setIsSearched("search")
   }
-  const slice = posts.slice(0,numberElement);
-  console.log(data, confirmedPost);
+  const handleFilterPosts = () => {
+    let data = {};
+    // data = {...data,
+    //   Sort: arrange
+    // }
+    if(date != ""){
+      data = {...data,
+        StartDate: date[0],
+        EndDate: date[1]
+      }
+    }
+    if(similarCategoryId != ""){
+      data = {...data,
+        Similar: similarCategoryId
+      }
+    }
+    dispatch(postsFilter(data)).then(() =>{
+      setIsSearched("filter")
+      setShowFilterModal(false)
+    })
+  }
+  let posts
+  if(isSearched == "search"){
+    posts = allSearchPostAdmin
+  }
+  else if(isSearched == "filter"){
+    posts = filter
+  }
+  else{
+    posts = data
+  }
+  console.log(posts);
+  let post = [];
+  for (let i = 0; i < posts?.length; i++) {
+    if (posts[i].Status === confirmedPost)
+      post.push({ ...posts[i] });
+    if (posts[i].Status === 2 && confirmedPost === 1)
+      post.push({ ...posts[i] });
+  }
+  const slice = post.slice(0,numberElement)
   return (
     <div className="lg:pt-[70px] table-auto md:mx-auto md:p-10 max-md:px-5 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-      <div className="pt-[30px] grid grid-cols-3 items-center md:w-[50%] max-md:w-full gap-3 mb-5 font-medium text-base text-gray-500">
+      <div className="pt-[30px] grid grid-cols-4 items-center md:w-[80%] max-md:w-full gap-3 mb-5 font-medium text-base text-gray-500">
         <div
           onClick={() => setConfirmPost(1)}
           className={` ${
             confirmedPost === 1 ? "bg-gray-100" : "bg-white"
-          } h-10 drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
+          } h-11 drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
         >
           Bài viết đã được duyệt
         </div>
@@ -90,15 +128,31 @@ const ManageBlog = () => {
           onClick={() => setConfirmPost(0)}
           className={` ${
             confirmedPost === 0 ? "bg-gray-100" : "bg-white"
-          } h-10 drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
+          } h-11 drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
         >
           Bài viết đang chờ duyệt
         </div>
-        {!showFilterModal &&
-        <TbFilterSearch className="h-6 w-6 text-teal-500 cursor-pointer transition-transform duration-500 hover:scale-110"
-                        onClick={()=>setShowFilterModal(true)}
-        />
-        }
+        <div className="flex gap-2 items-center col-start-3 col-span-2">
+          <div className="bg-slate-100 flex gap-2 items-center h-11 lg:w-[70%] max-lg:w-[70%] rounded-lg hover:ring-1 hover:ring-teal-400">
+            <input
+              className="bg-slate-100 p-3 h-full w-full font-normal rounded-lg outline-none text-base"
+              placeholder="Tìm theo tên..."
+              value={keywordUser}
+              onChange={(e)=>{setKeywordUser(e.target.value)}}
+              onKeyDown={(e) => { 
+                if (e.key === "Enter") 
+                  handleSearchPost(); 
+              }} />
+            <FiSearch className="mr-4 h-[24px] w-[24px] text-teal-300"></FiSearch>          
+          </div>
+          {(isSearched) && <IoIosCloseCircleOutline className="h-6 w-6 text-rose-500 cursor-pointer" onClick={()=>{handleClose();setIsSearched("");setKeywordUser("")}}/>}
+          {!showFilterModal &&
+            <TbFilterSearch className="h-6 w-6 text-teal-500 cursor-pointer transition-transform duration-500 hover:scale-110"
+                            onClick={()=>setShowFilterModal(true)}
+            />
+          }
+        </div>
+        
       </div>
       <Table hoverable className="shadow-lg shadow-violet-200 rounded-lg">
         <Table.Head>
@@ -109,7 +163,7 @@ const ManageBlog = () => {
           {currentUser.authentication === 0 &&
           <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Tác giả</Table.HeadCell>
           }
-          <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs"></Table.HeadCell>
+          <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Trạng thái</Table.HeadCell>
           <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs"></Table.HeadCell>
            {confirmedPost === 0 && (
             <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs"></Table.HeadCell>
@@ -143,7 +197,7 @@ const ManageBlog = () => {
               <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">{post.FirstName + " " + post.LastName}</Table.Cell>
               }
               <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
-                {post.Status === 1 && (
+                {post.Status == 1 && (
                 <div
                   onClick={() => {
                     setShowModal(true);
@@ -154,7 +208,7 @@ const ManageBlog = () => {
                   Ẩn bài viết
                 </div>
                 )}
-                {post.Status === 2 && (
+                {post.Status == 2 && (
                 <div
                   onClick={() => {
                     handleHidePost(post.id);
@@ -197,7 +251,7 @@ const ManageBlog = () => {
           </Table.Body>
         ))}
       </Table>
-      {posts.length > 6 &&
+      {post.length > 6 &&
       <Button
         className="mt-3 w-32 mx-auto rounded-lg h-11"
         outline gradientDuoTone="tealToLime"
@@ -266,7 +320,7 @@ const ManageBlog = () => {
                 onChange={handleChangeCategory}
               >
                 <option disabled value="" className="text-white">
-                  Chọn chuyên mục
+                  Tất cả chuyên mục
                 </option>
                 {category?.map((cgr) => (
                   <Select.OptGroup
@@ -292,9 +346,9 @@ const ManageBlog = () => {
               // disabled={record === "" || recordNote === ""}
               className="w-full h-10 mt-2"
               gradientDuoTone="purpleToPink"
-              // onClick={() => {
-              //   idRecord !== null ? handleUpdateHealthRecord() : handleHealthRecord()         
-              // }}
+              onClick={() => {
+                handleFilterPosts()         
+              }}
             >
               Xác nhận
             </Button>

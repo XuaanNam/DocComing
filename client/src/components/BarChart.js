@@ -1,5 +1,4 @@
 'use client';
-
 import {
   BarChart,
   Bar,
@@ -14,106 +13,29 @@ import { getTotalDashboard} from "../redux-toolkit/authSlice";
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 
-const data = [
-  {
-    name: 'Tháng 1',
-    user: 4000,
-    post: 2400,
-    appointment: 12,
-  },
-  {
-    name: 'Tháng 2',
-    user: 3000,
-    post: 1398,
-    appointment: 13,
-  },
-  {
-    name: 'Tháng 3',
-    user: 9800,
-    post: 2000,
-    appointment: 15,
-  },
-  {
-    name: 'Tháng 4',
-    user: 3908,
-    post: 2780,
-  },
-  {
-    name: 'Tháng 5',
-    user: 4800,
-    post: 1890,
-    appointment: 18,
-  },
-  {
-    name: 'Tháng 6',
-    user: 3800,
-    post: 2390,
-    appointment: 10,
-
-  },
-  {
-    name: 'Tháng 7',
-    user: 3800,
-    post: 2390,
-    appointment: 100,
-  },
-  {
-    name: 'Tháng 8',
-    user: 3800,
-    post: 2390,
-    appointment: 120,
-
-  },
-  {
-    name: 'Tháng 9',
-    user: 3800,
-    post: 2390,
-    appointment: 112,
-
-  },
-  {
-    name: 'Tháng 10',
-    user: 3800,
-    post: 2390,
-    appointment: 123,
-
-  },
-  {
-    name: 'Tháng 11',
-    user: 3800,
-    post: 2390,
-    appointment: 132,
-
-  },
-  {
-    name: 'Tháng 12',
-    user: 3800,
-    post: 2390,
-    appointment: 212,
-  },
-];
-
 const BarChartComponent = () => {
   const dispatch = useDispatch()
-  const { currentUser,countUser, dashboardData} = useSelector((state) => state.user);
+  const {dashboardData} = useSelector((state) => state.user);
   useEffect(()=>{
     dispatch(getTotalDashboard())
   },[])
-  // let data = [];
-  // for (let i = 0; i < 12; i++)
-  //   if(dashboardData[i])
-  //   data.push({
-  //     name: 'Tháng' + (i + 1),
-  //     user: 4000,
-  //     post: 2400,
-  //     appointment: 12,
-  //   });
+  let data = [];
+  for (let i = 0; i < 12; i++)
+    if(dashboardData[i]){    
+      data.push({
+        name: 'Tháng' + " " + dashboardData[i].month,
+        user: dashboardData[i].TotalAcc,
+        post: dashboardData[i].TotalPost,
+        appointment: dashboardData[i].TotalApptn,
+      });
+    }  
   return (
     <ResponsiveContainer width="100%" height="100%">
       <BarChart
-        width={500}
-        height={300}
-        data={data}
+        className='transition-all'
+        width={400}
+        height={350}
+        data={data?.length > 0 && data}
         margin={{
           right: 30,
         }}
@@ -126,7 +48,6 @@ const BarChartComponent = () => {
         <Bar dataKey="user" fill="#5C88C4" />
         <Bar dataKey="post" fill="#E2BBE9" />
         <Bar dataKey="appointment" fill="#40A578" />
-
       </BarChart>
     </ResponsiveContainer>
   );

@@ -129,6 +129,7 @@ const BlogPage = () => {
     if(id !== 235523484)
       Navigate(`/doctors/${path(firstName + " " + lastName,id)}`)
   }
+  console.log(SimilarDoctor)
   return (
     <div className="relative bg-white">
       {(settingCmt !== 0 || settingRepCmt !== 0) && (

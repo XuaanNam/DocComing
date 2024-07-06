@@ -3,7 +3,7 @@ import { CiCamera } from "react-icons/ci";
 import { MdEdit } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal } from "flowbite-react";
-import { changePassword, fetchProfile, updateProfile } from "../../redux-toolkit/authSlice";
+import { changePassword, fetchProfile, getAllNotification, updateProfile } from "../../redux-toolkit/authSlice";
 import { useNavigate } from "react-router-dom";
 import { DatePicker, Input, Select } from "antd";
 import dayjs from "dayjs";
@@ -111,8 +111,10 @@ const DoctorProfile = () => {
       setErrorMessage("Mật khẩu phải chứa ít nhất 6 kí tự!")
     else
       dispatch(changePassword(data)).then((result) => {
-        if(result.payload.message == "Đổi mật khẩu thành công!")
+        if(result.payload.message == "Đổi mật khẩu thành công!"){
+          dispatch(getAllNotification())
           handleClose()
+        }
         else
           setErrorMessage(result.payload.message);
       })

@@ -25,7 +25,7 @@ const Header = () => {
   const { currentUser, user, allNoti } = useSelector((state) => state.user);
   const [actived, setActived] = useState(false);
   const [noti, setNoti] = useState(false);
-  const [numberElement, setNumberElement] = useState(5)
+  const [numberElement, setNumberElement] = useState(6)
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const authentication = currentUser?.authentication;
@@ -63,6 +63,7 @@ const Header = () => {
       dispatch(fetchProfile())
     }
   },[currentUser,dispatch])
+  console.log(allNoti)
   // useEffect(()=>{
   //   if(currentUser){
   //     const interval = setInterval(() => {
@@ -90,7 +91,7 @@ const Header = () => {
           }}
         ></div>
       )}
-      <div className="text-sm h-full px-5 font-medium text-teal-800 max-sm:px-2 text-gray-700 bg-teal-600 grid grid-cols-4 max-lg:grid-cols-11 max-lg:gap-1 drop-shadow-lg">
+      <div className="text-sm h-full px-5 font-medium text-teal-800 max-sm:px-2 bg-teal-600 grid grid-cols-4 max-lg:grid-cols-11 max-lg:gap-1 drop-shadow-lg">
         <div className="max-lg:col-start-1 max-lg:col-span-3 col-start-1 col-span-1 lg:pl-5 text-xl flex items-center font-bold text-teal-500">
           <img className="rounded-full h-12 w-12 mr-3 max-sm:h-10 max-sm:w-10 max-sm:mr-1 " alt="logo" src={logo}></img>
           <a className="text-gray-100 max-sm:text-sm" href="/">
@@ -160,14 +161,25 @@ const Header = () => {
                   } text-gray-100 h-5 w-5`}
                 ></IoMdArrowDropdown>
               </div>
-              <GoBellFill
-                onClick={() => {setNoti(!noti);setActived(false)}}
-                className="max-sm:h-5 max-sm:w-5 h-7 w-7 text-lime-100  cursor-pointer transition-all duration-500 hover:scale-110"
-              />
+              <div className="relative cursor-pointer"
+                   onClick={() => {setNoti(!noti);setActived(false)}}
+              >
+                <GoBellFill
+                  className="max-sm:h-5 max-sm:w-5 h-7 w-7 text-lime-100 cursor-pointer transition-all duration-500 hover:scale-110"
+                >       
+                </GoBellFill>
+              {parseInt(allNoti?.Unread) > 0 &&
+                <div>
+                  <div class="animate-ping absolute top-0 right-1 inline-flex h-[10px] w-[10px] rounded-full bg-rose-500 transition-transform duration-700"></div>
+                  <span class="absolute top-0 right-1 inline-flex rounded-full h-[10px] w-[10px] bg-rose-600"></span>
+                </div>
+              }
+              </div>
               {noti && (
-                <div className={`flex flex-col gap-2 max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:top-[62px] lg:w-full py-3 px-5 font-medium text-teal-800 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition ease-in-out duration-1000 z-50`}>
+                <div className={`flex flex-col gap-2 h-[600px] max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:top-[62px] lg:w-full py-3 px-5 font-medium text-teal-800 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition ease-in-out duration-500 z-50`}>
                   <p className="">Thông báo</p>
                   <hr className="w-full"></hr>
+                  <div className="h-[90%] overflow-auto">
                   {slice?.map((noti) =>(
                     <div className="flex flex-col gap-2">
                       <div className="hover:bg-slate-100 w-full p-2 cursor-pointer rounded-lg flex flex-col gap-2"
@@ -178,7 +190,7 @@ const Header = () => {
                             <div className={`text-sm ${noti.Status === 0 ? "text-black" : "text-gray-500"}`}>
                               {noti.Notification}
                             </div>
-                            <p className="text-sm self-start text-sky-600">{noti.NotiTime}</p>
+                            <p className="text-sm self-start text-sky-600">{noti.NotiTime.slice(0,16)}</p>
                           </div>  
                           {noti.Status === 0 &&
                             <GoDotFill className="text-sky-600 h-4 w-4"/>
@@ -188,7 +200,8 @@ const Header = () => {
                       <hr className="w-[95%]"></hr>
                     </div>
                   ))}
-                  {allNoti?.notification?.length > 5 &&
+                  </div>
+                  {allNoti?.notification?.length > 6 &&
                     <Button
                         className="my-3 w-32 rounded-2xl mx-auto h-9 text-slate-700"
                         gradientDuoTone="tealToLime"

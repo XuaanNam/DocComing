@@ -20,6 +20,16 @@ const EditBlog = () => {
   const [files, setFiles] = useState(null);
   const {postId} = useParams();
   const ref = useRef();
+  const classifies = [
+    {
+      value: 1,
+      label: 'Bệnh lý',
+    },
+    {
+      value: 2,
+      label: 'Thông tin sức khỏe',
+    },
+]
   useEffect(() => {
     dispatch(getDetailPost(postId)).then((results) => {
       setData(results.payload.data[0])
@@ -27,6 +37,7 @@ const EditBlog = () => {
     dispatch(fetchCategories());
     dispatch(fetchMajor());
   }, [postId]);
+  console.log(data)
   useEffect(() => {
     if (currentUser) {
       if (currentUser.authentication != 0) Navigate("/");
@@ -48,6 +59,7 @@ const EditBlog = () => {
     body.append("Title", data.Title);
     body.append("Brief", data.Brief);
     body.append("Content", data.Content);
+    body.append("idClassify", data.idClassify);
     body.append("idCategories", data.idCategories);
     body.append("idMajor", data.idMajor);
     body.append("idSimilar", data.idSimilar);
@@ -97,6 +109,30 @@ const EditBlog = () => {
                           onChange={(e) => {setData({ ...data, Brief: e.target.value });}}
                       />
                       </div>
+                      <Select
+                        id="classify"
+                        className={` ${
+                          !filled && data?.idClassify === ""
+                            ? "border-red-400 border-[1.5px]"
+                            : "border-gray-400"
+                        } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+                        value={data?.idClassify}
+                        onChange={(value)=>{setData({ ...data, idClassify: value})}}
+                      >    
+                        <option disabled value="" className="text-white">
+                          Phân loại bài viết
+                        </option>
+                        {classifies.map((item) => 
+                        <Select
+                          id="classify"
+                          value={item.value}
+                          label={item.label}
+                          key={item.value}
+                        >
+                          {item.label}
+                        </Select>
+                        )}
+                      </Select>
                       <Select
                         id="categories"
                         className={` ${
@@ -189,7 +225,7 @@ const EditBlog = () => {
                       onClick={handleCreatePost}
                       className="h-12 mt-5 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
                       >
-                        Đăng
+                        Cập nhật
                       </button>
                   </div>
               </div>

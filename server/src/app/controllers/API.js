@@ -1304,14 +1304,14 @@ class API {
       }
     }
     const idAuthor = req.user.id;
-    const { Title, Brief, Content, idCategories, idSimilar } = req.body;
+    const { Title, Brief, Content, idCategories, idSimilar, idClassify } = req.body;
     const idMajor = req.body.idMajor? req.body.idMajor: null;
     let insertSql = "";
     
     if (req.user.Authorization == 0) {
-      insertSql = "insert into post (FeaturedImage, Title, Brief, Content, idAuthor, DatePost, idCategories, idSimilar, idMajor, Status) values (?,?,?,?,?,NOW(),?,?,?,1)";
+      insertSql = "insert into post (FeaturedImage, Title, Brief, Content, idAuthor, DatePost, idCategories, idSimilar, idMajor, Status, idClassify) values (?,?,?,?,?,NOW(),?,?,?,1,?)";
     } else if (req.user.Authorization == 2) {
-      insertSql = "insert into post (FeaturedImage, Title, Brief, Content, idAuthor, DatePost, idCategories, idSimilar, idMajor, Status) values (?,?,?,?,?,NOW(),?,?,?,0)";
+      insertSql = "insert into post (FeaturedImage, Title, Brief, Content, idAuthor, DatePost, idCategories, idSimilar, idMajor, Status, idClassify) values (?,?,?,?,?,NOW(),?,?,?,0,?)";
     }
     if (req.user.Authorization == 1) {
       res.end("Unauthorized");
@@ -1327,6 +1327,7 @@ class API {
           idCategories,
           idSimilar,
           idMajor,
+          idClassify,
         ],
         function (error, results, fields) {
           if (error) {
@@ -1358,7 +1359,7 @@ class API {
         checked: false,
       });
     }
-    const { Title, Brief, Content, idCategories, idSimilar, id } = req.body;
+    const { Title, Brief, Content, idCategories, idSimilar, id, idClassify } = req.body;
     let idMajor;
     if(req.body.idMajor != "null"){
       idMajor = req.body.idMajor
@@ -1372,12 +1373,12 @@ class API {
 
     if(req.files === null){
       FeaturedImage = req.files.FeaturedImage[0]?.path; 
-      updateSql = "update post set FeaturedImage = ?, Title = ?, Brief = ?, Content = ?, idCategories = ?, idSimilar = ?, idMajor = ? where id = ?"
-      data = [FeaturedImage, Title, Brief, Content, idCategories, idSimilar, idMajor, id]
+      updateSql = "update post set FeaturedImage = ?, Title = ?, Brief = ?, Content = ?, idCategories = ?, idSimilar = ?, idMajor = ?, idClassify = ? where id = ?"
+      data = [FeaturedImage, Title, Brief, Content, idCategories, idSimilar, idMajor, idClassify, id]
     } else {
       updateSql =
-      "update post set Title = ?, Brief = ?, Content = ?, idCategories = ?, idSimilar = ?, idMajor = ? where id = ?";
-      data= [Title, Brief, Content, idCategories, idSimilar, idMajor, id]
+      "update post set Title = ?, Brief = ?, Content = ?, idCategories = ?, idSimilar = ?, idMajor = ?, idClassify = ? where id = ?";
+      data= [Title, Brief, Content, idCategories, idSimilar, idMajor, idClassify, id]
     }
     let Images = "";
     if (req.files.Gallery) {

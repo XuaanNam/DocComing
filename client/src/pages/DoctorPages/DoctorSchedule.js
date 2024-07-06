@@ -3,12 +3,10 @@ import { FaRegUserCircle } from "react-icons/fa";
 import { LuCalendarDays, LuCalendarCheck } from "react-icons/lu";
 import { FiLogOut } from "react-icons/fi";
 import { FaLongArrowAltRight } from "react-icons/fa";
-import { Badge, Calendar } from "antd";
 import {
   fetchDoctorSchedule,
   fetchService,
   fetchAllService,
-  fetchAppointment,
   addService,
   deleteService,
   updateSchedule,
@@ -233,7 +231,6 @@ const DoctorSchedule = () => {
     dispatch(fetchDoctorSchedule(today)); 
     dispatch(fetchService({ idDoctor: currentUser?.id }));
     dispatch(fetchAllService());
-    dispatch(fetchAppointment()); 
     if (currentUser) {
       dispatch(fetchProfile());
     }
@@ -248,42 +245,7 @@ const DoctorSchedule = () => {
     }
   }, [service, ScheduleData]);
 
-  const getListData = (value) => {
-    let listData = [];
-    for (let i = 0; i < AppointmentData?.length; i++) {
-      let db = AppointmentData[i]?.DateBooking?.split("/");
-      if (
-        value.date() == db[0] &&
-        value.month() + 1 == db[1] &&
-        value.year() == db[2]
-      ) {
-        listData = [
-          ...listData,
-          {
-            type: AppointmentData[i].Type,
-            content: AppointmentData[i].TimeBooking + " - " + AppointmentData[i].Service,
-          },
-        ];
-      }
-    }
-    return listData || [];
-  };
-  const dateCellRender = (value) => {
-    const listData = getListData(value);
-    return (
-      <ul className="events">
-        {listData.map((item) => (
-          <li key={item.content}>
-            <Badge status={item.type} text={item.content} />
-          </li>
-        ))}
-      </ul>
-    );
-  };
-  const cellRender = (current, info) => {
-    if (info.type === "date") return dateCellRender(current);
-    return info.originNode;
-  };
+  
 
   return (
     <div className="lg:pt-[70px] max-md:pt-[20px] min-h-screen">
@@ -695,11 +657,6 @@ const DoctorSchedule = () => {
               </div>
             </div>
           </div>
-
-          <Calendar
-            className="shadow-lg shadow-blue-300 p-3 rounded-lg border font-medium"
-            cellRender={cellRender}
-          />
         </div>
       </div>
     </div>

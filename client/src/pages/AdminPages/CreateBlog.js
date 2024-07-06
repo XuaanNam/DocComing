@@ -16,8 +16,19 @@ const CreateBlog = () => {
   const [majorId, setMajorId] = useState("")
   const [categoryId, setCategoryId] = useState("");
   const [similarCategoryId, setSimilarCategoryId] = useState("");
-
+  const [classify, setClassify] = useState("")
+  const [isValid, setIsValid] = useState(true)
   const ref = useRef();
+  const classifies = [
+      {
+        value: 1,
+        label: 'Bệnh lý',
+      },
+      {
+        value: 2,
+        label: 'Thông tin sức khỏe',
+      },
+  ]
   useEffect(() => {
     dispatch(fetchCategories());
     dispatch(fetchMajor());
@@ -34,12 +45,13 @@ const CreateBlog = () => {
       }
     }
   };
-
+  console.log(content)
   const handleCreatePost = () => {
     const data = new FormData();
     data.append("Title", title);
     data.append("Brief", summary);
     data.append("Content", content);
+    data.append("idClassify", classify);
     data.append("idMajor", majorId);
     data.append("idCategories", categoryId);
     data.append("idSimilar", similarCategoryId);
@@ -48,18 +60,26 @@ const CreateBlog = () => {
       title !== "" &&
       summary !== "" &&
       content.length > 0 &&
+      classify !== "" &&
       similarCategoryId !== "" &&
       files?.name
     ) {
-      dispatch(createPost(data)).then(() => {
-        setTitle("");
-        setSummary("");
-        setContent("");
-        setMajorId("")
-        setSimilarCategoryId("");
-        setFiles(null);
-        ref.current.value = null;
-      });
+      if((classify == "1" && majorId != "") || classify == "2"){
+        dispatch(createPost(data)).then(() => {
+          setFilled(true)
+          setIsValid(true)
+          setTitle("");
+          setSummary("");
+          setContent("");
+          setClassify("")
+          setMajorId("")
+          setSimilarCategoryId("");
+          setFiles(null);
+          ref.current.value = null;
+        });
+      }
+      else
+        setIsValid(false)
     } else {
       setFilled(false);
     }
@@ -94,9 +114,33 @@ const CreateBlog = () => {
           />
         </div>
         <Select
+            id="classify"
+            className={` ${
+              !filled && classify === ""
+                ? "border-red-400 border-[1.5px]"
+                : "border-gray-400"
+            } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+            value={classify}
+            onChange={(value)=>{setClassify(value)}}
+        >    
+          <option disabled value="" className="text-white">
+            Phân loại bài viết
+          </option>
+          {classifies.map((item) => 
+          <Select
+            id="classify"
+            value={item.value}
+            label={item.label}
+            key={item.value}
+          >
+            {item.label}
+          </Select>
+          )}
+        </Select>
+        <Select
           id="categories"
           className={` ${
-            !filled && categoryId === ""
+            !filled && similarCategoryId === ""
               ? "border-red-400 border-[1.5px]"
               : "border-gray-400"
           } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
@@ -130,10 +174,10 @@ const CreateBlog = () => {
         <Select
           id="major"
           className={` ${
-            !filled && majorId === ""
+            !isValid && majorId === ""
               ? "border-red-400 border-[1.5px]"
               : "border-gray-400"
-          } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+          } border-gray-400 h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
           value={majorId}
           onChange={(value)=>{setMajorId(value)}}
         >

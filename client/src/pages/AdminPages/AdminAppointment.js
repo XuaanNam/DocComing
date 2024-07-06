@@ -29,7 +29,7 @@ const AdminAppointment = () => {
       appointment.push({ ...AppointmentData[i] });
   }
   const slice = appointment.slice(0,numberElement);
-  console.log(appointment)
+  console.log(slice)
   return (
     <div className="lg:pt-[70px] bg-gray-50 min-h-screen">
       <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:flex-col lg:gap-10">
@@ -171,7 +171,7 @@ const AdminAppointment = () => {
                               <div className="flex items-center mb-2 gap-3">
                                   <TbFileDescription className="h-5 min-w-5 text-teal-600" />
                                   <p>Triệu chứng:</p>
-                                  <div className="font-medium text-red-400">
+                                  <div className="font-medium text-red-500">
                                   {appointment.Information}
                                   </div>
                               </div>

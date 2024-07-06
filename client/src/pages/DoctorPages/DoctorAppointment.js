@@ -6,6 +6,7 @@ import { FaPhoneAlt } from "react-icons/fa";
 import { TbFileDescription } from "react-icons/tb";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { Modal, Button } from "flowbite-react";
+import { Badge, Calendar } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointment,
@@ -21,6 +22,7 @@ import {
 } from "../../redux-toolkit/appointmentSlice";
 import { DatePicker, Input, TimePicker  } from "antd";
 import dayjs from "dayjs";
+import { getAllNotification } from "../../redux-toolkit/authSlice";
 const { TextArea } = Input;
 
 const DoctorAppointment = () => {
@@ -54,7 +56,6 @@ const DoctorAppointment = () => {
     + "/" +
     currentDate.getFullYear();
 
-    
   useEffect(() => {
     setDate(today);
     dispatch(fetchHealthRecord());
@@ -106,11 +107,13 @@ const DoctorAppointment = () => {
     }
     if(note !== null)
       dispatch(editNoteAppointment(data)).then(() => {
+        dispatch(getAllNotification())
         handleClose()
         dispatch(fetchAppointment())
       })
     else
       dispatch(noteAppointment(data)).then(() => {
+        dispatch(getAllNotification())
         handleClose()
         dispatch(fetchAppointment())
       })
@@ -122,11 +125,13 @@ const DoctorAppointment = () => {
     }
     if(editNote || ReExaminationDate !== null)
       dispatch(editNoteAppointment(data)).then(() => {
+        dispatch(getAllNotification())
         handleClose()
         dispatch(fetchAppointment())
       })
     else
       dispatch(noteAppointment(data)).then(() => {
+        dispatch(getAllNotification())
         handleClose()
         dispatch(fetchAppointment())
       })
@@ -139,6 +144,7 @@ const DoctorAppointment = () => {
       IllnessDate: date
     }
     dispatch(healthRecord(data)).then(() => {
+      dispatch(getAllNotification())
       handleClose()
       dispatch(fetchAppointment())
     })
@@ -151,11 +157,11 @@ const DoctorAppointment = () => {
       IllnessDate: date
     }
     dispatch(updateHealthRecord(data)).then(() => {
+      dispatch(getAllNotification())
       handleClose()
       dispatch(fetchAppointment())
     })
   }
-  console.log(healthRecordData)
   const handleClose = () => {
     setShowExaminationModal(false);
     setShowNoteModal(false);
@@ -196,24 +202,67 @@ const DoctorAppointment = () => {
     setShowModal(false);
     setIdPatient(null)
   };
-  console.log(AppointmentData)
+  const getListData = (value) => {
+    let listData = [];
+    for (let i = 0; i < AppointmentData?.length; i++) {
+      let db = AppointmentData[i]?.DateBooking?.split("/");
+      if (
+        value.date() == db[0] &&
+        value.month() + 1 == db[1] &&
+        value.year() == db[2]
+      ) {
+        listData = [
+          ...listData,
+          {
+            type: AppointmentData[i].Type,
+            content: AppointmentData[i].TimeBooking + " - " + AppointmentData[i].Service,
+          },
+        ];
+      }
+    }
+    return listData || [];
+  };
+  const dateCellRender = (value) => {
+    const listData = getListData(value);
+    return (
+      <ul className="events">
+        {listData.map((item) => (
+          <li key={item.content}>
+            <Badge status={item.type} text={item.content} />
+          </li>
+        ))}
+      </ul>
+    );
+  };
+  const cellRender = (current, info) => {
+    if (info.type === "date") return dateCellRender(current);
+    return info.originNode;
+  };
   return (
     <div className="lg:pt-[70px] min-h-screen">
       <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
         <div className="md:my-7 lg:max-xl:w-full max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-200 py-5 lg:px-8">
-          <div className="lg:mb-5 max-lg:my-5 lg:h-10 max-lg:h-auto grid lg:grid-cols-6 max-lg:grid-cols-12 lg:gap-3 max-lg:gap-1 font-semibold">
-            <p className="max-md:mb-3 md:text-2xl max-md:text-3xl lg:col-span-2 max-lg:col-start-1 max-lg:col-span-12">Lịch khám</p>
-            <div className = "lg:w-full lg:flex lg:justify-end lg:col-start-3 lg:col-span-2">
-              <div
-                onClick={() => {
-                  setPassed(4);
-                }}
-                className={` ${
-                  passed === 4 && "bg-white shadow-md shadow-violet-300"
-                } first-letter:max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-2 max-lg:col-span-5 lg:col-span-2 lg:col-start-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 max-lg:w-full lg:w-1/2 h-full`}
-              > 
-                CHƯA XÁC NHẬN
-              </div>
+          <div className="lg:mb-5 max-lg:my-5 lg:h-10 max-lg:h-auto grid lg:grid-cols-5 max-lg:grid-cols-12 lg:gap-3 max-lg:gap-1 font-semibold">
+            <p className="max-md:mb-3 md:text-2xl max-md:text-3xl max-lg:col-start-1 max-lg:col-span-12">Lịch khám</p>
+            <div
+              onClick={() => {
+                setPassed(0);
+              }}
+              className={` ${
+                passed === 0 && "bg-white shadow-md shadow-violet-300"
+              } col-start-2 max-lg:col-start-4 max-lg:col-span-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+            >
+              TỔNG QUÁT
+            </div>
+            <div
+              onClick={() => {
+                setPassed(4);
+              }}
+              className={` ${
+                passed === 4 && "bg-white shadow-md shadow-violet-300"
+              } first-letter:max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-3 max-lg:col-span-5 lg:col-start-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 max-lg:w-full w-full h-full`}
+            > 
+              CHƯA XÁC NHẬN
             </div>
             <div
               onClick={() => {
@@ -221,7 +270,7 @@ const DoctorAppointment = () => {
               }}
               className={` ${
                 passed === 1 && "bg-white shadow-md shadow-violet-300"
-              } max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-7 max-lg:col-span-3 col-start-5 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+              } max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-7 max-lg:col-span-3 col-start-4 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               SẮP TỚI
             </div>
@@ -231,12 +280,18 @@ const DoctorAppointment = () => {
               }}
               className={` ${
                 passed === 2 && "bg-white shadow-md shadow-violet-300"
-              } max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-10 max-lg:col-span-3 col-start-6 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+              } max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-10 max-lg:col-span-3 col-start-5 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               ĐÃ QUA
             </div>
           </div>
-          {appointment?.length > 0 ? (
+          {passed === 0 ?
+          <Calendar
+            className="shadow-lg shadow-blue-300 p-3 rounded-lg border font-medium"
+            cellRender={cellRender}
+          />
+          :
+          appointment?.length > 0 ? (
             appointment?.map((appointment) => (
               <div
                 key={appointment.id}

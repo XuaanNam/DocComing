@@ -9,6 +9,7 @@ const initialState = {
   img: "",
   checked: false,
   data: [],
+  filter: [],
   countPost: 0,
   detailPost: {},
   SimilarDoctor: [],
@@ -17,6 +18,7 @@ const initialState = {
   post: [],
   allPost: [],
   allSearchPost: [],
+  allSearchPostAdmin:[],
   allSearchData: [],
   comment: []
 };
@@ -47,6 +49,17 @@ export const fetchPost = createAsyncThunk("fetchPost", async ({filter, orderby})
     headers: {
       Authorization: localStorage.getItem("token"),
     },
+  });
+  return await res.json();
+});
+export const postsFilter = createAsyncThunk("postsFilter", async (body) => {
+  const res = await fetch(`http://localhost:5000/api/admin/post/filter`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
   });
   return await res.json();
 });
@@ -223,6 +236,20 @@ export const searchPost = createAsyncThunk(
     return await res.json();
   }
 );
+export const searchPostAdmin = createAsyncThunk(
+  "searchPostAdmin",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/admin/post/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
 export const searchDoctor = createAsyncThunk(
   "searchDoctor",
   async (body) => {
@@ -240,6 +267,19 @@ export const searchMajor = createAsyncThunk(
   "searchMajor",
   async (body) => {
     const res = await fetch("http://localhost:5000/api/search/major", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
+export const searchDisease = createAsyncThunk(
+  "searchDisease",
+  async (body) => {
+    const res = await fetch("http://localhost:5000/api/search/disease", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -317,7 +357,18 @@ const postSlice = createSlice({
       .addCase(fetchPost.rejected, (state, action) => {
         state.loading = true;
       })
-      //fetchPost-Dcotor
+      //postsFilter-Admin
+      .addCase(postsFilter.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(postsFilter.fulfilled, (state, action) => {
+        state.filter = action.payload.data;
+        state.countPost = action.payload.count
+      })
+      .addCase(postsFilter.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //fetchPost-Doctor
       .addCase(fetchDoctorPost.pending, (state, action) => {
         state.loading = true;
       })
@@ -460,6 +511,18 @@ const postSlice = createSlice({
       .addCase(searchPost.rejected, (state, action) => {
         state.loading = true;
       })
+      //searchPost
+      .addCase(searchPostAdmin.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(searchPostAdmin.fulfilled, (state, action) => {
+        console.log(action.payload.data)
+        state.allSearchPostAdmin = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(searchPostAdmin.rejected, (state, action) => {
+        state.loading = true;
+      })
       //searchDoctor
       .addCase(searchDoctor.pending, (state, action) => {
         state.loading = true;
@@ -480,6 +543,17 @@ const postSlice = createSlice({
         state.loading = false;
       })
       .addCase(searchMajor.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //searchDisease
+      .addCase(searchDisease.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(searchDisease.fulfilled, (state, action) => {
+        state.allSearchData = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(searchDisease.rejected, (state, action) => {
         state.loading = true;
       })
       ;

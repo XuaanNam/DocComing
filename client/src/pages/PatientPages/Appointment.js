@@ -18,7 +18,6 @@ import {
   createAppointment,
 } from "../../redux-toolkit/appointmentSlice";
 import { getAllNotification } from "../../redux-toolkit/authSlice";
-import SelectForm from "../../components/SelectForm";
 
 const { TextArea } = Input;
 const description = ['Quá tệ', 'Chưa tốt', 'Bình thường', 'Tốt', 'Tuyệt vời'];
@@ -41,7 +40,6 @@ const Appointment = () => {
   useEffect(() => {
     dispatch(fetchAppointment());
   }, []);
-  console.log(healthRecordData, AppointmentData)
   useEffect(() => {
     if (currentUser) {
       if (currentUser.authentication != 1) Navigate("/");
@@ -78,6 +76,7 @@ const Appointment = () => {
   const handleCancelAppointment = (id) => {
     const data = { id, idAccount: idDoctor };
     dispatch(cancelAppointment(data)).then(() => {
+      dispatch(getAllNotification())
       dispatch(fetchAppointment());
     });
     setShowModal(false);
@@ -92,13 +91,14 @@ const Appointment = () => {
       Information,
     };
     dispatch(createAppointment(body))
-    dispatch(getAllNotification())
     dispatch(acceptNoteAppointment({idAppointment})).then(() => {
+      dispatch(getAllNotification())
       dispatch(fetchAppointment());
     });
   };
   const handleCancelNoteAppointment = (idAppointment) => {
     dispatch(cancelNoteAppointment({idAppointment})).then(() => {
+      dispatch(getAllNotification())
       dispatch(fetchAppointment());
     });
   };
@@ -155,6 +155,16 @@ const Appointment = () => {
             <p className="text-2xl lg:col-span-2 max-lg:col-start-1 max-lg:col-span-4">Lịch khám</p>
             <div
               onClick={() => {
+                setPassed(0);
+              }}
+              className={` ${
+                passed === 0 && "bg-white shadow-md shadow-violet-300"
+              } col-start-3 max-lg:col-start-4 max-lg:col-span-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+            >
+              TỔNG QUÁT
+            </div>
+            <div
+              onClick={() => {
                 setPassed(1);
               }}
               className={` ${
@@ -174,7 +184,13 @@ const Appointment = () => {
               ĐÃ QUA
             </div>
           </div>
-          {appointment?.length > 0 ? (
+          {passed === 0 ?
+            <Calendar
+              className="shadow-lg shadow-blue-300 p-3 rounded-lg border font-medium"
+              cellRender={cellRender}
+            />
+          :
+          appointment?.length > 0 ? (
             appointment?.map((appointment) => (
             <div key={appointment.id} className="w-full rounded-xl shadow-lg mb-5 border">
               <div className="p-1 rounded-t-xl bg-teal-200 w-full h-10 grid grid-cols-3 place-items-center">
@@ -375,13 +391,8 @@ const Appointment = () => {
             <p className="py-10 w-full text-center text-2xl font-medium">
               Bạn chưa có cuộc hẹn mới
             </p>
-          )}
-          <div>
-            <Calendar
-              className="shadow-lg shadow-blue-300 p-3 rounded-lg border font-medium"
-              cellRender={cellRender}
-            />
-          </div>
+          )
+          }
         </div>
       <Modal
         show={showModal}

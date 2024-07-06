@@ -3,7 +3,7 @@ import { CiCamera } from "react-icons/ci";
 import { MdEdit } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
 import { Button, Modal } from "flowbite-react";
-import { fetchProfile, updateProfile,logout, changePassword } from "../../redux-toolkit/authSlice";
+import { fetchProfile, updateProfile,logout, changePassword, getAllNotification } from "../../redux-toolkit/authSlice";
 import { useNavigate,Link } from "react-router-dom";
 import { DatePicker, Space, Input, Select } from "antd";
 import dayjs from "dayjs";
@@ -101,8 +101,10 @@ const Profile = () => {
       setErrorMessage("Mật khẩu phải chứa ít nhất 6 kí tự!")
     else
       dispatch(changePassword(data)).then((result) => {
-        if(result.payload.message == "Đổi mật khẩu thành công!")
+        if(result.payload.message == "Đổi mật khẩu thành công!"){
+          dispatch(getAllNotification())
           handleClose()
+        }
         else
           setErrorMessage(result.payload.message);
       })

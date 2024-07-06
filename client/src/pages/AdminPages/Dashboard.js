@@ -14,17 +14,27 @@ import { fetchAdminAppointment } from "../../redux-toolkit/appointmentSlice";
 
 export default function Dashboard() {
   const dispatch = useDispatch();
+  const Navigate = useNavigate()
   const { currentUser,countUser} = useSelector((state) => state.user);
   const {data,countPost} = useSelector((state) => state.post);
   const allUsers = useSelector((state) => state.user.data);
   const { AppointmentData,countAppointment, error, loading } = useSelector((state) => state.appointment);
-  const Navigate = useNavigate()
-  console.log(AppointmentData, countAppointment)
+  const currentDate = new Date();
+
   useEffect(() => {
-    dispatch(fetchUsers()); 
-    dispatch(fetchPost());
+    const Users = {
+      filter : "CreatedAt",
+      orderby: "asc"
+    }
+    const Posts = {
+      filter: "DatePost",
+      orderby: "asc"
+    }
+    dispatch(fetchUsers(Users)); 
+    dispatch(fetchPost(Posts));
     dispatch(fetchAdminAppointment())
   }, [currentUser]);
+  console.log(currentDate.getMonth() + 1)
   return (
     <div className="pt-[80px] bg-gray-50 h-screen flex flex-col justify-center m-3 md:mx-auto p-6 border-collapse">
       <div className="pt-3 flex flex-wrap gap-4 justify-center">
@@ -83,17 +93,17 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      <GridItem title="Bar Chart">
-          <BarChart />
-        </GridItem>
+      <GridItem title={`Thống kê năm ${currentDate.getMonth() + 1 < 12 ? parseInt(currentDate.getFullYear() - 1) + " - " + parseInt(currentDate.getFullYear()) : parseInt(currentDate.getFullYear())}`}>
+        <BarChart />
+      </GridItem>
     </div>
   );
 }
 
 function GridItem({ title, children }) {
   return (
-    <div className="flex flex-col items-center justify-center p-4 mt-12 border shadow-lg shadow-violet-200 border-white bg-white rounded-xl h-[400px]">
-      <h3 className="text-2xl font-semibold text-white mb-4">{title}</h3>
+    <div className="flex flex-col items-center justify-center p-4 mt-12 border shadow-lg shadow-violet-200 border-white bg-white rounded-xl h-[450px] transition-all">
+      <h3 className="text-2xl font-semibold text-black mb-4">{title}</h3>
       {children}
     </div>
   );
