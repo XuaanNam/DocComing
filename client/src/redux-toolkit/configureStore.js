@@ -13,7 +13,7 @@ const userPersistConfig = {
 const postPersistConfig = {
   key: "post",
   storage,
-  blacklist: ["checked", "message"],
+  blacklist: ["checked", "message","comment"],
 };
 const persistConfig = {
   key: "root",

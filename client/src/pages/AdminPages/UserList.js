@@ -26,6 +26,7 @@ const UserList = () => {
   const [arrange, setArrange] = useState("desc")
   const [date, setDate] = useState("")
   const [profile, setProfile] = useState(false)
+  const [detailProfile, setDetailProfile] = useState(null)
   const dispatch = useDispatch();
   useEffect(() => {
     const data = {
@@ -93,7 +94,6 @@ const UserList = () => {
     setArrange("desc")
     setDate("")
   }
-  console.log(filter)
   const handleDatePickerChange = (date, dateString) => {
     setDate(dateString);
   };
@@ -111,14 +111,26 @@ const UserList = () => {
       label: "Bệnh nhân"
     }
   ]
+  const handleDetailProfile = (index) => {
+    if(isSearched == "search"){
+      setDetailProfile(allSearchUsers[index])
+    }
+    else if(isSearched == "filter"){
+      setDetailProfile(filter[index])
+    }
+    else{
+      setDetailProfile(allUsers[index])
+    }
+  }
+  console.log(detailProfile)
   return (
-    <div className="lg:pt-[70px] h-screen table-auto md:mx-auto px-10 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
+    <div className="lg:pt-[70px] mb-5 table-auto md:mx-auto px-10 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
       {profile ?
-      <div className="mt-5 py-7 w-full h-[94%] rounded-xl bg-white shadow-lg shadow-violet-200 max-lg:px-6 lg:px-8">
+      <div className="mt-5 py-7 w-full rounded-xl bg-white shadow-lg shadow-violet-200 max-lg:px-6 lg:px-8">
         <FaArrowLeftLong className="h-6 w-8 hover:text-gray-600 cursor-pointer transition-transform duration-500"
                   onClick={()=>setProfile(false)}
         />
-        <div className="lg:grid lg:grid-cols-5 lg:gap-8 h-full w-full">
+        <div className="lg:grid lg:grid-cols-5 lg:gap-8 w-full">
           <div className="lg:col-span-1 flex flex-col items-center gap-3">
             <p className="font-semibold text-2xl mb-5">Hồ sơ</p>
             <img
@@ -127,72 +139,72 @@ const UserList = () => {
               className=" rounded-full w-32 h-32 object-cover border-4 border-[lightgray]"
             />
             <div className=" max-lg:text-left max-lg:text-base max-lg:flex max-lg:items-center max-lg:justify-center font-medium lg:text-lg lg:text-center w-full">
-              Quoc Anh
+              {detailProfile?.FirstName + " " + detailProfile?.LastName}
             </div>
           </div>
-          <div className={`lg:col-span-4 flex flex-col h-2/3`}>
+          <div className={`lg:col-span-4 flex flex-col`}>
             <Button className="mb-5 self-end" gradientMonochrome="failure">Xóa người dùng</Button>
             <div className="flex flex-col w-full self-center py-8 px-16 bg-white shadow-md rounded-lg">
               <div className="lg:flex lg:gap-5 mb-5">
                 <div className="lg:w-1/2">
                   <p className="font-medium text-sm">Họ và tên</p>
-                  <div className="lg:w-2/3 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">Quoc Anh</div>
+                  <div className="lg:w-4/5 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10"> {(detailProfile?.FirstName + " " + detailProfile?.LastName) || "--"} </div>
                 </div>
                 <div className="lg:w-1/2">
                   <p className="font-medium text-sm">Email</p>
-                  <div className="lg:w-2/3 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">oruku8888@gmail.com</div>
+                  <div className="lg:w-4/5 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">{detailProfile?.Email}</div>
                 </div>
               </div>
               <div className="lg:flex lg:gap-5 mb-5">
                 <div className="lg:w-1/2">
                   <p className="font-medium text-sm">Số điện thoại</p>
-                  <div className="lg:w-2/3 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">123456789</div>
+                  <div className="lg:w-4/5 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">{(detailProfile?.Phone || "--")}</div>
                 </div>
                 <div className="lg:w-1/2">
                   <p className="font-medium text-sm">Địa chỉ</p>
-                  <div className="lg:w-2/3 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">420 võ văn ngân</div>
+                  <div className="lg:w-4/5 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">{(detailProfile?.Address || "--")}</div>
                 </div>
               </div>
               <div className="lg:flex lg:gap-5 mb-5">
                 <div className="lg:w-1/2">
                   <p className="font-medium text-sm">Ngày sinh</p>
-                  <div className="lg:w-2/3 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">11/11/2001</div>
+                  <div className="lg:w-4/5 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">{(detailProfile?.BirthDate || "--")}</div>
                 </div>
                 <div className="lg:w-1/2">
                   <p className="font-medium text-sm">Giới tính</p>
-                  <div className="lg:w-2/3 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">Nữ</div>
+                  <div className="lg:w-4/5 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">{(detailProfile?.Gender || "--")}</div>
                 </div>
               </div>
-              {/* <>
+              {detailProfile?.Role == "doctor" &&
+              <>
                 <div className="lg:flex lg:gap-5 mb-5">
                   <div className="lg:w-1/2">
                     <p className="font-medium text-sm">Chuyên khoa</p>
-                    <div className="lg:w-2/3 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">Nhãn khoa</div>
+                    <div className="lg:w-4/5 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">{(detailProfile?.Major || "--")}</div>
                   </div>
                   <div className="lg:w-1/2">
                     <p className="font-medium text-sm">Bằng cấp</p>
-                    <div className="lg:w-2/3 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">Thạc sĩ y khoa</div>                      
+                    <div className="lg:w-4/5 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">{(detailProfile?.Degree || "--")}</div>                      
                   </div>
                 </div>
                 <div className="lg:flex lg:gap-5 mb-5">
                   <div className="lg:w-1/2">
                     <p className="font-medium text-sm">Năm kinh nghiệm</p>
-                    <div className="lg:w-2/3 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">12</div>
+                    <div className="lg:w-4/5 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">{(detailProfile?.Experience  || "--")}</div>
                   </div>
                   <div className="lg:w-1/2">
                     <p className="font-medium text-sm">Nơi đào tạo</p>
-                    <div className="lg:w-2/3 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">Đại học y dược</div>
+                    <div className="lg:w-4/5 border-b-2 text-gray-700 border-b-teal-400 flex items-center bg-white border-gray-300 max-lg:mb-4 h-10">{(detailProfile?.Training || "--")}</div>
                   </div>
                 </div>
                 <p className="font-medium text-sm mb-2">Giới thiệu</p>
-                <div>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged
-                </div>
-              </> */}
-              {/* <div
-                className="text-lg mb-3 text-justify content"
-                dangerouslySetInnerHTML={{ __html: detailPost[0]?.Content }}
-              /> */}
+                <div
+                  className="mb-3 text-justify content"
+                  dangerouslySetInnerHTML={{ __html: detailProfile?.Introduce }}
+                /> 
+              </> 
+              }
+
             </div>
           </div>
         </div>
@@ -229,9 +241,9 @@ const UserList = () => {
             <Table.HeadCell>Phân quyền</Table.HeadCell>
             <Table.HeadCell></Table.HeadCell>
           </Table.Head>
-          {slice?.map((user) => (
+          {slice?.map((user,index) => (
             <Table.Body className="divide-y" key={user.id}>
-              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800 cursor-pointer" onClick={()=>setProfile(true)}>
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800 cursor-pointer" onClick={()=>{setProfile(true);handleDetailProfile(index)}}>
                 <Table.Cell>
                   {new Date(user.CreatedAt).toLocaleDateString()}
                 </Table.Cell>
@@ -244,7 +256,7 @@ const UserList = () => {
                 </Table.Cell>
                 <Table.Cell>{user.FirstName + " " + user.LastName}</Table.Cell>
                 <Table.Cell>{user.Email}</Table.Cell>
-                <Table.Cell>{user.Phone}</Table.Cell>
+                <Table.Cell>{user.Phone || "Chưa cập nhật"}</Table.Cell>
                 <Table.Cell>{user.Role}</Table.Cell>
                 <Table.Cell>
                   <span
@@ -364,7 +376,7 @@ const UserList = () => {
                   label: 'Cũ nhất xếp trước',
                 },
               ]}
-            />
+              />
             </div>
                        
             <Button

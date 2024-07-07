@@ -158,7 +158,7 @@ const Doctors = () => {
                   />
                 </div>
                 <p className="w-[85%] text-base">
-                  Chuyên khoa: {doctor?.major}
+                  Chuyên khoa: {doctor?.Major}
                 </p>
               </div>
               <div className="min-h-[70px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">

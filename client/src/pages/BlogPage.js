@@ -31,6 +31,7 @@ const BlogPage = () => {
     const x = name + "_" + id;
     return x;
   };
+  console.log(SimilarDoctor)
   useEffect(() => {
     const data = {
       idPost: blogId,
@@ -38,7 +39,7 @@ const BlogPage = () => {
     }
     dispatch(getDetailPost(blogId));
     dispatch(fetchComment(data))
-  }, [dispatch]);
+  }, [dispatch,blogId]);
   const handleAction = (id) => {
     if(currentUser)
       setReply(id);
@@ -128,7 +129,6 @@ const BlogPage = () => {
     if(id !== 235523484)
       Navigate(`/doctors/${path(firstName + " " + lastName,id)}`)
   }
-  console.log(SimilarDoctor)
   return (
     <div className="relative bg-white">
       {(settingCmt !== 0 || settingRepCmt !== 0) && (
@@ -143,12 +143,15 @@ const BlogPage = () => {
       <div className="lg:mx-[48px] max-lg:pt-[80px] lg:pt-[100px] lg:pl-16">
         <div className="lg:flex lg:gap-7 pb-20 max-lg:px-7">
           <div className="lg:w-[75%] ">
-            <p className="h-[44px] max-lg:mx-auto max-lg:mt-7 bg-white max-w-64 flex items-center justify-center p-1 mb-5 cursor-pointer rounded-3xl  text-teal-400 font-medium drop-shadow-lg  transition-transform duration-500 hover:scale-105">
-              {detailPost[0]?.Similar}
-            </p>
-            <div className="mb-5">
-              {/* Bệnh tiêu hóa {">"} Các vấn đề tiêu hóa khác */}
+            <div className="h-10 max-lg:mx-auto max-lg:mt-7 bg-gray-50 w-32 max-w-64 flex items-center justify-center p-1 mb-5 rounded-3xl  text-teal-400 font-medium drop-shadow-lg"
+            >
+              {detailPost[0]?.Classify}
             </div>
+            <div className="h-[44px] max-lg:mx-auto max-lg:mt-7 bg-white max-w-64 flex items-center justify-center p-1 mb-5 cursor-pointer rounded-3xl  text-teal-400 font-medium drop-shadow-lg  transition-transform duration-500 hover:scale-105"
+               onClick={()=>Navigate(`/categories/${detailPost[0]?.Similar}`)}
+            >
+              {detailPost[0]?.Similar}
+            </div> 
             <div className="text-4xl max-lg:text-3xl font-bold text-slate-800 w-full mb-5">
               {detailPost[0]?.Title}
             </div>
@@ -277,7 +280,6 @@ const BlogPage = () => {
                         :
                         <p className="mb-2 text-lg">{replyCmt.repCmt}</p>  
                         }
-                        {/* <p className="cursor-pointer hover:underline text-slate-600">Thích</p> */}
                         <div className="flex gap-2">
                           {replyCmt.repIsLoved ? 
                           <FaHeart className="cursor-pointer w-5 h-5 text-rose-500 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP", idAccount: replyCmt.repidAccount})}}></FaHeart>
@@ -342,9 +344,9 @@ const BlogPage = () => {
                 <div>
                   <div className="font-medium  text-lg">{item.FirstName + " " + item.LastName}</div>
                   <div className="flex gap-1">
-                    Chuyên khoa: <p className="font-medium">Đa khoa</p>
+                    Chuyên khoa: <p className="font-medium">{detailPost[0]?.Major}</p>
                   </div>
-                  <div>12 năm kinh nghiệm</div>
+                  <div>{item.Experience}</div>
                 </div>
               </div>
               )}

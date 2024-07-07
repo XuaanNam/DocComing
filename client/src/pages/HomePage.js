@@ -86,8 +86,8 @@ const HomePage = () => {
     return x;
   };
   return (
-    <div className="pt-[72px]">
-      <div className="max-w-[92%] h-[720px] w-full max-sm:h-[560px] max-sm:pt-16 m-auto pb-[40px] px-4 relative group drop-shadow-md">
+    <div className="pt-[70px]">
+      <div className="max-w-[92%] h-[726px] w-full max-sm:h-[560px] max-sm:pt-16 m-auto pb-[40px] px-4 relative group drop-shadow-md">
         <div
           style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
           className="w-full lg:h-full max-sm:h-1/3 transition-full rounded-3xl bg-center bg-cover duration-500"
@@ -134,11 +134,11 @@ const HomePage = () => {
             onClick={() => Navigate(`/blog/${allPost[0].id}`)}
           >
             <img
-              className="lg:h-[450px] max-sm:h-[230px] w-full rounded-xl mb-2 bg-cover drop-shadow-lg"
+              className="lg:h-[450px] max-sm:h-[230px] w-full rounded-xl mb-2 object-cover drop-shadow-lg"
               src={allPost[0]?.FeaturedImage}
               alt=""
             ></img>
-            <div className="text-teal-500 mb-2">{allPost[0]?.Similar}</div>
+            <div className="text-teal-500 mb-2" onClick={()=>Navigate(`/categories/${allPost[0]?.Categories}/${allPost[0]?.Similar}`)}>{allPost[0]?.Similar}</div>
             <div className="text-slate-800 text-ellipsis text-xl font-medium mb-2">
               {allPost[0]?.Title}
             </div>
@@ -147,7 +147,7 @@ const HomePage = () => {
             </p>
             <div className="flex gap-2 text-base items-center">
               <img
-                className="h-8 w-8 rounded-full bg-cover drop-shadow-md"
+                className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                 src={allPost[0]?.Avt}
                 alt=""
               ></img>
@@ -160,19 +160,19 @@ const HomePage = () => {
           <div className="lg:grid max-sm:mt-5 max-sm:gap-3 lg:grid-rows-3 lg:w-2/5 max-sm:w-full">
             <div className="row-span-2 cursor-pointer w-full pb-5 border-b-[1.5px]">
               <img
-                className="h-[280px] w-full rounded-xl mb-4 bg-cover drop-shadow-lg"
+                className="h-[280px] w-full rounded-xl mb-4 object-cover drop-shadow-lg"
                 src={allPost[1]?.FeaturedImage}
                 alt=""
                 onClick={() => Navigate(`/blog/${allPost[1].id}`)}
               ></img>
-              <div className="text-teal-500 mb-4">{allPost[1]?.Similar}</div>
+              <div className="text-teal-500 mb-4" onClick={()=>Navigate(`/categories/${allPost[1]?.Categories}/${allPost[1]?.Similar}`)}>{allPost[1]?.Similar}</div>
               <div className="text-slate-800 text-lg text-ellipsis font-medium mb-4"
                    onClick={() => Navigate(`/blog/${allPost[1].id}`)}>
                 {allPost[1]?.Title}
               </div>
               <div className="flex gap-2 text-base items-center">
                 <img
-                  className="h-8 w-8 rounded-full drop-shadow-md"
+                  className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                   src={allPost[1]?.Avt}
                   alt=""
                 ></img>
@@ -186,7 +186,7 @@ const HomePage = () => {
             <div className="cursor-pointer w-full pt-5">
               <div className=" flex gap-3">
                 <div className="w-3/5">
-                  <div className="text-teal-500 mb-4">
+                  <div className="text-teal-500 mb-4" onClick={()=>Navigate(`/categories/${allPost[2]?.Categories}/${allPost[2]?.Similar}`)}>
                     {allPost[2]?.Similar}
                   </div>
                   <div className="text-slate-800 text-lg max-sm:mb-3 font-medium lg:mb-8 text-ellipsis overflow-hidden" onClick={() => Navigate(`/blog/${allPost[2].id}`)}>
@@ -194,7 +194,7 @@ const HomePage = () => {
                   </div>
                   <div className="flex gap-2 text-base items-center self-end">
                     <img
-                      className="h-8 w-8 rounded-full drop-shadow-md"
+                      className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={allPost[2]?.Avt}
                       alt=""
                     ></img>
@@ -205,7 +205,7 @@ const HomePage = () => {
                   </div>
                 </div>
                 <img
-                  className="h-[140px] w-2/5 rounded-xl bg-cover drop-shadow-lg"
+                  className="h-[140px] w-2/5 rounded-xl object-cover drop-shadow-lg"
                   src={allPost[2]?.FeaturedImage}
                   alt=""
                   onClick={() => Navigate(`/blog/${allPost[2].id}`)}
@@ -214,8 +214,42 @@ const HomePage = () => {
             </div>
           </div>
         </div>
-        <hr className="w-full mt-5 mb-10"></hr>
-        <div className="text-2xl font-medium text-slate-800 mb-3">
+        <hr className="w-full mt-5 mb-7"></hr>
+        <Slider {...settings}>
+          {allPost?.slice(3).map((disease) => 
+          <div className="md:!flex gap-7 max-sm:mb-7 w-[775px]">
+            <img
+              className="h-[200px] w-[280px] max-sm:w-full rounded-xl mb-2 object-cover drop-shadow-lg cursor-pointer"
+              src={disease.FeaturedImage}
+              alt=""
+              onClick={() => Navigate(`/blog/${disease.id}`)}
+            ></img>
+            <div className="max-w-[700px]">
+              <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Bệnh tiêu hóa/${disease.Similar}`)}>{disease.Similar}</div>
+              <div className="cursor-pointer">
+                <div className="text-slate-800 text-lg font-medium mb-2">
+                  {disease.Title}
+                </div>
+                <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
+                  {disease.Brief}
+                </div>
+                <div className="flex gap-2 text-base items-center">
+                  <img
+                    className="h-8 w-8 rounded-full object-cover drop-shadow-md"
+                    src={disease.Avt}
+                    alt=""
+                  ></img>
+                  <div className="font-medium">
+                    {disease.FirstName + " " + disease.LastName} -
+                  </div>
+                  <div> Ngày đăng: {disease.DatePost?.slice(0, 10)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          )}
+        </Slider>
+        <div className="text-2xl font-medium text-slate-800 mb-3 mt-12">
           Đội ngũ chuyên gia của Doctor Coming
         </div>
         <div className="md:flex gap-x-7 mb-15">
@@ -238,7 +272,7 @@ const HomePage = () => {
           </div>
           <div className="flex gap-4 w-[42%] max-sm:w-full max-sm:mb-7">
             {doctors?.slice(0,2).map((doctor) =>
-            <div onClick={()=>Navigate(`doctors/${path(doctor.FirstName + doctor.LastName, doctor.id)}`)} 
+            <div onClick={()=>Navigate(`/doctors/${path(doctor.FirstName + doctor.LastName, doctor.id)}`)} 
                  className="w-1/2 grid grid-rows-1 gap-2 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105">
               <div className="relative w-[100%] flex justify-center mb-3">
                 <img
@@ -290,7 +324,7 @@ const HomePage = () => {
             <div className="text-2xl w-44 font-medium text-slate-800 flex items-center">
               Bệnh tim mạch
             </div>
-            <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("categories/Bệnh tim mạch")}>
+            <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("/categories/Bệnh tim mạch")}>
               <span className="text-base text-blue-500">Xem thêm </span>
               <IoIosArrowForward className="text-blue-500 mt-1 h-[15px] w-[15px]"></IoIosArrowForward>
             </div>
@@ -299,14 +333,14 @@ const HomePage = () => {
             {heartDiseases.length > 0 && heartDiseases.map((disease) => 
             <div className="md:!flex gap-7 max-sm:mb-7 w-[575px]">
               <img
-                className="h-[200px] max-sm:w-full w-[280px] rounded-xl mb-2 bg-cover drop-shadow-lg cursor-pointer"
+                className="h-[200px] max-sm:w-full w-[280px] rounded-xl mb-2 object-cover drop-shadow-lg cursor-pointer"
                 src={disease.FeaturedImage}
                 alt=""
                 onClick={() => Navigate(`/blog/${disease.id}`)}
               ></img>
               <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`categories/Bệnh tim mạch/${disease.Similar}`)}>{disease.Similar}</div>
-                <div className="cursor-pointer" onClick={() => Navigate(`/blog/${disease.id}`)}>
+                <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Bệnh tim mạch/${disease.Similar}`)}>{disease.Similar}</div>
+                <div className="cursor-pointer">
                   <div className="text-slate-800 text-lg font-medium mb-2">
                     {disease.Title}
                   </div>
@@ -315,7 +349,7 @@ const HomePage = () => {
                   </div>
                   <div className="flex gap-2 text-base items-center">
                     <img
-                      className="h-8 w-8 rounded-full bg-cover drop-shadow-md"
+                      className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={disease.Avt}
                       alt=""
                     ></img>
@@ -335,7 +369,7 @@ const HomePage = () => {
             <div className="text-2xl w-44 font-medium text-slate-800 flex items-center">
               Bệnh tiêu hóa
             </div>
-            <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("categories/Bệnh tiêu hóa")}>
+            <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("/categories/Bệnh tiêu hóa")}>
               <span className="text-base text-blue-500">Xem thêm </span>
               <IoIosArrowForward className="text-blue-500 mt-1 h-[15px] w-[15px]"></IoIosArrowForward>
             </div>
@@ -344,14 +378,14 @@ const HomePage = () => {
             {digestiveDiseases.length > 0 && digestiveDiseases.map((disease) => 
             <div className="md:!flex gap-7 max-sm:mb-7 w-[575px]">
               <img
-                className="h-[200px] w-[280px] max-sm:w-full rounded-xl mb-2 bg-cover drop-shadow-lg cursor-pointer"
+                className="h-[200px] w-[280px] max-sm:w-full rounded-xl mb-2 object-cover drop-shadow-lg cursor-pointer"
                 src={disease.FeaturedImage}
                 alt=""
                 onClick={() => Navigate(`/blog/${disease.id}`)}
               ></img>
               <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`categories/Bệnh tiêu hóa/${disease.Similar}`)}>{disease.Similar}</div>
-                <div className="cursor-pointer" onClick={() => Navigate(`/blog/${disease.id}`)}>
+                <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Bệnh tiêu hóa/${disease.Similar}`)}>{disease.Similar}</div>
+                <div className="cursor-pointer">
                   <div className="text-slate-800 text-lg font-medium mb-2">
                     {disease.Title}
                   </div>
@@ -360,7 +394,7 @@ const HomePage = () => {
                   </div>
                   <div className="flex gap-2 text-base items-center">
                     <img
-                      className="h-8 w-8 rounded-full bg-cover drop-shadow-md"
+                      className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={disease.Avt}
                       alt=""
                     ></img>
@@ -380,7 +414,7 @@ const HomePage = () => {
             <div className="text-2xl w-44 font-medium text-slate-800 flex items-center">
               Tiểu đường
             </div>
-            <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("categories/Tiểu đường")}>
+            <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("/categories/Tiểu đường")}>
               <span className="text-base text-blue-500">Xem thêm </span>
               <IoIosArrowForward className="text-blue-500 mt-1 h-[15px] w-[15px]"></IoIosArrowForward>
             </div>
@@ -389,14 +423,14 @@ const HomePage = () => {
             {diabetesDiseases.length > 0 && diabetesDiseases.map((disease) => 
             <div className="md:!flex gap-7 max-sm:mb-7 w-[575px]">
               <img
-                className="h-[200px] w-[280px] max-sm:w-full rounded-xl mb-2 bg-cover drop-shadow-lg cursor-pointer"
+                className="h-[200px] w-[280px] max-sm:w-full rounded-xl mb-2 object-cover drop-shadow-lg cursor-pointer"
                 src={disease.FeaturedImage}
                 alt=""
                 onClick={() => Navigate(`/blog/${disease.id}`)}
               ></img>
               <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2" onClick={()=>Navigate(`categories/Tiểu đường/${disease.Similar}`)}>{disease.Similar}</div>
-                <div className="cursor-pointer" onClick={() => Navigate(`/blog/${disease.id}`)}>
+                <div className="text-teal-500 mb-2" onClick={()=>Navigate(`/categories/Tiểu đường/${disease.Similar}`)}>{disease.Similar}</div>
+                <div className="cursor-pointer">
                   <div className="text-slate-800 text-lg font-medium mb-2">
                     {disease.Title}
                   </div>
@@ -405,7 +439,7 @@ const HomePage = () => {
                   </div>
                   <div className="flex gap-2 text-base items-center">
                     <img
-                      className="h-8 w-8 rounded-full bg-cover drop-shadow-md"
+                      className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={disease.Avt}
                       alt=""
                     ></img>

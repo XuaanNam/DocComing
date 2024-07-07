@@ -54,7 +54,7 @@ const Header = () => {
   const handleNavigate = (url) => {
     if(url == "Email")
       window.open("https://mail.google.com")
-    else
+    else if(url != "none")
       Navigate(url)
   }
   useEffect(()=>{
@@ -63,7 +63,6 @@ const Header = () => {
       dispatch(fetchProfile())
     }
   },[currentUser,dispatch])
-  console.log(allNoti)
   // useEffect(()=>{
   //   if(currentUser){
   //     const interval = setInterval(() => {
@@ -91,7 +90,7 @@ const Header = () => {
           }}
         ></div>
       )}
-      <div className="text-sm h-full px-5 font-medium text-teal-800 max-sm:px-2 bg-teal-600 grid grid-cols-4 max-lg:grid-cols-11 max-lg:gap-1 drop-shadow-lg">
+      <div className="text-sm h-full px-5 font-medium text-teal-800 max-sm:px-2 bg-[#416475] grid grid-cols-4 max-lg:grid-cols-11 max-lg:gap-1 drop-shadow-lg">
         <div className="max-lg:col-start-1 max-lg:col-span-3 col-start-1 col-span-1 lg:pl-5 text-xl flex items-center font-bold text-teal-500">
           <img className="rounded-full h-12 w-12 mr-3 max-sm:h-10 max-sm:w-10 max-sm:mr-1 " alt="logo" src={logo}></img>
           <a className="text-gray-100 max-sm:text-sm" href="/">

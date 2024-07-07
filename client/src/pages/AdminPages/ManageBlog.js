@@ -23,9 +23,20 @@ const ManageBlog = () => {
   const [similarCategoryId, setSimilarCategoryId] = useState("");
   const [keywordUser, setKeywordUser] = useState("")
   const [isSearched, setIsSearched] = useState("")
+  const [postStatus, setPostStatus] = useState(1)
   const [arrange, setArrange] = useState("desc")
   const [date, setDate] = useState("")
   const dispatch = useDispatch();
+  const status = [
+    {
+      id: 1,
+      label: "Bài viết đang xuất hiện"
+    },
+    {
+      id: 2,
+      label: "Bài viết đang bị ẩn"
+    }
+  ]
   useEffect(() => {
     if(currentUser.authentication == 2){
       dispatch(fetchDoctorPost())
@@ -75,9 +86,10 @@ const ManageBlog = () => {
   }
   const handleFilterPosts = () => {
     let data = {};
-    // data = {...data,
-    //   Sort: arrange
-    // }
+    data = {...data,
+      Sort: arrange,
+      Status: postStatus
+    }
     if(date != ""){
       data = {...data,
         StartDate: date[0],
@@ -104,7 +116,6 @@ const ManageBlog = () => {
   else{
     posts = data
   }
-  console.log(posts);
   let post = [];
   for (let i = 0; i < posts?.length; i++) {
     if (posts[i].Status === confirmedPost)
@@ -341,6 +352,45 @@ const ManageBlog = () => {
                   </Select.OptGroup>
                 ))}
               </Select>
+            </div>
+            <div className="flex items-center w-full">
+              <p className="font-medium min-w-[35%]">Trạng thái</p>
+              <Select
+              id="status"
+              className="h-10 md:w-[65%] max-md:w-[65%] border rounded-md bg-white text-slate-800 cursor-pointer"
+              value={postStatus}
+              onChange={(value)=>{setPostStatus(value)}}
+              >
+                {status?.map((status) => (
+                  <Select
+                    id="role"
+                    value={status.id}
+                    label={status.label}
+                    key={status.id}
+                  >
+                    {status.label}
+                  </Select>
+                ))}
+              </Select>
+            </div>
+            <div className="flex items-center w-full">
+              <p className="font-medium min-w-[35%]">Sắp xếp theo</p>
+              <Select
+              id="arrange"
+              className="h-10 md:w-[65%] max-md:w-[65%] border rounded-md bg-white text-slate-800 cursor-pointer"
+              value={arrange}
+              onChange={(value)=>{setArrange(value)}}
+              options={[
+                {
+                  value: "desc",
+                  label: 'Mới nhất xếp trước',
+                },
+                {
+                  value: "asc",
+                  label: 'Cũ nhất xếp trước',
+                },
+              ]}
+              />
             </div>                       
             <Button
               // disabled={record === "" || recordNote === ""}

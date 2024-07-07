@@ -302,10 +302,6 @@ const AdminProfile = () => {
                 )}
               </form>
             </div>
-
-            {/* {imageFileUploadError && (
-          <Alert color='failure'>{imageFileUploadError}</Alert>
-        )} */}
           </div>
         </div>
       ) : (
