@@ -39,7 +39,6 @@ const BlogPage = () => {
     dispatch(getDetailPost(blogId));
     dispatch(fetchComment(data))
   }, [dispatch]);
-  console.log(SimilarDoctor)
   const handleAction = (id) => {
     if(currentUser)
       setReply(id);
@@ -47,7 +46,7 @@ const BlogPage = () => {
       Navigate("/login")
       localStorage.setItem("blog", JSON.stringify(blogId))
     }
-  }
+  } 
   const handleLike = ({id,status,idAccount}) => {
     if(currentUser)
     {
@@ -333,7 +332,7 @@ const BlogPage = () => {
               <div className="text-xl font-medium text-black italic mb-4">Bác sĩ điều trị</div>
               {SimilarDoctor?.map((item) =>
               <div className="bg-white hover:bg-slate-50 cursor-pointer rounded-xl shadow-md p-4 flex gap-2 items-center"
-                  //  onClick={()=> Navigate(`/doctors/${path(item.FirstName + " " + item.LastName,item.id)}`)}
+                  onClick={()=> Navigate(`/doctors/${path(item.FirstName + " " + item.LastName,item.id)}`)}
               >
                 <img
                   className="rounded-full w-14 h-14 object-contain drop-shadow-sm"

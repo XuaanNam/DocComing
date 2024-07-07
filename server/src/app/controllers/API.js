@@ -1897,6 +1897,8 @@ class API {
   filterPost(req, res) {
     let DatePost = "";
     let Similar = "";
+    let Sort = "";
+    let Status = "";
     if(req.body.StartDate){
       let sd = req.body.StartDate.split("/")
       let ed = req.body.EndDate.split("/")
@@ -1909,7 +1911,17 @@ class API {
         Similar = " idSimilar = " + req.body.Similar;
       }
     } 
-    const selectSql = "select * from AllPost WHERE " + DatePost + Similar;
+    if(req.body.Status){
+      if(req.body.StartDate || req.body.Similar){
+        Status = " and Status = " + req.body.Status;
+      } else {
+        Status = " Status = " + req.body.Status;
+      }
+    }
+    if(req.body.Sort){
+      Sort = " order by DatePost " + req.body.Sort;
+    }
+    const selectSql = "select * from AllPost WHERE " + DatePost + Similar + Status + Sort;
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
     if (req.user.Authorization != 0) {

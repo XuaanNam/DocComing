@@ -71,7 +71,7 @@ router.get("/post/detail/:id", api.getPostById);
 router.get("/post/categories/:id", api.getPostByCategories); // truyền tới id categories
 router.get("/post/categories/similar/:id", api.getPostBySimilarCategories); // truyền tới id similar
 router.get("/category", api.getCategory);
-router.get("/major", api.getMajor);
+router.get("/major", api.getMajor); 
 router.get("/comment/:idPost/:idAccount", api.getComment); // lấy tất cả cmt dựa trên idPost -> truyền idPost/ nếu k có idAcc -> idAcc = null
 router.post("/comment/create", PassportCheck, api.createComment); // thêm cmt vào 1 post ->truyền idPost
 router.post("/comment/update", PassportCheck, api.updateComment); // chỉnh sửa cmt ->truyền id, Cmt (id này là id comment)
