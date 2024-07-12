@@ -36,7 +36,6 @@ const BookingConfirm = () => {
       setActived(false);
     }
   }, []);
-  console.log(appointment.idDoctor); console.log(data)
   const handleBooking = () => {
     const body = {
       idService: appointment.idService,
@@ -62,6 +61,18 @@ const BookingConfirm = () => {
       });
     }
   };
+  const TransferDegree = (degree) => {
+    let res = ""
+    if(degree == "Thạc sĩ y khoa")
+      res = "ThS.BS."
+    else if(degree == "Tiến sĩ y khoa")
+      res = "TS.BS."
+    else if(degree == "Cử nhân điều dưỡng")
+      res = "ĐD"
+    else
+      res = "BS.CK1."
+    return res;
+  }
   return (
     <div className="pt-[90px] pb-20">
       <script type="text/javascript">
@@ -76,19 +87,12 @@ const BookingConfirm = () => {
         ></img>
         <div className="lg:col-start-2 lg:col-span-5 max-lg:col-span-12">
           <div className="text-2xl font-medium text-slate-700 mb-3">
-            ThS. BS. {detailDoctor[0]?.FullName} - Chuyên khoa{" "}
-            {detailDoctor[0]?.Major}
+            {TransferDegree(detailDoctor[0]?.Degree)} {detailDoctor[0]?.FullName} - Chuyên khoa {detailDoctor[0]?.Major}
           </div>
           <div className="flex gap-3 items-center text-lg mb-2">
             <LuStethoscope className="text-teal-600" />
             <div className="text-slate-600">{detailDoctor[0]?.Major}</div>
           </div>
-          {/* <div className="flex gap-3 items-center text-lg mb-2">
-            <FaRegAddressBook className="text-teal-600" />
-            <div className="text-slate-600">
-              1 Nơ Trang Long, Bình Thạnh, Hồ Chí Minh
-            </div>
-          </div> */}
           <div className="flex gap-3 items-center text-lg mb-3">
             <FaHome className="text-teal-600" />
             <div className="text-slate-600">Khám tại nhà</div>
@@ -129,8 +133,6 @@ const BookingConfirm = () => {
                 src={FlagIcon}
                 alt=""
               ></img>
-              {/* <p className="text-lg opacity-70 ">(+84)</p>
-              <div className="w-[1.5px] h-[28px] bg-slate-400"></div> */}
               <Input
                 id="Phone"
                 // type="text"

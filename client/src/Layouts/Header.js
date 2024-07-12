@@ -9,12 +9,12 @@ import { GrSchedule } from "react-icons/gr";
 import { AiOutlineSchedule, AiOutlineDashboard } from "react-icons/ai";
 import { MdOutlinePostAdd, MdManageSearch } from "react-icons/md";
 import { FiLogOut } from "react-icons/fi";
-import { getAllNotification, logout, readNotification } from "../redux-toolkit/authSlice";
-import { useNavigate } from "react-router-dom";
+import { getAllDoctors, getAllNotification, logout, readNotification } from "../redux-toolkit/authSlice";
+import { Link, useNavigate } from "react-router-dom";
 import logo from "../logo.png";
 import { fetchProfile } from "../redux-toolkit/authSlice";
 import { persistor } from "../redux-toolkit/configureStore";
-import { searchPost } from "../redux-toolkit/postSlice";
+import { fetchCategories, fetchMajor, searchPost } from "../redux-toolkit/postSlice";
 
 import { Input } from 'antd';
 import { Button } from "flowbite-react";
@@ -54,15 +54,19 @@ const Header = () => {
   const handleNavigate = (url) => {
     if(url == "Email")
       window.open("https://mail.google.com")
-    else if(url != "none")
+    else if(url != "None")
       Navigate(url)
   }
+
   useEffect(()=>{
     if(currentUser){
       dispatch(getAllNotification())
-      dispatch(fetchProfile())
     }
-  },[currentUser,dispatch])
+    if(currentUser?.authentication == 0 || currentUser?.authentication == 2){
+      dispatch(fetchCategories());
+      dispatch(fetchMajor());
+    }
+  },[currentUser])
   // useEffect(()=>{
   //   if(currentUser){
   //     const interval = setInterval(() => {
@@ -72,6 +76,8 @@ const Header = () => {
   //   }
   // },[currentUser,dispatch])
   const slice = allNoti?.notification?.slice(0,numberElement);
+
+  console.log(allNoti)
   return (
     <div className="h-[70px] fixed w-screen z-50 max-sm:h-[80px]">
       {actived && (
@@ -90,12 +96,12 @@ const Header = () => {
           }}
         ></div>
       )}
-      <div className="text-sm h-full px-5 font-medium text-teal-800 max-sm:px-2 bg-[#416475] grid grid-cols-4 max-lg:grid-cols-11 max-lg:gap-1 drop-shadow-lg">
+      <div className="text-sm h-full px-5 font-medium text-teal-800 max-sm:px-2 bg-[#2d988a] grid grid-cols-4 max-lg:grid-cols-11 max-lg:gap-1 drop-shadow-lg">
         <div className="max-lg:col-start-1 max-lg:col-span-3 col-start-1 col-span-1 lg:pl-5 text-xl flex items-center font-bold text-teal-500">
-          <img className="rounded-full h-12 w-12 mr-3 max-sm:h-10 max-sm:w-10 max-sm:mr-1 " alt="logo" src={logo}></img>
-          <a className="text-gray-100 max-sm:text-sm" href="/">
+          <img className="rounded-full border-2 border-white h-12 w-12 mr-3 max-sm:h-10 max-sm:w-10 max-sm:mr-1 object-cover" alt="logo" src={logo}></img>
+          <Link className="text-gray-100 max-sm:text-sm" to="/">
             Doctor Coming
-          </a>
+          </Link>
         </div>
         <div className="max-lg:hidden max-lg:col-start-4 max-lg:col-span-1 col-start-2 col-span-1 flex items-center justify-center">
             <div className="relative w-full flex lg:gap-3 items-center justify-center">
@@ -139,13 +145,11 @@ const Header = () => {
                 className="flex lg:gap-3 items-center justify-center cursor-pointer lg:w-[81%] max-lg:w-full"
                 onClick={() => {setActived(!actived); setNoti(false)}}
               >
-                <div className="rounded-full h-11 w-11 max-sm:h-6 max-sm:w-6 bg-white flex items-center justify-center">
+                <div className="rounded-full h-[38px] w-[38px] max-sm:h-6 max-sm:w-6 bg-white flex items-center justify-center">
                   <img
-                    className="rounded-full h-10 w-10 max-sm:h-6 max-sm:w-6 object-cover"
+                    className="rounded-full h-[34px] w-[34px] max-sm:h-4 max-sm:w-4 object-cover"
                     alt=""
-                    src={
-                      user?.data?.Avt || require("../Images/pattientavt.png")
-                    }
+                    src={user?.data?.Avt ? user?.data?.Avt.toString() : require("../Images/pattientavt.png")}
                   ></img>
                 </div>
 
@@ -185,11 +189,11 @@ const Header = () => {
                           onClick={() => {handleNavigate(noti.Type);setNoti(false);handleRead(noti.id)}}
                       >
                         <div className="flex gap-3 items-center">
-                          <div className="w-[90%]">
-                            <div className={`text-sm ${noti.Status === 0 ? "text-black" : "text-gray-500"}`}>
+                          <div className={`w-[90%] ${noti.Status === 1 && "opacity-75"} `}>
+                            <div className="text-sm mb-1 text-black">
                               {noti.Notification}
                             </div>
-                            <p className="text-sm self-start text-sky-600">{noti.NotiTime.slice(0,16)}</p>
+                            <p className="text-xs font-normal self-start text-teal-700">{noti.NotiTime.slice(11,16)} {noti.NotiTime.slice(8,10)}/{noti.NotiTime.slice(5,7)}/{noti.NotiTime.slice(0,4)}</p>
                           </div>  
                           {noti.Status === 0 &&
                             <GoDotFill className="text-sky-600 h-4 w-4"/>
@@ -382,20 +386,20 @@ const Header = () => {
           ) : (
             <div className="sm:ml-5 w-full flex gap-3 justify-center items-center text-base max-sm:pl-3">
               <div className="w-1/2 flex justify-center">
-                <a
-                  href="/login"
+                <Link
+                  to="/login"
                   className="max-sm:p-1 max-sm:text-xs sm:max-lg:w-full font-medium text-center text-gray-100 cursor-pointer transition-transform duration-500 hover:scale-110"
                 >
                   Đăng nhập
-                </a>
+                </Link>
               </div>
               <div className="w-1/2 flex justify-center">
-                <a
-                  href="/register"
+                <Link
+                  to="/register"
                   className="max-sm:text-xs sm:max-lg:h-[40px] flex justify-center items-center sm:max-lg:w-[90%] max-sm:h-[40px] max-sm:w-[80px] max-sm:p-1 lg:h-[38px] lg:w-[120px] text-center border-[1.5px] text-white bg-teal-400 lg:p-1.5 hover:bg-teal-500 transition-transform hover:duration-1000 rounded-lg cursor-pointer"
                 >
                   Tạo tài khoản
-                </a>
+                </Link>
               </div>
             </div>
           )}

@@ -16,7 +16,6 @@ const AdminAppointment = () => {
   const { AppointmentData, ScheduleData, allService, service, error, loading } =
     useSelector((state) => state.appointment);
   const [passed, setPassed] = useState(1);
-  const [numberElement, setNumberElement] = useState(5)
 
   useEffect(() => {
     dispatch(fetchAdminAppointment());
@@ -28,12 +27,19 @@ const AdminAppointment = () => {
     if (AppointmentData[i].Status === 3 && passed === 2)
       appointment.push({ ...AppointmentData[i] });
   }
-  const slice = appointment.slice(0,numberElement);
-  console.log(slice)
+  const TransferPricing = (price) => {
+    let pr = parseInt(price, 10).toString();
+
+    let formattedNum = pr.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    formattedNum += " đ";
+
+    return formattedNum;
+  }
   return (
-    <div className="lg:pt-[70px] bg-gray-50 min-h-screen">
-      <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:flex-col lg:gap-10">
-        <div className="md:my-7 lg:max-xl:w-full max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-200 py-5 lg:px-8">
+    <div className="lg:pt-[70px] bg-gray-50 px-10 h-screen">
+      <div className="max-lg:px-4 h-full text-gray-700 lg:flex lg:flex-col lg:gap-10">
+        <div className="md:my-7 lg:max-xl:w-full h-[94%] max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-200 py-5 lg:px-8">
           <div className="lg:mb-5 max-lg:my-5 lg:h-10 max-lg:h-auto grid lg:grid-cols-6 max-lg:grid-cols-12 lg:gap-3 max-lg:gap-1 font-semibold">
             <p className="max-md:mb-3 md:text-2xl max-md:text-3xl lg:col-span-2 max-lg:col-start-1 max-lg:col-span-12">Lịch khám</p>
             <div className = "lg:w-full lg:flex lg:justify-end lg:col-start-3 lg:col-span-2">
@@ -69,8 +75,9 @@ const AdminAppointment = () => {
               ĐÃ QUA
             </div>
           </div>
-          {slice?.length > 0 ? (
-            slice?.map((appointment) => (
+          <div className="overflow-auto h-[88%] ">
+          {appointment?.length > 0 ? (
+            appointment?.map((appointment) => (
               <div
                 key={appointment.id}
                 className="w-full rounded-xl shadow-lg mb-5 border"
@@ -125,7 +132,7 @@ const AdminAppointment = () => {
                               <div className="flex items-center mb-2 gap-3">
                                   <BsCash className="h-5 min-w-5 text-green-400"></BsCash>
                                   <p className="min-w-20">Giá dịch vụ:</p>
-                                  <p className="font-medium text-green-400">{appointment.Price} đ</p>
+                                  <p className="font-medium text-green-400">{TransferPricing(appointment.Price)}</p>
                               </div>
                               {appointment?.Advice &&
                               <div className="flex gap-3 mb-2">
@@ -230,15 +237,7 @@ const AdminAppointment = () => {
               Chưa có cuộc hẹn mới
             </p>
           )}
-          {appointment?.length > 5 &&
-            <Button
-                className="mb-5 w-40 rounded-lg mx-auto h-11"
-                outline gradientDuoTone="tealToLime"
-                onClick={()=>{setNumberElement(numberElement+numberElement)}}
-            >
-            Xem thêm
-            </Button>
-          }
+          </div>         
         </div>
       </div>
     </div>

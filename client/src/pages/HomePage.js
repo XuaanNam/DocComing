@@ -15,7 +15,6 @@ const HomePage = () => {
   const { currentUser,doctors, auth, user, error, loading, updated } = useSelector(
     (state) => state.user
   );
-  // console.log(auth);
   const { allPost } = useSelector((state) => state.post);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
@@ -31,7 +30,7 @@ const HomePage = () => {
     },
   ];
   const settings = {
-    dots: true,
+    dots: false,
     infinite: true,
     speed: 500,
     slidesToShow: 1,
@@ -46,7 +45,6 @@ const HomePage = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
-      console.log(1)
     }, 5000);
     return () => clearInterval(interval);
   }, [nextSlide]);
@@ -57,34 +55,30 @@ const HomePage = () => {
   useEffect(() => {
     dispatch(getAllPost());
     dispatch(getAllDoctors());
-  }, [currentUser]);
+  }, []);
 
   
   let heartDiseases = []
-  for (let i = 0; i < allPost?.length; i++)
-    if(allPost[i].Categories === "Bệnh tim mạch")
-    {
-      if(heartDiseases.length < 10)
-        heartDiseases.push({...allPost[i]});
-    }
   let digestiveDiseases = []
-  for (let i = 0; i < allPost?.length; i++)
-    if(allPost[i].Categories === "Bệnh tiêu hóa")
-    {
-      if(digestiveDiseases.length < 10)
-        digestiveDiseases.push({...allPost[i]});
-    }
   let diabetesDiseases = []
+
   for (let i = 0; i < allPost?.length; i++)
-    if(allPost[i].Categories === "Tiểu đường")
-    {
-      if(diabetesDiseases.length < 10)
-        diabetesDiseases.push({...allPost[i]});
-    }
+  {
+    if(allPost[i].Categories === "Bệnh tim mạch")
+      heartDiseases.push({...allPost[i]});
+    else if(allPost[i].Categories === "Bệnh tiêu hóa")
+      digestiveDiseases.push({...allPost[i]});
+    else if(allPost[i].Categories === "Tiểu đường")
+      diabetesDiseases.push({...allPost[i]});
+  }
   const path = (name, id) => {
     const x = name + "_" + id;
     return x;
   };
+  const handleNavigate = (fname,lname,id) => {
+    if(id != 235523484)
+      Navigate(`/doctors/${path(fname + lname, id)}`)
+  }
   return (
     <div className="pt-[70px]">
       <div className="max-w-[92%] h-[726px] w-full max-sm:h-[560px] max-sm:pt-16 m-auto pb-[40px] px-4 relative group drop-shadow-md">
@@ -124,28 +118,30 @@ const HomePage = () => {
         </div>
       </div>
       <div className="lg:mx-12 max-sm:px-7 sm:px-7 mb-10">
-        <div className="h-[44px] w-[150px] flex items-center justify-center p-1 mb-6 rounded-3xl bg-teal-50 text-blue-500 font-medium drop-shadow-lg">
+        <div className="h-[44px] w-[150px] flex items-center justify-center p-1 mb-6 rounded-3xl bg-teal-50 text-teal-500 font-medium drop-shadow-lg">
           Bài viết mới nhất
         </div>
 
-        <div className="w-full lg:flex gap-x-7">
+        <div className="w-full lg:flex gap-x-3">
           <div
             className="lg:w-3/5 max-sm:w-full cursor-pointer"
-            onClick={() => Navigate(`/blog/${allPost[0].id}`)}
           >
             <img
-              className="lg:h-[450px] max-sm:h-[230px] w-full rounded-xl mb-2 object-cover drop-shadow-lg"
+              className="lg:h-[450px] max-sm:h-[230px] w-full rounded-xl object-cover drop-shadow-lg transition-transform duration-500 hover:scale-105 p-2"
               src={allPost[0]?.FeaturedImage}
               alt=""
+              onClick={() => Navigate(`/blog/${allPost[0].id}`)}
             ></img>
             <div className="text-teal-500 mb-2" onClick={()=>Navigate(`/categories/${allPost[0]?.Categories}/${allPost[0]?.Similar}`)}>{allPost[0]?.Similar}</div>
-            <div className="text-slate-800 text-ellipsis text-xl font-medium mb-2">
-              {allPost[0]?.Title}
+            <div onClick={() => Navigate(`/blog/${allPost[0].id}`)}>
+              <div className="text-slate-800 text-ellipsis text-xl font-medium mb-2">
+                {allPost[0]?.Title}
+              </div>
+              <p className="h-[76px] text-slate-600 text-base text-justify text-ellipsis overflow-hidden mb-4">
+                {allPost[0]?.Brief}
+              </p>
             </div>
-            <p className="h-[76px] text-slate-600 text-base text-justify text-ellipsis overflow-hidden mb-4">
-              {allPost[0]?.Brief}
-            </p>
-            <div className="flex gap-2 text-base items-center">
+            <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(allPost[0].FirstName,allPost[0].LastName,allPost[0].idAuthor)}}>
               <img
                 className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                 src={allPost[0]?.Avt}
@@ -154,13 +150,13 @@ const HomePage = () => {
               <div className="font-medium">
                 {allPost[0]?.FirstName + " " + allPost[0]?.LastName} -
               </div>
-              <div>Ngày đăng: {allPost[0]?.DatePost?.slice(0, 10)}</div>
+              <div className="text-gray-400">Ngày đăng: {allPost[0]?.DatePost.slice(8,10)}/{allPost[0]?.DatePost.slice(5,7)}/{allPost[0]?.DatePost.slice(0,4)}</div>
             </div>
           </div>
           <div className="lg:grid max-sm:mt-5 max-sm:gap-3 lg:grid-rows-3 lg:w-2/5 max-sm:w-full">
-            <div className="row-span-2 cursor-pointer w-full pb-5 border-b-[1.5px]">
+            <div className="row-span-2 cursor-pointer w-full pb-3 border-b-[1.5px]">
               <img
-                className="h-[280px] w-full rounded-xl mb-4 object-cover drop-shadow-lg"
+                className="h-[280px] w-full rounded-xl object-cover drop-shadow-lg transition-transform duration-500 hover:scale-105 p-2"
                 src={allPost[1]?.FeaturedImage}
                 alt=""
                 onClick={() => Navigate(`/blog/${allPost[1].id}`)}
@@ -170,16 +166,16 @@ const HomePage = () => {
                    onClick={() => Navigate(`/blog/${allPost[1].id}`)}>
                 {allPost[1]?.Title}
               </div>
-              <div className="flex gap-2 text-base items-center">
+              <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(allPost[1].FirstName,allPost[1].LastName,allPost[1].idAuthor)}}>
                 <img
                   className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                   src={allPost[1]?.Avt}
                   alt=""
                 ></img>
                 <div className="font-medium">
-                  {allPost[1]?.FirstName + " " + allPost[1]?.LastName} -
+                  {allPost[1]?.FirstName + " " + allPost[1]?.LastName}  
                 </div>
-                <div>Ngày đăng: {allPost[1]?.DatePost.slice(0, 10)}</div>
+                <div className="text-gray-400">Ngày đăng: {allPost[1]?.DatePost.slice(8,10)}/{allPost[1]?.DatePost.slice(5,7)}/{allPost[1]?.DatePost.slice(0,4)}</div>
               </div>
             </div>
 
@@ -192,20 +188,20 @@ const HomePage = () => {
                   <div className="text-slate-800 text-lg max-sm:mb-3 font-medium lg:mb-8 text-ellipsis overflow-hidden" onClick={() => Navigate(`/blog/${allPost[2].id}`)}>
                     {allPost[2]?.Title}
                   </div>
-                  <div className="flex gap-2 text-base items-center self-end">
+                  <div className="flex gap-2 text-base items-center self-end" onClick={()=>{handleNavigate(allPost[2].FirstName,allPost[2].LastName,allPost[2].idAuthor)}}>
                     <img
                       className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={allPost[2]?.Avt}
                       alt=""
                     ></img>
                     <div className="overflow-hidden text-ellipsis font-medium">
-                      {allPost[2]?.FirstName + " " + allPost[2]?.LastName} -
+                      {allPost[2]?.FirstName + " " + allPost[2]?.LastName}  
                     </div>
-                    <div>Ngày đăng: {allPost[2]?.DatePost.slice(0, 10)}</div>
+                    <div className="text-gray-400">Ngày đăng: {allPost[2]?.DatePost.slice(8,10)}/{allPost[2]?.DatePost.slice(5,7)}/{allPost[2]?.DatePost.slice(0,4)}</div>
                   </div>
                 </div>
                 <img
-                  className="h-[140px] w-2/5 rounded-xl object-cover drop-shadow-lg"
+                  className="h-[140px] w-2/5 rounded-xl object-cover drop-shadow-lg transition-transform duration-500 hover:scale-105 p-2"
                   src={allPost[2]?.FeaturedImage}
                   alt=""
                   onClick={() => Navigate(`/blog/${allPost[2].id}`)}
@@ -217,15 +213,15 @@ const HomePage = () => {
         <hr className="w-full mt-5 mb-7"></hr>
         <Slider {...settings}>
           {allPost?.slice(3).map((disease) => 
-          <div className="md:!flex gap-7 max-sm:mb-7 w-[775px]">
+          <div className="md:!flex gap-7 max-sm:mb-7 w-[775px] p-2 rounded-xl" key={disease.id}>
             <img
-              className="h-[200px] w-[280px] max-sm:w-full rounded-xl mb-2 object-cover drop-shadow-lg cursor-pointer"
+              className="h-[200px] w-[280px] max-sm:w-full rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
               src={disease.FeaturedImage}
               alt=""
               onClick={() => Navigate(`/blog/${disease.id}`)}
             ></img>
             <div className="max-w-[700px]">
-              <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Bệnh tiêu hóa/${disease.Similar}`)}>{disease.Similar}</div>
+              <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/${disease.Categories}/${disease.Similar}`)}>{disease.Similar}</div>
               <div className="cursor-pointer">
                 <div className="text-slate-800 text-lg font-medium mb-2">
                   {disease.Title}
@@ -233,23 +229,23 @@ const HomePage = () => {
                 <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
                   {disease.Brief}
                 </div>
-                <div className="flex gap-2 text-base items-center">
+                <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
                   <img
                     className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                     src={disease.Avt}
                     alt=""
                   ></img>
                   <div className="font-medium">
-                    {disease.FirstName + " " + disease.LastName} -
+                    {disease.FirstName + " " + disease.LastName}  
                   </div>
-                  <div> Ngày đăng: {disease.DatePost?.slice(0, 10)}</div>
+                  <div className="text-gray-400">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                 </div>
               </div>
             </div>
           </div>
           )}
         </Slider>
-        <div className="text-2xl font-medium text-slate-800 mb-3 mt-12">
+        <div className="text-2xl font-medium text-slate-800 mb-3 mt-10">
           Đội ngũ chuyên gia của Doctor Coming
         </div>
         <div className="md:flex gap-x-7 mb-15">
@@ -331,9 +327,9 @@ const HomePage = () => {
           </div>
           <Slider {...settings}>
             {heartDiseases.length > 0 && heartDiseases.map((disease) => 
-            <div className="md:!flex gap-7 max-sm:mb-7 w-[575px]">
+            <div className="md:!flex gap-7 max-sm:mb-7 w-[590px] p-2 rounded-xl">
               <img
-                className="h-[200px] max-sm:w-full w-[280px] rounded-xl mb-2 object-cover drop-shadow-lg cursor-pointer"
+                className="h-[200px] max-sm:w-full w-[280px] rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
                 src={disease.FeaturedImage}
                 alt=""
                 onClick={() => Navigate(`/blog/${disease.id}`)}
@@ -347,16 +343,16 @@ const HomePage = () => {
                   <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-5">
                     {disease.Brief}
                   </div>
-                  <div className="flex gap-2 text-base items-center">
+                  <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
                     <img
                       className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={disease.Avt}
                       alt=""
                     ></img>
                     <div className="font-medium">
-                      {disease.FirstName + " " + disease.LastName} -
+                      {disease.FirstName + " " + disease.LastName}  
                     </div>
-                    <div> Ngày đăng: {disease.DatePost?.slice(0, 10)}</div>
+                    <div className="text-gray-400">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                   </div>
                 </div>
               </div>
@@ -376,9 +372,9 @@ const HomePage = () => {
           </div>
           <Slider {...settings}>
             {digestiveDiseases.length > 0 && digestiveDiseases.map((disease) => 
-            <div className="md:!flex gap-7 max-sm:mb-7 w-[575px]">
+            <div className="md:!flex gap-7 max-sm:mb-7 w-[590px] p-2 rounded-xl">
               <img
-                className="h-[200px] w-[280px] max-sm:w-full rounded-xl mb-2 object-cover drop-shadow-lg cursor-pointer"
+                className="h-[200px] w-[280px] max-sm:w-full rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
                 src={disease.FeaturedImage}
                 alt=""
                 onClick={() => Navigate(`/blog/${disease.id}`)}
@@ -392,16 +388,16 @@ const HomePage = () => {
                   <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
                     {disease.Brief}
                   </div>
-                  <div className="flex gap-2 text-base items-center">
+                  <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
                     <img
                       className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={disease.Avt}
                       alt=""
                     ></img>
                     <div className="font-medium">
-                      {disease.FirstName + " " + disease.LastName} -
+                      {disease.FirstName + " " + disease.LastName}  
                     </div>
-                    <div> Ngày đăng: {disease.DatePost?.slice(0, 10)}</div>
+                    <div className="text-gray-400">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                   </div>
                 </div>
               </div>
@@ -421,15 +417,15 @@ const HomePage = () => {
           </div>
           <Slider {...settings}>
             {diabetesDiseases.length > 0 && diabetesDiseases.map((disease) => 
-            <div className="md:!flex gap-7 max-sm:mb-7 w-[575px]">
+            <div className="md:!flex gap-7 max-sm:mb-7 w-[590px] p-2 rounded-xl">
               <img
-                className="h-[200px] w-[280px] max-sm:w-full rounded-xl mb-2 object-cover drop-shadow-lg cursor-pointer"
+                className="h-[200px] w-[280px] max-sm:w-full rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
                 src={disease.FeaturedImage}
                 alt=""
                 onClick={() => Navigate(`/blog/${disease.id}`)}
               ></img>
               <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2" onClick={()=>Navigate(`/categories/Tiểu đường/${disease.Similar}`)}>{disease.Similar}</div>
+                <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Tiểu đường/${disease.Similar}`)}>{disease.Similar}</div>
                 <div className="cursor-pointer">
                   <div className="text-slate-800 text-lg font-medium mb-2">
                     {disease.Title}
@@ -437,16 +433,16 @@ const HomePage = () => {
                   <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
                     {disease.Brief}
                   </div>
-                  <div className="flex gap-2 text-base items-center">
+                  <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
                     <img
                       className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={disease.Avt}
                       alt=""
                     ></img>
                     <div className="font-medium">
-                      {disease.FirstName + " " + disease.LastName} -
+                      {disease.FirstName + " " + disease.LastName}  
                     </div>
-                    <div> Ngày đăng: {disease.DatePost?.slice(0, 10)}</div>
+                    <div className="text-gray-400">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                   </div>
                 </div>
               </div>

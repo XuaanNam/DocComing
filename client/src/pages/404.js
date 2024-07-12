@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function PageNotFound() {
   return (
     <>
@@ -24,7 +26,7 @@ export default function PageNotFound() {
           <span>4</span>
         </section>
         <div className="link-container">
-          <a href="/" className="more-link">Trở về trang chủ</a>
+          <Link to="/" className="more-link">Trở về trang chủ</Link>
         </div>
       </main>
     </>

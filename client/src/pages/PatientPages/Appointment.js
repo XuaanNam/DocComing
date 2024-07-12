@@ -59,6 +59,16 @@ const Appointment = () => {
     })
   }
 
+  const TransferPricing = (price) => {
+    let pr = parseInt(price, 10).toString();
+
+    let formattedNum = pr.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    formattedNum += " đ";
+
+    return formattedNum;
+  }
+
   const handleUpdateRatingDoctor = ({id,iddoctor}) => {
     const data = {
       idAppointment: id,
@@ -161,7 +171,7 @@ const Appointment = () => {
                 passed === 0 && "bg-white shadow-md shadow-violet-300"
               } col-start-3 max-lg:col-start-4 max-lg:col-span-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
-              TỔNG QUÁT
+              TỔNG QUAN
             </div>
             <div
               onClick={() => {
@@ -245,7 +255,7 @@ const Appointment = () => {
                       <div className="flex gap-2 items-center lg:w-1/2">
                         <BsCash className="h-5 min-w-5 text-green-400"></BsCash>
                         <p>Giá dịch vụ:</p>
-                        <p className="font-medium text-green-400">{appointment.Price} đ</p>
+                        <p className="font-medium text-green-400">{TransferPricing(appointment.Price)}</p>
                       </div>
                     </div>
                     
@@ -314,7 +324,7 @@ const Appointment = () => {
                               <div className="flex flex-col gap-1 w-3/4">
                                 <p>Ngày tái khám: <span className="text-green-500 font-medium">{appointment.ReExaminationDate.slice(0,10)}</span></p>
                                 <p>Thời gian: <span className="text-green-500 font-medium">{appointment.ReExaminationDate.slice(11,16)}</span></p>
-                                <p>Chi phí dự kiến: <span className="text-green-500 font-medium">{appointment.ReExaminationPrice} đ</span></p>
+                                <p>Chi phí dự kiến: <span className="text-green-500 font-medium">{TransferPricing(appointment.ReExaminationPrice)}</span></p>
                               </div>
                               {(appointment.NoteStatus !== 1 && appointment.NoteStatus !== 2) &&
                               <div className="flex flex-col gap-3 w-1/4">

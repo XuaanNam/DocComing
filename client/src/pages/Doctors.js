@@ -18,15 +18,15 @@ const Doctors = () => {
   const { allSearchData, error, loading } = useSelector((state) => state.post);
   const [keywordDoctor, setKeywordDoctor] = useState("")
   const [keywordDisease, setKeywordDisease] = useState("")
-  const [isSearched, setIsSearched] = useState(false)
+  const [isSearched, setIsSearched] = useState("")
   const [numberElement, setNumberElement] = useState(8)
 
   const handleSearchDoctor = () => {
-    setIsSearched(true)
+    setIsSearched("search")
     dispatch(searchDoctor({keywords: keywordDoctor}))
   }
   const handleSearchMajor = () => {
-    setIsSearched(true)
+    setIsSearched("search")
     dispatch(searchDisease({keywords: keywordDisease}))
   }
   useEffect(() => {
@@ -36,11 +36,18 @@ const Doctors = () => {
     const x = name + "_" + id;
     return x;
   };
-  const slice1 = doctors?.slice(0,numberElement);
-  const slice2 = allSearchData?.slice(0,numberElement);
-  console.log(allSearchData)
+  
+  let doctor = [];
+  if(isSearched == "search"){
+    doctor = allSearchData
+  }
+  else{
+    doctor = doctors
+  }
+  const slice = doctor.slice(0,numberElement);
+
   return (
-    <div className="lg:pt-[70px] max-lg:pt-[70px]">
+    <div className="lg:pt-[70px] max-lg:pt-[70px] mb-6">
       <div className="relative w-full">
         <img
           className="absolute w-full lg:h-[440px] object-cover shadow-xl"
@@ -115,14 +122,14 @@ const Doctors = () => {
               }} />
             <FiSearch className="mr-4 h-[24px] w-[24px] text-teal-300"></FiSearch>
           </div>
-          {isSearched && 
-          <IoIosCloseCircleOutline className="h-8 w-8 text-rose-500 cursor-pointer" onClick={()=>{setIsSearched(false);setKeywordDoctor("");setKeywordDisease("")}}></IoIosCloseCircleOutline>}
+          {isSearched == "search" && 
+          <IoIosCloseCircleOutline className="h-8 w-8 text-rose-500 cursor-pointer" onClick={()=>{setIsSearched("");setKeywordDoctor("");setKeywordDisease("")}}></IoIosCloseCircleOutline>}
         </div>
 
         <div className="flex flex-wrap max-lg:w-full gap-6">
-          {isSearched ? slice2.map((doctor) => (
+          {slice.map((doctor) => (
           <div
-            key={doctor?.id}
+            // key={doctor?.id}
             onClick={() =>
               Navigate(
                 `/doctors/${path(
@@ -175,71 +182,17 @@ const Doctors = () => {
               </div>
             </div>
           </div>
-          )) :
-          slice1?.map((doctor) => (
-            <div
-              key={doctor?.id}
-              onClick={() =>
-                Navigate(
-                  `/doctors/${path(
-                    doctor?.FirstName + " " + doctor?.LastName,
-                    doctor?.id
-                  )}`
-                )
-              }
-              className="lg:w-[23.5%] sm:max-lg:w-[47%] max-sm:w-[100%] grid grid-rows-1 gap-4 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105"
-            >
-              <div className="relative w-full flex justify-center">
-                <img
-                  className="w-full rounded-3xl h-[200px] rol-start-1 shadow-lg"
-                  src={require("../Images/backgroundDoctor.jpg")}
-                  alt=""
-                ></img>
-                <img
-                  className="absolute top-0 h-[200px] mx-auto object-contain"
-                  src={doctor?.Avt}
-                  alt=""
-                ></img>
-              </div>
-              <div className="w-full ">
-                <p className="font-medium text-base text-slate-800 mb-4 text-center">
-                  {doctor?.FirstName + " " + doctor?.LastName}
-                </p>
-                <div className="min-h-[70px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
-                  <div className="w-9 h-9 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
-                    <img
-                      src={HospitalIcon}
-                      className="w-5 h-5"
-                      alt="HeartIcon"
-                    />
-                  </div>
-                  <p className="w-[85%] text-base">
-                    Chuyên khoa: {doctor?.Major}
-                  </p>
-                </div>
-                <div className="min-h-[70px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
-                  <div className="w-9 h-9 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
-                    <img
-                      src={SpecialtiesIcon}
-                      className="w-5 h-5"
-                      alt="SpecialtiesIcon"
-                    />
-                  </div>
-                  <p className="text-base">
-                    {doctor?.Experience} năm kinh nghiệm
-                  </p>
-                </div>
-              </div>
-            </div>
           ))}
         </div>
+        {doctor.length > 8 && numberElement < doctor.length &&
         <Button
-          className="my-10 w-40 rounded-lg mx-auto h-11"
+          className="my-10 w-40 rounded-lg mx-auto h-10"
           outline gradientDuoTone="tealToLime"
           onClick={()=>{setNumberElement(numberElement+numberElement)}}
         >
           Xem thêm
         </Button>
+        }
       </div>
     </div>
   );

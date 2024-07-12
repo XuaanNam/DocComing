@@ -288,16 +288,11 @@ const authSlice = createSlice({
       })
       .addCase(resetPassword.fulfilled, (state, action) => {
         state.checked = action.payload.checked;
-        // if (action.payload.checked) {
-        //   toast.success("Đổi mật khẩu thành công", {
-        //     position: "top-right",
-        //   });
-        // } else {
-        //   toast.error(action.payload.message, {
-        //     position: "top-right",
-        //   });
-        //   state.message = action.payload.message;
-        // }
+        if (action.payload.checked) {
+          toast.success("Đổi mật khẩu thành công", {
+            position: "top-right",
+          });
+        } 
         state.loading = false;
       })
       .addCase(resetPassword.rejected, (state, action) => {
@@ -308,16 +303,11 @@ const authSlice = createSlice({
       })
       .addCase(changePassword.fulfilled, (state, action) => {
         state.message = action.payload.message;
-        // if (action.payload.checked) {
-        //   toast.success("Đổi mật khẩu thành công", {
-        //     position: "top-right",
-        //   });
-        // } else {
-        //   toast.error(action.payload.message, {
-        //     position: "top-right",
-        //   });
-        //   state.message = action.payload.message;
-        // }
+        if (action.payload.checked) {
+          toast.success("Đổi mật khẩu thành công", {
+            position: "top-right",
+          });
+        }
         state.loading = false;
       })
       .addCase(changePassword.rejected, (state, action) => {
@@ -393,6 +383,7 @@ const authSlice = createSlice({
       })
       .addCase(updateProfile.fulfilled, (state, { payload }) => {
         state.checked = payload.checked;
+        state.message = payload.message;
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = true;

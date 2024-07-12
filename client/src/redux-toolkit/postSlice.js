@@ -34,6 +34,7 @@ export const createPost = createAsyncThunk("createPost", async (body) => {
   return await res.json();
 });
 export const updatePost = createAsyncThunk("updatePost", async (body) => {
+  console.log(body)
   const res = await fetch("http://localhost:5000/api/post/update", {
     method: "POST",
     headers: {

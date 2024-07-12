@@ -17,13 +17,17 @@ const DoctorPage = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     if (currentUser) {
-      if (currentUser.authentication !== 2) Navigate("/");
-    } else Navigate("/");
+      if (currentUser.authentication !== 2){
+        Navigate("/");
+      }
+    } else{
+      Navigate("/");
+    }
   }, [currentUser]);
 
   return (
     <div>
-      {currentUser?.authentication === 2 ? (
+      {currentUser?.authentication == 2 ? (
         <div className="lg:flex ">
           <DoctorSidebar param={doctorpage}></DoctorSidebar>
           <div className="w-full flex flex-col h-screen">
@@ -31,7 +35,6 @@ const DoctorPage = () => {
               {doctorpage === "profile" && <DoctorProfile />}
               {doctorpage === "create-post" && <CreateBlog />}
               {doctorpage === "manage-post" && <ManageBlog />}
-              {/* {doctorpage === "dashboard" && <Dashboard />} */}
               {doctorpage === "schedule" && <DoctorSchedule />}
               {doctorpage === "appointment" && <DoctorAppointment />}
             </div>

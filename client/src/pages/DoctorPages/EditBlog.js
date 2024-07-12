@@ -7,6 +7,7 @@ import { Select, Input } from "antd";
 import { FileInput, Button } from "flowbite-react";
 import { useNavigate, useParams } from "react-router-dom";
 import DashSidebar from "../../components/DashSidebar";
+import DoctorSidebar from "../../components/DoctorSidebar";
 const EditBlog = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
@@ -17,24 +18,27 @@ const EditBlog = () => {
   const [actived, setActived] = useState(false);
   const [filled, setFilled] = useState(true);
   const [data,setData] = useState({});
+  const [content,setContent] = useState("")
   const [files, setFiles] = useState(null);
   const {postId} = useParams();
   const ref = useRef();
+
   useEffect(() => {
-    dispatch(getDetailPost(postId)).then((results) => {
+    dispatch(getDetailPost(postId)).then(results => {
       setData(results.payload.data[0])
+      setContent(results.payload.data[0]?.Content)
     })
-    dispatch(fetchCategories());
-    dispatch(fetchMajor());
-  }, [dispatch,postId]);
-
-  console.log(data);
-
+  }, []);
   useEffect(() => {
     if (currentUser) {
-      if (currentUser.authentication !== 2) Navigate("/");
-    } else Navigate("/");
-  }, [currentUser,category]);
+      if (currentUser.authentication != 2){
+        Navigate("/");
+      }
+    } 
+    else {
+      Navigate("/");
+    }
+  }, [currentUser]);
   const handleChange = (value) => {
     for (let i = 0; i < category?.length; i++) {
       for (let j = 0; j < category[i]?.Similar?.length; j++) {
@@ -49,19 +53,22 @@ const EditBlog = () => {
     const body = new FormData();
     body.append("Title", data.Title);
     body.append("Brief", data.Brief);
-    body.append("Content", data.Content);
+    body.append("Content", content);
+    body.append("idClassify", data.idClassify);
     body.append("idCategories", data.idCategories);
-    body.append("idSimilar", data.idSimilar);
     body.append("idMajor", data.idMajor);
+    body.append("idSimilar", data.idSimilar);
     body.append("id", postId); //id post
-    if(files != null )
+    if(files != null ){
       body.append("FeaturedImage", files);
+    }
     if (
       data.Title !== "" &&
       data.Brief !== "" &&
-      data.Content !== ""
+      content !== ""
     ) {
-      dispatch(updatePost(body)).then(()=>{
+      dispatch(updatePost(body))
+      .then(()=>{
         Navigate("/doctor/manage-post")
       });
     } else {
@@ -72,7 +79,7 @@ const EditBlog = () => {
     <div>
         {currentUser?.authentication === 2 ? (
         <div className="min-h-screen flex">
-            <DashSidebar param="manage-post"></DashSidebar>
+            <DoctorSidebar param="manage-post"></DoctorSidebar>
             <div className="overflow-auto pt-[70px] w-full">
               <div className="md:flex md:items-center md:justify-center">
                   <div className="lg:mt-10 max-lg:mt-5 mb-20 flex flex-col items-center justify-center md:w-3/4 max-md:w-[90%] md:p-8 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200 border">
@@ -183,15 +190,15 @@ const EditBlog = () => {
                       </div>
                       )}
                       <Editor
-                      className={` ${!filled && data.Content === "" && "ql-error"} mb-5`}
-                      value={data?.Content}
-                      onChange={(value) => {setData({ ...data, Content: value })}}
+                      className={` ${!filled && content === "" && "ql-error"}`}
+                      value={content}
+                      onChange={setContent}
                       />
                       <button
                       onClick={handleCreatePost}
-                      className="h-12 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
+                      className="h-12 mt-5 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
                       >
-                        Đăng
+                        Cập nhật
                       </button>
                   </div>
               </div>

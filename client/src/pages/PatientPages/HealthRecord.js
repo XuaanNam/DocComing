@@ -40,7 +40,7 @@ const HealthRecord = () => {
   return (
     <div className="my-7 lg:w-full max-lg:h-full max-lg:px-3 rounded-xl bg-white shadow-lg text-slate-600 shadow-violet-200 py-5 lg:px-8">
         <p className="text-2xl mb-3 font-medium">Bệnh án</p>
-        {HealthRecordData.length > 0 ?
+        {HealthRecordData?.length > 0 ?
         <>
           <Table hoverable className="shadow-lg shadow-violet-200">
             <Table.Head>

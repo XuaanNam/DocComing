@@ -30,6 +30,7 @@ import SimilarPost from "./pages/SimilarPost";
 import ResetPassword from "./pages/ResetPassword";
 import PatientPage from "./pages/PatientPages/PatientPage";
 import PageNotFound from "./pages/404";
+
 function App() {
   return (
     <div>
@@ -62,7 +63,6 @@ function App() {
             <Route path="/booking/success" element={<BookingSuccess />} />
             <Route path="/search" element={<SearchPost />} />
           </Route>
-
           <Route path="*" element={<PageNotFound/>} />
         </Routes>
       </Router>

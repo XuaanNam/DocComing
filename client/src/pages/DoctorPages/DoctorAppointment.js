@@ -107,13 +107,11 @@ const DoctorAppointment = () => {
     }
     if(note !== null)
       dispatch(editNoteAppointment(data)).then(() => {
-        dispatch(getAllNotification())
         handleClose()
         dispatch(fetchAppointment())
       })
     else
       dispatch(noteAppointment(data)).then(() => {
-        dispatch(getAllNotification())
         handleClose()
         dispatch(fetchAppointment())
       })
@@ -125,13 +123,11 @@ const DoctorAppointment = () => {
     }
     if(editNote || ReExaminationDate !== null)
       dispatch(editNoteAppointment(data)).then(() => {
-        dispatch(getAllNotification())
         handleClose()
         dispatch(fetchAppointment())
       })
     else
       dispatch(noteAppointment(data)).then(() => {
-        dispatch(getAllNotification())
         handleClose()
         dispatch(fetchAppointment())
       })
@@ -144,7 +140,6 @@ const DoctorAppointment = () => {
       IllnessDate: date
     }
     dispatch(healthRecord(data)).then(() => {
-      dispatch(getAllNotification())
       handleClose()
       dispatch(fetchAppointment())
     })
@@ -157,7 +152,6 @@ const DoctorAppointment = () => {
       IllnessDate: date
     }
     dispatch(updateHealthRecord(data)).then(() => {
-      dispatch(getAllNotification())
       handleClose()
       dispatch(fetchAppointment())
     })
@@ -238,6 +232,15 @@ const DoctorAppointment = () => {
     if (info.type === "date") return dateCellRender(current);
     return info.originNode;
   };
+  const TransferPricing = (price) => {
+    let pr = parseInt(price, 10).toString();
+
+    let formattedNum = pr.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    formattedNum += " đ";
+
+    return formattedNum;
+  }
   return (
     <div className="lg:pt-[70px] min-h-screen">
       <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
@@ -252,7 +255,7 @@ const DoctorAppointment = () => {
                 passed === 0 && "bg-white shadow-md shadow-violet-300"
               } col-start-2 max-lg:col-start-4 max-lg:col-span-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
-              TỔNG QUÁT
+              TỔNG QUAN
             </div>
             <div
               onClick={() => {
@@ -321,7 +324,7 @@ const DoctorAppointment = () => {
                       <img
                         className="h-14 w-14 rounded-full object-contain border border-lime-200"
                         alt=""
-                        src={require("../../Images/doctorBackground2.jpg")}
+                        src={appointment.Avt || require("../../Images/pattientavt.png")}
                       ></img>
                     </div>
                     <div className="w-[80%]">
@@ -329,25 +332,25 @@ const DoctorAppointment = () => {
                         {appointment.FirstName + " " + appointment.LastName}
                       </p>
                       <div className="lg:flex w-full gap-5 mb-3">
-                        <div className="flex gap-2 items-center max-lg:mb-3 lg:w-[40%]">
+                        <div className="flex gap-2 items-center max-lg:mb-3 lg:w-1/2">
                           <RiServiceFill className="h-5 min-w-5 text-red-500"></RiServiceFill>
-                          <p className="">Dịch vụ:</p>
+                          <p className="min-w-16">Dịch vụ:</p>
                           <p className="font-medium">{appointment.Service}</p>
                         </div>
-                        <div className="flex gap-2 items-center lg:w-[60%]">
+                        <div className="flex gap-2 items-center lg:w-1/2">
                           <BsCash className="h-5 min-w-5 text-green-400"></BsCash>
-                          <p className="">Giá dịch vụ:</p>
-                          <p className="font-medium text-green-400">{appointment.Price} đ</p>
+                          <p className="min-w-20">Giá dịch vụ:</p>
+                          <p className="font-medium text-green-400">{TransferPricing(appointment.Price)}</p>
                         </div>
                       </div>
 
                       <div className="lg:flex w-full gap-5 mb-3">
-                        <div className="flex gap-2 items-center lg:w-[40%]">
+                        <div className="flex gap-2 items-center lg:w-1/2">
                           <FaPhoneAlt className="h-4 min-w-5 text-teal-600" />
-                          <p className="min-w-20">Số điện thoại:</p>
+                          <p className="min-w-24">Số điện thoại:</p>
                           <div className="font-medium text-teal-500">{appointment.Phone}</div>
                         </div>
-                        <div className="flex gap-2 items-center max-lg:mb-3 lg:w-[60%]">
+                        <div className="flex gap-2 items-center max-lg:mb-3 lg:w-1/2">
                           <FaHome className="h-5 min-w-5 text-teal-600" />
                           <p className="min-w-14">Địa chỉ:</p>
                           <div className="font-medium lg:w-full">

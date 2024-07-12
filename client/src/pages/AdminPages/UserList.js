@@ -18,7 +18,7 @@ const UserList = () => {
   const [users, setUsers] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [userIdToDelete, setUserIdToDelete] = useState("");
-  const [numberElement, setNumberElement] = useState(6)
+  const [numberElement, setNumberElement] = useState(7)
   const [keywordUser, setKeywordUser] = useState("")
   const [isSearched, setIsSearched] = useState("")
   const [showFilterModal,setShowFilterModal] = useState(false)
@@ -124,17 +124,17 @@ const UserList = () => {
   }
   console.log(detailProfile)
   return (
-    <div className="lg:pt-[70px] mb-5 table-auto md:mx-auto px-10 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
+    <div className="lg:pt-[70px] h-screen table-auto md:mx-auto px-10 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
       {profile ?
-      <div className="mt-5 py-7 w-full rounded-xl bg-white shadow-lg shadow-violet-200 max-lg:px-6 lg:px-8">
+      <div className="mt-5 py-7 h-[90%] w-full rounded-xl bg-white shadow-lg shadow-violet-200 max-lg:px-6 lg:px-8">
         <FaArrowLeftLong className="h-6 w-8 hover:text-gray-600 cursor-pointer transition-transform duration-500"
                   onClick={()=>setProfile(false)}
         />
-        <div className="lg:grid lg:grid-cols-5 lg:gap-8 w-full">
+        <div className="lg:grid lg:grid-cols-5 lg:gap-8 h-full w-full">
           <div className="lg:col-span-1 flex flex-col items-center gap-3">
             <p className="font-semibold text-2xl mb-5">Hồ sơ</p>
             <img
-              src={require("../../Images/pattientavt.png")}
+              src={detailProfile?.Avt || require("../../Images/pattientavt.png")}
               alt="userImage"
               className=" rounded-full w-32 h-32 object-cover border-4 border-[lightgray]"
             />
@@ -142,9 +142,16 @@ const UserList = () => {
               {detailProfile?.FirstName + " " + detailProfile?.LastName}
             </div>
           </div>
-          <div className={`lg:col-span-4 flex flex-col`}>
-            <Button className="mb-5 self-end" gradientMonochrome="failure">Xóa người dùng</Button>
-            <div className="flex flex-col w-full self-center py-8 px-16 bg-white shadow-md rounded-lg">
+          <div className={`lg:col-span-4 h-[540px] flex flex-col`}>
+            <Button className="mb-5 self-end" 
+                    gradientMonochrome="failure" 
+                    onClick={() => {
+                      setShowModal(true);
+                      setUserIdToDelete(detailProfile.id);
+                    }}> 
+              Xóa người dùng
+            </Button>
+            <div className="flex flex-col overflow-auto h-[95%]  w-full self-center py-8 px-16 bg-white shadow-md rounded-lg">
               <div className="lg:flex lg:gap-5 mb-5">
                 <div className="lg:w-1/2">
                   <p className="font-medium text-sm">Họ và tên</p>
@@ -210,8 +217,8 @@ const UserList = () => {
         </div>
       </div>
       :
-      <div className="lg:py-8">
-        <div className="flex gap-4 mb-5 items-center">
+      <div className="lg:pt-4 h-full">
+        <div className="flex gap-4 mb-3 items-center">
           <div className="bg-slate-100 flex items-center col-span-2 h-11 lg:w-[30%] max-lg:w-[45%] rounded-lg hover:ring-1 hover:ring-teal-400">
             <input
               className="bg-slate-100 p-3 h-full w-full rounded-lg outline-none text-base"
@@ -231,7 +238,8 @@ const UserList = () => {
           />
           }
         </div>
-        <Table hoverable className="shadow-lg shadow-violet-200">
+        <div className="overflow-auto h-[83%] bg-white rounded-lg shadow-lg shadow-violet-200 ">
+        <Table hoverable className="">
           <Table.Head>
             <Table.HeadCell>Ngày tạo</Table.HeadCell>
             <Table.HeadCell>Avatar</Table.HeadCell>
@@ -273,18 +281,10 @@ const UserList = () => {
             </Table.Body>
           ))}
         </Table>
-        {users?.length > 6 && !isSearched &&
+        </div>
+        {user?.length > 7 && numberElement < user?.length &&
         <Button
-          className="mt-3 w-32 mx-auto rounded-lg h-11"
-          outline gradientDuoTone="tealToLime"
-          onClick={()=>{setNumberElement(numberElement+numberElement)}}
-        >
-          Xem thêm
-        </Button>
-        }
-        {user?.length > 6 && isSearched &&
-        <Button
-          className="mt-3 w-32 mx-auto rounded-lg h-11"
+          className="mt-3 w-32 mx-auto rounded-lg h-10"
           outline gradientDuoTone="tealToLime"
           onClick={()=>{setNumberElement(numberElement+numberElement)}}
         >

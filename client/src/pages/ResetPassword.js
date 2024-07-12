@@ -10,7 +10,7 @@ const ResetPassword = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const { token } = useParams();
-  console.log(auth)
+  console.log(user)
   const initialValues = {
     password: "",
     confirmPassword: "",
@@ -39,10 +39,8 @@ const ResetPassword = () => {
     if (formErrors?.confirmPassword && name === "confirmPassword")
       setFormErrors({ ...formErrors, [name]: "" });
   };
-  console.log(user)
   localStorage.setItem("token", "Bearer " + token);
   useEffect(()=>{
-    // dispatch(fetchProfile());
     dispatch(authentication())
   },[])
   useEffect(()=>{
@@ -77,7 +75,7 @@ const ResetPassword = () => {
                 className="max-lg:col-start-1 max-lg:col-span-1 rounded-full w-16 h-16 object-cover mb-2 border-4 border-[lightgray]"
             />
             <div className="mb-2 max-lg:col-start-2 max-lg:col-span-1 max-lg:text-left max-lg:text-base max-lg:flex max-lg:items-center max-lg:justify-center font-medium lg:text-lg lg:text-center w-full">
-                {user?.data?.FirstName + " " + user?.data?.LastName} 
+                {user?.data?.FullName} 
             </div>
             <div className="mb-3 max-lg:col-start-2 max-lg:col-span-1 max-lg:text-left max-lg:text-base max-lg:flex max-lg:items-center max-lg:justify-center font-medium lg:text-lg lg:text-center w-full">
                 {user?.data?.Email} 

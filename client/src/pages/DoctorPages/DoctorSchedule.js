@@ -23,7 +23,6 @@ const DoctorSchedule = () => {
   const { currentUser, user } = useSelector((state) => state.user);
   const { AppointmentData, ScheduleData, allService, service, error, loading } =
     useSelector((state) => state.appointment);
-  const [actived, setActived] = useState(false);
   const [editService, setEditService] = useState(false);
   const [serviceData, setServiceData] = useState([]);
   const [scheduleData, setScheduleData] = useState({});
@@ -32,7 +31,7 @@ const DoctorSchedule = () => {
   const [optimized, setOptimized] = useState(false);
   const [serviceChange, setServiceChange] = useState(false)
   const [scheduleChange, setScheduleChange] = useState(false)
-  console.log(AppointmentData)
+  const [data, setData] = useState([])
   const dateFormat = "DD/MM/YYYY";
   const currentDate = new Date();
   const today =
@@ -51,7 +50,7 @@ const DoctorSchedule = () => {
     });
   }
   let sv = [];
-  for (let i = 0; i < service?.length; i++)
+  for (let i = 0; i < data?.length; i++)
     sv.push({
       value: service[i]?.id,
       label: service[i]?.Service,
@@ -229,28 +228,31 @@ const DoctorSchedule = () => {
   useEffect(() => {
     setDate(today);
     dispatch(fetchDoctorSchedule(today)); 
-    dispatch(fetchService({ idDoctor: currentUser?.id }));
     dispatch(fetchAllService());
-    if (currentUser) {
-      dispatch(fetchProfile());
-    }
+    dispatch(fetchService({ idDoctor: currentUser?.id })).then((r)=>{
+      setData(r.payload.data)
+    });
+
   }, [currentUser]);
   useEffect(() => {
-    if (service && sv.length > 0) {
+    if (data.length > 0) {
       setServiceData(sv);
-      setActived(true);
     }
     if (ScheduleData) {
       setScheduleData(ScheduleData[0]);
     }
-  }, [service, ScheduleData]);
-
-  
+  }, [data,ScheduleData]);
+  const TransferPricing = (price) => {
+    let pr = parseInt(price, 10).toString();
+    let formattedNum = pr.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    formattedNum += " đ";
+    return formattedNum;
+  }
 
   return (
     <div className="lg:pt-[70px] max-md:pt-[20px] min-h-screen">
       <div className=" md:mx-16 max-md:px-7 text-gray-700 flex gap-7">
-        <div className="md:my-7 max-md:mt-5 max-md:mb-7 w-full rounded-xl bg-white border shadow-lg shadow-violet-300 py-5 md:px-8 max-md:px-2">
+        <div className="md:mt-6 max-md:mt-6 w-full rounded-xl bg-white border shadow-lg shadow-violet-300 py-5 md:px-8 max-md:px-2">
           <div className="w-full">
             <div className="flex gap-5">
               <p className="font-semibold max-md:pl-5 text-2xl max-md:w-[40%] md:w-[30%] mb-5">Dịch vụ</p>
@@ -368,7 +370,7 @@ const DoctorSchedule = () => {
               ))}
             </Table>
           </div>
-          <hr className="bg-gray-200 my-10"></hr>
+          <hr className="bg-gray-200 my-4"></hr>
           <div>
             <div className="flex gap-5 mb-5 w-full">
               <p className="font-semibold max-md:pl-5 max-lg:w-[50%] lg:w-[30%] text-2xl">Lịch làm việc</p>

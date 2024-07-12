@@ -88,7 +88,6 @@ const BookingDoctor = () => {
     dispatch(getRatingDoctor(Id))
     setData({ ...data, DateBooking: today });
   }, []);
-  console.log(detailDoctor)
   useEffect(() => {
     if (!data?.Service && ScheduleData && service.length > 0) {
       if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
@@ -420,6 +419,27 @@ const BookingDoctor = () => {
     Navigate("/login");
     localStorage.setItem("check", JSON.stringify(data));
   };
+  const TransferPricing = (price) => {
+    let pr = parseInt(price, 10).toString();
+
+    let formattedNum = pr.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    formattedNum += " đ";
+
+    return formattedNum;
+  }
+  const TransferDegree = (degree) => {
+    let res = ""
+    if(degree == "Thạc sĩ y khoa")
+      res = "ThS.BS."
+    else if(degree == "Tiến sĩ y khoa")
+      res = "TS.BS."
+    else if(degree == "Cử nhân điều dưỡng")
+      res = "ĐD"
+    else
+      res = "BS.CK1."
+    return res;
+  }
   return (
     <div className="bg-lime-50 max-lg:pt-[80px] pt-[90px]">
       <div className="lg:mx-10 max-lg:px-6 lg:flex lg:gap-5 pb-20">
@@ -432,7 +452,7 @@ const BookingDoctor = () => {
                 alt="avt"
               ></img>
               <div className="col-span-3 ">
-                <p className="text-2xl font-medium text-slate-700 mb-4"> {detailDoctor[0]?.Degree}. {detailDoctor[0]?.FullName} - Chuyên khoa {detailDoctor[0]?.Major}</p>
+                <p className="text-2xl font-medium text-slate-700 mb-4"> {TransferDegree(detailDoctor[0]?.Degree)} {detailDoctor[0]?.FullName} - Chuyên khoa {detailDoctor[0]?.Major}</p>
                 <div className="min-h-11 w-[65%] px-5 py-3 rounded-3xl bg-white bg-opacity-90 shadow-lg text-slate-700 flex gap-3 items-center justify-center">
                   <Rate className="w-52 flex gap-2"
                         value={parseFloat(detailDoctor[0]?.Star)}
@@ -718,7 +738,7 @@ const BookingDoctor = () => {
             <div className="flex gap-3 mb-5 items-center">
               <p className=" text-teal-800">Phí dịch vụ: </p>
               <p className="font-medium text-emerald-500 text-lg">
-                {data?.Service ? service[index]?.Price : service[0]?.Price} VND
+                {data?.Service ? TransferPricing(service[index]?.Price) : TransferPricing(service[0]?.Price)}
               </p>
             </div>
             <p className="italic text-sm text-teal-800 mb-5">

@@ -31,13 +31,12 @@ const DashSidebar = ({ param }) => {
     <div className="shadow-xl bg-white lg:min-h-screen">
       <div className="w-full lg:w-56 max-lg:flex max-lg:flex-col max-lg:gap-2 font-medium lg:pt-[70px] max-lg:pt-[80px] max-lg:px-2">
         <div className="px-12 py-4 lg:mb-4 max-lg:mb-1">
-          <a
-            href="/admin/dashboard"
+          <div
             className="text-2xl max-lg:items-center max-lg:justify-center max-lg:flex max-lg:gap-3 font-semibold uppercase text-teal-400 hover:text-gray-300"
           >
             <span className="text-left">Doctor</span>
             <span className="flex justify-end">Coming</span>
-          </a>
+          </div>
         </div>
         <div className="max-lg:overflow-x-auto max-lg:w-[100vw]">
           <div className="flex lg:flex-col max-lg:w-[96%] gap-1 font-medium">

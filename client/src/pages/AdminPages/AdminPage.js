@@ -31,7 +31,7 @@ const AdminPage = () => {
           <DashSidebar param={adminpage}></DashSidebar>
           <div className="w-full flex flex-col h-screen">
             <div
-              className="overflow-auto w-full"
+              className="w-full"
               onClick={() => setActived(false)}
             >
               {adminpage === "profile" && <AdminProfile />}

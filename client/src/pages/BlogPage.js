@@ -31,7 +31,6 @@ const BlogPage = () => {
     const x = name + "_" + id;
     return x;
   };
-  console.log(SimilarDoctor)
   useEffect(() => {
     const data = {
       idPost: blogId,
@@ -39,7 +38,7 @@ const BlogPage = () => {
     }
     dispatch(getDetailPost(blogId));
     dispatch(fetchComment(data))
-  }, [dispatch,blogId]);
+  }, []);
   const handleAction = (id) => {
     if(currentUser)
       setReply(id);
@@ -143,11 +142,11 @@ const BlogPage = () => {
       <div className="lg:mx-[48px] max-lg:pt-[80px] lg:pt-[100px] lg:pl-16">
         <div className="lg:flex lg:gap-7 pb-20 max-lg:px-7">
           <div className="lg:w-[75%] ">
-            <div className="h-10 max-lg:mx-auto max-lg:mt-7 bg-gray-50 w-32 max-w-64 flex items-center justify-center p-1 mb-5 rounded-3xl  text-teal-400 font-medium drop-shadow-lg"
+            <div className="h-9 max-lg:mx-auto max-lg:mt-7 bg-gray-50 w-fit max-w-44 flex items-center justify-center px-4 mb-5 rounded-3xl  text-teal-400 font-medium drop-shadow-lg"
             >
-              {detailPost[0]?.Classify}
+              {detailPost[0]?.Classify === "Bệnh lí" ? "Bệnh lý" : detailPost[0]?.Classify}
             </div>
-            <div className="h-[44px] max-lg:mx-auto max-lg:mt-7 bg-white max-w-64 flex items-center justify-center p-1 mb-5 cursor-pointer rounded-3xl  text-teal-400 font-medium drop-shadow-lg  transition-transform duration-500 hover:scale-105"
+            <div className="h-10 max-lg:mx-auto max-lg:mt-7 bg-white min-w-32 w-fit max-w-64 flex items-center justify-center px-4 mb-5 cursor-pointer rounded-3xl  text-teal-400 font-medium drop-shadow-lg  transition-transform duration-500 hover:scale-105"
                onClick={()=>Navigate(`/categories/${detailPost[0]?.Similar}`)}
             >
               {detailPost[0]?.Similar}
@@ -185,7 +184,7 @@ const BlogPage = () => {
               <div className="w-full bg-white shadow-lg shadow-violet-200 rounded-xl p-5">
               {comment?.map((cmt) => 
                 <div className="mb-5">
-                  <div className="flex gap-4 items-center mb-3">
+                  <div className="flex gap-4 items-center mb-1">
                     <img
                       className="h-12 w-12 rounded-full object-cover drop-shadow-md"
                       src={cmt.Avt !== null ? cmt.Avt : require("../Images/pattientavt.png")}
@@ -195,7 +194,7 @@ const BlogPage = () => {
                       <div className="font-medium text-lg">
                         {cmt.FirstName + " " + cmt.LastName}
                       </div>
-                      <div>{cmt.CmtTime}</div>
+                      <div className="text-gray-400 text-sm">Vào lúc {cmt.CmtTime.slice(11,16)} {cmt.CmtTime.slice(8,10)}/{cmt.CmtTime.slice(5,7)}/{cmt.CmtTime.slice(0,4)}</div>
                     </div>
                     {cmt.idAccount === currentUser?.id &&
                     <div className="relative w-full">
@@ -227,29 +226,29 @@ const BlogPage = () => {
                   <p className="mb-2 text-lg">{cmt.Cmt}</p>  
                   }
                   <div className="flex gap-5 mb-4">
-                    <div className="flex gap-2">
+                    <div className="flex gap-1 items-center h-6">
                       {cmt.IsLoved ? 
-                          <FaHeart className="cursor-pointer w-5 h-5 text-rose-500 transition-full" onClick={()=>{handleLike({id:cmt.id, status: "CMT", idAccount: cmt.idAccount})}}></FaHeart>
+                          <FaHeart className="cursor-pointer w-4 h-4 text-rose-500 transition-full" onClick={()=>{handleLike({id:cmt.id, status: "CMT", idAccount: cmt.idAccount})}}></FaHeart>
                           :
-                          <FaRegHeart className="cursor-pointer w-5 h-5 text-gray-600 transition-full" onClick={()=>{handleLike({id:cmt.id, status: "CMT", idAccount: cmt.idAccount})}}></FaRegHeart>
+                          <FaRegHeart className="cursor-pointer w-4 h-4 text-gray-600 transition-full" onClick={()=>{handleLike({id:cmt.id, status: "CMT", idAccount: cmt.idAccount})}}></FaRegHeart>
                           } 
                       <p>{cmt.Love}</p>
                     </div>
                     <div className="w-full">
                       <FaRegCommentDots className="cursor-pointer w-5 h-6 text-slate-600" onClick={()=>{handleAction(cmt.id); setStatus("REP")}}></FaRegCommentDots>
                       {cmt.RepComment?.map((replyCmt) => 
-                      <div className="flex flex-col gap-2 mt-3">
+                      <div className="flex flex-col gap-1 mt-3">
                         <div className="flex gap-4 text-base items-center">
                           <img
                             className="h-10 w-10 rounded-full object-cover drop-shadow-md"
                             src={replyCmt.repAvt !== null ? replyCmt.repAvt : require("../Images/pattientavt.png")}
                             alt=""
                           ></img>
-                          <div className="flex flex-col gap-1 w-96">
+                          <div className="flex flex-col w-96">
                             <div className="font-medium text-lg">
                               {replyCmt.repFirstName + " " + replyCmt.repLastName}
                             </div>
-                            <div>{replyCmt.repCmtTime}</div>
+                            <div className="text-gray-400 text-sm">Vào lúc {replyCmt.repCmtTime.slice(11,16)} {replyCmt.repCmtTime.slice(8,10)}/{replyCmt.repCmtTime.slice(5,7)}/{replyCmt.repCmtTime.slice(0,4)}</div>
                           </div>
                           {replyCmt.repidAccount === currentUser?.id &&
                             <div className="relative w-full">
@@ -278,17 +277,16 @@ const BlogPage = () => {
                           </div>
                         </div>
                         :
-                        <p className="mb-2 text-lg">{replyCmt.repCmt}</p>  
+                        <p className="text-base">{replyCmt.repCmt}</p>  
                         }
-                        <div className="flex gap-2">
+                        <div className="flex gap-1 items-center h-6">
                           {replyCmt.repIsLoved ? 
-                          <FaHeart className="cursor-pointer w-5 h-5 text-rose-500 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP", idAccount: replyCmt.repidAccount})}}></FaHeart>
+                          <FaHeart className="cursor-pointer w-4 h-4 text-rose-500 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP", idAccount: replyCmt.repidAccount})}}></FaHeart>
                           :
-                          <FaRegHeart className="cursor-pointer w-5 h-5 text-gray-700 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP", idAccount: replyCmt.repidAccount})}}></FaRegHeart>
+                          <FaRegHeart className="cursor-pointer w-4 h-4 text-gray-700 transition-full" onClick={()=>{handleLike({id:replyCmt.repid, status: "REP", idAccount: replyCmt.repidAccount})}}></FaRegHeart>
                           } 
                           <p>{replyCmt.repLove}</p>
                         </div>
-                        <hr className="w-80"></hr>
                       </div>
                       )}
                       {reply === cmt.id && 
@@ -303,7 +301,6 @@ const BlogPage = () => {
                       }
                     </div>
                   </div>
-                  <hr className="w-full"></hr>
                 </div>
               )}
               </div>  
@@ -326,7 +323,7 @@ const BlogPage = () => {
               <div className="grid place-items-center w-full">
                 <hr className="w-[90%]"></hr>
                 <div className="text-sm text-center">
-                  <div>Ngày đăng: {detailPost[0]?.DatePost.slice(0, 10)}</div>
+                  <div>Ngày đăng: {detailPost[0]?.DatePost.slice(8,10)}/{detailPost[0]?.DatePost.slice(5,7)}/{detailPost[0]?.DatePost.slice(0,4)}</div>
                 </div>
               </div>
             </div>
@@ -341,12 +338,12 @@ const BlogPage = () => {
                   src={item.Avt}
                   alt=""
                 ></img>
-                <div>
-                  <div className="font-medium  text-lg">{item.FirstName + " " + item.LastName}</div>
+                <div className="flex flex-col gap-1">
+                  <div className="font-medium text-lg">{item.FirstName + " " + item.LastName}</div>
                   <div className="flex gap-1">
                     Chuyên khoa: <p className="font-medium">{detailPost[0]?.Major}</p>
                   </div>
-                  <div>{item.Experience}</div>
+                  <div>{item.Experience} năm kinh nghiệm</div>
                 </div>
               </div>
               )}

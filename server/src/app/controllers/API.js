@@ -392,7 +392,7 @@ class API {
   // Profile
   //[GET] /api/profile
   getProfile(req, res) {
-    const id = req.user.id; 
+    const id = req.user.id;  
     let selectSql = "";
     const errorMsg = "Lỗi hệ thống, không thể lấy thông tin!";
 
@@ -421,7 +421,7 @@ class API {
 
   //[PATCH] /api/profile/update
   updateProfile(req, res) {
-    const id = req.user.id;
+    const id = req.user.id; console.log(req.body);
     const FullName = req.body.FullName ? req.body.FullName : null;
     const Address = req.body.Address ? req.body.Address : null;
     const Phone = req.body.Phone ? req.body.Phone : null;
@@ -460,7 +460,25 @@ class API {
         "update account set FirstName = ?, LastName = ?, BirthDate = ?, Gender = ?, Phone = ?, Address = ?, Avt = ? where id = ?";
     }
     const errorMsg = "Lỗi hệ thống, không thể cập nhật thông tin!";
-    const updateInforDoctorSql = "update infordoctor set Degree = ?, Introduce =?, idMajor = ?, Experience = ?,Training = ? where idAccount = ?"
+    let updateInforDoctorSql = "";
+    let dataID = "";
+    if(req.body.idMajor == "null"){ 
+      if(req.body.Experience == "null") { 
+        updateInforDoctorSql = "update infordoctor set Degree = ?, Introduce =?,Training = ? where idAccount = ?"
+        dataID = [Degree, Introduce, Training, id]
+      } else {
+        updateInforDoctorSql = "update infordoctor set Degree = ?, Experience = ?, Introduce =?,Training = ? where idAccount = ?"
+        dataID = [Degree, Experience, Introduce, Training, id]
+      }
+    } else {
+      if(req.body.Experience == "null") { 
+        updateInforDoctorSql = "update infordoctor set Degree = ?, Introduce =?, idMajor = ?,Training = ? where idAccount = ?"
+        dataID = [Degree, Introduce, idMajor, Training, id]
+      } else {
+        updateInforDoctorSql = "update infordoctor set Degree = ?, Introduce =?, idMajor = ?, Experience = ?,Training = ? where idAccount = ?"
+        dataID = [Degree, Introduce, idMajor, Experience, Training, id]
+      }
+    }
 
     pool.getConnection(function (err, connection) {
       if (err) throw err; // not connected!
@@ -471,15 +489,12 @@ class API {
         }
         if (results) {
           if(req.user.Authorization == 2){
-            connection.query(
-              updateInforDoctorSql,
-              [Degree, Introduce, idMajor, Experience, Training, id],
-              function (error, results, fields) {
+            connection.query(updateInforDoctorSql, dataID, function (err, rs, fields) {
                 connection.destroy();
-                if (error) {
-                  res.send({ message: error, checked: false });
+                if (err) { console.log(err);
+                  res.send({ message: err, checked: false });
                 }
-                if (results) {
+                if (rs) {
                   res.status(200).send({ checked:true });
                 }
               }
@@ -538,21 +553,25 @@ class API {
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
     const data = [idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information]
 
+    const date = new Date();
+    if(parseInt(db[0]) == date.getDate && parseInt(db[1]) == (date.getMonth() + 1) ){
+      res.status(200).send({ message: "Vui lòng đặt trước 1 ngày để bác sĩ sắp xếp lịch.", checked: true });
+    }
     if (req.user.Authorization != 1) {
       res.end("Unauthorized");
-    } else {
-      pool.query(insertSql, data, function (error, results, fields) {
-        if (error) {
-          res.send({ message: error.sqlMessage, checked: false });
-        } else {
-          if (results) {
-            res.status(200).send({ checked: true });
-          } else {
-            res.status(200).send({ message: errorMsg, checked: false });
-          }
-        }
-      });
     }
+    pool.query(insertSql, data, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error.sqlMessage, checked: false });
+      } else {
+        if (results) {
+          // Thiếu hệ thống tự động hủy cuộc hẹn sau 2h
+          res.status(200).send({ checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
   }
 
   //[PATCH] /api/appointment/accept
@@ -1352,7 +1371,6 @@ class API {
 
   //[POST] /api/post/update
   updatePost(req, res) {
-    console.log(req.body)
     if ((req.user.Authorization == 1)) {
       res.send({
         message: "Bệnh nhân không thể chỉnh sửa bài",
@@ -1371,7 +1389,7 @@ class API {
     let updateSql = "";
     let data = [];
 
-    if(req.files === null){
+    if(req.files.FeaturedImage){
       FeaturedImage = req.files.FeaturedImage[0]?.path; 
       updateSql = "update post set FeaturedImage = ?, Title = ?, Brief = ?, Content = ?, idCategories = ?, idSimilar = ?, idMajor = ?, idClassify = ? where id = ?"
       data = [FeaturedImage, Title, Brief, Content, idCategories, idSimilar, idMajor, idClassify, id]
@@ -1596,8 +1614,8 @@ class API {
           if (err) {
             res.send({ message: errorMsg, checked: false });
           }
-          if (rs[0]) {
-            CmtData = rs[0];
+          if (rs[0].length > 0) {
+            CmtData = rs[0]; 
             for(let i = 0; i < CmtData.length; i++) {
               CmtData[i].IsLoved = false;
               CmtData[i].repIsLoved = false;
@@ -1640,7 +1658,8 @@ class API {
         
               if(i == CmtData.length - 1) res.status(200).send({ data: CmtData, checked: true });
             }
-          }
+            
+          } else res.status(200).send({ data: [], checked: true });
         });
       });
     }
@@ -1650,7 +1669,7 @@ class API {
           res.send({ message: errorMsg, checked: false });
         }
         if (rs[0].length > 0) { 
-          CmtData = rs[0];
+          CmtData = rs[0]; console.log(rs)
           for(let i = 0; i < CmtData.length; i++) {
 
             if (CmtData[i].repid) {
@@ -1678,8 +1697,10 @@ class API {
               i -= 1;
             }
       
-            if(i == CmtData.length - 1) res.status(200).send({ data: CmtData, checked: true });
-          }
+            if(i == CmtData.length - 1) {
+              res.status(200).send({ data: CmtData, checked: true });
+            }
+          } 
         } else res.status(200).send({ data: [], checked: true });
       });
     }

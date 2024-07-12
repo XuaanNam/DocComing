@@ -20,17 +20,22 @@ const AdminLogin = () => {
     const { name, value } = e.target;
     setFormValues({ ...formValues, [name]: value });
   };
+  console.log(formValues);
   const handleLogin = () => {
     const data = {
       Email: formValues.email,
       PassWord: formValues.password,
     };
-    if(formValues.email !== "admin@doccoming.com"){
-      setErr("Không thể đăng nhập bằng tài khoản này!!" )
-    } else {
+    if(formValues.email == "" || formValues.password == "")
+      setErr("Vui lòng nhập đầy đủ tài khoản và mật khẩu!")
+    else if(formValues.email !== "admin@doccoming.com"){
+      setErr("Không thể đăng nhập bằng tài khoản này!")
+    } 
+    else {
       dispatch(login(data))
-      .then(() => {
-        setErr(message);
+      .then((r) => {
+        if(r.payload.checked === false)
+          setErr(r.payload.message);
       })
     }
   };
@@ -38,7 +43,7 @@ const AdminLogin = () => {
     if (currentUser) setTimeout(Navigate("/admin/dashboard"), 1000);
   }, [currentUser]);
   return (
-    <div className="md:pt-[150px] max-md:pt-[80px] md:py-20 mb-40 w-full">
+    <div className="md:pt-[150px] bg-gray-50 max-md:pt-[80px] md:py-20 mb-40 w-full">
       {!currentUser ? (
         <div className="shadow-lg bg-gradient-to-r p-5 rounded-xl from-lime-50 to-white lg:w-1/3 sm:max-lg:w-1/2 max-sm:w-2/3 lg:h-80 mx-auto max-sm:mt-4"
              onKeyDown={(e) => { 
@@ -70,7 +75,7 @@ const AdminLogin = () => {
                 formErrors?.password ? "border-b-red-500" : "border-b-teal-100"
               } py-2 mb-4 max-xl:w-full xl:w-96 h-12 bg-transparent focus-visible:ring-0 border-x-0 border-t-0 border-b-2 text-lg items-center focus:border-b-teal-400`}
             ></input>
-            <p className="text-red-500 mb-4">{err}</p>
+            <p className="text-red-500 mb-1">{err}</p>
             <Button
               onClick={handleLogin}
               className="max-xl:w-full xl:w-60 mt-3 mx-auto h-[48px] text-center"

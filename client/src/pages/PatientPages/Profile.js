@@ -33,6 +33,7 @@ const Profile = () => {
   const filePickerRef = useRef();
   const dispatch = useDispatch();
   const Navigate = useNavigate();
+  console.log(currentUser, data)
   useEffect(() => {
     if (!currentUser) {
       Navigate("/");

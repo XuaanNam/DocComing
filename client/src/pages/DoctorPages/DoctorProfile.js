@@ -23,6 +23,7 @@ const DoctorProfile = () => {
   const [isSubmited, setIsSubmited] = useState(false);
   const [edit, setEdit] = useState(false);
   const [data, setData] = useState({});
+  const [introduce, setIntroduce] = useState("");
   const [FullName, setFullName] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [formData, setFormData] = useState({});
@@ -30,10 +31,11 @@ const DoctorProfile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [showModal, setShowModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
-
   const filePickerRef = useRef();
   const dispatch = useDispatch();
   const Navigate = useNavigate();
+
+  console.log(user?.data, data)
   useEffect(() => {
     dispatch(fetchProfile());
   }, [dispatch]);
@@ -43,6 +45,7 @@ const DoctorProfile = () => {
     } else {
       if (currentUser.authentication == 2) {
         setData(user?.data);
+        setIntroduce(user?.data.Introduce)
         setFullName(
           user?.data?.FullName ||
             currentUser?.FullName
@@ -59,6 +62,7 @@ const DoctorProfile = () => {
     setEdit(true);
   };
   const handleCancel = () => {
+    setIntroduce(user?.data.Introduce)
     setEdit(false);
     setFormData({});
     setData(user?.data);
@@ -86,7 +90,7 @@ const DoctorProfile = () => {
     body.append("BirthDate", data.BirthDate);
     body.append("Gender", data.Gender || "Nam");
     body.append("Degree", data.Degree);
-    body.append("Introduce", data.Introduce);
+    body.append("Introduce", introduce);
     body.append("idMajor", data.idMajor);
     body.append("Experience", data.Experience);
     body.append("Training", data.Training);
@@ -102,6 +106,11 @@ const DoctorProfile = () => {
     setData({ ...data, BirthDate: dateString });
     setFormData({ ...formData, BirthDate: dateString });
   };
+  const handleChangeEditor = (value) => {
+    // setData({ ...data, Introduce: value });
+    setIntroduce(value)
+    setFormData({ ...formData, Introduce: value });
+  }
   const handleChangePassword = () => {
     const data = {
       OldPassWord: oldPassword,
@@ -135,10 +144,6 @@ const DoctorProfile = () => {
       name: "Bệnh truyền nhiễm",
     },
     {
-      id: 3,
-      name: "Chẩn đoán hình ảnh",
-    },
-    {
       id: 4,
       name: "Da liễu",
     },
@@ -156,7 +161,7 @@ const DoctorProfile = () => {
     },
     {
       id: 8,
-      name: "Huyết học",
+      name: "Nội khoa",
     },
     {
       id: 9,
@@ -205,6 +210,14 @@ const DoctorProfile = () => {
     {
       id: 20,
       name: "Đa khoa",
+    },
+    {
+      id: 21,
+      name: "Huyết học",
+    },
+    {
+      id: 22,
+      name: "Nội tiết",
     },
   ]
   return (
@@ -417,6 +430,8 @@ const DoctorProfile = () => {
 
                         <option value="Thạc sĩ y khoa">Thạc sĩ y khoa</option>
                         <option value="Tiến sĩ y khoa">Tiến sĩ y khoa</option>
+                        <option value="Cử nhân điều dưỡng">Cử nhân điều dưỡng</option>
+                        <option value="Bác sĩ chuyên khoa 1">Bác sĩ chuyên khoa 1</option>
                       </Select>
                     </div>
                   </div>
@@ -464,11 +479,8 @@ const DoctorProfile = () => {
                   <div className={`${edit ? "border-teal-400" : "border-gray-400"} w-full border-2 border-dotted  p-3 flex items-center justify-center`}>
                     <Editor
                       className="w-full text-lg bg-white rounded-lg border-gray-300 text-gray-900"
-                      value={data?.Introduce}
-                      onChange={(value) => {
-                        setData({ ...data, Introduce: value });
-                        setFormData({ ...formData, Introduce: value });
-                      }}
+                      value={introduce}
+                      onChange={handleChangeEditor}
                       readOnly={!edit}
                     />
                   </div>

@@ -29,11 +29,6 @@ const CreateBlog = () => {
         label: 'Thông tin sức khỏe',
       },
   ]
-  useEffect(() => {
-    dispatch(fetchCategories());
-    dispatch(fetchMajor());
-
-  }, [dispatch]);
   const handleChangeCategory = (value) => {
     setSimilarCategoryId(value);
     for (let i = 0; i < category?.length; i++) {
@@ -45,7 +40,7 @@ const CreateBlog = () => {
       }
     }
   };
-  console.log(content)
+  console.log(files)
   const handleCreatePost = () => {
     const data = new FormData();
     data.append("Title", title);
@@ -86,12 +81,12 @@ const CreateBlog = () => {
   };
   console.log(majorId)
   return (
-    <div className="lg:pt-[70px] md:flex md:items-center md:justify-center ">
-      <div className="lg:mt-10 max-lg:mt-5 mb-20 flex flex-col items-center justify-center md:w-3/4 max-md:w-[90%] md:p-8 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200">
+    <div className="lg:pt-[70px] min-h-screen bg-gray-50 md:flex md:items-center md:justify-center ">
+      <div className="lg:my-5 max-lg:my-5 bg-white flex flex-col items-center justify-center md:w-3/4 max-md:w-[90%] md:p-4 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200">
         <div className="text-2xl font-bold opacity-70 mb-5">
           Thêm bài viết
         </div>
-        <div className="h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
+        <div className="h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
           <Input
             className={` ${
               !filled && title === "" && "border-red-400 border-[1.5px]"
@@ -102,7 +97,7 @@ const CreateBlog = () => {
             onChange={(e) => setTitle(e.target.value)}
           />
         </div>
-        <div className="h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
+        <div className="h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
           <Input
             className={` ${
               !filled && summary === "" && "border-red-400 border-[1.5px]"
@@ -119,7 +114,7 @@ const CreateBlog = () => {
               !filled && classify === ""
                 ? "border-red-400 border-[1.5px]"
                 : "border-gray-400"
-            } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+            } h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
             value={classify}
             onChange={(value)=>{setClassify(value)}}
         >    
@@ -143,7 +138,7 @@ const CreateBlog = () => {
             !filled && similarCategoryId === ""
               ? "border-red-400 border-[1.5px]"
               : "border-gray-400"
-          } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+          } h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
           value={similarCategoryId}
           onChange={handleChangeCategory}
         >
@@ -177,7 +172,7 @@ const CreateBlog = () => {
             !isValid && majorId === ""
               ? "border-red-400 border-[1.5px]"
               : "border-gray-400"
-          } border-gray-400 h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+          } border-gray-400 h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
           value={majorId}
           onChange={(value)=>{setMajorId(value)}}
         >
@@ -203,7 +198,7 @@ const CreateBlog = () => {
           } md:w-[90%] max-md:w-full mb-4  justify-between border-2 border-dotted p-3`}
         >
           <FileInput
-            className="cursor-pointer h-[48px] w-full !text-white"
+            className="cursor-pointer h-11 w-full !text-white"
             type="file"
             accept="image/*"
             onChange={(e) => setFiles(e.target.files[0])}
@@ -220,7 +215,7 @@ const CreateBlog = () => {
         
         <button
           onClick={handleCreatePost}
-          className="h-12 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
+          className="h-11 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
         >
           Đăng
         </button>

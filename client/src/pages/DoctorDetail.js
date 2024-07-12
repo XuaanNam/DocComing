@@ -32,7 +32,6 @@ const DoctorDetail = () => {
   const max = Math.max(...rating);
   useEffect(() => {
     dispatch(getDetailDoctor(Id));
-
     dispatch(getRatingDoctor(Id))
   }, [Id, dispatch]);
   useEffect(()=>{
@@ -42,14 +41,27 @@ const DoctorDetail = () => {
       for(let i=ratingDoctor.length-1;i>=0;i--){
         rate.push(ratingDoctor[i].Rate.length);
         count += ratingDoctor[i].Rate.length
-        if(i === ratingDoctor.length - 1){
+        console.log(count)
+
+        if(i === 0){
           setRating(rate)
           setCount(count)
         }
       }
     }
-  },[ratingDoctor, Id]);
-  console.log(detailDoctor)
+  },[ratingDoctor]);
+  const TransferDegree = (degree) => {
+    let res = ""
+    if(degree == "Thạc sĩ y khoa")
+      res = "ThS.BS."
+    else if(degree == "Tiến sĩ y khoa")
+      res = "TS.BS."
+    else if(degree == "Cử nhân điều dưỡng")
+      res = "ĐD"
+    else
+      res = "BS.CK1."
+    return res;
+  }
   return (
     <div className="pt-[70px]">
       <div className="relative w-full block">
@@ -75,7 +87,7 @@ const DoctorDetail = () => {
           alt="ClinicIcon"
         />
         <div className="absolute left-20 top-20 h-16 p-4 rounded-3xl bg-white bg-opacity-90 shadow-lg text-slate-700 text-3xl font-bold z-10 max-w-[500px]">
-          ThS.BS. {detailDoctor[0]?.FullName}
+          {TransferDegree(detailDoctor[0]?.Degree)} {detailDoctor[0]?.FullName}
         </div>
         <div className="absolute left-20 top-40 min-h-12 p-3 mb-3 rounded-3xl bg-white bg-opacity-90 shadow-lg text-slate-700 flex gap-3 items-center">
           <div className="w-9 h-9 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
@@ -173,105 +185,75 @@ const DoctorDetail = () => {
         <hr className="w-24 border-[1.5px] border-teal-400 rounded-lg mb-5"></hr>
         <div className="text-base mb-8 text-slate-600 bg-white p-10 rounded-xl shadow-xl shadow-violet-200">
             <p className="italic mb-5 text-slate-500">
-              Phản hồi từ bệnh nhân đã thực sự được khám từ bác sĩ
+              "Phản hồi từ bệnh nhân đã thực sự được khám từ bác sĩ"
             </p>
-            <div className="w-[50%]">
-            <div className="">
-              <div className="flex gap-8 items-center mb-5">
-                <div className={` bg-white rounded-xl drop-shadow-lg h-full p-3`}>
-                  <div className="flex flex-col h-full gap-3 items-center justify-center">
-                    <p className="text-2xl text-pink-500 font-medium">{detailDoctor[0]?.Star?.slice(0,3) ? detailDoctor[0]?.Star?.slice(0,3) : "0.00" }</p>
-                    <div>
-                      <Rate className="w-full flex gap-1"
-                            value={parseFloat(detailDoctor[0]?.Star?.slice(0,3))}
-                            allowHalf
-                            style={{ fontSize: 24}}
-                            disabled={true} 
-                      />
-                    </div>
-                    <p className={` text-lg`}>{count} đánh giá</p>
-                  </div>
-                </div>
-                <table className="w-[80%]">
-                  <tbody>
-                    {rating.map((item, itemIndex) => {
-                      let style = {
-                        backgroundColor: item > 0 ? yellow[600] : grey[200],
-                        width: (item / max) * 100 + '%',
-                        height: '12px',
-                        borderRadius: '8px',
-                      }
-
-                      return (
-                        <tr className="flex items-center gap-3 w-full" key={itemIndex}>
-                          <td className={`w-2 font-medium`}>
-                            {5 - itemIndex} 
-                          </td>
-                          <td>
-                              <StarIcon className="text-gray-400 h-4" />
-                          </td>
-                          <td className='w-[80%]'>
-                              <div className="w-full h-3 rounded-lg bg-[#eeeeee]">
-                                  <div style={style}>
-                                  </div>
-                              </div>
-                          </td>
-                          <td>
-                              <span className={` text-slate-600`}>{item}</span>
-                          </td>
-                        </tr>
-                      )
-                    })}
-                  </tbody>
-                </table>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3 mb-8">
-              {rating.map((item,index) => (
-              <div className="flex gap-1 items-center justify-center w-20 h-8 bg-white hover:bg-slate-100 rounded-2xl shadow-md cursor-pointer"
-                   onClick={()=>{setStar(index+1)}}>
-              {index + 1}
-              <StarIcon className="text-[#fdd835] h-4" />
-              </div>
-              ))}
-            </div>
-            {star === 0 ?
-            ratingDoctor?.map((item) => (
-              item.Rate.map((rate) => 
-                <div className="mb-5">
-                  <div className="flex gap-3 mb-3">
-                    <div className="rounded-full h-12 w-12 bg-slate-200 flex items-center justify-center">
-                      <img
-                        className="rounded-full h-10 w-10 object-cover"
-                        alt=""
-                        src={rate.Avt || require("../Images/pattientavt.png")}
-                      ></img>
-                    </div>
-                    <div className="flex flex-col gap-1">
-                      <div className="text-lg font-medium text-slate-700 mb-1">
-                        {rate.FullName}
+            {count > 0 ?
+            <>
+              <div className="w-[50%]">
+                <div className="">
+                <div className="flex gap-8 items-center mb-5">
+                  <div className={` bg-white rounded-xl drop-shadow-lg h-full p-3`}>
+                    <div className="flex flex-col h-full gap-3 items-center justify-center">
+                      <p className="text-2xl text-pink-500 font-medium">{detailDoctor[0]?.Star?.slice(0,3) ? detailDoctor[0]?.Star?.slice(0,3) : "0.00" }</p>
+                      <div>
+                        <Rate className="w-full flex gap-1"
+                              value={parseFloat(detailDoctor[0]?.Star?.slice(0,3))}
+                              allowHalf
+                              style={{ fontSize: 24}}
+                              disabled={true} 
+                        />
                       </div>
-                      <Rate className="w-full" 
-                            defaultValue={item.Star}
-                            style={{ fontSize: 18}}
-                            disabled={true}
-                            >
-                      </Rate>
-                      <p className="text-lg text-slate-600 mt-2">{rate.Comment}</p>
+                      <p className={` text-lg`}>{count} đánh giá</p>
                     </div>
                   </div>
-                  <hr className="w-full border-slate-200 rounded-lg my-2"></hr>
+                  <table className="w-[80%]">
+                    <tbody>
+                      {rating.map((item, itemIndex) => {
+                        let style = {
+                          backgroundColor: item > 0 ? yellow[600] : grey[200],
+                          width: (item / max) * 100 + '%',
+                          height: '12px',
+                          borderRadius: '8px',
+                        }
+
+                        return (
+                          <tr className="flex items-center gap-3 w-full" key={itemIndex}>
+                            <td className={`w-2 font-medium`}>
+                              {5 - itemIndex} 
+                            </td>
+                            <td>
+                                <StarIcon className="text-gray-400 h-4" />
+                            </td>
+                            <td className='w-[80%]'>
+                                <div className="w-full h-3 rounded-lg bg-[#eeeeee]">
+                                    <div style={style}>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span className={` text-slate-600`}>{item}</span>
+                            </td>
+                          </tr>
+                        )
+                      })}
+                    </tbody>
+                  </table>
+                  </div>
                 </div>
-            )))
-            : 
-            ratingDoctor[star-1].Rate.length > 0
-            ?
-            ratingDoctor?.map((item) => (
-              item.Star === star &&
-              item.Rate.map((rate) => 
-                <div className="mb-5">
-                  <div>
+              </div>
+              <div className="flex items-center gap-3 mb-8">
+                {rating.map((item,index) => (
+                <div className="flex gap-1 items-center justify-center w-20 h-8 bg-white hover:bg-slate-100 rounded-2xl shadow-md cursor-pointer"
+                    onClick={()=>{setStar(index+1)}}>
+                {index + 1}
+                <StarIcon className="text-[#fdd835] h-4" />
+                </div>
+                ))}
+              </div>
+              {star === 0 ?
+              ratingDoctor?.map((item) => (
+                item.Rate.map((rate) => 
+                  <div className="mb-5">
                     <div className="flex gap-3 mb-3">
                       <div className="rounded-full h-12 w-12 bg-slate-200 flex items-center justify-center">
                         <img
@@ -295,10 +277,46 @@ const DoctorDetail = () => {
                     </div>
                     <hr className="w-full border-slate-200 rounded-lg my-2"></hr>
                   </div>
-                </div>
-            )))
+              )))
+              : 
+              ratingDoctor[star-1].Rate.length > 0
+              ?
+              ratingDoctor?.map((item) => (
+                item.Star === star &&
+                item.Rate.map((rate) => 
+                  <div className="mb-5">
+                    <div>
+                      <div className="flex gap-3 mb-3">
+                        <div className="rounded-full h-12 w-12 bg-slate-200 flex items-center justify-center">
+                          <img
+                            className="rounded-full h-10 w-10 object-cover"
+                            alt=""
+                            src={rate.Avt || require("../Images/pattientavt.png")}
+                          ></img>
+                        </div>
+                        <div className="flex flex-col gap-1">
+                          <div className="text-lg font-medium text-slate-700 mb-1">
+                            {rate.FullName}
+                          </div>
+                          <Rate className="w-full" 
+                                defaultValue={item.Star}
+                                style={{ fontSize: 18}}
+                                disabled={true}
+                                >
+                          </Rate>
+                          <p className="text-lg text-slate-600 mt-2">{rate.Comment}</p>
+                        </div>
+                      </div>
+                      <hr className="w-full border-slate-200 rounded-lg my-2"></hr>
+                    </div>
+                  </div>
+              )))
+              :
+              <div className="text-lg text-slate-800 italic font-medium">Bác sĩ chưa có đánh giá {star} sao</div>
+              }
+            </>
             :
-            <div className="text-lg text-slate-800 italic font-medium">Bác sĩ chưa có đánh giá {star} sao</div>
+            <div className="text-xl font-medium text-teal-700 italic">Bác sĩ hiện chưa nhận được đánh giá</div>
             }
         </div>
       </div>

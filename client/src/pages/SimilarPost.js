@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {fetchCategories,getPostByCategory,getPostBySimilarCategory} from "../redux-toolkit/postSlice"
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 
 const SimilarPost = () => {
@@ -43,15 +43,14 @@ const SimilarPost = () => {
                 dispatch(getPostByCategory(category[i].id))
         }
   },[category])
-  console.log(post)
   return (
     <div className="pt-[70px] bg-slate-50 min-h-screen flex justify-center">
       <div className="my-4 w-[80%] p-8 rounded-xl bg-white shadow-lg shadow-violet-200">
         {similar &&
         <div className="flex gap-2 items-center mb-5">
-            <a href={`/categories/${cgr}`} className="text-slate-700 font-medium cursor-pointer">{cgr}</a>
+            <Link to={`/categories/${cgr}`} className="text-slate-700 font-medium cursor-pointer">{cgr}</Link>
             <IoIosArrowForward></IoIosArrowForward>
-            <a href={`/categories/${cgr}/${similar}`} className="text-slate-700 font-medium cursor-pointer">{similar}</a>
+            <Link to={`/categories/${cgr}/${similar}`} className="text-slate-700 font-medium cursor-pointer">{similar}</Link>
         </div>
         }
         <div className="flex flex-col gap-6 px-40 mb-5">
@@ -96,28 +95,28 @@ const SimilarPost = () => {
           <div className="flex flex-wrap gap-5 gap-y-7 w-3/5">
             {post?.slice(1, 5).map((item) => 
             <div
-                className="cursor-pointer w-[48%] p-3 rounded-xl shadow-md shadow-violet-200 bg-lime-50"
+                className="cursor-pointer flex flex-col gap-3 w-[48%] max-h-[75%] p-3 rounded-xl shadow-md shadow-violet-200 bg-lime-50"
                 onClick={() => Navigate(`/blog/${item.id}`)}
             >
                 <img
-                className="h-48 w-full rounded-xl mb-3 bg-cover drop-shadow-md"
+                className="h-48 w-full rounded-xl bg-cover drop-shadow-md"
                 src={item?.FeaturedImage}
                 alt=""
                 ></img>
-                <div className="text-teal-500 mb-2">{item?.Similar}</div>
-                <div className="text-slate-800 h-14 text-xl font-medium mb-4">
+                <div className="text-teal-500">{item?.Similar}</div>
+                <div className="text-slate-800 h-20 text-ellipsis overflow-hidden text-xl font-medium">
                 {item?.Title}
                 </div>
                 <div className="flex gap-2 text-base items-center">
-                <img
-                    className="h-8 w-8 rounded-full bg-cover drop-shadow-md"
-                    src={item?.Avt}
-                    alt=""
-                ></img>
-                <div className="font-medium">
-                    {item?.FirstName + " " + item?.LastName} -
-                </div>
-                <div>{item?.DatePost?.slice(0, 10)}</div>
+                    <img
+                        className="h-8 w-8 rounded-full bg-cover drop-shadow-md"
+                        src={item?.Avt}
+                        alt=""
+                    ></img>
+                    <div className="font-medium">
+                        {item?.FirstName + " " + item?.LastName} -
+                    </div>
+                    <div>{item?.DatePost?.slice(0, 10)}</div>
                 </div>
             </div>
             )}
@@ -125,20 +124,19 @@ const SimilarPost = () => {
         </div>
         {!similar &&
         <div>
-            <p className="text-2xl text-slate-700 font-medium mb-4">Khám phá thêm các mục về tiểu đường</p>
+            <p className="text-2xl text-slate-700 font-medium mb-4">Khám phá thêm các mục về {categories[0]?.Categories}</p>
             <div className="flex gap-5 mb-10">
                 {categories[0]?.Similar?.map((item) => 
-                <a
+                <Link
                     key={item.id}
                     className="w-40 min-h-40 p-3 cursor-pointer rounded-3xl bg-lime-50 shadow-xl flex flex-col items-center justify-center transition-transform duration-500 hover:scale-110"
-                    // onClick={()=>Navigate(`/categories/${categories[0]?.Categories}/${item.SimilarCategories}`)}
-                    href={`/categories/${categories[0]?.Categories}/${item.SimilarCategories}`}
+                    to={`/categories/${categories[0]?.Categories}/${item.SimilarCategories}`}
                 >
                     <img className="h-20 w-20 mb-2" alt="" src={item.ImageSimilar}></img>
                     <p className="font-medium text-gray-500 h-14 flex items-center text-center">
                     {item.SimilarCategories}
                     </p>
-                </a>
+                </Link>
                 )}
             </div>
         </div>

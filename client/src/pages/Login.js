@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FlagIcon from "../Images/flag.png";
 import { useDispatch, useSelector } from "react-redux";
-import { login, loginGoogle, sendMail } from "../redux-toolkit/authSlice";
+import { fetchProfile, login, loginGoogle, sendMail } from "../redux-toolkit/authSlice";
 import OAuth from "../components/OAuth";
 import { Button,Modal } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
@@ -50,18 +50,17 @@ function Login() {
     if (formValues.email == "admin@doccoming.com") {
       setErr("Không thể đăng nhập bằng tài khoản này!!");
     } 
+    else if(formValues.email == "" || formValues.password == "")
+      setErr("Vui lòng nhập đầy đủ tài khoản và mật khẩu!")
     else {
-      if (
-        !validate(formValues)?.email &&
-        !validate(formValues)?.password
-      ){
-        dispatch(login(data)).then(() => {
-          if(blogId){
-            setTimeout(Navigate(`/blog/${blogId}`), 1000);
-            localStorage.removeItem('blog')
-          }
-        });
-      }  
+      dispatch(login(data)).then((r) => {
+        if(r.payload.checked === false)
+          setErr(r.payload.message);
+        else if(blogId){
+          setTimeout(Navigate(`/blog/${blogId}`), 1000);
+          localStorage.removeItem('blog')
+        }
+      });
     }
   };
   const handleSendEmail = () => {
@@ -69,17 +68,17 @@ function Login() {
     setForgotPassword(false)
   }
   useEffect(() => {
-    setErr(message);
-  },[message])
-  useEffect(() => {
     if (currentUser?.authentication == 1) {
+      dispatch(fetchProfile())
       if (data) 
         {
           setTimeout(Navigate(`/booking/${data.doctor}`), 1000);
         }
       else setTimeout(Navigate("/"), 1000);
-    } else if (currentUser?.authentication == 2)
+    } else if (currentUser?.authentication == 2){
+      dispatch(fetchProfile())
       setTimeout(Navigate("/doctor/schedule"));
+    }
   }, [currentUser]);
   return (
     <div className="bg-white">

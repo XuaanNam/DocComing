@@ -17,6 +17,7 @@ const EditBlog = () => {
   const [actived, setActived] = useState(false);
   const [filled, setFilled] = useState(true);
   const [data,setData] = useState({});
+  const [content,setContent] = useState("")
   const [files, setFiles] = useState(null);
   const {postId} = useParams();
   const ref = useRef();
@@ -31,13 +32,11 @@ const EditBlog = () => {
     },
 ]
   useEffect(() => {
-    dispatch(getDetailPost(postId)).then((results) => {
+    dispatch(getDetailPost(postId)).then(results => {
       setData(results.payload.data[0])
+      setContent(results.payload.data[0]?.Content)
     })
-    dispatch(fetchCategories());
-    dispatch(fetchMajor());
-  }, [postId]);
-  console.log(data)
+  }, []);
   useEffect(() => {
     if (currentUser) {
       if (currentUser.authentication != 0) Navigate("/");
@@ -58,7 +57,7 @@ const EditBlog = () => {
     const body = new FormData();
     body.append("Title", data.Title);
     body.append("Brief", data.Brief);
-    body.append("Content", data.Content);
+    body.append("Content", content);
     body.append("idClassify", data.idClassify);
     body.append("idCategories", data.idCategories);
     body.append("idMajor", data.idMajor);
@@ -69,9 +68,10 @@ const EditBlog = () => {
     if (
       data.Title !== "" &&
       data.Brief !== "" &&
-      data.Content !== ""
+      content !== ""
     ) {
-      dispatch(updatePost(body)).then(()=>{
+      dispatch(updatePost(body))
+      .then(()=>{
         Navigate("/admin/manage-post")
       });
     } else {
@@ -83,14 +83,14 @@ const EditBlog = () => {
         {currentUser?.authentication == 0 ? (
         <div className="min-h-screen flex">
             <DashSidebar param="manage-post"></DashSidebar>
-            <div className="overflow-auto pt-[70px] w-full">
+            <div className="overflow-auto pt-[70px] bg-gray-50 w-full">
               <div className="md:flex md:items-center md:justify-center">
-                  <div className="lg:mt-10 max-lg:mt-5 mb-20 flex flex-col items-center justify-center md:w-3/4 max-md:md:w-[90%] max-md:w-full md:p-8 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200 border">
+                  <div className="lg:my-5 max-lg:my-5 bg-white flex flex-col items-center justify-center md:w-3/4 max-md:md:w-[90%] max-md:w-full md:p-4 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200">
                       <div className="text-2xl font-bold opacity-70 mb-5">Chỉnh sửa bài viết</div>
-                      <div className="h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
+                      <div className="h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
                       <Input
                           className={` ${
-                          !filled && data.Title === "" && "border-red-400 border-[1.5px]"
+                          !filled && data?.Title === "" && "border-red-400 border-[1.5px]"
                           } outline-none rounded-md h-full p-3 w-full`}
                           type="text"
                           placeholder="Tiêu đề" 
@@ -98,10 +98,10 @@ const EditBlog = () => {
                           onChange={(e) => {setData({ ...data, Title: e.target.value })}}
                       />
                       </div>
-                      <div className="h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
+                      <div className="h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
                       <Input
                           className={` ${
-                          !filled && data.Brief === "" && "border-red-400 border-[1.5px]"
+                          !filled && data?.Brief === "" && "border-red-400 border-[1.5px]"
                           } outline-none rounded-md h-full p-3 w-full`}
                           type="text"
                           placeholder="Tóm tắt"
@@ -115,7 +115,7 @@ const EditBlog = () => {
                           !filled && data?.idClassify === ""
                             ? "border-red-400 border-[1.5px]"
                             : "border-gray-400"
-                        } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+                        } h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
                         value={data?.idClassify}
                         onChange={(value)=>{setData({ ...data, idClassify: value})}}
                       >    
@@ -139,7 +139,7 @@ const EditBlog = () => {
                             !filled && data?.idSimilar === ""
                             ? "border-red-400 border-[1.5px]"
                             : "border-gray-400"
-                        } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+                        } h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
                         value={data?.idSimilar}
                         onChange={handleChange}
                         >
@@ -171,7 +171,7 @@ const EditBlog = () => {
                           !filled && data?.idMajor === ""
                             ? "border-red-400 border-[1.5px]"
                             : "border-gray-400"
-                        } h-[48px] md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
+                        } h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white text-slate-800 cursor-pointer`}
                         value={data?.idMajor}
                         onChange={(value)=>{setData({ ...data, idMajor: value})}}
                       >
@@ -195,7 +195,7 @@ const EditBlog = () => {
                       className="md:w-[90%] max-md:w-full mb-4 justify-between border-2 border-dotted border-teal-500 p-3 cursor-pointer"
                       >
                       <FileInput
-                          className="cursor-pointer h-[48px] w-full !text-white"
+                          className="cursor-pointer h-11 w-full !text-white"
                           type="file"
                           accept="image/*"
                           onChange={(e) => setFiles(e.target.files[0])}
@@ -217,13 +217,13 @@ const EditBlog = () => {
                       </div>
                       )}
                       <Editor
-                      className={` ${!filled && data.Content === "" && "ql-error"}`}
-                      value={data?.Content}
-                      onChange={(value) => {setData({ ...data, Content: value })}}
+                      className={` ${!filled && content === "" && "ql-error"}`}
+                      value={content}
+                      onChange={setContent}
                       />
                       <button
                       onClick={handleCreatePost}
-                      className="h-12 mt-5 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
+                      className="h-11 mt-5 w-[90%] border rounded-xl py-2 cursor-pointer text-white text-lg text-center font-medium bg-gradient-to-r from-green-400 to-teal-500 hover:drop-shadow-lg"
                       >
                         Cập nhật
                       </button>
