@@ -22,9 +22,11 @@ const initialState = {
   allSearchData: [],
   comment: []
 };
+
+const SERVER_URL =  "http://52.76.152.177:5000"
 //admin
 export const createPost = createAsyncThunk("createPost", async (body) => {
-  const res = await fetch("http://localhost:5000/api/post/create", {
+  const res = await fetch(SERVER_URL + "/api/post/create", {
     method: "POST",
     headers: {
       Authorization: localStorage.getItem("token"),  
@@ -35,7 +37,7 @@ export const createPost = createAsyncThunk("createPost", async (body) => {
 });
 export const updatePost = createAsyncThunk("updatePost", async (body) => {
   console.log(body)
-  const res = await fetch("http://localhost:5000/api/post/update", {
+  const res = await fetch(SERVER_URL + "/api/post/update", {
     method: "POST",
     headers: {
       Authorization: localStorage.getItem("token"),
@@ -65,7 +67,7 @@ export const postsFilter = createAsyncThunk("postsFilter", async (body) => {
   return await res.json();
 });
 export const fetchDoctorPost = createAsyncThunk("fetchDoctorPost", async () => {
-  const res = await fetch("http://localhost:5000/api/doctor/post/get", {
+  const res = await fetch(SERVER_URL + "/api/doctor/post/get", {
     method: "GET",
     headers: {
       Authorization: localStorage.getItem("token"),
@@ -75,7 +77,7 @@ export const fetchDoctorPost = createAsyncThunk("fetchDoctorPost", async () => {
 });
 //user
 export const fetchCategories = createAsyncThunk("fetchCategories", async () => {
-  const res = await fetch("http://localhost:5000/api/category", {
+  const res = await fetch(SERVER_URL + "/api/category", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -84,7 +86,7 @@ export const fetchCategories = createAsyncThunk("fetchCategories", async () => {
   return await res.json();
 });
 export const fetchMajor = createAsyncThunk("fetchMajor", async () => {
-  const res = await fetch("http://localhost:5000/api/major", {
+  const res = await fetch(SERVER_URL + "/api/major", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -93,7 +95,7 @@ export const fetchMajor = createAsyncThunk("fetchMajor", async () => {
   return await res.json();
 });
 export const getAllPost = createAsyncThunk("getAllPost", async () => {
-  const res = await fetch("http://localhost:5000/api/post", {
+  const res = await fetch(SERVER_URL + "/api/post", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -131,7 +133,7 @@ export const getDetailPost = createAsyncThunk("getDetailPost", async (body) => {
 export const acceptPost = createAsyncThunk(
   "acceptPost",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/admin/post/accept", {
+    const res = await fetch(SERVER_URL + "/api/admin/post/accept", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -145,7 +147,7 @@ export const acceptPost = createAsyncThunk(
 export const hidePost = createAsyncThunk(
   "hidePost",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/admin/post/status/change", {
+    const res = await fetch(SERVER_URL + "/api/admin/post/status/change", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -171,7 +173,7 @@ export const fetchComment = createAsyncThunk(
 export const createComment = createAsyncThunk(
   "createComment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/comment/create", {
+    const res = await fetch(SERVER_URL + "/api/comment/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -185,7 +187,7 @@ export const createComment = createAsyncThunk(
 export const updateComment = createAsyncThunk(
   "updateComment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/comment/update", {
+    const res = await fetch(SERVER_URL + "/api/comment/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -199,7 +201,7 @@ export const updateComment = createAsyncThunk(
 export const deleteComment = createAsyncThunk(
   "deleteComment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/comment/delete", {
+    const res = await fetch(SERVER_URL + "/api/comment/delete", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -213,7 +215,7 @@ export const deleteComment = createAsyncThunk(
 export const likeComment = createAsyncThunk(
   "likeComment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/comment/love", {
+    const res = await fetch(SERVER_URL + "/api/comment/love", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -227,7 +229,7 @@ export const likeComment = createAsyncThunk(
 export const searchPost = createAsyncThunk(
   "searchPost",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/search/post", {
+    const res = await fetch(SERVER_URL + "/api/search/post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -240,7 +242,7 @@ export const searchPost = createAsyncThunk(
 export const searchPostAdmin = createAsyncThunk(
   "searchPostAdmin",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/admin/post/search", {
+    const res = await fetch(SERVER_URL + "/api/admin/post/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -254,7 +256,7 @@ export const searchPostAdmin = createAsyncThunk(
 export const searchDoctor = createAsyncThunk(
   "searchDoctor",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/search/doctor", {
+    const res = await fetch(SERVER_URL + "/api/search/doctor", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -267,7 +269,7 @@ export const searchDoctor = createAsyncThunk(
 export const searchMajor = createAsyncThunk(
   "searchMajor",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/search/major", {
+    const res = await fetch(SERVER_URL + "/api/search/major", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -280,7 +282,7 @@ export const searchMajor = createAsyncThunk(
 export const searchDisease = createAsyncThunk(
   "searchDisease",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/search/disease", {
+    const res = await fetch(SERVER_URL + "/api/search/disease", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

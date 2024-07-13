@@ -742,6 +742,7 @@ class API {
           res.send({ message: error, checked: false });
         } else {
           if (results) {
+            
             res.status(200).send({ checked: true });
           } else {
             res.status(200).send({ message: errorMsg, checked: false });

@@ -17,8 +17,10 @@ const initialState = {
   ratingDoctor: [],
   HealthRecordData: []
 };
+
+const SERVER_URL =  "http://52.76.152.177:5000"
 export const fetchService = createAsyncThunk("fetchService", async (body) => {
-  const res = await fetch("http://localhost:5000/api/doctor/service", {
+  const res = await fetch(SERVER_URL + "/api/doctor/service", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -30,7 +32,7 @@ export const fetchService = createAsyncThunk("fetchService", async (body) => {
 export const fetchAllService = createAsyncThunk(
   "fetchAllService",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/service", {
+    const res = await fetch(SERVER_URL + "/api/service", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -41,7 +43,7 @@ export const fetchAllService = createAsyncThunk(
   }
 );
 export const addService = createAsyncThunk("addService", async (body) => {
-  const res = await fetch("http://localhost:5000/api/doctor/service/create", {
+  const res = await fetch(SERVER_URL + "/api/doctor/service/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -52,7 +54,7 @@ export const addService = createAsyncThunk("addService", async (body) => {
   return await res.json();
 });
 export const deleteService = createAsyncThunk("deleteService", async (body) => {
-  const res = await fetch("http://localhost:5000/api/doctor/service/delete", {
+  const res = await fetch(SERVER_URL + "/api/doctor/service/delete", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -77,7 +79,7 @@ export const fetchSchedule = createAsyncThunk("fetchSchedule", async (body) => {
 export const updateSchedule = createAsyncThunk(
   "updateSchedule",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/schedule", {
+    const res = await fetch(SERVER_URL + "/api/schedule", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -107,7 +109,7 @@ export const fetchDoctorSchedule = createAsyncThunk(
 export const fetchAppointment = createAsyncThunk(
   "fetchAppointment",
   async () => {
-    const res = await fetch("http://localhost:5000/api/appointment", {
+    const res = await fetch(SERVER_URL + "/api/appointment", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -120,7 +122,7 @@ export const fetchAppointment = createAsyncThunk(
 export const fetchAdminAppointment = createAsyncThunk(
   "fetchAdminAppointment",
   async () => {
-    const res = await fetch("http://localhost:5000/api/admin/appointment", {
+    const res = await fetch(SERVER_URL + "/api/admin/appointment", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -133,7 +135,7 @@ export const fetchAdminAppointment = createAsyncThunk(
 export const acceptAppointment = createAsyncThunk(
   "acceptAppointment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/appointment/accept", {
+    const res = await fetch(SERVER_URL + "/api/appointment/accept", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -147,7 +149,7 @@ export const acceptAppointment = createAsyncThunk(
 export const completeAppointment = createAsyncThunk(
   "completeAppointment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/appointment/complete", {
+    const res = await fetch(SERVER_URL + "/api/appointment/complete", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -161,7 +163,7 @@ export const completeAppointment = createAsyncThunk(
 export const cancelAppointment = createAsyncThunk(
   "cancelAppointment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/appointment/cancel", {
+    const res = await fetch(SERVER_URL + "/api/appointment/cancel", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -175,7 +177,7 @@ export const cancelAppointment = createAsyncThunk(
 export const createAppointment = createAsyncThunk(
   "createAppointment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/appointment/create", {
+    const res = await fetch(SERVER_URL + "/api/appointment/create", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -189,7 +191,7 @@ export const createAppointment = createAsyncThunk(
 export const ratingDoctor = createAsyncThunk(
   "ratingDoctor",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/rating", {
+    const res = await fetch(SERVER_URL + "/api/rating", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -203,7 +205,7 @@ export const ratingDoctor = createAsyncThunk(
 export const updateRatingDoctor = createAsyncThunk(
   "updateRatingDoctor",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/rating/update", {
+    const res = await fetch(SERVER_URL + "/api/rating/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -229,7 +231,7 @@ export const getRatingDoctor = createAsyncThunk(
 export const noteAppointment = createAsyncThunk(
   "noteAppointment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/appointment/note", {
+    const res = await fetch(SERVER_URL + "/api/appointment/note", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -243,7 +245,7 @@ export const noteAppointment = createAsyncThunk(
 export const editNoteAppointment = createAsyncThunk(
   "editNoteAppointment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/appointment/note/update", {
+    const res = await fetch(SERVER_URL + "/api/appointment/note/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -257,7 +259,7 @@ export const editNoteAppointment = createAsyncThunk(
 export const acceptNoteAppointment = createAsyncThunk(
   "acceptNoteAppointment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/appointment/note/accept", {
+    const res = await fetch(SERVER_URL + "/api/appointment/note/accept", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -271,7 +273,7 @@ export const acceptNoteAppointment = createAsyncThunk(
 export const cancelNoteAppointment = createAsyncThunk(
   "cancelNoteAppointment",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/appointment/note/cancel", {
+    const res = await fetch(SERVER_URL + "/api/appointment/note/cancel", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -285,7 +287,7 @@ export const cancelNoteAppointment = createAsyncThunk(
 export const fetchHealthRecord = createAsyncThunk(
   "fetchHealthRecord",
   async () => {
-    const res = await fetch("http://localhost:5000/api/medical/record", {
+    const res = await fetch(SERVER_URL + "/api/medical/record", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -298,7 +300,7 @@ export const fetchHealthRecord = createAsyncThunk(
 export const healthRecord = createAsyncThunk(
   "healthRecord",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/medical/record", {
+    const res = await fetch(SERVER_URL + "/api/medical/record", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -312,7 +314,7 @@ export const healthRecord = createAsyncThunk(
 export const updateHealthRecord = createAsyncThunk(
   "updateHealthRecord",
   async (body) => {
-    const res = await fetch("http://localhost:5000/api/medical/record/update", {
+    const res = await fetch(SERVER_URL + "/api/medical/record/update", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

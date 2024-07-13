@@ -24,8 +24,9 @@ const initialState = {
   dashboardData: []
 };
 
+const SERVER_URL =  "http://52.76.152.177:5000"
 export const userRegister = createAsyncThunk("userRegister", async (body) => {
-  const res = await fetch("http://localhost:5000/api/register", {
+  const res = await fetch(SERVER_URL + "/api/register", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -35,7 +36,7 @@ export const userRegister = createAsyncThunk("userRegister", async (body) => {
   return await res.json();
 });
 export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
-  const res = await fetch("http://localhost:5000/api/auth/google/check", {
+  const res = await fetch(SERVER_URL + "/api/auth/google/check", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -45,7 +46,7 @@ export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   return await res.json();
 });
 export const login = createAsyncThunk("login", async (body) => {
-  const res = await fetch("http://localhost:5000/api/login", {
+  const res = await fetch(SERVER_URL + "/api/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -55,7 +56,7 @@ export const login = createAsyncThunk("login", async (body) => {
   return await res.json();
 });
 export const sendMail = createAsyncThunk("sendMail", async (body) => {
-  const res = await fetch("http://localhost:5000/api/send/mail", {
+  const res = await fetch(SERVER_URL + "/api/send/mail", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -65,7 +66,7 @@ export const sendMail = createAsyncThunk("sendMail", async (body) => {
   return await res.json();
 });
 export const changePassword = createAsyncThunk("changePassword", async (body) => {
-  const res = await fetch("http://localhost:5000/api/change/password", {
+  const res = await fetch(SERVER_URL + "/api/change/password", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -76,7 +77,7 @@ export const changePassword = createAsyncThunk("changePassword", async (body) =>
   return await res.json();
 });
 export const resetPassword = createAsyncThunk("resetPassword", async (body) => {
-  const res = await fetch("http://localhost:5000/api/reset/password", {
+  const res = await fetch(SERVER_URL + "/api/reset/password", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -87,7 +88,7 @@ export const resetPassword = createAsyncThunk("resetPassword", async (body) => {
   return await res.json();
 });
 export const authentication = createAsyncThunk("authentication", async () => {
-  const res = await fetch("http://localhost:5000/api/isauth", {
+  const res = await fetch(SERVER_URL + "/api/isauth", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -132,7 +133,7 @@ export const searchUser = createAsyncThunk(
   }
 );
 export const deleteAccount = createAsyncThunk("deleteAccount", async (body) => {
-  const res = await fetch("http://localhost:5000/api/admin/account/delete", {
+  const res = await fetch(SERVER_URL + "/api/admin/account/delete", {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
@@ -143,7 +144,7 @@ export const deleteAccount = createAsyncThunk("deleteAccount", async (body) => {
   return await res.json();
 });
 export const fetchProfile = createAsyncThunk("fetchProfile", async () => {
-  const res = await fetch("http://localhost:5000/api/profile", {
+  const res = await fetch(SERVER_URL + "/api/profile", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -153,7 +154,7 @@ export const fetchProfile = createAsyncThunk("fetchProfile", async () => {
   return await res.json();
 });
 export const updateProfile = createAsyncThunk("updateProfile", async (body) => {
-  const res = await fetch("http://localhost:5000/api/profile/update", {
+  const res = await fetch(SERVER_URL + "/api/profile/update", {
     method: "POST",
     headers: {
       Authorization: localStorage.getItem("token"),
@@ -163,7 +164,7 @@ export const updateProfile = createAsyncThunk("updateProfile", async (body) => {
   return await res.json();
 });
 export const getAllDoctors = createAsyncThunk("getAllDoctors", async () => {
-  const res = await fetch("http://localhost:5000/api/doctor", {
+  const res = await fetch(SERVER_URL + "/api/doctor", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -184,7 +185,7 @@ export const getDetailDoctor = createAsyncThunk(
   }
 );
 export const getAllNotification = createAsyncThunk("getAllNotification", async () => {
-  const res = await fetch("http://localhost:5000/api/notification", {
+  const res = await fetch(SERVER_URL + "/api/notification", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -194,7 +195,7 @@ export const getAllNotification = createAsyncThunk("getAllNotification", async (
   return await res.json();
 });
 export const readNotification = createAsyncThunk("readNotification", async (body) => {
-  const res = await fetch("http://localhost:5000/api/notification/read", {
+  const res = await fetch(SERVER_URL + "/api/notification/read", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -205,7 +206,7 @@ export const readNotification = createAsyncThunk("readNotification", async (body
   return await res.json();
 });
 export const getTotalDashboard = createAsyncThunk("getTotalDashboard", async () => {
-  const res = await fetch("http://localhost:5000/api/admin/dashboard", {
+  const res = await fetch(SERVER_URL + "/api/admin/dashboard", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
