@@ -23,7 +23,7 @@ const initialState = {
   comment: []
 };
 
-const SERVER_URL =  "http://52.76.152.177:5000"
+const SERVER_URL =  "http://13.214.226.21:5000"
 //admin
 export const createPost = createAsyncThunk("createPost", async (body) => {
   const res = await fetch(SERVER_URL + "/api/post/create", {

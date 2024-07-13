@@ -24,7 +24,7 @@ const initialState = {
   dashboardData: []
 };
 
-const SERVER_URL =  "http://52.76.152.177:5001"
+const SERVER_URL =  "http://13.214.226.21:5001"
 export const userRegister = createAsyncThunk("userRegister", async (body) => {
   const res = await fetch(SERVER_URL + "/api/register", {
     method: "POST",
