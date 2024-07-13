@@ -12,7 +12,7 @@ export default function Editor({ value, onChange, className,readOnly }) {
     fd.append("image", file);
 
     const xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://52.76.152.177:5000/api/post/image", true);
+    xhr.open("POST", "http://52.76.152.177:5001/api/post/image", true);
     xhr.onload = () => {
       if (xhr.status === 200) {
         // this is callback data: url
