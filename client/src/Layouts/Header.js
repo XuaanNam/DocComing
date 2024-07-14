@@ -67,17 +67,15 @@ const Header = () => {
       dispatch(fetchMajor());
     }
   },[currentUser])
-  // useEffect(()=>{
-  //   if(currentUser){
-  //     const interval = setInterval(() => {
-  //       dispatch(getAllNotification())
-  //     }, 300000);
-  //     return () => clearInterval(interval);
-  //   }
-  // },[currentUser,dispatch])
+  useEffect(()=>{
+    if(currentUser){
+      const interval = setInterval(() => {
+        dispatch(getAllNotification())
+      }, 300000);
+      return () => clearInterval(interval);
+    }
+  },[currentUser,dispatch])
   const slice = allNoti?.notification?.slice(0,numberElement);
-
-  console.log(allNoti)
   return (
     <div className="h-[70px] fixed w-screen z-50 max-sm:h-[80px]">
       {actived && (

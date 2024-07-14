@@ -576,6 +576,7 @@ class API {
 
   //[PATCH] /api/appointment/accept
   acceptAppointment(req, res) {
+    console.log(req.body)
     const { id } = req.body;
     const updateSql =
       "update appointment set status = 1 where status = 4 and id = ?";
@@ -624,8 +625,9 @@ class API {
 
   //[POST] /api/appointment/cancel
   cancelAppointment(req, res) {
+    console.log(req.body)
     const { id, idAccount} = req.body;
-    const updateSql = "update appointment set status = 3 where id = ?";
+    const updateSql = "update appointment set status = 3 where id IN (?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
     const insertNotiSql = "insert into notification (idAccount, Notification, Type) values (?,?,?)";
     const Notification = "Cuộc hẹn của bạn đã bị hủy!";
@@ -634,14 +636,21 @@ class API {
       Type = "/doctor/appointment";
     } else Type = "/patient/appointment";
     
+    const notification = idAccount.map(id => ({
+      id,
+      Notification,
+      Type,
+    }));
+    const valueNoti = notification.map(noti => [noti.id, noti.Notification, noti.Type]);
+
     pool.getConnection(function (err, connection) {
       if (err) throw err; // not connected!
-      connection.query(updateSql, id, function (error, results, fields) {
+      connection.query(updateSql, [id], function (error, results, fields) {
         if (error) {
           res.send({ message: error.sqlMessage, checked: false });
         } else {
           if (results) {
-            connection.query(insertNotiSql, [idAccount, Notification, Type], function (err, rs, fields) {
+            connection.query(insertNotiSql, [valueNoti], function (err, rs, fields) {
               if (err) {
                 res.send({ message: err, checked: false });
               } else if(rs) {
@@ -654,6 +663,8 @@ class API {
         }
       });
     });
+    
+    
   }
 
   //[POST] /api/appointment/note

@@ -18,7 +18,9 @@ const initialState = {
   HealthRecordData: []
 };
 
-const SERVER_URL =  "http://13.214.226.21:5001"
+const SERVER_URL =  "https://13.214.226.21:5001"
+//const SERVER_URL =  "http://localhost:5001"
+
 export const fetchService = createAsyncThunk("fetchService", async (body) => {
   const res = await fetch(SERVER_URL + "/api/doctor/service", {
     method: "POST",
@@ -66,7 +68,7 @@ export const deleteService = createAsyncThunk("deleteService", async (body) => {
 });
 export const fetchSchedule = createAsyncThunk("fetchSchedule", async (body) => {
   const res = await fetch(
-    `http://localhost:5000/api/schedule/${body.idDoctor}/${body.DateBooking}`,
+    SERVER_URL + `/api/schedule/${body.idDoctor}/${body.DateBooking}`,
     {
       method: "GET",
       headers: {
@@ -94,7 +96,7 @@ export const fetchDoctorSchedule = createAsyncThunk(
   "fetchDoctorSchedule",
   async (body) => {
     const res = await fetch(
-      `http://localhost:5000/api/doctor/schedule/${body}`,
+      SERVER_URL + `/api/doctor/schedule/${body}`,
       {
         method: "GET",
         headers: {
@@ -162,7 +164,7 @@ export const completeAppointment = createAsyncThunk(
 );
 export const cancelAppointment = createAsyncThunk(
   "cancelAppointment",
-  async (body) => {
+  async (body) => { 
     const res = await fetch(SERVER_URL + "/api/appointment/cancel", {
       method: "POST",
       headers: {
@@ -219,7 +221,7 @@ export const updateRatingDoctor = createAsyncThunk(
 export const getRatingDoctor = createAsyncThunk(
   "getRatingDoctor",
   async (body) => {
-    const res = await fetch(`http://localhost:5000/api/rating/${body}`, {
+    const res = await fetch(SERVER_URL + `/api/rating/${body}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

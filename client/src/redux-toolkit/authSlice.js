@@ -24,7 +24,9 @@ const initialState = {
   dashboardData: []
 };
 
-const SERVER_URL =  "http://13.214.226.21:5001"
+ const SERVER_URL =  "https://13.214.226.21:5001"
+// const SERVER_URL =  "http://localhost:5001"
+
 export const userRegister = createAsyncThunk("userRegister", async (body) => {
   const res = await fetch(SERVER_URL + "/api/register", {
     method: "POST",
@@ -98,7 +100,7 @@ export const authentication = createAsyncThunk("authentication", async () => {
   return await res.json();
 });
 export const fetchUsers = createAsyncThunk("fetchUsers", async ({filter, orderby}) => {
-  const res = await fetch(`http://localhost:5000/api/admin/account/${filter}/${orderby}`, {
+  const res = await fetch( SERVER_URL + `/api/admin/account/${filter}/${orderby}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -108,7 +110,7 @@ export const fetchUsers = createAsyncThunk("fetchUsers", async ({filter, orderby
   return await res.json();
 });
 export const usersFilter = createAsyncThunk("usersFilter", async (body) => {
-  const res = await fetch(`http://localhost:5000/api/admin/account/filter`, {
+  const res = await fetch( SERVER_URL + `/api/admin/account/filter`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -121,7 +123,7 @@ export const usersFilter = createAsyncThunk("usersFilter", async (body) => {
 export const searchUser = createAsyncThunk(
   "searchUser",
   async (body) => {
-    const res = await fetch(`http://localhost:5000/api/admin/account/search`, {
+    const res = await fetch(SERVER_URL + `/api/admin/account/search`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -175,7 +177,7 @@ export const getAllDoctors = createAsyncThunk("getAllDoctors", async () => {
 export const getDetailDoctor = createAsyncThunk(
   "getDetailDoctor",
   async (body) => {
-    const res = await fetch(`http://localhost:5000/api/doctor/${body}`, {
+    const res = await fetch(SERVER_URL + `/api/doctor/${body}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

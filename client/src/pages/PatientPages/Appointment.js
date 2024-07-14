@@ -8,7 +8,7 @@ import { TbFileDescription } from "react-icons/tb";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { MdOutlineNoteAlt } from "react-icons/md";
 import { Modal, Button } from "flowbite-react";
-import { Rate, Input, Badge, Calendar } from 'antd';
+import { Rate, Input, Badge, Calendar, DatePicker } from 'antd';
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointment,cancelAppointment, ratingDoctor,
@@ -18,11 +18,13 @@ import {
   createAppointment,
 } from "../../redux-toolkit/appointmentSlice";
 import { getAllNotification } from "../../redux-toolkit/authSlice";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 
 const { TextArea } = Input;
 const description = ['Quá tệ', 'Chưa tốt', 'Bình thường', 'Tốt', 'Tuyệt vời'];
 
 const Appointment = () => {
+  const dateFormat = "DD/MM/YYYY";
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const { AppointmentData, healthRecordData, error, loading } = useSelector((state) => state.appointment);
@@ -36,6 +38,10 @@ const Appointment = () => {
   const [comment,setComment] = useState("")
   const [isRated,setIsRated] = useState(false)
   const [editRating,setEditRating] = useState(0)
+  const [isFilter, setIsFilter] = useState(false)
+  const [filterDate, setFilterDate] = useState(false)
+
+  const [currentAppointment, setCurrentAppointment] = useState([])
   
   useEffect(() => {
     dispatch(fetchAppointment());
@@ -158,6 +164,26 @@ const Appointment = () => {
     if (info.type === "date") return dateCellRender(current);
     return info.originNode;
   };
+  
+  const handleDatePickerChange = (date, dateString) => {
+    if(filterDate){
+      getAppointmentsOnDate(appointment, dateString)
+    }
+  };
+  const getAppointmentsOnDate = (appointments, targetDate) => {
+    let appointmentsOnDate = []
+    for(let i = 0; i<appointments.length; i++){
+      if(appointments[i].DateBooking == targetDate)
+        appointmentsOnDate.push(appointments[i])
+    }
+    setCurrentAppointment(appointmentsOnDate)
+    setIsFilter(true)
+  }
+  let slice =  []
+  if(isFilter)
+    slice = currentAppointment
+  else
+    slice = appointment
   return (
     <div className="">
         <div className="my-7 lg:w-full max-lg:h-full max-lg:px-3 rounded-xl bg-white shadow-lg text-slate-600 shadow-violet-200 py-5 lg:px-8">
@@ -200,8 +226,36 @@ const Appointment = () => {
               cellRender={cellRender}
             />
           :
-          appointment?.length > 0 ? (
-            appointment?.map((appointment) => (
+          <>
+          {appointment?.length > 0 &&
+              <div className="flex gap-3 items-center mb-4">
+                    <p className="font-medium">Lọc theo ngày</p>
+                    {filterDate ?
+                      <div className="flex gap-3 items-center w-52">
+                        <DatePicker className="h-9 md:w-40 max-md:w-40" 
+                          format={dateFormat}
+                          onChange={handleDatePickerChange}
+                          placeholder="Chọn ngày"
+                        />
+                        <IoIosCloseCircleOutline className="h-6 w-6 text-rose-500 cursor-pointer" onClick={()=>{setFilterDate(false);setIsFilter(false);setCurrentAppointment([])}}></IoIosCloseCircleOutline>
+                      </div>
+                      :
+                      <Button
+                        size="sm"
+                        className="w-32 h-9"
+                        gradientDuoTone="purpleToPink"
+                        onClick={() => {
+                          setFilterDate(true)         
+                        }}
+                      >
+                        Chọn ngày
+                      </Button>
+                    }
+              </div>
+          }
+          {
+          slice?.length > 0 ? 
+            slice?.map((appointment) => (
             <div key={appointment.id} className="w-full rounded-xl shadow-lg mb-5 border">
               <div className="p-1 rounded-t-xl bg-teal-200 w-full h-10 grid grid-cols-3 place-items-center">
                 <div className="max-lg:text-base lg:text-lg font-medium">{appointment.TimeBooking}</div>
@@ -397,12 +451,22 @@ const Appointment = () => {
               </div>
             </div>
             ))
-          ) : (
-            <p className="py-10 w-full text-center text-2xl font-medium">
-              Bạn chưa có cuộc hẹn mới
-            </p>
-          )
+           : 
+            <>
+              {appointment?.length == 0 &&
+                <p className="py-4 w-full text-center text-2xl font-medium">
+                  Bạn chưa có cuộc hẹn mới
+                </p>
+              }
+              {isFilter && currentAppointment?.length == 0 &&
+                <p className="py-4 w-full text-center text-2xl font-medium">
+                  Bạn chưa có cuộc hẹn nào trong ngày này
+                </p>
+              }
+            </>
           }
+          </>
+          }      
         </div>
       <Modal
         show={showModal}

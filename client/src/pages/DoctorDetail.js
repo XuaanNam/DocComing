@@ -41,8 +41,6 @@ const DoctorDetail = () => {
       for(let i=ratingDoctor.length-1;i>=0;i--){
         rate.push(ratingDoctor[i].Rate.length);
         count += ratingDoctor[i].Rate.length
-        console.log(count)
-
         if(i === 0){
           setRating(rate)
           setCount(count)
@@ -57,8 +55,8 @@ const DoctorDetail = () => {
     else if(degree == "Tiến sĩ y khoa")
       res = "TS.BS."
     else if(degree == "Cử nhân điều dưỡng")
-      res = "ĐD"
-    else
+      res = "ĐD."
+    else 
       res = "BS.CK1."
     return res;
   }

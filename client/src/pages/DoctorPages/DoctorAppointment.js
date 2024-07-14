@@ -3,10 +3,10 @@ import { FaRegCalendarPlus, FaRegAddressBook, FaHome } from "react-icons/fa";
 import { RiServiceFill } from "react-icons/ri";
 import { BsCash } from "react-icons/bs";
 import { FaPhoneAlt } from "react-icons/fa";
-import { TbFileDescription } from "react-icons/tb";
+import { TbFileDescription, TbFilterSearch } from "react-icons/tb";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { Modal, Button } from "flowbite-react";
-import { Badge, Calendar } from "antd";
+import { Modal, Button, Table } from "flowbite-react";
+import { Badge, Calendar, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAppointment,
@@ -20,9 +20,10 @@ import {
   healthRecord,
   updateHealthRecord,
 } from "../../redux-toolkit/appointmentSlice";
-import { DatePicker, Input, TimePicker  } from "antd";
+import { DatePicker , Input, TimePicker  } from "antd";
 import dayjs from "dayjs";
 import { getAllNotification } from "../../redux-toolkit/authSlice";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 const { TextArea } = Input;
 
 const DoctorAppointment = () => {
@@ -32,11 +33,16 @@ const DoctorAppointment = () => {
   const { currentUser } = useSelector((state) => state.user);
   const [date, setDate] = useState("");
   const [passed, setPassed] = useState(1);
+  const [currentAppointment, setCurrentAppointment] = useState([])
+  const [showConflictModal, setShowConflictModal] = useState(false)
+  const [conflictAppointment, setConflictAppointment] = useState([])
   const [showModal, setShowModal] = useState(false);
   const [showExaminationModal, setShowExaminationModal] = useState(false);
   const [ReExaminationDate, setReExaminationDate] = useState(null)
   const [showNoteModal, setShowNoteModal] = useState(false);
   const [showRecordModal, setShowRecordModal] = useState(false);
+  const [filterDate, setFilterDate] = useState(false)
+  const [isFilter, setIsFilter] = useState(false)
   const [record,setRecord] = useState("");
   const [recordNote,setRecordNote] = useState("");
   const [note, setNote] = useState("");
@@ -172,15 +178,36 @@ const DoctorAppointment = () => {
   }
   const handleDatePickerChange = (date, dateString) => {
     setDate(dateString);
+    if(filterDate){
+      getAppointmentsOnDate(appointment, dateString)
+    }
   };
   const handleTimePickerChange = (time, timeString) => {
     setTime(timeString);
   }
-  const handleAcceptAppointment = (id) => {
-    const data = { id };
-    dispatch(acceptAppointment(data)).then(() => {
-      dispatch(fetchAppointment());
-    });
+  const handleAcceptAppointment = (idAppointment) => {
+    const data = { id: idAppointment };
+    let id = []
+    let idAccount = []
+    if(conflictAppointment.length > 0)
+    {
+      for(let i=0; i<conflictAppointment.length; i++){
+        id.push(conflictAppointment[i].id)
+        idAccount.push(conflictAppointment[i].idPatient)
+      }
+
+      dispatch(acceptAppointment(data)).then(() => {
+        setConflictAppointment([])
+        setShowConflictModal(false)
+        dispatch(fetchAppointment());
+      });
+      dispatch(cancelAppointment({id,idAccount}))
+    }
+    else
+      dispatch(acceptAppointment(data)).then(() => {
+        setConflictAppointment([])
+        dispatch(fetchAppointment());
+      });
   };
   const handleCompleteAppointment = (id) => {
     const data = { id };
@@ -241,6 +268,52 @@ const DoctorAppointment = () => {
 
     return formattedNum;
   }
+
+  const findCancelAppointments = (idAppointment) => {
+    const data = {id: idAppointment}
+    const selectedApptn = slice.find(apptn => apptn.id === idAppointment);
+    if (!selectedApptn)  return [];
+    
+    const [startHour, startMinute] = selectedApptn.TimeBooking.split(':').map(Number);
+    const [finishHour, finishMinute] = selectedApptn.EstimatedTime.split(':').map(Number);
+    const selectStartInMinutes = startHour * 60 + startMinute;
+    const selectEndInMinutes = selectStartInMinutes + finishHour * 60 + finishMinute;
+
+    const returnApptn = slice.filter(apptn => {
+        if (apptn.id === idAppointment) return false;
+        const [startHour, startMinute] = apptn.TimeBooking.split(':').map(Number);
+        const [finishHour, finishMinute] = apptn.EstimatedTime.split(':').map(Number);
+
+        const startInMinutes = startHour * 60 + startMinute;
+        const endInMinutes = startInMinutes + finishHour * 60 + finishMinute;
+        return (startInMinutes < selectEndInMinutes && endInMinutes > selectStartInMinutes);
+    });
+    if(returnApptn.length > 0)
+    {
+      setConflictAppointment(returnApptn)
+      setShowConflictModal(true)
+      setIdAppointment(idAppointment)
+    }
+    else
+      dispatch(acceptAppointment(data)).then(() => {
+        setConflictAppointment([]);
+        dispatch(fetchAppointment());
+      });
+  }
+  const getAppointmentsOnDate = (appointments, targetDate) => {
+    let appointmentsOnDate = []
+    for(let i = 0; i<appointments.length; i++){
+      if(appointments[i].DateBooking == targetDate)
+        appointmentsOnDate.push(appointments[i])
+    }
+    setCurrentAppointment(appointmentsOnDate)
+    setIsFilter(true)
+  }
+  let slice =  []
+  if(isFilter)
+    slice = currentAppointment
+  else
+    slice = appointment
   return (
     <div className="lg:pt-[70px] min-h-screen">
       <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
@@ -260,6 +333,8 @@ const DoctorAppointment = () => {
             <div
               onClick={() => {
                 setPassed(4);
+                setFilterDate(false)
+                setIsFilter(false)
               }}
               className={` ${
                 passed === 4 && "bg-white shadow-md shadow-violet-300"
@@ -270,6 +345,8 @@ const DoctorAppointment = () => {
             <div
               onClick={() => {
                 setPassed(1);
+                setFilterDate(false)
+                setIsFilter(false)
               }}
               className={` ${
                 passed === 1 && "bg-white shadow-md shadow-violet-300"
@@ -280,6 +357,8 @@ const DoctorAppointment = () => {
             <div
               onClick={() => {
                 setPassed(2);
+                setFilterDate(false)
+                setIsFilter(false)
               }}
               className={` ${
                 passed === 2 && "bg-white shadow-md shadow-violet-300"
@@ -294,207 +373,245 @@ const DoctorAppointment = () => {
             cellRender={cellRender}
           />
           :
-          appointment?.length > 0 ? (
-            appointment?.map((appointment) => (
-              <div
-                key={appointment.id}
-                className="w-full rounded-xl shadow-lg mb-5 border"
-              >
-                <div className="p-1 rounded-t-xl bg-teal-200 w-full h-10 grid grid-cols-3 place-items-center">
-                  <div className="max-lg:text-base lg:text-lg font-medium">
-                    {appointment.TimeBooking}
-                  </div>
-                  <div className="max-lg:text-base lg:text-lg font-medium flex gap-2 items-center">
-                    <FaRegCalendarPlus />
-                    <div>{appointment.DateBooking}</div>
-                  </div>
-                  <div className={` ${appointment.Status == 3 && "text-red-600"} max-lg:text-base lg:text-lg font-medium`}>
-                    {appointment.Status == 1
-                      ? "Đã xác nhận"
-                      : appointment.Status == 4
-                      ? "Chưa xác nhận"
-                      : appointment.Status == 2
-                      ? "Đã hoàn thành"
-                      : appointment.Status == 3 && "Đã hủy"}
-                  </div>
-                </div>
-                <div className="p-5">
-                  <div className="lg:flex lg:gap-5">
-                    <div className="flex md:w-[5%] max-md:w-full">
-                      <img
-                        className="h-14 w-14 rounded-full object-contain border border-lime-200"
-                        alt=""
-                        src={appointment.Avt || require("../../Images/pattientavt.png")}
-                      ></img>
-                    </div>
-                    <div className="w-[80%]">
-                      <p className="font-medium lg:text-lg max-lg:mt-3 max-lg:text-base text-gray-600 mb-3">
-                        {appointment.FirstName + " " + appointment.LastName}
-                      </p>
-                      <div className="lg:flex w-full gap-5 mb-3">
-                        <div className="flex gap-2 items-center max-lg:mb-3 lg:w-1/2">
-                          <RiServiceFill className="h-5 min-w-5 text-red-500"></RiServiceFill>
-                          <p className="min-w-16">Dịch vụ:</p>
-                          <p className="font-medium">{appointment.Service}</p>
-                        </div>
-                        <div className="flex gap-2 items-center lg:w-1/2">
-                          <BsCash className="h-5 min-w-5 text-green-400"></BsCash>
-                          <p className="min-w-20">Giá dịch vụ:</p>
-                          <p className="font-medium text-green-400">{TransferPricing(appointment.Price)}</p>
-                        </div>
+          <>
+            {appointment?.length > 0 &&
+              <div className="flex gap-3 items-center mb-4">
+                    <p className="font-medium">Lọc theo ngày</p>
+                    {filterDate ?
+                      <div className="flex gap-3 items-center w-52">
+                        <DatePicker className="h-9 md:w-40 max-md:w-40" 
+                                    format={dateFormat}
+                                    onChange={handleDatePickerChange}
+                                    placeholder="Chọn ngày"
+                        />
+                        <IoIosCloseCircleOutline className="h-6 w-6 text-rose-500 cursor-pointer" onClick={()=>{setFilterDate(false);setIsFilter(false);setCurrentAppointment([])}}></IoIosCloseCircleOutline>
                       </div>
-
-                      <div className="lg:flex w-full gap-5 mb-3">
-                        <div className="flex gap-2 items-center lg:w-1/2">
-                          <FaPhoneAlt className="h-4 min-w-5 text-teal-600" />
-                          <p className="min-w-24">Số điện thoại:</p>
-                          <div className="font-medium text-teal-500">{appointment.Phone}</div>
-                        </div>
-                        <div className="flex gap-2 items-center max-lg:mb-3 lg:w-1/2">
-                          <FaHome className="h-5 min-w-5 text-teal-600" />
-                          <p className="min-w-14">Địa chỉ:</p>
-                          <div className="font-medium lg:w-full">
-                            {appointment.Address}
+                      :
+                      <Button
+                        size="sm"
+                        className="w-32 h-9"
+                        gradientDuoTone="purpleToPink"
+                        onClick={() => {
+                          setFilterDate(true)         
+                        }}
+                      >
+                        Chọn ngày
+                      </Button>
+                    }
+              </div>
+            }
+            {slice?.length > 0 ? 
+              slice?.map((appointment) => (
+                <div
+                  key={appointment.id}
+                  className="w-full rounded-xl shadow-lg mb-5 border"
+                >
+                  <div className="p-1 rounded-t-xl bg-teal-200 w-full h-10 grid grid-cols-3 place-items-center">
+                    <div className="max-lg:text-base lg:text-lg font-medium">
+                      {appointment.TimeBooking.slice(0,5)}
+                    </div>
+                    <div className="max-lg:text-base lg:text-lg font-medium flex gap-2 items-center">
+                      <FaRegCalendarPlus />
+                      <div>{appointment.DateBooking}</div>
+                    </div>
+                    <div className={` ${appointment.Status == 3 && "text-red-600"} max-lg:text-base lg:text-lg font-medium`}>
+                      {appointment.Status == 1
+                        ? "Đã xác nhận"
+                        : appointment.Status == 4
+                        ? "Chưa xác nhận"
+                        : appointment.Status == 2
+                        ? "Đã hoàn thành"
+                        : appointment.Status == 3 && "Đã hủy"}
+                    </div>
+                  </div>
+                  <div className="p-5">
+                    <div className="lg:flex lg:gap-5">
+                      <div className="flex md:w-[5%] max-md:w-full">
+                        <img
+                          className="h-14 w-14 rounded-full object-contain border border-lime-200"
+                          alt=""
+                          src={appointment.Avt || require("../../Images/pattientavt.png")}
+                        ></img>
+                      </div>
+                      <div className="w-[80%]">
+                        <p className="font-medium lg:text-lg max-lg:mt-3 max-lg:text-base text-gray-600 mb-3">
+                          {appointment.FirstName + " " + appointment.LastName}
+                        </p>
+                        <div className="lg:flex w-full gap-5 mb-3">
+                          <div className="flex gap-2 items-center max-lg:mb-3 lg:w-1/2">
+                            <RiServiceFill className="h-5 min-w-5 text-red-500"></RiServiceFill>
+                            <p className="min-w-16">Dịch vụ:</p>
+                            <p className="font-medium">{appointment.Service}</p>
+                          </div>
+                          <div className="flex gap-2 items-center lg:w-1/2">
+                            <BsCash className="h-5 min-w-5 text-green-400"></BsCash>
+                            <p className="min-w-20">Giá dịch vụ:</p>
+                            <p className="font-medium text-green-400">{TransferPricing(appointment.Price)}</p>
                           </div>
                         </div>
-                      </div>
-                      <div className="flex gap-2 mb-3">
-                        <TbFileDescription className="h-5 min-w-5 text-teal-600" />
-                        <p className="min-w-fit">Triệu chứng:</p>
-                        <div className="font-medium text-red-500">
-                          {appointment.Information}
+
+                        <div className="lg:flex w-full gap-5 mb-3">
+                          <div className="flex gap-2 items-center lg:w-1/2">
+                            <FaPhoneAlt className="h-4 min-w-5 text-teal-600" />
+                            <p className="min-w-24">Số điện thoại:</p>
+                            <div className="font-medium text-teal-500">{appointment.Phone}</div>
+                          </div>
+                          <div className="flex gap-2 items-center max-lg:mb-3 lg:w-1/2">
+                            <FaHome className="h-5 min-w-5 text-teal-600" />
+                            <p className="min-w-14">Địa chỉ:</p>
+                            <div className="font-medium lg:w-full">
+                              {appointment.Address}
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      {appointment?.Advice &&
-                      <div className="flex gap-2 mb-3">
-                        <TbFileDescription className="h-5 min-w-5 text-teal-600" />
-                        <p className="font-medium">Ghi chú:</p>
-                        <div className="font-medium italic text-red-500">
-                          {appointment.Advice}
-                        </div>                  
-                      </div>
-                      }
-                    </div>
-                    {appointment.Status == 2 && (
-                      <div className="w-[15%] mx-auto flex flex-col gap-2 place-items-center relative">   
-                        {appointment.Record === null &&   
-                        <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowRecordModal(true);setIdAppointment(appointment.id);setDate(appointment.DateBooking)}}>
-                          Thêm bệnh án
-                        </Button>
+                        <div className="flex gap-2 mb-3">
+                          <TbFileDescription className="h-5 min-w-5 text-teal-600" />
+                          <p className="min-w-fit">Triệu chứng:</p>
+                          <div className="font-medium text-red-500">
+                            {appointment.Information}
+                          </div>
+                        </div>
+                        {appointment?.Advice &&
+                        <div className="flex gap-2 mb-3">
+                          <TbFileDescription className="h-5 min-w-5 text-teal-600" />
+                          <p className="font-medium">Ghi chú:</p>
+                          <div className="font-medium italic text-red-500">
+                            {appointment.Advice}
+                          </div>                  
+                        </div>
                         }
-                        {appointment.ReExaminationDate === null &&
-                        <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowExaminationModal(true);setIdAppointment(appointment.id);setNote(appointment.Advice)}}>
-                          Hẹn tái khám
-                        </Button>
-                        } 
-                        {appointment.Advice === null ?
-                          <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowNoteModal(true);setIdAppointment(appointment.id);setReExaminationDate(appointment.ReExaminationDate)}}>
-                            Ghi chú
+                      </div>
+                      {appointment.Status == 2 && (
+                        <div className="w-[15%] mx-auto flex flex-col gap-2 place-items-center relative">   
+                          {appointment.Record === null &&   
+                          <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowRecordModal(true);setIdAppointment(appointment.id);setDate(appointment.DateBooking)}}>
+                            Thêm bệnh án
                           </Button>
-                        :
-                          <p className="absolute bottom-1 text-sm cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
-                            onClick={()=>{setEditNote(true);setShowNoteModal(true);setIdAppointment(appointment.id);setNote(appointment.Advice)}}>Chỉnh sửa
-                          </p>
-                        }
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex max-md:justify-center max-md:items-center mx-auto md:w-full max-md:w-full max-md:px-3 gap-10">
-                    {appointment.Status === 2 && 
-                      <div className="w-full flex flex-col gap-3">
-                        {appointment.NoteRecord !== null && appointment.ReExaminationDate !== null &&
-                          <hr className="w-[98%] mx-auto border-[1px] border-lime-50 rounded-lg"></hr>
-                        }
-                        <div className="grid grid-cols-2 gap-5">
-                          {appointment.NoteRecord !== null &&
-                            <div className="flex flex-col col-start-1 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
-                              <div className="flex items-center">                             
-                                <p className="font-medium text-black text-lg w-1/2">Bệnh án</p>   
-                                <div className="w-1/2 flex justify-end text-green-500 font-medium">
-                                  <Button className="w-24" size="xs" outline gradientDuoTone="tealToLime" onClick={()=>{setShowRecordModal(true);setIdRecord(appointment.idMedicalRecord);setRecord(appointment.Record);setRecordNote(appointment.NoteRecord  )}}>
-                                    Chỉnh sửa
-                                  </Button>
-                                </div>
-                              </div>             
-                              <div className="flex gap-3">
-                                <div className="flex flex-col gap-1 w-full">
-                                  <p>Chẩn đoán: <span className="text-teal-600 font-medium">{appointment.Record}</span></p>
-                                  <p>Mô tả: <span className="text-teal-600 font-medium">{appointment.NoteRecord}</span></p>
-                                </div>
-                              </div>
-                            </div>
                           }
-                          {appointment.ReExaminationDate !== null &&
-                            <div className="flex flex-col col-start-2 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
-                              <div className="flex items-center">
-                                <p className="font-medium text-black text-lg w-1/2">Lịch hẹn tái khám</p>
-                                {appointment.NoteStatus === 0 && 
-                                  <div className="w-1/2 mr-4 flex justify-end text-green-500 font-medium">Chưa xác nhận</div>
-                                }
-                                {appointment.NoteStatus === 1 && 
-                                  <div className="w-1/2 mr-4 flex justify-end text-green-500 font-medium">Đã xác nhận</div>
-                                }
-                                {appointment.NoteStatus === 2 && 
-                                  <div className="w-1/2 mr-4 flex justify-end text-rose-500 font-medium">Đã hủy</div>
-                                }
-                              </div>
-                              <div className="flex gap-3">
-                                <div className="flex flex-col gap-1 w-full">
-                                  <p>Ngày tái khám: <span className="text-green-500 font-medium">{appointment.ReExaminationDate.slice(0,10)}</span></p>
-                                  <p>Thời gian: <span className="text-green-500 font-medium">{appointment.ReExaminationDate.slice(11,16)}</span></p>
-                                  <p>Chi phí dự kiến: <span className="text-green-500 font-medium">{appointment.ReExaminationPrice} đ</span></p>
-                                </div>
-                              </div>
-                            </div>
+                          {appointment.ReExaminationDate === null &&
+                          <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowExaminationModal(true);setIdAppointment(appointment.id);setNote(appointment.Advice)}}>
+                            Hẹn tái khám
+                          </Button>
+                          } 
+                          {appointment.Advice === null ?
+                            <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowNoteModal(true);setIdAppointment(appointment.id);setReExaminationDate(appointment.ReExaminationDate)}}>
+                              Ghi chú
+                            </Button>
+                          :
+                            <p className="absolute bottom-1 text-sm cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
+                              onClick={()=>{setEditNote(true);setShowNoteModal(true);setIdAppointment(appointment.id);setNote(appointment.Advice)}}>Chỉnh sửa
+                            </p>
                           }
                         </div>
-                      </div>
-                    }
-                    {appointment.Status != 2 && appointment.Status != 3 && (
-                      <Button
-                        className="md:w-40 max-md:w-48 md:mx-auto rounded-2xl"
-                        gradientMonochrome="failure"
-                        onClick={() => {
-                          setShowModal(true);
-                          setIdAppointment(appointment.id);
-                          setIdPatient(appointment.idPatient)
-                        }}
-                      >
-                        Hủy
-                      </Button>
-                    )}
-                    {appointment.Status == 4 && (
-                      <Button
-                        className="md:w-40 max-md:w-48 mx-auto rounded-2xl"
-                        gradientDuoTone="greenToBlue"
-                        onClick={() => {
-                          handleAcceptAppointment(appointment.id);
-                        }}
-                      >
-                        xác nhận
-                      </Button>
-                    )}
-                    {appointment.Status == 1 && (
-                      <Button
-                        className="md:w-40 max-md:w-48 mx-auto rounded-2xl"
-                        gradientDuoTone="greenToBlue"
-                        onClick={() => {
-                          handleCompleteAppointment(appointment.id);
-                        }}
-                      >
-                        Hoàn thành
-                      </Button>
-                    )}
-                    
+                      )}
+                    </div>
+                    <div className="flex max-md:justify-center max-md:items-center mx-auto md:w-full max-md:w-full max-md:px-3 gap-10">
+                      {appointment.Status === 2 && 
+                        <div className="w-full flex flex-col gap-3">
+                          {appointment.NoteRecord !== null && appointment.ReExaminationDate !== null &&
+                            <hr className="w-[98%] mx-auto border-[1px] border-lime-50 rounded-lg"></hr>
+                          }
+                          <div className="grid grid-cols-2 gap-5">
+                            {appointment.NoteRecord !== null &&
+                              <div className="flex flex-col col-start-1 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                                <div className="flex items-center">                             
+                                  <p className="font-medium text-black text-lg w-1/2">Bệnh án</p>   
+                                  <div className="w-1/2 flex justify-end text-green-500 font-medium">
+                                    <Button className="w-24" size="xs" outline gradientDuoTone="tealToLime" onClick={()=>{setShowRecordModal(true);setIdRecord(appointment.idMedicalRecord);setRecord(appointment.Record);setRecordNote(appointment.NoteRecord  )}}>
+                                      Chỉnh sửa
+                                    </Button>
+                                  </div>
+                                </div>             
+                                <div className="flex gap-3">
+                                  <div className="flex flex-col gap-1 w-full">
+                                    <p>Chẩn đoán: <span className="text-teal-600 font-medium">{appointment.Record}</span></p>
+                                    <p>Mô tả: <span className="text-teal-600 font-medium">{appointment.NoteRecord}</span></p>
+                                  </div>
+                                </div>
+                              </div>
+                            }
+                            {appointment.ReExaminationDate !== null &&
+                              <div className="flex flex-col col-start-2 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                                <div className="flex items-center">
+                                  <p className="font-medium text-black text-lg w-1/2">Lịch hẹn tái khám</p>
+                                  {appointment.NoteStatus === 0 && 
+                                    <div className="w-1/2 mr-4 flex justify-end text-green-500 font-medium">Chưa xác nhận</div>
+                                  }
+                                  {appointment.NoteStatus === 1 && 
+                                    <div className="w-1/2 mr-4 flex justify-end text-green-500 font-medium">Đã xác nhận</div>
+                                  }
+                                  {appointment.NoteStatus === 2 && 
+                                    <div className="w-1/2 mr-4 flex justify-end text-rose-500 font-medium">Đã hủy</div>
+                                  }
+                                </div>
+                                <div className="flex gap-3">
+                                  <div className="flex flex-col gap-1 w-full">
+                                    <p>Ngày tái khám: <span className="text-green-500 font-medium">{appointment.ReExaminationDate.slice(0,10)}</span></p>
+                                    <p>Thời gian: <span className="text-green-500 font-medium">{appointment.ReExaminationDate.slice(11,16)}</span></p>
+                                    <p>Chi phí dự kiến: <span className="text-green-500 font-medium">{appointment.ReExaminationPrice} đ</span></p>
+                                  </div>
+                                </div>
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }
+                      {appointment.Status != 2 && appointment.Status != 3 && (
+                        <Button
+                          className="md:w-40 max-md:w-48 md:mx-auto rounded-2xl"
+                          gradientMonochrome="failure"
+                          onClick={() => {
+                            setShowModal(true);
+                            setIdAppointment(appointment.id);
+                            setIdPatient(appointment.idPatient);
+                          }}
+                        >
+                          Hủy
+                        </Button>
+                      )}
+                      {appointment.Status == 4 && (
+                        <Button
+                          className="md:w-40 max-md:w-48 mx-auto rounded-2xl"
+                          gradientDuoTone="greenToBlue"
+                          onClick={() => {
+                            findCancelAppointments(appointment.id)
+                          }}
+                        >
+                          xác nhận
+                        </Button>
+                      )}
+                      {appointment.Status == 1 && (
+                        <Button
+                          className="md:w-40 max-md:w-48 mx-auto rounded-2xl"
+                          gradientDuoTone="greenToBlue"
+                          onClick={() => {
+                            handleCompleteAppointment(appointment.id);
+                          }}
+                        >
+                          Hoàn thành
+                        </Button>
+                      )}
+                      
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))
-          ) : (
-            <p className="py-10 w-full text-center text-2xl font-medium">
-              Bạn chưa có cuộc hẹn mới
-            </p>
-          )}
+              ))
+            : (
+              <>
+              {appointment?.length == 0 &&
+                <p className="py-4 w-full text-center text-2xl font-medium">
+                  Bạn chưa có cuộc hẹn mới
+                </p>
+              }
+              {isFilter && currentAppointment?.length == 0 &&
+                <p className="py-4 w-full text-center text-2xl font-medium">
+                  Bạn chưa có cuộc hẹn nào trong ngày này
+                </p>
+              }
+              </>
+            )}
+          </>
+          }
         </div>
       </div>
       <Modal
@@ -667,6 +784,58 @@ const DoctorAppointment = () => {
             onClick={handleClose}
             >
               Để sau
+            </Button>
+          </div>
+        </Modal.Body>
+      </Modal>
+      <Modal
+        show={showConflictModal}
+        onClose={()=>{setShowConflictModal(false); setConflictAppointment([])}}
+        popup
+        size="2xl"
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="flex flex-col gap-5 items-center justify-center">
+            <h3 className="text-lg text-center dark:text-gray-400">
+              <p>
+                <span className="text-red-500 font-medium">{conflictAppointment.length + " "}</span>
+                cuộc hẹn sẽ bị xóa nếu bạn chấp nhận cuộc hẹn này vì bị trùng thời gian
+              </p>
+            </h3>
+            <Table hoverable className="">
+              <Table.Head>
+                <Table.HeadCell>Avatar</Table.HeadCell>
+                <Table.HeadCell>Tên bệnh nhân</Table.HeadCell>
+                <Table.HeadCell>Ngày đặt hẹn</Table.HeadCell>
+                <Table.HeadCell>Thời gian hẹn</Table.HeadCell>
+            </Table.Head>
+            {conflictAppointment.map((appointment) =>
+              <Table.Body className="divide-y" key={appointment.id}>
+                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                  <Table.Cell>
+                    <img
+                      src={appointment.Avt || require("../../Images/pattientavt.png") }
+                      alt={"Pattient"}
+                      className="w-10 h-10 object-cover bg-gray-500 rounded-full"
+                    />
+                  </Table.Cell>
+                  <Table.Cell>{appointment.FirstName + " " + appointment.LastName}</Table.Cell>
+                  <Table.Cell>{appointment.DateBooking}</Table.Cell>
+                  <Table.Cell>{appointment.TimeBooking.slice(0,5)}</Table.Cell>
+                </Table.Row>
+            </Table.Body>
+            )}
+            </Table>
+
+            <Button
+              className="w-[90%] h-10"
+              gradientDuoTone="purpleToPink"
+              onClick={() => {
+                handleAcceptAppointment(idAppointment)
+              }}
+            >
+              Xác nhận
             </Button>
           </div>
         </Modal.Body>

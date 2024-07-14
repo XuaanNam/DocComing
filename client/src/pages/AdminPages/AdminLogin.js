@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { login, loginGoogle } from "../../redux-toolkit/authSlice";
+import { fetchProfile, login, loginGoogle } from "../../redux-toolkit/authSlice";
 import { Button } from "flowbite-react";
 import { useNavigate } from "react-router-dom";
 
@@ -40,7 +40,11 @@ const AdminLogin = () => {
     }
   };
   useEffect(() => {
-    if (currentUser) setTimeout(Navigate("/admin/dashboard"), 1000);
+    if (currentUser) 
+      { 
+        dispatch(fetchProfile())
+        setTimeout(Navigate("/admin/dashboard"), 1000);
+      }
   }, [currentUser]);
   return (
     <div className="md:pt-[150px] bg-gray-50 max-md:pt-[80px] md:py-20 mb-40 w-full">

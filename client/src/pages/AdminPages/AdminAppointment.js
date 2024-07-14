@@ -9,14 +9,20 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAdminAppointment,
 } from "../../redux-toolkit/appointmentSlice";
-import { Rate } from "antd";
+import { DatePicker, Rate } from "antd";
 import { Button } from "flowbite-react";
+import { IoIosCloseCircleOutline } from "react-icons/io";
 const AdminAppointment = () => {
+  const format = 'HH:mm';
+  const dateFormat = "DD/MM/YYYY";
   const dispatch = useDispatch();
   const { AppointmentData, ScheduleData, allService, service, error, loading } =
     useSelector((state) => state.appointment);
   const [passed, setPassed] = useState(1);
-
+  const [currentAppointment, setCurrentAppointment] = useState([])
+  const [filterDate, setFilterDate] = useState(false)
+  const [isFilter, setIsFilter] = useState(false)
+  
   useEffect(() => {
     dispatch(fetchAdminAppointment());
   }, []);
@@ -36,11 +42,30 @@ const AdminAppointment = () => {
 
     return formattedNum;
   }
+  const handleDatePickerChange = (date, dateString) => {
+    if(filterDate){
+      getAppointmentsOnDate(appointment, dateString)
+    }
+  };
+  const getAppointmentsOnDate = (appointments, targetDate) => {
+    let appointmentsOnDate = []
+    for(let i = 0; i<appointments.length; i++){
+      if(appointments[i].DateBooking == targetDate)
+        appointmentsOnDate.push(appointments[i])
+    }
+    setCurrentAppointment(appointmentsOnDate)
+    setIsFilter(true)
+  }
+  let slice =  []
+  if(isFilter)
+    slice = currentAppointment
+  else
+    slice = appointment
   return (
     <div className="lg:pt-[70px] bg-gray-50 px-10 h-screen">
       <div className="max-lg:px-4 h-full text-gray-700 lg:flex lg:flex-col lg:gap-10">
         <div className="md:my-7 lg:max-xl:w-full h-[94%] max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-200 py-5 lg:px-8">
-          <div className="lg:mb-5 max-lg:my-5 lg:h-10 max-lg:h-auto grid lg:grid-cols-6 max-lg:grid-cols-12 lg:gap-3 max-lg:gap-1 font-semibold">
+          <div className="lg:mb-2 max-lg:my-5 lg:h-10 max-lg:h-auto grid lg:grid-cols-6 max-lg:grid-cols-12 lg:gap-3 max-lg:gap-1 font-semibold">
             <p className="max-md:mb-3 md:text-2xl max-md:text-3xl lg:col-span-2 max-lg:col-start-1 max-lg:col-span-12">Lịch khám</p>
             <div className = "lg:w-full lg:flex lg:justify-end lg:col-start-3 lg:col-span-2">
               <div
@@ -75,9 +100,35 @@ const AdminAppointment = () => {
               ĐÃ QUA
             </div>
           </div>
-          <div className="overflow-auto h-[88%] ">
-          {appointment?.length > 0 ? (
-            appointment?.map((appointment) => (
+          {appointment?.length > 0 &&
+              <div className="flex gap-3 items-center mb-4">
+                    <p className="font-medium">Lọc theo ngày</p>
+                    {filterDate ?
+                      <div className="flex gap-3 items-center w-52">
+                        <DatePicker className="h-9 md:w-40 max-md:w-40" 
+                          format={dateFormat}
+                          onChange={handleDatePickerChange}
+                          placeholder="Chọn ngày"
+                        />
+                        <IoIosCloseCircleOutline className="h-6 w-6 text-rose-500 cursor-pointer" onClick={()=>{setFilterDate(false);setIsFilter(false);setCurrentAppointment([])}}></IoIosCloseCircleOutline>
+                      </div>
+                      :
+                      <Button
+                        size="sm"
+                        className="w-32 h-9"
+                        gradientDuoTone="purpleToPink"
+                        onClick={() => {
+                          setFilterDate(true)         
+                        }}
+                      >
+                        Chọn ngày
+                      </Button>
+                    }
+              </div>
+          }
+          <div className="overflow-auto h-[85%] ">
+          {slice?.length > 0 ? (
+            slice?.map((appointment) => (
               <div
                 key={appointment.id}
                 className="w-full rounded-xl shadow-lg mb-5 border"
@@ -152,7 +203,7 @@ const AdminAppointment = () => {
                               <img
                                   className="h-14 w-14 mb-2 rounded-full object-contain border border-lime-200"
                                   alt=""
-                                  src={appointment.AvtPatient}
+                                  src={appointment.AvtPatient !== null ? appointment.AvtPatient : require("../../Images/pattientavt.png")}
                               ></img>
                               <div className="flex items-center mb-2 gap-3 max-lg:mb-2">
                                   <FaUser className="h-4 min-w-5 text-teal-600" />
@@ -232,11 +283,20 @@ const AdminAppointment = () => {
                 </div>               
               </div>
             ))
-          ) : (
-            <p className="py-10 w-full text-center text-2xl font-medium">
-              Chưa có cuộc hẹn mới
-            </p>
-          )}
+          ) : 
+            <>
+              {appointment?.length == 0 &&
+                <p className="py-4 w-full text-center text-2xl font-medium">
+                  Chưa có cuộc hẹn
+                </p>
+              }
+              {isFilter && currentAppointment?.length == 0 &&
+                <p className="py-4 w-full text-center text-2xl font-medium">
+                  Hệ thống chưa ghi nhận cuộc hẹn nào trong ngày này
+                </p>
+              }
+            </>
+          }
           </div>         
         </div>
       </div>

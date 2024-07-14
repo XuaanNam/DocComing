@@ -23,7 +23,9 @@ const initialState = {
   comment: []
 };
 
-const SERVER_URL =  "http://13.214.226.21:5000"
+ const SERVER_URL =  "https://13.214.226.21:5001"
+// const SERVER_URL =  "http://localhost:5001"
+
 //admin
 export const createPost = createAsyncThunk("createPost", async (body) => {
   const res = await fetch(SERVER_URL + "/api/post/create", {
@@ -47,7 +49,7 @@ export const updatePost = createAsyncThunk("updatePost", async (body) => {
   return await res.json();
 });
 export const fetchPost = createAsyncThunk("fetchPost", async ({filter, orderby}) => {
-  const res = await fetch(`http://localhost:5000/api/admin/post/${filter}/${orderby}`, {
+  const res = await fetch(SERVER_URL + `/api/admin/post/${filter}/${orderby}`, {
     method: "GET",
     headers: {
       Authorization: localStorage.getItem("token"),
@@ -56,7 +58,7 @@ export const fetchPost = createAsyncThunk("fetchPost", async ({filter, orderby})
   return await res.json();
 });
 export const postsFilter = createAsyncThunk("postsFilter", async (body) => {
-  const res = await fetch(`http://localhost:5000/api/admin/post/filter`, {
+  const res = await fetch(SERVER_URL + `/api/admin/post/filter`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -104,7 +106,7 @@ export const getAllPost = createAsyncThunk("getAllPost", async () => {
   return await res.json();
 });
 export const getPostByCategory = createAsyncThunk("getPostByCategory", async (body) => {
-  const res = await fetch(`http://localhost:5000/api/post/categories/${body}`, {
+  const res = await fetch(SERVER_URL + `/api/post/categories/${body}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -113,7 +115,7 @@ export const getPostByCategory = createAsyncThunk("getPostByCategory", async (bo
   return await res.json();
 });
 export const getPostBySimilarCategory = createAsyncThunk("getPostBySimilarCategory", async (body) => {
-  const res = await fetch(`http://localhost:5000/api/post/categories/similar/${body}`, {
+  const res = await fetch(SERVER_URL + `/api/post/categories/similar/${body}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -122,7 +124,7 @@ export const getPostBySimilarCategory = createAsyncThunk("getPostBySimilarCatego
   return await res.json();
 });
 export const getDetailPost = createAsyncThunk("getDetailPost", async (body) => {
-  const res = await fetch(`http://localhost:5000/api/post/detail/${body}`, {
+  const res = await fetch( SERVER_URL + `/api/post/detail/${body}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -161,7 +163,7 @@ export const hidePost = createAsyncThunk(
 export const fetchComment = createAsyncThunk(
   "fetchComment",
   async (body) => {
-    const res = await fetch(`http://localhost:5000/api/comment/${body.idPost}/${body.idAccount}`, {
+    const res = await fetch(SERVER_URL + `/api/comment/${body.idPost}/${body.idAccount}`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

@@ -20,8 +20,8 @@ const BookingDoctor = () => {
   const check = JSON.parse(localStorage.getItem("check"));
   const dateFormat = "DD/MM/YYYY";
   const date = new Date();
-  const today =
-    (date.getDate() < 10 ? "0" + date.getDate() : date.getDate())
+  const tomorrow =
+    (date.getDate() < 10 ? "0" + (date.getDate() + 1): (date.getDate() + 1))
     + "/" +
     (date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1) 
     + "/" +
@@ -29,6 +29,7 @@ const BookingDoctor = () => {
   const { service, ScheduleData, AppointmentData,ratingDoctor, error, loading, updated } =
     useSelector((state) => state.appointment);
   const { currentUser, detailDoctor } = useSelector((state) => state.user);
+  console.log(currentUser)
   const [index, setIndex] = useState("");
   const [estimatedTime, setEstimatedTime] = useState("");
   const [step, setStep] = useState(0);
@@ -46,14 +47,13 @@ const BookingDoctor = () => {
   const [rating,setRating] = useState([0,0,0,0,0])
   const [count ,setCount] = useState(0)
   const [star,setStar] = useState(0)
-  const max = Math.max(...rating);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const { doctorId } = useParams();
   const Id = doctorId?.slice(-9);
   let body = {
     idDoctor: parseInt(Id),
-    DateBooking: today,
+    DateBooking: tomorrow,
   };
   const addTime = (fTime, sTime) => {
     const ft = fTime.split(":");
@@ -86,21 +86,14 @@ const BookingDoctor = () => {
     dispatch(fetchSchedule(body));
     dispatch(fetchService({ idDoctor: Id }));
     dispatch(getRatingDoctor(Id))
-    setData({ ...data, DateBooking: today });
+    setData({ ...data, DateBooking: tomorrow });
   }, []);
   useEffect(() => {
     if (!data?.Service && ScheduleData && service.length > 0) {
       if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
         let first = parse(currenTime1) + parse(service[0]?.EstimatedTime);
         if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
-          if(data.DateBooking === today){
-            if(parse(currenTime1) > parse(date.toLocaleTimeString())) {
-              setTime1([...time1, { id: step1, value: currenTime1 }]);
-            }
-          }
-          else{
-            setTime1([...time1, { id: step1, value: currenTime1 }]);
-          }
+          setTime1([...time1, { id: step1, value: currenTime1 }]);
           setStep1(step1 + 1);
           setTimeout(
             setCurrenTime1(addTime(currenTime1, service[0]?.EstimatedTime)),
@@ -140,14 +133,7 @@ const BookingDoctor = () => {
         let second = parse(currenTime2) + parse(service[0]?.EstimatedTime);
 
         if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
-          if(data.DateBooking === today){
-            if(parse(currenTime2) > parse(date.toLocaleTimeString())) {
-              setTime2([...time2, { id: step2, value: currenTime2 }]);
-            }
-          }
-          else{
-            setTime2([...time2, { id: step2, value: currenTime2 }]);
-          }
+          setTime2([...time2, { id: step2, value: currenTime2 }]);
           setStep2(step2 + 1);
           setTimeout(
             setCurrenTime2(addTime(currenTime2, service[0]?.EstimatedTime)),
@@ -183,17 +169,7 @@ const BookingDoctor = () => {
       if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 !== undefined) {
         let third = parse(currenTime3) + parse(service[0]?.EstimatedTime);
         if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
-          if(parse(currenTime3) > parse(date.toLocaleTimeString())) {
-            setTime3([...time3, { id: step3, value: currenTime3 }]);
-          }
-          if(data.DateBooking === today){
-            if(parse(currenTime3) > parse(date.toLocaleTimeString())) {
-              setTime3([...time3, { id: step3, value: currenTime3 }]);
-            }
-          }
-          else{
-            setTime3([...time3, { id: step3, value: currenTime3 }]);
-          }
+          setTime3([...time3, { id: step3, value: currenTime3 }]);
           setStep3(step3 + 1);
           setTimeout(
             setCurrenTime3(addTime(currenTime3, service[0]?.EstimatedTime)),
@@ -230,14 +206,7 @@ const BookingDoctor = () => {
       if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
         let first = parse(currenTime1) + parse(estimatedTime);
         if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
-          if(data.DateBooking === today){
-            if(parse(currenTime1) > parse(date.toLocaleTimeString())) {
-              setTime1([...time1, { id: step1, value: currenTime1 }]);
-            }
-          }
-          else{
-            setTime1([...time1, { id: step1, value: currenTime1 }]);
-          }
+          setTime1([...time1, { id: step1, value: currenTime1 }]);
           setStep1(step1 + 1);
           setTimeout(setCurrenTime1(addTime(currenTime1, estimatedTime)), 0);
           if (
@@ -273,14 +242,7 @@ const BookingDoctor = () => {
       ) {
         let second = parse(currenTime2) + parse(estimatedTime);
         if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
-          if(data.DateBooking === today){
-            if(parse(currenTime2) > parse(date.toLocaleTimeString())) {
-              setTime2([...time2, { id: step2, value: currenTime2 }]);
-            }
-          }
-          else{
-            setTime2([...time2, { id: step2, value: currenTime2 }]);
-          }
+          setTime2([...time2, { id: step2, value: currenTime2 }]);
           setStep2(step2 + 1);
           setTimeout(setCurrenTime2(addTime(currenTime2, estimatedTime)), 0);
           if (
@@ -314,14 +276,7 @@ const BookingDoctor = () => {
         let third = parse(currenTime3) + parse(estimatedTime);
 
         if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
-          if(data.DateBooking === today){
-            if(parse(currenTime3) > parse(date.toLocaleTimeString())) {
-              setTime3([...time3, { id: step3, value: currenTime3 }]);
-            }
-          }
-          else{
-            setTime3([...time3, { id: step3, value: currenTime3 }]);
-          }
+          setTime3([...time3, { id: step3, value: currenTime3 }]);
           setStep3(step3 + 1);
           setTimeout(setCurrenTime3(addTime(currenTime3, estimatedTime)), 0);
           if (
@@ -394,6 +349,7 @@ const BookingDoctor = () => {
     }
   },[ratingDoctor, Id]);
   const handleDatePickerChange = (date, dateString) => {
+    setActived()
     setData({ ...data, DateBooking: dateString });
     dispatch(fetchSchedule({ ...body, DateBooking: dateString }));
   };
@@ -406,7 +362,7 @@ const BookingDoctor = () => {
         : service[0].Service,
       idDoctor: Id,
       Price: data.Service ? service[index].Price : service[0].Price,
-      DateBooking: data.DateBooking ? data.DateBooking : today,
+      DateBooking: data.DateBooking ? data.DateBooking : tomorrow,
       TimeBooking: data.timePicker,
     };
     localStorage.setItem("appointment", JSON.stringify(body));
@@ -606,7 +562,7 @@ const BookingDoctor = () => {
               value={dayjs(data?.DateBooking, dateFormat)}
               format={dateFormat}
               onChange={handleDatePickerChange}
-              minDate={dayjs(today, dateFormat)}
+              minDate={dayjs(tomorrow, dateFormat)}
             />
             {time1.length > 0 && (
               <>
@@ -719,21 +675,18 @@ const BookingDoctor = () => {
             )}
             <div className="w-full my-5">
               <p className="font-medium text-teal-800">Loại dịch vụ</p>
-              <div className="max-w-md h-[40px] mt-2">
-                <select
-                  className="bg-white cursor-pointer border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  id="Service"
-                  // required
-                  value={data?.Service}
-                  onChange={handleChange}
-                >
-                  {service?.map((item) => (
-                    <option value={item.id} key={item.id}>
-                      {item.Service}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <select
+                className="bg-white mt-2 cursor-pointer border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                id="Service"
+                value={data?.Service}
+                onChange={handleChange}
+              >
+                {service?.map((item) => (
+                  <option value={item.id} key={item.id}>
+                    {item.Service}
+                  </option>
+                ))}
+              </select>
             </div>
             <div className="flex gap-3 mb-5 items-center">
               <p className=" text-teal-800">Phí dịch vụ: </p>
@@ -747,6 +700,7 @@ const BookingDoctor = () => {
               Vui lòng trao đổi với bác sĩ về các chi phí dịch vụ trước khi tiến
               hành thăm khám & chữa bệnh.
             </p>
+            {currentUser.authentication == 1 &&
             <Button
               disabled={!actived}
               onClick={currentUser ? handleBooking : handleNavigate}
@@ -755,6 +709,7 @@ const BookingDoctor = () => {
             >
               <p className="text-lg">ĐẶT HẸN</p>
             </Button>
+            }
           </div>
         </div>
       </div>
