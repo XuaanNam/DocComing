@@ -44,7 +44,7 @@ const Doctors = () => {
   else{
     doctor = doctors
   }
-  const slice = doctor.slice(0,numberElement);
+  const slice = doctor?.slice(0,numberElement);
 
   return (
     <div className="lg:pt-[70px] max-lg:pt-[70px] mb-6">

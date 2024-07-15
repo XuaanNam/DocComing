@@ -43,6 +43,7 @@ const SimilarPost = () => {
                 dispatch(getPostByCategory(category[i].id))
         }
   },[category])
+  console.log(post)
   return (
     <div className="pt-[70px] bg-slate-50 min-h-screen flex justify-center">
       <div className="my-4 w-[80%] p-8 rounded-xl bg-white shadow-lg shadow-violet-200">
@@ -64,7 +65,7 @@ const SimilarPost = () => {
         </div>
         <p className="text-2xl text-slate-700 font-medium mb-5">Kiến thức chung </p>
         <div className="w-full flex gap-x-7 mb-10">
-          <div
+          {/* <div
             className="w-2/5 cursor-pointer"
             onClick={() => Navigate(`/blog/${post[0]?.id}`)}
             >
@@ -91,7 +92,7 @@ const SimilarPost = () => {
                 </div>
                 <div>{post[0]?.DatePost?.slice(0, 10)}</div>
                 </div>
-          </div>
+          </div> */}
           <div className="flex flex-wrap gap-5 gap-y-7 w-3/5">
             {post?.slice(1, 5).map((item) => 
             <div

@@ -22,17 +22,18 @@ const AdminAppointment = () => {
   const [currentAppointment, setCurrentAppointment] = useState([])
   const [filterDate, setFilterDate] = useState(false)
   const [isFilter, setIsFilter] = useState(false)
-  
+
   useEffect(() => {
-    dispatch(fetchAdminAppointment());
+    dispatch(fetchAdminAppointment())
   }, []);
-  let appointment = [];
+  let appointment = []
   for (let i = 0; i < AppointmentData?.length; i++) {
     if (AppointmentData[i].Status === passed)
-      appointment.push({ ...AppointmentData[i] });
+      appointment.push({ ...AppointmentData[i] })
     if (AppointmentData[i].Status === 3 && passed === 2)
-      appointment.push({ ...AppointmentData[i] });
+      appointment.push({ ...AppointmentData[i] })
   }
+  
   const TransferPricing = (price) => {
     let pr = parseInt(price, 10).toString();
 
@@ -42,6 +43,7 @@ const AdminAppointment = () => {
 
     return formattedNum;
   }
+
   const handleDatePickerChange = (date, dateString) => {
     if(filterDate){
       getAppointmentsOnDate(appointment, dateString)

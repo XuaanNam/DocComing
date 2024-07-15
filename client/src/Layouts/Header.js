@@ -14,7 +14,7 @@ import { Link, useNavigate } from "react-router-dom";
 import logo from "../logo.png";
 import { fetchProfile } from "../redux-toolkit/authSlice";
 import { persistor } from "../redux-toolkit/configureStore";
-import { fetchCategories, fetchMajor, searchPost } from "../redux-toolkit/postSlice";
+import { fetchCategories, fetchMajor, searchDisease, searchPost } from "../redux-toolkit/postSlice";
 
 import { Input } from 'antd';
 import { Button } from "flowbite-react";
@@ -31,11 +31,11 @@ const Header = () => {
   const authentication = currentUser?.authentication;
   const { allSearchPost, error, loading } = useSelector((state) => state.post);
   const [search, setSearch] = useState("")
-  const handleSearch = () => {
-    localStorage.setItem("keyword", JSON.stringify(search))
-    dispatch(searchPost({keywords: search})).then(() => {
-      Navigate("/search")
-      setSearch("")
+  const [keywordDisease, setKeywordDisease] = useState("")
+
+  const handleSearchMajor = () => {
+    dispatch(searchDisease({keywords: keywordDisease})).then(() => {
+      Navigate("/doctors")
     })
   }
   const handleLogout = () => {
@@ -104,16 +104,15 @@ const Header = () => {
         <div className="max-lg:hidden max-lg:col-start-4 max-lg:col-span-1 col-start-2 col-span-1 flex items-center justify-center">
             <div className="relative w-full flex lg:gap-3 items-center justify-center">
                 <Input 
-                    placeholder="Tìm kiếm theo bệnh" 
+                    placeholder="Tìm bác sĩ theo bệnh" 
                     className="h-11 pl-14 rounded-lg border-slate-400" 
-                    value={search}
-                    onChange={(e)=>{setSearch(e.target.value)}}
-                    onKeyDown={(e) => {
+                    value={keywordDisease}
+                    onChange={(e)=>{setKeywordDisease(e.target.value)}}
+                    onKeyDown={(e) => { 
                       if (e.key === "Enter") 
-                        handleSearch(); 
-                    }} />
+                        handleSearchMajor(); 
+                }} />
                 <CiSearch className="h-6 w-6 text-teal-300 sm:absolute sm:top-[10px] lg:left-4 max-sm:bg-slate-100 max-sm:rounded-lg"></CiSearch>
-                
             </div>
         </div>
         <div className="max-lg:col-start-4 max-lg:col-span-3 text-gray-100 lg:mr-4 flex gap-2 items-center col-start-3 justify-end font-medium cursor-pointer">

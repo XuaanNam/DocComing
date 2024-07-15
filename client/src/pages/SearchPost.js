@@ -22,13 +22,12 @@ const SearchPost = () => {
     })
   }
   useEffect(()=>{
-    if(allSearchPost.length > 0)
+    if(allSearchPost?.length > 0)
     {
         setIsSearched(true)
         setKeywords(keyword)
     }   
-  },[keyword,allSearchPost.length])
-  console.log(allSearchPost)
+  },[keyword,allSearchPost?.length])
   return (
     <div className="pt-[70px] min-h-screen mb-10">
         <div className="mt-16 flex justify-center items-center w-full">

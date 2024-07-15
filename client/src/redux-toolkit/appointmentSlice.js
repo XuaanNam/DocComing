@@ -18,8 +18,8 @@ const initialState = {
   HealthRecordData: []
 };
 
-const SERVER_URL =  "https://13.214.226.21:5001"
-//const SERVER_URL =  "http://localhost:5001"
+const SERVER_URL =  "https://server.doccoming.online"
+// const SERVER_URL =  "http://localhost:5001"
 
 export const fetchService = createAsyncThunk("fetchService", async (body) => {
   const res = await fetch(SERVER_URL + "/api/doctor/service", {

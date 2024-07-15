@@ -61,7 +61,6 @@ const DoctorAppointment = () => {
     (currentDate.getMonth() + 1 < 10 ? "0" + (currentDate.getMonth() + 1) : currentDate.getMonth() + 1) 
     + "/" +
     currentDate.getFullYear();
-
   useEffect(() => {
     setDate(today);
     dispatch(fetchHealthRecord());
@@ -216,7 +215,7 @@ const DoctorAppointment = () => {
     });
   };
   const handleCancelAppointment = (id) => {
-    const data = { id, idAccount: idPatient};
+    const data = { id: [id], idAccount: [idPatient]};
     dispatch(cancelAppointment(data)).then(() => {
       dispatch(fetchAppointment());
     });
@@ -426,14 +425,14 @@ const DoctorAppointment = () => {
                   </div>
                   <div className="p-5">
                     <div className="lg:flex lg:gap-5">
-                      <div className="flex md:w-[5%] max-md:w-full">
+                      <div className="flex md:min-w-[6%] max-md:w-full">
                         <img
                           className="h-14 w-14 rounded-full object-contain border border-lime-200"
                           alt=""
                           src={appointment.Avt || require("../../Images/pattientavt.png")}
                         ></img>
                       </div>
-                      <div className="w-[80%]">
+                      <div className="w-[81%]">
                         <p className="font-medium lg:text-lg max-lg:mt-3 max-lg:text-base text-gray-600 mb-3">
                           {appointment.FirstName + " " + appointment.LastName}
                         </p>
@@ -482,7 +481,7 @@ const DoctorAppointment = () => {
                         }
                       </div>
                       {appointment.Status == 2 && (
-                        <div className="w-[15%] mx-auto flex flex-col gap-2 place-items-center relative">   
+                        <div className="w-[13%] mx-auto flex flex-col gap-2 place-items-center relative">   
                           {appointment.Record === null &&   
                           <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowRecordModal(true);setIdAppointment(appointment.id);setDate(appointment.DateBooking)}}>
                             Thêm bệnh án

@@ -421,7 +421,7 @@ class API {
 
   //[PATCH] /api/profile/update
   updateProfile(req, res) {
-    const id = req.user.id; console.log(req.body);
+    const id = req.user.id; 
     const FullName = req.body.FullName ? req.body.FullName : null;
     const Address = req.body.Address ? req.body.Address : null;
     const Phone = req.body.Phone ? req.body.Phone : null;
@@ -491,7 +491,7 @@ class API {
           if(req.user.Authorization == 2){
             connection.query(updateInforDoctorSql, dataID, function (err, rs, fields) {
                 connection.destroy();
-                if (err) { console.log(err);
+                if (err) { 
                   res.send({ message: err, checked: false });
                 }
                 if (rs) {
@@ -524,15 +524,6 @@ class API {
         res.send({ message: error, checked: false });
       } else {
         if (results[0]) {
-          results[0].forEach((apptn) => {
-            let db = apptn.DateBooking.split('-');
-            apptn.DateBooking = db[2] + "/" + db[1] + "/" + db[0];
-            if(apptn.ReExaminationDate){
-              let re = apptn.ReExaminationDate.split(' ')[0]?.split('-')
-              apptn.ReExaminationDate = re[2] + "/" + re[1] + "/" + re[0] + " " + apptn.ReExaminationDate?.split(' ')[1];
-            }
-   
-          })
           res.status(200).send({ AppointmentData: results[0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
@@ -576,7 +567,6 @@ class API {
 
   //[PATCH] /api/appointment/accept
   acceptAppointment(req, res) {
-    console.log(req.body)
     const { id } = req.body;
     const updateSql =
       "update appointment set status = 1 where status = 4 and id = ?";
@@ -625,7 +615,6 @@ class API {
 
   //[POST] /api/appointment/cancel
   cancelAppointment(req, res) {
-    console.log(req.body)
     const { id, idAccount} = req.body;
     const updateSql = "update appointment set status = 3 where id IN (?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
@@ -956,10 +945,6 @@ class API {
         res.send({ message: error, checked: false });
       } else {
         if (results[0].length>0) {
-          results[0].forEach((record) => {
-            let Idate = record.IllnessDate.split('-');
-            record.IllnessDate = Idate[2] + "/" + Idate[1] + "/" + Idate[0];
-          })
           res.status(200).send({ data: results[0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
@@ -1291,7 +1276,7 @@ class API {
 
     pool.query(insertSql, [idAppointment, Star, Comment], function (error, results, fields) {
       if (error) {
-        res.send({ message: error, checked: false }); console.log(error)
+        res.send({ message: error, checked: false }); 
       } else {
         if (results) {
           res.status(200).send({ checked: true });    
@@ -1681,7 +1666,7 @@ class API {
           res.send({ message: errorMsg, checked: false });
         }
         if (rs[0].length > 0) { 
-          CmtData = rs[0]; console.log(rs)
+          CmtData = rs[0]; 
           for(let i = 0; i < CmtData.length; i++) {
 
             if (CmtData[i].repid) {

@@ -13,3 +13,4 @@
 /node_modules
 /.pnp
 .pnp.js
+/*.conf

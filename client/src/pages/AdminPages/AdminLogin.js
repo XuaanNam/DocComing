@@ -33,7 +33,7 @@ const AdminLogin = () => {
     } 
     else {
       dispatch(login(data))
-      .then((r) => {
+      .then((r) => { 
         if(r.payload.checked === false)
           setErr(r.payload.message);
       })

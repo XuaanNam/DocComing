@@ -24,7 +24,7 @@ const initialState = {
   dashboardData: []
 };
 
- const SERVER_URL =  "https://13.214.226.21:5001"
+const SERVER_URL =  "https://server.doccoming.online"
 // const SERVER_URL =  "http://localhost:5001"
 
 export const userRegister = createAsyncThunk("userRegister", async (body) => {

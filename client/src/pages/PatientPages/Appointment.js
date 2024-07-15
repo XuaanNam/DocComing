@@ -90,7 +90,7 @@ const Appointment = () => {
   }
 
   const handleCancelAppointment = (id) => {
-    const data = { id, idAccount: idDoctor };
+    const data = { id: [id], idAccount: [idDoctor] };
     dispatch(cancelAppointment(data)).then(() => {
       dispatch(getAllNotification())
       dispatch(fetchAppointment());

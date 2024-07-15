@@ -12,7 +12,7 @@ const session = require('express-session');
 //     saveUninitialized: true,
 //     secret: process.env.SESSION_SECRET
 // }));
-const allowedOrigins = [process.env.ORIGIN_PATH, 'http://localhost:3000'];
+const allowedOrigins = [process.env.ORIGIN_PATH];
 
 app.use(
     cors({
@@ -44,7 +44,7 @@ route(app);
 //socket(io);
 
 app.listen(port, ()=> {
-    console.log(`Server is running on: http://localhost:${port} `);
+    console.log(`Server is running in `+ process.env.NODE_ENV);
 });
 // server.listen(portSocket, ()=> {
 //     console.log(`Server socket is running on: http://localhost:${portSocket} `);

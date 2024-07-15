@@ -9,7 +9,9 @@ import { IoIosArrowForward } from "react-icons/io";
 import Slider from "react-slick";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProfile,getAllDoctors } from "../redux-toolkit/authSlice";
-import { getAllPost } from "../redux-toolkit/postSlice";
+import { getAllPost, searchPost } from "../redux-toolkit/postSlice";
+import { Input } from "antd";
+import { CiSearch } from "react-icons/ci";
 
 const HomePage = () => {
   const { currentUser,doctors, auth, user, error, loading, updated } = useSelector(
@@ -18,6 +20,8 @@ const HomePage = () => {
   const { allPost } = useSelector((state) => state.post);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
+  const [search, setSearch] = useState("")
+
   const slides = [
     {
       url: require("../Images/banner-01.jpg"),
@@ -79,6 +83,13 @@ const HomePage = () => {
     if(id != 235523484)
       Navigate(`/doctors/${path(fname + lname, id)}`)
   }
+  const handleSearch = () => {
+    localStorage.setItem("keyword", JSON.stringify(search))
+    dispatch(searchPost({keywords: search})).then(() => {
+      Navigate("/search")
+      setSearch("")
+    })
+  }
   return (
     <div className="pt-[70px]">
       <div className="max-w-[92%] h-[726px] w-full max-sm:h-[560px] max-sm:pt-16 m-auto pb-[40px] px-4 relative group drop-shadow-md">
@@ -118,10 +129,23 @@ const HomePage = () => {
         </div>
       </div>
       <div className="lg:mx-12 max-sm:px-7 sm:px-7 mb-10">
-        <div className="h-[44px] w-[150px] flex items-center justify-center p-1 mb-6 rounded-3xl bg-teal-50 text-teal-500 font-medium drop-shadow-lg">
+        <div className="flex gap-5 items-center mb-6">
+        <div className="h-11 w-36 flex items-center justify-center p-1 rounded-3xl bg-teal-50 text-teal-500 font-medium drop-shadow-lg">
           Bài viết mới nhất
         </div>
-
+        <div className="relative w-96 flex lg:gap-3 items-center justify-center">
+          <Input 
+              placeholder="Tìm kiếm bài viết..." 
+              className="h-11 pl-14 rounded-lg border-gray-300 shadow-md shadow-violet-200" 
+              value={search}
+              onChange={(e)=>{setSearch(e.target.value)}}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") 
+                  handleSearch(); 
+              }} />
+          <CiSearch className="h-6 w-6 text-teal-300 sm:absolute sm:top-[10px] lg:left-4 max-sm:bg-slate-100 max-sm:rounded-lg"></CiSearch>
+        </div>
+        </div>
         <div className="w-full lg:flex gap-x-3">
           <div
             className="lg:w-3/5 max-sm:w-full cursor-pointer"
