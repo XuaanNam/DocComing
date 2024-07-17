@@ -165,17 +165,17 @@ const HomePage = () => {
                 {allPost[0]?.Brief}
               </p>
             </div>
-            <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(allPost[0].FirstName,allPost[0].LastName,allPost[0].idAuthor)}}>
+            <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(allPost[0].FirstName,allPost[0].LastName,allPost[0].idAuthor)}}>
               <img
                 className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                 src={allPost[0]?.Avt}
                 alt=""
               ></img>
               <div className="font-medium">
-                {allPost[0]?.FirstName + " " + allPost[0]?.LastName} -
+                {allPost[0]?.FirstName + " " + allPost[0]?.LastName} 
               </div>
-              <div className="text-gray-400">Ngày đăng: {allPost[0]?.DatePost.slice(8,10)}/{allPost[0]?.DatePost.slice(5,7)}/{allPost[0]?.DatePost.slice(0,4)}</div>
             </div>
+            <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {allPost[0]?.DatePost.slice(8,10)}/{allPost[0]?.DatePost.slice(5,7)}/{allPost[0]?.DatePost.slice(0,4)}</div>
           </div>
           <div className="lg:grid max-sm:mt-5 max-sm:gap-3 lg:grid-rows-3 lg:w-2/5 max-sm:w-full">
             <div className="row-span-2 cursor-pointer w-full pb-3 border-b-[1.5px]">
@@ -190,7 +190,7 @@ const HomePage = () => {
                    onClick={() => Navigate(`/blog/${allPost[1].id}`)}>
                 {allPost[1]?.Title}
               </div>
-              <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(allPost[1].FirstName,allPost[1].LastName,allPost[1].idAuthor)}}>
+              <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(allPost[1].FirstName,allPost[1].LastName,allPost[1].idAuthor)}}>
                 <img
                   className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                   src={allPost[1]?.Avt}
@@ -199,8 +199,9 @@ const HomePage = () => {
                 <div className="font-medium">
                   {allPost[1]?.FirstName + " " + allPost[1]?.LastName}  
                 </div>
-                <div className="text-gray-400">Ngày đăng: {allPost[1]?.DatePost.slice(8,10)}/{allPost[1]?.DatePost.slice(5,7)}/{allPost[1]?.DatePost.slice(0,4)}</div>
               </div>
+              <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {allPost[1]?.DatePost.slice(8,10)}/{allPost[1]?.DatePost.slice(5,7)}/{allPost[1]?.DatePost.slice(0,4)}</div>
+
             </div>
 
             <div className="cursor-pointer w-full pt-5">
@@ -212,7 +213,7 @@ const HomePage = () => {
                   <div className="text-slate-800 text-lg max-sm:mb-3 font-medium lg:mb-8 text-ellipsis overflow-hidden" onClick={() => Navigate(`/blog/${allPost[2].id}`)}>
                     {allPost[2]?.Title}
                   </div>
-                  <div className="flex gap-2 text-base items-center self-end" onClick={()=>{handleNavigate(allPost[2].FirstName,allPost[2].LastName,allPost[2].idAuthor)}}>
+                  <div className="flex gap-2 text-base items-center mb-1 self-end" onClick={()=>{handleNavigate(allPost[2].FirstName,allPost[2].LastName,allPost[2].idAuthor)}}>
                     <img
                       className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={allPost[2]?.Avt}
@@ -221,8 +222,8 @@ const HomePage = () => {
                     <div className="overflow-hidden text-ellipsis font-medium">
                       {allPost[2]?.FirstName + " " + allPost[2]?.LastName}  
                     </div>
-                    <div className="text-gray-400">Ngày đăng: {allPost[2]?.DatePost.slice(8,10)}/{allPost[2]?.DatePost.slice(5,7)}/{allPost[2]?.DatePost.slice(0,4)}</div>
                   </div>
+                  <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {allPost[2]?.DatePost.slice(8,10)}/{allPost[2]?.DatePost.slice(5,7)}/{allPost[2]?.DatePost.slice(0,4)}</div>
                 </div>
                 <img
                   className="h-[140px] w-2/5 rounded-xl object-cover drop-shadow-lg transition-transform duration-500 hover:scale-105 p-2"
@@ -253,7 +254,7 @@ const HomePage = () => {
                 <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
                   {disease.Brief}
                 </div>
-                <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
+                <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
                   <img
                     className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                     src={disease.Avt}
@@ -262,8 +263,8 @@ const HomePage = () => {
                   <div className="font-medium">
                     {disease.FirstName + " " + disease.LastName}  
                   </div>
-                  <div className="text-gray-400">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                 </div>
+                <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
               </div>
             </div>
           </div>
@@ -310,7 +311,7 @@ const HomePage = () => {
                 <p className="font-medium text-base text-slate-800 mb-4 text-center">
                   ThS. BS. {doctor.FirstName + " " + doctor.LastName}
                 </p>
-                <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
+                <div className="max-h-42 mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
                   <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
                     <img
                       src={HospitalIcon}
@@ -319,7 +320,8 @@ const HomePage = () => {
                     />
                   </div>
                   <p className="w-[85%]">
-                    Bác sĩ {doctor.Major}
+                    <p className="text-sm">Chuyên khoa</p>
+                    <p className="font-medium">{doctor.Major}</p>
                   </p>
                 </div>
                 <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
@@ -367,7 +369,7 @@ const HomePage = () => {
                   <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-5">
                     {disease.Brief}
                   </div>
-                  <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
+                  <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
                     <img
                       className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={disease.Avt}
@@ -376,8 +378,8 @@ const HomePage = () => {
                     <div className="font-medium">
                       {disease.FirstName + " " + disease.LastName}  
                     </div>
-                    <div className="text-gray-400">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                   </div>
+                  <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                 </div>
               </div>
             </div>
@@ -412,7 +414,7 @@ const HomePage = () => {
                   <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
                     {disease.Brief}
                   </div>
-                  <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
+                  <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
                     <img
                       className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={disease.Avt}
@@ -421,8 +423,8 @@ const HomePage = () => {
                     <div className="font-medium">
                       {disease.FirstName + " " + disease.LastName}  
                     </div>
-                    <div className="text-gray-400">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                   </div>
+                  <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                 </div>
               </div>
             </div>
@@ -457,7 +459,7 @@ const HomePage = () => {
                   <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
                     {disease.Brief}
                   </div>
-                  <div className="flex gap-2 text-base items-center" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
+                  <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
                     <img
                       className="h-8 w-8 rounded-full object-cover drop-shadow-md"
                       src={disease.Avt}
@@ -466,8 +468,8 @@ const HomePage = () => {
                     <div className="font-medium">
                       {disease.FirstName + " " + disease.LastName}  
                     </div>
-                    <div className="text-gray-400">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                   </div>
+                  <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                 </div>
               </div>
             </div>

@@ -17,7 +17,6 @@ const SelectForm = ({ param }) => {
       persistor.purge();
     }, 200);
   };
-  console.log(param)
   return (
     <div className="flex flex-col lg:gap-1 my-7 lg:w-1/4 sm:max-lg:w-[30%] lg:h-60 bg-white shadow-lg shadow-violet-200 rounded-lg">
         <div

@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const BookingSuccess = () => {
   return (
@@ -16,9 +17,9 @@ const BookingSuccess = () => {
         <p className="max-lg:px-5 max-lg:text-center font-bold text-2xl text-teal-600">
           Cảm ơn bạn đã đặt lịch hẹn qua Doctor Coming
         </p>
-        <a href="/" className="underline font-medium text-lg text-teal-800">
+        <Link to="/" className="underline font-medium text-lg text-teal-800">
           Trở lại trang chủ
-        </a>
+        </Link>
       </div>
     </div>
   );

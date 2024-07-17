@@ -50,16 +50,19 @@ const UserList = () => {
   else{
     user = users
   }
-  const slice = user.slice(0,numberElement);
+  const slice = user?.slice(0,numberElement);
   const handleSearchUser = () => {
     dispatch(searchUser({keywords: keywordUser}))
     setIsSearched("search")
   }
   const handleDeleteAccount = () => {
     setShowModal(false)
-    dispatch(deleteAccount({id:userIdToDelete}))
+    dispatch(deleteAccount({id:userIdToDelete})).then(()=>{
+      if(profile)
+        setProfile(false)
+    })
     let userData = []
-    for(let i = 0; i < users.length; i++) {
+    for(let i = 0; i < users?.length; i++) {
       if(users[i].id !== userIdToDelete){
         userData.push({ ...users[i] })
       }
@@ -84,13 +87,14 @@ const UserList = () => {
       }
     }
     dispatch(usersFilter(data)).then(() =>{
+      setDate("")
       setIsSearched("filter")
       setShowFilterModal(false)
     })
   }
   const handleClose = () => {
     setShowFilterModal(false)
-    setRoleUser("Tất cả")
+    setRoleUser("all")
     setArrange("desc")
     setDate("")
   }
@@ -122,7 +126,6 @@ const UserList = () => {
       setDetailProfile(allUsers[index])
     }
   }
-  console.log(detailProfile)
   return (
     <div className="lg:pt-[70px] h-screen table-auto md:mx-auto px-10 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
       {profile ?
@@ -251,21 +254,21 @@ const UserList = () => {
           </Table.Head>
           {slice?.map((user,index) => (
             <Table.Body className="divide-y" key={user.id}>
-              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800 cursor-pointer" onClick={()=>{setProfile(true);handleDetailProfile(index)}}>
-                <Table.Cell>
+              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800 cursor-pointer">
+                <Table.Cell  onClick={()=>{setProfile(true);handleDetailProfile(index)}}>
                   {new Date(user.CreatedAt).toLocaleDateString()}
                 </Table.Cell>
-                <Table.Cell>
+                <Table.Cell onClick={()=>{setProfile(true);handleDetailProfile(index)}}>
                   <img
                     src={user.Avt || require("../../Images/pattientavt.png") }
                     alt={user.username}
                     className="w-10 h-10 object-cover bg-gray-500 rounded-full"
                   />
                 </Table.Cell>
-                <Table.Cell>{user.FirstName + " " + user.LastName}</Table.Cell>
-                <Table.Cell>{user.Email}</Table.Cell>
-                <Table.Cell>{user.Phone || "Chưa cập nhật"}</Table.Cell>
-                <Table.Cell>{user.Role}</Table.Cell>
+                <Table.Cell onClick={()=>{setProfile(true);handleDetailProfile(index)}}>{user.FirstName + " " + user.LastName}</Table.Cell>
+                <Table.Cell onClick={()=>{setProfile(true);handleDetailProfile(index)}}>{user.Email}</Table.Cell>
+                <Table.Cell onClick={()=>{setProfile(true);handleDetailProfile(index)}}>{user.Phone || "Chưa cập nhật"}</Table.Cell>
+                <Table.Cell onClick={()=>{setProfile(true);handleDetailProfile(index)}}>{user.Role}</Table.Cell>
                 <Table.Cell>
                   <span
                     onClick={() => {

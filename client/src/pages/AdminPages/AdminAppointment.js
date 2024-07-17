@@ -137,7 +137,7 @@ const AdminAppointment = () => {
               >
                 <div className="p-1 rounded-t-xl bg-teal-200 w-full h-10 grid grid-cols-3 place-items-center">
                   <div className="max-lg:text-base lg:text-lg font-medium">
-                    {appointment.TimeBooking}
+                    {appointment.TimeBooking.slice(0,5)}
                   </div>
                   <div className="max-lg:text-base lg:text-lg font-medium flex gap-2 items-center">
                     <FaRegCalendarPlus />
@@ -239,7 +239,7 @@ const AdminAppointment = () => {
                         </div>
                     </div>
                   </div>
-                  {appointment.Status === 2 && 
+                  {appointment?.Status === 2 && 
                       <div className="w-full flex flex-col gap-3">
                         {appointment.NoteRecord !== null && appointment.ReExaminationDate !== null &&
                           <hr className="w-[98%] mx-auto border-[1px] my-3 border-lime-50 rounded-lg"></hr>

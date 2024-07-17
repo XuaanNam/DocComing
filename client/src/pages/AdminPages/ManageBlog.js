@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Table, Button } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { fetchPost,fetchDoctorPost, acceptPost,hidePost, fetchCategories, searchPostAdmin, postsFilter } from "../../redux-toolkit/postSlice";
 import { TbFilterSearch  } from "react-icons/tb";
@@ -27,6 +27,7 @@ const ManageBlog = () => {
   const [arrange, setArrange] = useState("desc")
   const [date, setDate] = useState("")
   const [filtering, setFiltering] = useState({})
+  const Navigate = useNavigate()
   const dispatch = useDispatch();
   const status = [
     {
@@ -131,7 +132,12 @@ const ManageBlog = () => {
       setIsSearched("filter")
       setFiltering(data)
       setShowFilterModal(false)
+      setDate("")
     })
+  }
+  const handleNavigate = (postId) => {
+    if(confirmedPost === 1)
+      Navigate(`/blog/${postId}`)
   }
   let posts
   if(isSearched == "search"){
@@ -217,22 +223,22 @@ const ManageBlog = () => {
                   {new Date(post?.DatePost).toLocaleDateString()}
                 </Table.Cell>
                 <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
-                  <Link to={`/blog/${post.id}`}>
+                  <div onClick={()=>{handleNavigate(post.id)}}>
                     <img
                       src={post.FeaturedImage}
                       alt={post.Title}
                       className="min-w-20 h-10 object-cover bg-gray-500"
                     />
-                  </Link>
+                  </div>
                 </Table.Cell>
                 <Table.Cell className="md:p-3 max-md:p-2 max-md:text-xs">
                   <div className="">
-                  <Link
+                  <div
                     className="font-medium text-gray-900 dark:text-white"
-                    to={`/blog/${post.id}`}
+                    onClick={()=>{handleNavigate(post.id)}}
                   >
                     {post.Title}
-                  </Link>
+                  </div>
                   </div>
                 </Table.Cell>
                 <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">{post.Similar}</Table.Cell>
@@ -290,7 +296,7 @@ const ManageBlog = () => {
                   }
                 </Table.Cell>
                 }
-                {confirmedPost === 0 && 
+                {confirmedPost === 0 && currentUser.authentication == 0 &&
                 <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
                   <div
                     className="font-medium text-emerald-500 hover:underline cursor-pointer"
@@ -299,6 +305,14 @@ const ManageBlog = () => {
                     Duyệt
                   </div>
                 </Table.Cell>}
+                {currentUser.authentication == 2 &&
+                <>
+                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
+                </Table.Cell>
+                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
+                </Table.Cell>
+                </>
+                }
               </Table.Row>
             </Table.Body>
           ))}

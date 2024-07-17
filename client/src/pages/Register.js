@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { userRegister } from "../redux-toolkit/authSlice";
 const Register = () => {
   const { checked } = useSelector((state) => state.user);
-  console.log(checked);
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const initialValues = {
@@ -51,9 +50,7 @@ const Register = () => {
     if (formErrors?.confirmPassword && name === "confirmPassword")
       setFormErrors({ ...formErrors, [name]: "" });
   };
-  useEffect(() => {
-    if (checked) setTimeout(Navigate("/login"), 2000);
-  }, [checked]);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setFormErrors(validate(formValues));
@@ -68,11 +65,12 @@ const Register = () => {
         Email: formValues.email,
         PassWord: formValues.password,
       };
-      dispatch(userRegister(data));
+      dispatch(userRegister(data)).then((res) => {
+        if(res.payload.checked === true)
+          Navigate("/login")
+      });
     }
   };
-
-  console.log(formErrors?.email);
   return (
     <div>
       <div className="flex items-center bg-white justify-center lg:pt-[70px] max-lg:pt-[80px] p-9">

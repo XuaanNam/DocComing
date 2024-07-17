@@ -235,7 +235,7 @@ const DoctorSchedule = () => {
 
   }, [currentUser]);
   useEffect(() => {
-    if (data.length > 0) {
+    if (data?.length > 0) {
       setServiceData(sv);
     }
     if (ScheduleData) {
@@ -287,6 +287,7 @@ const DoctorSchedule = () => {
                     gradientMonochrome="failure"
                     onClick={() => {
                       setEditService(false);
+                      setServiceData(sv)
                     }}
                   >
                     Hủy

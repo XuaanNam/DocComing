@@ -10,7 +10,7 @@ const ResetPassword = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const { token } = useParams();
-  console.log(user)
+
   const initialValues = {
     password: "",
     confirmPassword: "",
@@ -70,15 +70,15 @@ const ResetPassword = () => {
       <div className="w-1/2 min-h-80 rounded-xl bg-white shadow-lg shadow-violet-200 p-5">
         <div className="w-full flex flex-col items-center justify-center">
             <img
-                src={user?.data?.Avt || require("../Images/pattientavt.png")}
+                src={auth?.Avt || require("../Images/pattientavt.png")}
                 alt="userImage"
                 className="max-lg:col-start-1 max-lg:col-span-1 rounded-full w-16 h-16 object-cover mb-2 border-4 border-[lightgray]"
             />
             <div className="mb-2 max-lg:col-start-2 max-lg:col-span-1 max-lg:text-left max-lg:text-base max-lg:flex max-lg:items-center max-lg:justify-center font-medium lg:text-lg lg:text-center w-full">
-                {user?.data?.FullName} 
+                {auth?.FullName} 
             </div>
             <div className="mb-3 max-lg:col-start-2 max-lg:col-span-1 max-lg:text-left max-lg:text-base max-lg:flex max-lg:items-center max-lg:justify-center font-medium lg:text-lg lg:text-center w-full">
-                {user?.data?.Email} 
+                {auth?.Email} 
             </div>
             <input
                 type="password"

@@ -29,13 +29,13 @@ const Header = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
   const authentication = currentUser?.authentication;
-  const { allSearchPost, error, loading } = useSelector((state) => state.post);
-  const [search, setSearch] = useState("")
   const [keywordDisease, setKeywordDisease] = useState("")
 
   const handleSearchMajor = () => {
+    localStorage.setItem("keywordDiseases", JSON.stringify(keywordDisease))
     dispatch(searchDisease({keywords: keywordDisease})).then(() => {
       Navigate("/doctors")
+      setKeywordDisease("")
     })
   }
   const handleLogout = () => {
@@ -71,7 +71,7 @@ const Header = () => {
     if(currentUser){
       const interval = setInterval(() => {
         dispatch(getAllNotification())
-      }, 300000);
+      }, 180000);
       return () => clearInterval(interval);
     }
   },[currentUser,dispatch])
@@ -215,7 +215,7 @@ const Header = () => {
 
               {actived && (
                 <div
-                  className={`max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:top-[62px] lg:w-60 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-50`}
+                  className={`max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:left-8 lg:top-[62px] lg:w-64 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-50`}
                 >
                   {authentication == 2 && (
                     <>

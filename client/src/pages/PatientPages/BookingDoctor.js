@@ -700,7 +700,7 @@ const BookingDoctor = () => {
               Vui lòng trao đổi với bác sĩ về các chi phí dịch vụ trước khi tiến
               hành thăm khám & chữa bệnh.
             </p>
-            {currentUser.authentication == 1 &&
+            {currentUser?.authentication == 1 &&
             <Button
               disabled={!actived}
               onClick={currentUser ? handleBooking : handleNavigate}

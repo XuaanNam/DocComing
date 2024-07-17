@@ -20,7 +20,19 @@ const Doctors = () => {
   const [keywordDisease, setKeywordDisease] = useState("")
   const [isSearched, setIsSearched] = useState("")
   const [numberElement, setNumberElement] = useState(8)
-
+  const keywordDiseases = JSON.parse(localStorage.getItem("keywordDiseases"));
+  useEffect(()=>{
+    if(keywordDiseases != null){
+      setIsSearched("search")
+      setKeywordDisease(keywordDiseases)
+      setKeywordDoctor("")
+    }
+  },[keywordDiseases])
+  useEffect(()=>{
+    if(keywordDiseases != null && isSearched == "search"){
+      localStorage.removeItem("keywordDiseases")
+    }
+  },[keywordDiseases,isSearched])
   const handleSearchDoctor = () => {
     setIsSearched("search")
     dispatch(searchDoctor({keywords: keywordDoctor}))
@@ -45,7 +57,6 @@ const Doctors = () => {
     doctor = doctors
   }
   const slice = doctor?.slice(0,numberElement);
-
   return (
     <div className="lg:pt-[70px] max-lg:pt-[70px] mb-6">
       <div className="relative w-full">

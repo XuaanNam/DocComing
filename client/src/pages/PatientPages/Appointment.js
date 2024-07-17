@@ -48,7 +48,7 @@ const Appointment = () => {
   }, []);
   useEffect(() => {
     if (currentUser) {
-      if (currentUser.authentication != 1) Navigate("/");
+      if (currentUser?.authentication != 1) Navigate("/");
     } else Navigate("/");
   }, [currentUser]);
   const handleRatingDoctor = () => {
@@ -106,10 +106,10 @@ const Appointment = () => {
       TimeBooking,
       Information,
     };
-    dispatch(createAppointment(body))
     dispatch(acceptNoteAppointment({idAppointment})).then(() => {
       dispatch(getAllNotification())
       dispatch(fetchAppointment());
+      dispatch(createAppointment(body))
     });
   };
   const handleCancelNoteAppointment = (idAppointment) => {
@@ -258,7 +258,7 @@ const Appointment = () => {
             slice?.map((appointment) => (
             <div key={appointment.id} className="w-full rounded-xl shadow-lg mb-5 border">
               <div className="p-1 rounded-t-xl bg-teal-200 w-full h-10 grid grid-cols-3 place-items-center">
-                <div className="max-lg:text-base lg:text-lg font-medium">{appointment.TimeBooking}</div>
+                <div className="max-lg:text-base lg:text-lg font-medium">{appointment.TimeBooking.slice(0,5)}</div>
                 <div className="max-lg:text-base lg:text-lg font-medium flex gap-2 items-center">
                   <FaRegCalendarPlus />
                   <div>{appointment.DateBooking}</div>

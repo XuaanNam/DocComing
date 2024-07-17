@@ -14,3 +14,4 @@
 /.pnp
 .pnp.js
 /*.conf
+/.htaccess

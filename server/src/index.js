@@ -12,7 +12,7 @@ const session = require('express-session');
 //     saveUninitialized: true,
 //     secret: process.env.SESSION_SECRET
 // }));
-const allowedOrigins = [process.env.ORIGIN_PATH];
+const allowedOrigins = [process.env.ORIGIN_PATH, "http://localhost:3000"];
 
 app.use(
     cors({

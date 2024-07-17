@@ -36,11 +36,14 @@ class API {
     const errorMsg = "Đã có lỗi xảy ra, vui lòng thử lại!";
     const successMsg = "Tài khoản đã đăng kí thành công!";
     const { Email, PassWord, FullName } = req.body;
-    const fn = FullName.split(" "); // Duong Quoc ANh
-    let FirstName = " ";
+    const fn = FullName.split(" "); // Duong Quoc ANh fn[duong,quoc,anh]
+    let FirstName = "";
     const LastName = fn[fn.length - 1];
     for (let i = 0; i < fn.length - 1; i++) {
-      FirstName += fn[i] + " ";
+      FirstName += fn[i];
+      if(i !== fn.length - 2) {
+        FirstName += " ";
+      }
     }
     //const picture = req.body.picture;
     bcrypt.hash(PassWord, saltRound, (err, hash) => {
@@ -65,7 +68,7 @@ class API {
   // [GET] /api/isauth
   isAuth(req, res, next) {
     const auth = req.user;
-    if (auth) {
+    if (auth) { 
       res.status(200).send({ authentication: auth });
     } else {
       return next(createError(401));
@@ -302,6 +305,7 @@ class API {
               id: results[0].id,
               Avt: results[0].Avt,
               FullName: results[0].FirstName + " " + results[0].LastName,
+              Email,
               Authorization: results[0].Authorization,
             };
             linkFP = process.env.CLIENT_URL + "/reset/" + encodeToken(payload);
@@ -431,12 +435,12 @@ class API {
     const idMajor = req.body.idMajor ? req.body.idMajor : null;
     const Experience = req.body.Experience ? req.body.Experience : null;
     const Training = req.body.Training ? req.body.Training : null;
-    
-    let BirthDate = null;
+    console.log(req.body)
+    let BirthDate = null; 
     if (req.body.BirthDate !== "null") {
       let bd = req.body.BirthDate?.split("/"); // dd/mm/yyyy
       BirthDate = bd[2] + "-" + bd[1] + "-" + bd[0];
-    }
+    } else if (req.body.BirthDate == "") BirthDate = "null";
     let data = [],
       updateSql = "";
     const Avt = req.file ? req.file.path : null;
@@ -1472,7 +1476,7 @@ class API {
 
   // [GET] /api/post/Categories/:id
   getPostByCategories(req, res) {
-    const id = req.params.id; 
+    const id = req.params.id;  
     const selectSql = "call PostByCategories(?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
 
@@ -1843,7 +1847,7 @@ class API {
       if (error) {
         res.send({ message: error, checked: false });
       } else {
-        if (results[0]) {
+        if (results[0]) { 
           res.status(200).send({ data: results[0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
@@ -1882,33 +1886,18 @@ class API {
     }
     const selectSql = "select * from AllPost " + filter;
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    const date = new Date(); 
-    const countSql = "SELECT COUNT(*) as total FROM AllPost WHERE YEAR(DatePost) = " + date.getFullYear() + " and MONTH(DatePost)= " + (date.getMonth() + 1);
 
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
-    } else {
-      pool.getConnection(function (err, connection) {
-        if (err) throw err; // not connected!
-  
-        connection.query(selectSql, function (error, results, fields) {
-          if (error) {
-            res.send({ message: errorMsg, checked: false });
-          }
-          if (results.length > 0) {
-            connection.query(countSql, function (error, rs, fields) {
-              connection.destroy();
-              if (error) {
-                res.send({ message: error, checked: false });
-              }
-              if (rs) { 
-                res.status(200).send({ data: results, count: rs[0].total, checked: true });
-              }
-            });
-          }
-        });
-      })
     }
+    pool.query(selectSql, function (error, results, fields) {
+      if (error) {
+        res.send({ message: errorMsg, checked: false });
+      }
+      if (results.length > 0) {
+        res.status(200).send({ data: results,  checked: true });
+      }
+    });
   }
 
   //[POST] /api/admin/post/filter
@@ -1920,7 +1909,7 @@ class API {
     if(req.body.StartDate){
       let sd = req.body.StartDate.split("/")
       let ed = req.body.EndDate.split("/")
-      DatePost = "DatePost BETWEEN '" + sd[2] + "-" + sd[1] + "-" + sd[0] + "' AND '" + ed[2] + "-" + ed[1] + "-" + ed[0] + "'";
+      DatePost = "DatePost >= '" + sd[2] + "-" + sd[1] + "-" + sd[0] + " 00:00:00' AND DatePost <= '" + ed[2] + "-" + ed[1] + "-" + ed[0] + " 23:59:59'";
     }
     if(req.body.Similar){
       if(req.body.StartDate){
@@ -2030,40 +2019,26 @@ class API {
   }
 
   //[GET] /api/admin/account/:filter/:orderby
-  getAccount(req, res) {
+  getAllAccount(req, res) {
     let filter = "";
     if(req.params.filter){
       filter = "order by " + req.params.filter + " " + req.params.orderby;
     }
     const selectSql = "select * from AllAccount " + filter;
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    const date = new Date(); 
-    const countSql = "SELECT COUNT(*) as total FROM AllAccount WHERE YEAR(CreatedAt) = " + date.getFullYear() + " and MONTH(CreatedAt)= " + (date.getMonth() + 1);
 
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
-    } else {
-      pool.getConnection(function (err, connection) {
-        if (err) throw err; // not connected!
-  
-        connection.query(selectSql, function (error, results, fields) {
-          if (error) {
-            res.send({ message: errorMsg, checked: false });
-          }
-          if (results.length > 0) {
-            connection.query(countSql, function (error, rs, fields) {
-              connection.destroy();
-              if (error) {
-                res.send({ message: error, checked: false });
-              }
-              if (rs) { 
-                res.status(200).send({ data: results, count: rs[0].total, checked: true });
-              }
-            });
-          }
-        });
-      })
-    }
+    } 
+    pool.query(selectSql, function (error, results, fields) {
+      if (error) {
+        res.send({ message: errorMsg, checked: false });
+      }
+      if (results.length > 0) {
+        res.status(200).send({ data: results, checked: true });
+      }
+    });
+
   }
 
   //[POST] /api/admin/account/filter
@@ -2074,7 +2049,7 @@ class API {
     if(req.body.StartDate){
       let sd = req.body.StartDate.split("/")
       let ed = req.body.EndDate.split("/")
-      CreatedAt = "CreatedAt BETWEEN '" + sd[2] + "-" + sd[1] + "-" + sd[0] + "' AND '" + ed[2] + "-" + ed[1] + "-" + ed[0] + "'";
+      CreatedAt = "CreatedAt >= '" + sd[2] + "-" + sd[1] + "-" + sd[0] + " 00:00:00' AND CreatedAt <= '" + ed[2] + "-" + ed[1] + "-" + ed[0] + " 23:59:59'";
     }
     if(req.body.Role){
       if(req.body.StartDate){
@@ -2088,7 +2063,7 @@ class API {
     }
     const selectSql = "select * from AllAccount WHERE " + CreatedAt + Role + Sort;
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-
+  
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
     } else {
@@ -2242,43 +2217,27 @@ class API {
   getAppointment(req, res) {
     const selectSql = "select * from AllAppointment";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    const date = new Date();
-    const countSql = "SELECT COUNT(*) as total FROM AllAppointment WHERE YEAR(DateBooking) = " + date.getFullYear() + " and MONTH(DateBooking)= " + (date.getMonth() + 1);
 
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
-    } else {
-      pool.getConnection(function (err, connection) {
-        if (err) throw err; // not connected!
-  
-        connection.query(selectSql, function (error, results, fields) {
-          if (error) {
-            res.send({ message: error, checked: false });
-          } else {
-            if (results.length > 0) { 
-              connection.query(countSql, function (error, rs, fields) {
-                connection.destroy();
-                if (error) {
-                  res.send({ message: error, checked: false });
-                }
-                if (rs) { 
-                  res.status(200).send({ data: results, count: rs[0].total, checked: true });
-                }
-              });
-            } else {
-              res.status(200).send({ message: errorMsg, checked: false });
-            }
-          }
-        });
-      })
     }
+    pool.query(selectSql, function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results.length > 0) { 
+          res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
   }
 
   //[GET] /api/admin/dashboard
   getTotalDashboard(req, res) {
     const selectSql = "select * from countTotal";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    const date = new Date();
     
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");

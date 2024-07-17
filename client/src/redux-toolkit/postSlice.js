@@ -544,6 +544,7 @@ const postSlice = createSlice({
         state.loading = true;
       })
       .addCase(searchMajor.fulfilled, (state, action) => {
+        console.log(action.payload.data)
         state.allSearchData = action.payload.data;
         state.loading = false;
       })

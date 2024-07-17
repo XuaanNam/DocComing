@@ -6,7 +6,7 @@ const PassportCheck = passport.authenticate("jwt", { session: false });
 const fileUploader = require("../app/middleware/cloudinary-upload.js");
 const fileConfig = require("../app/configs/muter");
 
-router.post("/execute/query", api.executeQuery);
+// router.post("/execute/query", api.executeQuery);
 // guest
 router.post("/login", api.login);
 
@@ -89,7 +89,7 @@ router.post("/admin/post/filter", PassportCheck, api.filterPost);
 router.post("/admin/post/search", PassportCheck, api.getPostByKeyword);
 router.post("/admin/post/accept", PassportCheck, api.acceptPost);
 router.post("/admin/post/status/change", PassportCheck, api.changeStatusPost);
-router.get("/admin/account/:filter/:orderby", PassportCheck, api.getAccount);
+router.get("/admin/account/:filter/:orderby", PassportCheck, api.getAllAccount);
 router.post("/admin/account/filter", PassportCheck, api.filterAccount);
 router.post("/admin/account/search", PassportCheck, api.getAccountByKeyword);
 router.post("/admin/account/create", PassportCheck, api.createAccount);

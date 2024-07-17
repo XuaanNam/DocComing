@@ -19,6 +19,7 @@ const BarChartComponent = () => {
   useEffect(()=>{
     dispatch(getTotalDashboard())
   },[])
+
   let data = [];
   for (let i = 0; i < 12; i++)
     if(dashboardData[i]){    
@@ -56,7 +57,7 @@ const BarChartComponent = () => {
 export default BarChartComponent;
 
 const CustomTooltip = ({ active, payload, label }) => {
-  if (active && payload && payload.length) {
+  if (active && payload && payload?.length) {
     return (
       <div className="p-4 bg-slate-900 flex flex-col gap-4 rounded-md">
         <p className="text-medium text-lg">{label}</p>

@@ -24,6 +24,7 @@ import { DatePicker , Input, TimePicker  } from "antd";
 import dayjs from "dayjs";
 import { getAllNotification } from "../../redux-toolkit/authSlice";
 import { IoIosCloseCircleOutline } from "react-icons/io";
+import { toast } from "react-toastify";
 const { TextArea } = Input;
 
 const DoctorAppointment = () => {
@@ -61,12 +62,16 @@ const DoctorAppointment = () => {
     (currentDate.getMonth() + 1 < 10 ? "0" + (currentDate.getMonth() + 1) : currentDate.getMonth() + 1) 
     + "/" +
     currentDate.getFullYear();
+    const hours = currentDate.getHours();
+    const minutes = currentDate.getMinutes();
+    const currentTime = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:00`;
   useEffect(() => {
     setDate(today);
     dispatch(fetchHealthRecord());
     dispatch(fetchAppointment());
     dispatch(fetchService({ idDoctor: currentUser?.id })); 
   }, []);
+
   let appointment = [];
   let isBooked = [];
   for (let i = 0; i < AppointmentData?.length; i++) {
@@ -95,7 +100,7 @@ const DoctorAppointment = () => {
             time = hour+":0"+ j +":00"
           else
             time = hour+":"+ j +":00"
-          if(parse(time) < parse(isBooked[i].TimeBooking) + parse(isBooked[i].EstimatedTime) && parse(time) > parse(isBooked[i].TimeBooking) - parse(isBooked[i].EstimatedTime)){
+          if(parse(time) < parse(isBooked[i]?.TimeBooking) + parse(isBooked[i]?.EstimatedTime) && parse(time) > parse(isBooked[i]?.TimeBooking) - parse(isBooked[i]?.EstimatedTime)){
             disabledMin.push(j)
           }
         }
@@ -208,11 +213,17 @@ const DoctorAppointment = () => {
         dispatch(fetchAppointment());
       });
   };
-  const handleCompleteAppointment = (id) => {
+
+  const handleCompleteAppointment = (id, dateBooking, timeBooking, ReExaminationDate) => {
     const data = { id };
-    dispatch(completeAppointment(data)).then(() => {
-      dispatch(fetchAppointment());
-    });
+    if(today < dateBooking || (currentTime < timeBooking && today == dateBooking))
+      toast.error("Không thể hoàn thành cuộc hẹn chưa diễn ra", {
+        position: "top-right",
+      });
+    else
+      dispatch(completeAppointment(data)).then(() => {
+        dispatch(fetchAppointment());
+      });
   };
   const handleCancelAppointment = (id) => {
     const data = { id: [id], idAccount: [idPatient]};
@@ -584,7 +595,7 @@ const DoctorAppointment = () => {
                           className="md:w-40 max-md:w-48 mx-auto rounded-2xl"
                           gradientDuoTone="greenToBlue"
                           onClick={() => {
-                            handleCompleteAppointment(appointment.id);
+                            handleCompleteAppointment(appointment.id, appointment.DateBooking, appointment.TimeBooking, appointment.ReExaminationDate );
                           }}
                         >
                           Hoàn thành

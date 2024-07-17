@@ -98,7 +98,7 @@ const Profile = () => {
       OldPassWord: oldPassword,
       NewPassWord: newPassword
     }
-    if(newPassword.length < 6)
+    if(newPassword?.length < 6)
       setErrorMessage("Mật khẩu phải chứa ít nhất 6 kí tự!")
     else
       dispatch(changePassword(data)).then((result) => {
@@ -292,7 +292,7 @@ const Profile = () => {
               <Button
                 onClick={handleUpdate}
                 gradientDuoTone="greenToBlue"
-                disabled={!(Object.keys(formData).length > 0)}
+                disabled={!(Object.keys(formData)?.length > 0)}
               >
                 Lưu thay đổi
               </Button>

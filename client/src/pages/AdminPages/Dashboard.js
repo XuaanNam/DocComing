@@ -15,10 +15,10 @@ import { fetchAdminAppointment } from "../../redux-toolkit/appointmentSlice";
 export default function Dashboard() {
   const dispatch = useDispatch();
   const Navigate = useNavigate()
-  const { currentUser,countUser} = useSelector((state) => state.user);
-  const {data,countPost} = useSelector((state) => state.post);
+  const { currentUser,dashboardData } = useSelector((state) => state.user);
+  const {data} = useSelector((state) => state.post);
   const allUsers = useSelector((state) => state.user.data);
-  const { AppointmentData,countAppointment, error, loading } = useSelector((state) => state.appointment);
+  const { AppointmentData, error, loading } = useSelector((state) => state.appointment);
   const currentDate = new Date();
 
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function Dashboard() {
           <div className="flex gap-2 text-sm">
             <span className="text-green-500 flex items-center">
               <HiArrowNarrowUp />
-              {countUser}
+              {dashboardData[11]?.TotalAcc}
             </span>
             <div className="text-gray-500">Tháng này</div>
           </div>
@@ -68,7 +68,7 @@ export default function Dashboard() {
           <div className="flex  gap-2 text-sm">
             <span className="text-green-500 flex items-center">
               <HiArrowNarrowUp />
-              {countPost}
+              {dashboardData[11]?.TotalPost}
             </span>
             <div className="text-gray-500">Tháng này</div>
           </div>
@@ -86,7 +86,7 @@ export default function Dashboard() {
           <div className="flex  gap-2 text-sm">
             <span className="text-green-500 flex items-center">
               <HiArrowNarrowUp />
-              {countAppointment}
+              {dashboardData[11]?.TotalApptn}
             </span>
             <div className="text-gray-500">Tháng này</div>
           </div>

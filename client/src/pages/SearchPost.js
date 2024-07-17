@@ -75,9 +75,9 @@ const SearchPost = () => {
                     alt=""
                     ></img>
                     <div className="font-medium">
-                    {post.FirstName + " " + post.LastName} -
+                    {post.FirstName + " " + post.LastName} 
                     </div>
-                    <div> Ngày đăng: {post.DatePost?.slice(0, 10)}</div>
+                    <div className="text-gray-400">  Ngày đăng: {post?.DatePost.slice(8,10)}/{post?.DatePost.slice(5,7)}/{post?.DatePost.slice(0,4)}</div>
                 </div>
                 </div>
             </div>

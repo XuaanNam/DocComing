@@ -24,8 +24,8 @@ const initialState = {
   dashboardData: []
 };
 
-const SERVER_URL =  "https://server.doccoming.online"
-// const SERVER_URL =  "http://localhost:5001"
+// const SERVER_URL =  "https://server.doccoming.online"
+const SERVER_URL =  "http://localhost:5001"
 
 export const userRegister = createAsyncThunk("userRegister", async (body) => {
   const res = await fetch(SERVER_URL + "/api/register", {
@@ -406,11 +406,11 @@ const authSlice = createSlice({
       .addCase(userRegister.fulfilled, (state, action) => {
         state.checked = action.payload.checked;
         if (action.payload.checked) {
-          toast.success(action.payload.message, {
+          toast.success("Tạo tài khoản thành công", {
             position: "top-right",
           });
         } else {
-          toast.error(action.payload.message, {
+          toast.error(action.payload.message.sqlMessage, {
             position: "top-right",
           });
           state.message = action.payload.message;

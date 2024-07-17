@@ -10,6 +10,7 @@ const SimilarPost = () => {
   const {cgr, similar} = useParams();
   const { category,post, error, loading } = useSelector((state) => state.post);
   let categories = []
+//   console.log(categories)
   for (let i = 0; i < category?.length; i++)
     if(category[i].Categories === cgr)
     {   
@@ -27,32 +28,32 @@ const SimilarPost = () => {
         else
             categories.push({...category[i]});
     }
-  useEffect(()=>{    
-    dispatch(fetchCategories())
-  },[])
-  useEffect(()=>{
-    for (let i = 0; i < category?.length; i++)
-        if(category[i].Categories === cgr)
-        {
-            if(similar){
-                for(let j=0;j<category[i].Similar.length;j++)
-                    if(category[i].Similar[j].SimilarCategories === similar)
-                        dispatch(getPostBySimilarCategory(category[i].Similar[j].id))
+    useEffect(()=>{    
+        dispatch(fetchCategories())
+    },[])
+    useEffect(()=>{
+        for (let i = 0; i < category?.length; i++)
+            if(category[i].Categories === cgr)
+            {
+                if(similar){
+                    for(let j=0;j<category[i].Similar.length;j++)
+                        if(category[i].Similar[j].SimilarCategories === similar)
+                            dispatch(getPostBySimilarCategory(category[i].Similar[j].id))
+                }
+                else
+                    dispatch(getPostByCategory(category[i].id))
             }
-            else
-                dispatch(getPostByCategory(category[i].id))
-        }
-  },[category])
-  console.log(post)
+      },[cgr, similar])
+  
   return (
     <div className="pt-[70px] bg-slate-50 min-h-screen flex justify-center">
       <div className="my-4 w-[80%] p-8 rounded-xl bg-white shadow-lg shadow-violet-200">
         {similar &&
-        <div className="flex gap-2 items-center mb-5">
-            <Link to={`/categories/${cgr}`} className="text-slate-700 font-medium cursor-pointer">{cgr}</Link>
-            <IoIosArrowForward></IoIosArrowForward>
-            <Link to={`/categories/${cgr}/${similar}`} className="text-slate-700 font-medium cursor-pointer">{similar}</Link>
-        </div>
+            <div className="flex gap-2 items-center mb-5">
+                <Link to={`/categories/${cgr}`} className="text-slate-700 font-medium cursor-pointer">{cgr}</Link>
+                <IoIosArrowForward></IoIosArrowForward>
+                <Link to={`/categories/${cgr}/${similar}`} className="text-slate-700 font-medium cursor-pointer">{similar}</Link>
+            </div>
         }
         <div className="flex flex-col gap-6 px-40 mb-5">
             <div className="flex gap-8 items-center">
@@ -65,7 +66,7 @@ const SimilarPost = () => {
         </div>
         <p className="text-2xl text-slate-700 font-medium mb-5">Kiến thức chung </p>
         <div className="w-full flex gap-x-7 mb-10">
-          {/* <div
+          <div
             className="w-2/5 cursor-pointer"
             onClick={() => Navigate(`/blog/${post[0]?.id}`)}
             >
@@ -92,11 +93,11 @@ const SimilarPost = () => {
                 </div>
                 <div>{post[0]?.DatePost?.slice(0, 10)}</div>
                 </div>
-          </div> */}
+          </div>
           <div className="flex flex-wrap gap-5 gap-y-7 w-3/5">
             {post?.slice(1, 5).map((item) => 
             <div
-                className="cursor-pointer flex flex-col gap-3 w-[48%] max-h-[75%] p-3 rounded-xl shadow-md shadow-violet-200 bg-lime-50"
+                className="cursor-pointer flex flex-col gap-3 w-[48%] max-h-[80%] p-3 rounded-xl shadow-md shadow-violet-200 bg-lime-50"
                 onClick={() => Navigate(`/blog/${item.id}`)}
             >
                 <img
