@@ -35,9 +35,16 @@ export default function Dashboard() {
     dispatch(fetchAdminAppointment())
   }, [currentUser]);
   return (
-    <div className="pt-[80px] bg-gray-50 h-screen flex flex-col justify-center md:mx-auto p-6 border-collapse">
+    <div className="pt-[80px] h-screen flex flex-col justify-center md:mx-auto p-6 border-collapse">
+      {loading ?
+      <div className="h-screen">
+        <div className="spinner mt-12 mx-auto">
+        </div>
+      </div>
+      :
+      <div>
       <div className="pt-3 flex flex-wrap gap-4 justify-center">
-        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-96 w-full rounded-md bg-white shadow-lg shadow-violet-200 cursor-pointer hover:bg-slate-50"
+        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-96 w-full rounded-md bg-white shadow-lg  cursor-pointer hover:bg-slate-50"
              onClick={()=>Navigate("/admin/users")}
         >
           <div className="flex justify-between">
@@ -55,7 +62,7 @@ export default function Dashboard() {
             <div className="text-gray-500">Tháng này</div>
           </div>
         </div>
-        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-96 w-full rounded-md bg-white shadow-lg shadow-violet-200 cursor-pointer hover:bg-slate-50"
+        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-96 w-full rounded-md bg-white shadow-lg  cursor-pointer hover:bg-slate-50"
              onClick={()=>Navigate("/admin/manage-post")}
         >
           <div className="flex justify-between">
@@ -73,7 +80,7 @@ export default function Dashboard() {
             <div className="text-gray-500">Tháng này</div>
           </div>
         </div>
-        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-96 w-full rounded-md bg-white shadow-lg shadow-violet-200 cursor-pointer hover:bg-slate-50"
+        <div className="flex flex-col p-3 dark:bg-slate-800 gap-4 md:w-96 w-full rounded-md bg-white shadow-lg  cursor-pointer hover:bg-slate-50"
              onClick={()=>Navigate("/admin/appointment")}
         >
           <div className="flex justify-between">
@@ -95,13 +102,15 @@ export default function Dashboard() {
       <GridItem title={`Thống kê năm ${currentDate.getMonth() + 1 < 12 ? parseInt(currentDate.getFullYear() - 1) + " - " + parseInt(currentDate.getFullYear()) : parseInt(currentDate.getFullYear())}`}>
         <BarChart />
       </GridItem>
+      </div>
+      }
     </div>
   );
 }
 
 function GridItem({ title, children }) {
   return (
-    <div className="flex flex-col items-center justify-center p-4 mt-6 border shadow-lg shadow-violet-200 border-white bg-white rounded-xl h-[450px] transition-all">
+    <div className="flex flex-col items-center justify-center p-4 mt-6 border shadow-lg  border-white bg-white rounded-xl h-[450px] transition-all">
       <h3 className="text-2xl font-semibold text-black mb-4">{title}</h3>
       {children}
     </div>

@@ -250,12 +250,16 @@ const DoctorSchedule = () => {
   }
 
   return (
-    <div className="lg:pt-[70px] max-md:pt-[20px] min-h-screen">
-      <div className=" md:mx-16 max-md:px-7 text-gray-700 flex gap-7">
-        <div className="md:mt-6 max-md:mt-6 w-full rounded-xl bg-white border shadow-lg shadow-violet-300 py-5 md:px-8 max-md:px-2">
+    <div className="lg:pt-[70px] max-md:pt-[20px] h-screen">
+      {loading ?
+      <div className="spinner mt-12 mx-auto">
+      </div>
+      :
+      <div className=" md:mx-16 max-md:px-7 text-gray-700 h-[97%] flex gap-7">
+        <div className="md:mt-6 max-md:mt-6 w-full  rounded-xl bg-white h-[full] overflow-auto border shadow-lg  py-5 md:px-8 max-md:px-3">
           <div className="w-full">
             <div className="flex gap-5">
-              <p className="font-semibold max-md:pl-5 text-2xl max-md:w-[40%] md:w-[30%] mb-5">Dịch vụ</p>
+              <p className="font-semibold sm:max-md:pl-5 text-2xl max-md:w-[40%] md:w-[30%] mb-5">Dịch vụ</p>
               {!editService && (
                 <div className="mb-5 flex max-md:w-[60%] md:w-[70%] justify-end">
                   <Button
@@ -374,7 +378,7 @@ const DoctorSchedule = () => {
           <hr className="bg-gray-200 my-4"></hr>
           <div>
             <div className="flex gap-5 mb-5 w-full">
-              <p className="font-semibold max-md:pl-5 max-lg:w-[50%] lg:w-[30%] text-2xl">Lịch làm việc</p>
+              <p className="font-semibold sm:max-md:pl-5  max-lg:w-[50%] lg:w-[30%] text-2xl">Lịch làm việc</p>
               {disabled ? (
                 <div className="flex max-md:w-[50%] md:w-[70%] gap-5 justify-end">
                   <Button
@@ -412,134 +416,30 @@ const DoctorSchedule = () => {
                 </div>
               )}
             </div>
-            <div className="">
-              <div className="flex gap-10 w-full">
-                <div className="flex gap-3 items-center mb-5 w-full">
-                  <p className="text-lg font-medium text-gray-600 w-20">
-                    Ca sáng
-                  </p>
-                  <Select
-                    className="h-[40px] w-32"
-                    size="large"
-                    placeholder="--"
-                    value={scheduleData?.FirstShiftStart}
-                    disabled={disabled}
-                    onChange={(value) => {
-                      setScheduleData({
-                        ...scheduleData,
-                        FirstShiftStart: value,
-                      });
-                      setScheduleChange(true);
-                    }}
-                  >
-                    {time1?.map((item) => (
-                      <option
-                        disabled={
-                          scheduleData?.FirstShiftEnd &&
-                          parse(item) >= parse(scheduleData?.FirstShiftEnd)
-                        }
-                        value={item}
-                        label={item}
-                      ></option>
-                    ))}
-                  </Select>
-                  <FaLongArrowAltRight />
-                  <Select
-                    className="h-[40px] w-32"
-                    size="large"
-                    placeholder="--"
-                    value={scheduleData?.FirstShiftEnd}
-                    disabled={disabled}
-                    onChange={(value) => {
-                      setScheduleData({
-                        ...scheduleData,
-                        FirstShiftEnd: value,
-                      });
-                      setScheduleChange(true);
-                    }}
-                  >
-                    {time1?.map((item) => (
-                      <option
-                        disabled={
-                          scheduleData?.FirstShiftStart &&
-                          parse(item) <= parse(scheduleData?.FirstShiftStart)
-                        }
-                        value={item}
-                        label={item}
-                      ></option>
-                    ))}
-                  </Select>
-                  {!disabled &&
-                    (scheduleData?.FirstShiftStart ||
-                      scheduleData?.FirstShiftEnd) && (
-                      <IoIosClose
-                        onClick={() => {
-                          setScheduleData({
-                            ...scheduleData,
-                            FirstShiftStart: null,
-                            FirstShiftEnd: null,
-                          });
-                        setScheduleChange(true);
-                        }}
-                        className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
-                      ></IoIosClose>
-                    )}
-                </div>
-                {optimized && (
-                  <div className="flex gap-3 w-[45%] items-center mb-5">
-                    <DatePicker
-                      id="DateBooking"
-                      className="h-[40px] w-[90%] bg-white border border-gray-300 !text-lg rounded-lg px-5 p-1"
-                      value={dayjs(date, dateFormat)}
-                      format={dateFormat}
-                      onChange={handleDatePickerChange}
-                      minDate={dayjs(today, dateFormat)}
-                    />
-                    <IoIosClose
-                      onClick={() => {
-                        setOptimized(false);
-                      }}
-                      className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
-                    ></IoIosClose>
-                  </div>
-                )}
-                {!disabled && !optimized && (
-                  <div className="flex w-[45%] justify-end">
-                    <button
-                      className="h-[36px] w-32 text-sm font-medium shadow-md shadow-emerald-200 py-1 rounded-lg bg-teal-600 hover:bg-teal-500 text-white"
-                      onClick={() => {
-                        setOptimized(true);
-                      }}
-                    >
-                      Chọn ngày
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex gap-3 items-center mb-5">
+            <div className="flex gap-10 w-full">
+              <div className="flex gap-3 items-center mb-5 w-full">
                 <p className="text-lg font-medium text-gray-600 w-20">
-                  Ca chiều
+                  Ca sáng
                 </p>
                 <Select
                   className="h-[40px] w-32"
                   size="large"
                   placeholder="--"
-                  value={scheduleData?.SecondShiftStart}
+                  value={scheduleData?.FirstShiftStart}
                   disabled={disabled}
                   onChange={(value) => {
                     setScheduleData({
                       ...scheduleData,
-                      SecondShiftStart: value,
+                      FirstShiftStart: value,
                     });
                     setScheduleChange(true);
                   }}
                 >
-                  {time2?.map((item) => (
+                  {time1?.map((item) => (
                     <option
                       disabled={
-                        scheduleData?.SecondShiftEnd &&
-                        parse(item) >= parse(scheduleData?.SecondShiftEnd)
+                        scheduleData?.FirstShiftEnd &&
+                        parse(item) >= parse(scheduleData?.FirstShiftEnd)
                       }
                       value={item}
                       label={item}
@@ -551,21 +451,21 @@ const DoctorSchedule = () => {
                   className="h-[40px] w-32"
                   size="large"
                   placeholder="--"
-                  value={scheduleData?.SecondShiftEnd}
+                  value={scheduleData?.FirstShiftEnd}
                   disabled={disabled}
                   onChange={(value) => {
                     setScheduleData({
                       ...scheduleData,
-                      SecondShiftEnd: value,
+                      FirstShiftEnd: value,
                     });
                     setScheduleChange(true);
                   }}
                 >
-                  {time2?.map((item) => (
+                  {time1?.map((item) => (
                     <option
                       disabled={
-                        scheduleData?.SecondShiftStart &&
-                        parse(item) <= parse(scheduleData?.SecondShiftStart)
+                        scheduleData?.FirstShiftStart &&
+                        parse(item) <= parse(scheduleData?.FirstShiftStart)
                       }
                       value={item}
                       label={item}
@@ -573,95 +473,198 @@ const DoctorSchedule = () => {
                   ))}
                 </Select>
                 {!disabled &&
-                  (scheduleData?.SecondShiftStart ||
-                    scheduleData?.SecondShiftEnd) && (
+                  (scheduleData?.FirstShiftStart ||
+                    scheduleData?.FirstShiftEnd) && (
                     <IoIosClose
                       onClick={() => {
                         setScheduleData({
                           ...scheduleData,
-                          SecondShiftStart: null,
-                          SecondShiftEnd: null,
+                          FirstShiftStart: null,
+                          FirstShiftEnd: null,
                         });
-                        setScheduleChange(true);
+                      setScheduleChange(true);
                       }}
                       className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
                     ></IoIosClose>
                   )}
               </div>
+              {optimized && (
+                <div className="flex gap-3 w-[45%] items-center mb-5">
+                  <DatePicker
+                    id="DateBooking"
+                    className="h-[40px] w-[90%] bg-white border border-gray-300 !text-lg rounded-lg px-5 p-1"
+                    value={dayjs(date, dateFormat)}
+                    format={dateFormat}
+                    onChange={handleDatePickerChange}
+                    minDate={dayjs(today, dateFormat)}
+                  />
+                  <IoIosClose
+                    onClick={() => {
+                      setOptimized(false);
+                    }}
+                    className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
+                  ></IoIosClose>
+                </div>
+              )}
+              {!disabled && !optimized && (
+                <div className="flex w-[45%] justify-end">
+                  <button
+                    className="h-[36px] w-32 text-sm font-medium shadow-md shadow-emerald-200 py-1 rounded-lg bg-teal-600 hover:bg-teal-500 text-white"
+                    onClick={() => {
+                      setOptimized(true);
+                    }}
+                  >
+                    Chọn ngày
+                  </button>
+                </div>
+              )}
+            </div>
 
-              <div className="flex gap-3 items-center mb-5">
-                <p className="text-lg font-medium text-gray-600 w-20">Ca tối</p>
-                <Select
-                  className="h-[40px] w-32"
-                  size="large"
-                  placeholder="--"
-                  value={scheduleData?.ThirdShiftStart}
-                  disabled={disabled}
-                  onChange={(value) => {
-                    setScheduleData({
-                      ...scheduleData,
-                      ThirdShiftStart: value,
-                    });
-                    setScheduleChange(true);
-                  }}
-                >
-                  {time3?.map((item) => (
-                    <option
-                      disabled={
-                        scheduleData?.ThirdShiftEnd &&
-                        parse(item) >= parse(scheduleData?.ThirdShiftEnd)
-                      }
-                      value={item}
-                      label={item}
-                    ></option>
-                  ))}
-                </Select>
-                <FaLongArrowAltRight />
-                <Select
-                  className="h-[40px] w-32"
-                  size="large"
-                  placeholder="--"
-                  value={scheduleData?.ThirdShiftEnd}
-                  disabled={disabled}
-                  onChange={(value) => {
-                    setScheduleData({
-                      ...scheduleData,
-                      ThirdShiftEnd: value,
-                    });
-                    setScheduleChange(true);
-                  }}
-                >
-                  {time3?.map((item) => (
-                    <option
-                      disabled={
-                        scheduleData?.ThirdShiftStart &&
-                        parse(item) <= parse(scheduleData?.ThirdShiftStart)
-                      }
-                      value={item}
-                      label={item}
-                    ></option>
-                  ))}
-                </Select>
-                {!disabled &&
-                  (scheduleData?.ThirdShiftStart ||
-                    scheduleData?.ThirdShiftEnd) && (
-                    <IoIosClose
-                      onClick={() => {
-                        setScheduleData({
-                          ...scheduleData,
-                          ThirdShiftStart: null,
-                          ThirdShiftEnd: null,
-                        });
-                        setScheduleChange(true);
-                      }}
-                      className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
-                    ></IoIosClose>
-                  )}
-              </div>
+            <div className="flex gap-3 items-center mb-5">
+              <p className="text-lg font-medium text-gray-600 w-20">
+                Ca chiều
+              </p>
+              <Select
+                className="h-[40px] w-32"
+                size="large"
+                placeholder="--"
+                value={scheduleData?.SecondShiftStart}
+                disabled={disabled}
+                onChange={(value) => {
+                  setScheduleData({
+                    ...scheduleData,
+                    SecondShiftStart: value,
+                  });
+                  setScheduleChange(true);
+                }}
+              >
+                {time2?.map((item) => (
+                  <option
+                    disabled={
+                      scheduleData?.SecondShiftEnd &&
+                      parse(item) >= parse(scheduleData?.SecondShiftEnd)
+                    }
+                    value={item}
+                    label={item}
+                  ></option>
+                ))}
+              </Select>
+              <FaLongArrowAltRight />
+              <Select
+                className="h-[40px] w-32"
+                size="large"
+                placeholder="--"
+                value={scheduleData?.SecondShiftEnd}
+                disabled={disabled}
+                onChange={(value) => {
+                  setScheduleData({
+                    ...scheduleData,
+                    SecondShiftEnd: value,
+                  });
+                  setScheduleChange(true);
+                }}
+              >
+                {time2?.map((item) => (
+                  <option
+                    disabled={
+                      scheduleData?.SecondShiftStart &&
+                      parse(item) <= parse(scheduleData?.SecondShiftStart)
+                    }
+                    value={item}
+                    label={item}
+                  ></option>
+                ))}
+              </Select>
+              {!disabled &&
+                (scheduleData?.SecondShiftStart ||
+                  scheduleData?.SecondShiftEnd) && (
+                  <IoIosClose
+                    onClick={() => {
+                      setScheduleData({
+                        ...scheduleData,
+                        SecondShiftStart: null,
+                        SecondShiftEnd: null,
+                      });
+                      setScheduleChange(true);
+                    }}
+                    className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
+                  ></IoIosClose>
+                )}
+            </div>
+
+            <div className="flex gap-3 items-center mb-5">
+              <p className="text-lg font-medium text-gray-600 w-20">Ca tối</p>
+              <Select
+                className="h-[40px] w-32"
+                size="large"
+                placeholder="--"
+                value={scheduleData?.ThirdShiftStart}
+                disabled={disabled}
+                onChange={(value) => {
+                  setScheduleData({
+                    ...scheduleData,
+                    ThirdShiftStart: value,
+                  });
+                  setScheduleChange(true);
+                }}
+              >
+                {time3?.map((item) => (
+                  <option
+                    disabled={
+                      scheduleData?.ThirdShiftEnd &&
+                      parse(item) >= parse(scheduleData?.ThirdShiftEnd)
+                    }
+                    value={item}
+                    label={item}
+                  ></option>
+                ))}
+              </Select>
+              <FaLongArrowAltRight />
+              <Select
+                className="h-[40px] w-32"
+                size="large"
+                placeholder="--"
+                value={scheduleData?.ThirdShiftEnd}
+                disabled={disabled}
+                onChange={(value) => {
+                  setScheduleData({
+                    ...scheduleData,
+                    ThirdShiftEnd: value,
+                  });
+                  setScheduleChange(true);
+                }}
+              >
+                {time3?.map((item) => (
+                  <option
+                    disabled={
+                      scheduleData?.ThirdShiftStart &&
+                      parse(item) <= parse(scheduleData?.ThirdShiftStart)
+                    }
+                    value={item}
+                    label={item}
+                  ></option>
+                ))}
+              </Select>
+              {!disabled &&
+                (scheduleData?.ThirdShiftStart ||
+                  scheduleData?.ThirdShiftEnd) && (
+                  <IoIosClose
+                    onClick={() => {
+                      setScheduleData({
+                        ...scheduleData,
+                        ThirdShiftStart: null,
+                        ThirdShiftEnd: null,
+                      });
+                      setScheduleChange(true);
+                    }}
+                    className="text-red-400 cursor-pointer transition-transform duration-500 hover:scale-125 h-8 w-8 "
+                  ></IoIosClose>
+                )}
             </div>
           </div>
         </div>
       </div>
+      }
     </div>
   );
 };

@@ -105,6 +105,7 @@ const Appointment = () => {
       DateBooking,
       TimeBooking,
       Information,
+      Status: 1
     };
     dispatch(acceptNoteAppointment({idAppointment})).then(() => {
       dispatch(getAllNotification())
@@ -186,16 +187,20 @@ const Appointment = () => {
     slice = appointment
   return (
     <div className="">
-        <div className="my-7 lg:w-full max-lg:h-full max-lg:px-3 rounded-xl bg-white shadow-lg text-slate-600 shadow-violet-200 py-5 lg:px-8">
-          <div className="mb-5 h-10 grid grid-cols-5 max-lg:grid-cols-10 gap-3 font-semibold">
+      {loading ?
+        <div className="spinner mt-12 mx-auto">
+        </div>
+      :
+        <div className="my-7 lg:w-full min-h-[85vh] max-lg:h-full max-lg:px-3 rounded-xl bg-white shadow-lg text-slate-600  py-5 lg:px-8">
+          <div className="mb-5 h-10 max-lg:h-auto grid grid-cols-5 max-lg:grid-cols-10 gap-3 font-semibold">
             <p className="text-2xl lg:col-span-2 max-lg:col-start-1 max-lg:col-span-4">Lịch khám</p>
             <div
               onClick={() => {
                 setPassed(0);
               }}
               className={` ${
-                passed === 0 && "bg-white shadow-md shadow-violet-300"
-              } col-start-3 max-lg:col-start-4 max-lg:col-span-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+                passed === 0 && "bg-white shadow-md "
+              } lg: col-start-3 max-sm:col-start-1 max-sm:col-span-4 max-md:col-start-1 sm:max-lg:col-span-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               TỔNG QUAN
             </div>
@@ -204,7 +209,7 @@ const Appointment = () => {
                 setPassed(1);
               }}
               className={` ${
-                passed === 1 && "bg-white shadow-md shadow-violet-300"
+                passed === 1 && "bg-white shadow-md "
               } col-start-4 max-lg:col-start-5 max-lg:col-span-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               SẮP TỚI
@@ -214,7 +219,7 @@ const Appointment = () => {
                 setPassed(2);
               }}
               className={` ${
-                passed === 2 && "bg-white shadow-md shadow-violet-300"
+                passed === 2 && "bg-white shadow-md "
               } col-start-5 max-lg:col-start-8 max-lg:col-span-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               ĐÃ QUA
@@ -280,9 +285,9 @@ const Appointment = () => {
                     alt=""
                     src={appointment.Avt !== null ? appointment.Avt : require("../../Images/pattientavt.png")}
                   ></img>              
-                  <div className="w-[90%]">
-                    <div className="relative flex items-center">
-                    <p className="font-medium lg:text-lg max-lg:mt-3 max-lg:text-base text-gray-600 mb-3">
+                  <div className="w-[90%] max-sm:w-full">
+                    <div className="relative flex items-center lg:mb-3">
+                    <p className="font-medium lg:text-lg max-lg:mt-3 max-lg:text-base text-gray-600 max-lg:mb-3">
                       {appointment.FirstName + " " + appointment.LastName}
                     </p>
                     {appointment.Status === 2 && appointment.Star === null && 
@@ -350,9 +355,9 @@ const Appointment = () => {
                     {appointment.NoteRecord !== null && appointment.ReExaminationDate !== null &&
                       <hr className="w-[98%] mx-auto border-[1px] border-lime-50 rounded-lg"></hr>
                     }
-                    <div className="grid grid-cols-2 gap-5">
+                    <div className="grid sm:grid-cols-2 max-sm:grid-rows-2 gap-5">
                       {appointment.NoteRecord !== null && 
-                        <div className="flex flex-col col-start-1 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                        <div className="flex flex-col col-start-1 gap-3 h-full w-full p-4 bg-white shadow-md  rounded-lg">
                           <p className="font-medium text-black text-lg w-1/2">Bệnh án</p>   
                           <div className="flex gap-3">
                             <div className="flex flex-col gap-1 w-full">
@@ -364,7 +369,7 @@ const Appointment = () => {
                       }
                       {appointment.ReExaminationDate !== null &&
                         <div className="w-full flex flex-col self-end gap-3">
-                          <div className="flex flex-col col-start-2 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                          <div className="flex flex-col col-start-2 gap-3 h-full w-full p-4 bg-white shadow-md  rounded-lg">
                             <div className="flex items-center">
                               <p className="font-medium text-black text-lg w-1/2">Lịch hẹn tái khám từ bác sĩ</p>
                               {appointment.NoteStatus === 1 && 
@@ -419,7 +424,7 @@ const Appointment = () => {
                         </div>
                       </div>
                       :
-                      <div className="flex flex-col items-center justify-center">
+                      <div className="flex flex-col items-center max-sm:items-start justify-center">
                         <Rate className="w-fit flex gap-2"
                               value={appointment.Star}
                               style={{ fontSize: 24}}
@@ -427,7 +432,8 @@ const Appointment = () => {
                         ></Rate>
                         <p className="text-lg text-slate-600 mt-2">{appointment.Comment}</p>
                         <p className="absolute top-3 right-0 text-sm cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
-                          onClick={()=>{setEditRating(appointment.id);setComment(appointment.Comment);setRating(appointment.Star)}}>Chỉnh sửa
+                          onClick={()=>{setEditRating(appointment.id);setComment(appointment.Comment);setRating(appointment.Star)}}>
+                            Chỉnh sửa
                         </p>
                       </div>
                       } 
@@ -468,11 +474,13 @@ const Appointment = () => {
           </>
           }      
         </div>
+      }
       <Modal
         show={showModal}
         onClose={() => setShowModal(false)}
         popup
         size="md"
+        className="max-sm:pt-40"
       >
         <Modal.Header />
         <Modal.Body>
@@ -508,6 +516,7 @@ const Appointment = () => {
         onClose={() => {setShowRatingModal(false); setIsRated(false);setRating(0);setComment("")}}
         popup
         size="xl"
+        className="max-sm:pt-40"
       >
         <Modal.Header>
         </Modal.Header>

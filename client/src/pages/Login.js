@@ -81,11 +81,11 @@ function Login() {
     }
   }, [currentUser]);
   return (
-    <div className="bg-white">
+    <div className="">
       {!currentUser ? (
         <div>
-          <div className="flex items-center justify-center min-h-screen lg:p-6 max-lg:px-7 max-lg:pt-20">
-            <div className="lg:w-2/5 lg:h-[400px] rounded-xl lg:pt-[30px] max-lg:w-full max-lg:px-10"
+          <div className="flex sm:items-center sm:justify-center min-h-screen lg:p-6 max-lg:px-7 max-lg:pt-20">
+            <div className="max-sm:pt-16 lg:w-2/5 lg:h-[400px] rounded-xl max-lg:w-full max-lg:px-10"
                  onKeyDown={(e) => { 
                   if (e.key === "Enter") 
                     handleLogin(); 
@@ -143,6 +143,7 @@ function Login() {
             onClose={() => setForgotPassword(false)}
             popup
             size="lg"
+            className="max-sm:pt-56"
           >
             <Modal.Header>
             </Modal.Header>

@@ -117,7 +117,7 @@ const Profile = () => {
     setShowModal(false)
   }
   return (
-    <div className="my-7 lg:w-full max-lg:full rounded-xl bg-white shadow-lg shadow-violet-200 py-5 px-8">
+    <div className="my-7 lg:w-full max-lg:full rounded-xl bg-white shadow-md py-5 px-8">
       <div className="mb-5 grid grid-cols-5 items-center">
         <p className="font-semibold text-2xl max-lg:col-start-1 max-lg:col-span-2 col-span-1">Hồ sơ</p>
         {edit === false && (
@@ -142,7 +142,7 @@ const Profile = () => {
         />
         <div className="lg:col-span-1 flex flex-col items-center gap-3">
           <div
-            className="max-lg:w-full relative lg:w-32 lg:h-32 cursor-pointer shadow-md rounded-full"
+            className="max-sm:w-[240px] max-sm:h-[240px] sm:max-lg:w-full sm:max-lg:h-auto relative lg:w-32 lg:h-32 cursor-pointer shadow-md rounded-full"
             onClick={() => filePickerRef.current.click()}
           >
             <img

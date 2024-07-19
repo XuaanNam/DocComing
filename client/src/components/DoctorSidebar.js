@@ -29,11 +29,11 @@ const DoctorSidebar = ({param}) => {
   };
 
   return (
-    <div className="shadow-lg bg-white ">
+    <div className="shadow-lg">
       <div className="w-full lg:w-56 max-lg:flex max-lg:flex-col max-lg:gap-2 font-medium lg:pt-[70px] max-lg:pt-[80px] max-lg:px-2">
         <div className="px-12 py-4 lg:mb-4 max-lg:mb-1">
           <div
-            className="text-2xl max-lg:items-center max-lg:justify-center max-lg:flex max-lg:gap-3 font-semibold uppercase text-teal-400 hover:text-gray-300"
+            className="text-2xl max-lg:items-center max-lg:justify-center max-lg:flex max-lg:gap-3 font-semibold uppercase text-white hover:text-gray-300"
           >
             <span className="lg:text-left">Doctor </span>
             <span className="lg:flex justify-end">Coming</span>
@@ -99,7 +99,7 @@ const DoctorSidebar = ({param}) => {
                   className={` ${
                     param === "create-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
-                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-lg flex items-center px-4 `}
+                  } bg-white max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-lg flex items-center px-4 `}
                   to="/doctor/create-post"
                 >
                   <div className="flex gap-2 items-center">
@@ -111,7 +111,7 @@ const DoctorSidebar = ({param}) => {
                   className={` ${
                     param === "manage-post" &&
                     "bg-gradient-to-r from-green-400 to-teal-400 text-white"
-                  } max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-lg flex items-center px-4 mb-1`}
+                  } bg-white max-lg:text-sm lg:w-40 lg:h-9 max-lg:w-48 max-lg:h-11 rounded-lg shadow-lg flex items-center px-4 mt-1`}
                   to="/doctor/manage-post"
                 >
                   <div className="flex gap-2 items-center">

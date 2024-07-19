@@ -10,6 +10,7 @@ const createError = require("http-errors");
 const myOAuth2Client = require("../../app/configs/oauth2client");
 const nodemailer = require("nodemailer");
 const emailBody = require("../../util/sendmail");
+const newdoctoraccmail = require("../../util/newdoctoraccmail");
 const { forEach } = require("../configs/muter");
 
 class API {
@@ -80,7 +81,7 @@ class API {
     const selectSql =
       "select id, Email, FirstName, LastName, PassWord, Authorization from account where Email = ? ";
     const notiSql = "call getNotification(?)";
-    const message = "Số điện thoại hoặc mật khẩu không chính xác!";
+    const message = "Email hoặc mật khẩu không chính xác!"
     const Email = req.body.Email;
     const PassWord = req.body.PassWord;
 
@@ -239,8 +240,8 @@ class API {
                     // mailOption là những thông tin gửi từ phía client lên thông qua API
                     const mailOptions = {
                       to: email,
-                      subject: "Thiết lập mật khẩu mới cho tài khoản DocComming!", // Tiêu đề email
-                      html: emailBody(linkFP), // Nội dung email
+                      subject: "Thiết lập mật khẩu mới cho tài khoản DocComing!", // Tiêu đề email
+                      html: emailBody(linkFP, email), // Nội dung email
                     };
                     await transport.sendMail(mailOptions); // gửi email
 
@@ -312,8 +313,8 @@ class API {
             // mailOption là những thông tin gửi từ phía client lên thông qua API
             const mailOptions = {
               to: Email,
-              subject: "Thiết lập mật khẩu mới cho tài khoản DocComming!", // Tiêu đề email
-              html: emailBody(linkFP), // Nội dung email
+              subject: "Thiết lập mật khẩu mới cho tài khoản DocComing!", // Tiêu đề email
+              html: emailBody(linkFP, Email), // Nội dung email
             };
             await transport.sendMail(mailOptions); // gửi email
             // Không có lỗi gì thì trả về success
@@ -538,15 +539,15 @@ class API {
 
   //[POST] /api/appointment/create
   createAppointment(req, res) {
-    const idPatient = req.user.id;
-    const { idService, idDoctor, Price, Information } = req.body;
+    const idPatient = req.user.id; 
+    const { idService, idDoctor, Price, Information, Status } = req.body;
     const TimeBooking = req.body.TimeBooking? req.body.TimeBooking : null;
     const db = req.body.DateBooking.split("/");
     const DateBooking = db[2] + "-" + db[1] + "-" + db[0];
     const insertSql =
-      "insert into appointment (idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information) values(?,?,?,?,?,?,?)";
+      "insert into appointment (idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information, Status) values(?,?,?,?,?,?,?,?)";
     const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
-    const data = [idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information]
+    const data = [idService, idPatient, idDoctor, DateBooking, TimeBooking, Price, Information, Status]
 
     const date = new Date();
     if(parseInt(db[0]) == date.getDate && parseInt(db[1]) == (date.getMonth() + 1) ){
@@ -1145,6 +1146,27 @@ class API {
       } else {
         if (results) {
           res.status(200).send({ data: results, checked: true });
+        } else {
+          res.status(200).send({ message: errorMsg, checked: false });
+        }
+      }
+    });
+  }
+
+  // [POST] /api/doctor/post/search
+  searchDoctorPost(req, res, next) {
+    const id = req.user.id;
+    let { keywords } = req.body;
+    keywords = "%" + keywords + "%";
+    const selectSql = "call ListSearchById(?,?)";
+    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+
+    pool.query(selectSql, [keywords, id], function (error, results, fields) {
+      if (error) {
+        res.send({ message: error, checked: false });
+      } else {
+        if (results[0]) {
+          res.status(200).send({ data: results[0], checked: true });
         } else {
           res.status(200).send({ message: errorMsg, checked: false });
         }
@@ -1816,7 +1838,7 @@ class API {
     });
   }
 
-  // [POST] /api/post/search/post
+  // [POST] /api/search/post
   searchPost(req, res, next) {
     let { keywords } = req.body;
     keywords = "%" + keywords + "%";
@@ -2108,48 +2130,69 @@ class API {
 
   //[POST] /api/admin/account/create
   createAccount(req, res) {
-    const {
-      FirstName,
-      LastName,
-      BirthDate,
-      Gender,
-      Address,
-      Email,
-      Phone,
-      Authorization,
-    } = req.body;
+
+    const { Email, FullName } = req.body;
     const insertSql =
-      "insert into account (FirstName, LastName, BirthDate, Gender, Address, Email, Phone, Authorization, CreatedAt) values(?,?,?,?,?,?,?,?, now())";
-    const errorMsg = "Có lỗi bất thường, request không hợp lệ!";
+      "insert into account (Email, PassWord, LastName, FirstName, Authorization, CreatedAt) values (?,?,?,?,2,now())";
+    const successMsg = "Tài khoản đã đăng kí thành công!";
+    const fn = FullName.split(" "); // Duong Quoc ANh fn[duong,quoc,anh]
+    let FirstName = "";
+    const LastName = fn[fn.length - 1];
+    for (let i = 0; i < fn.length - 1; i++) {
+      FirstName += fn[i];
+      if(i !== fn.length - 2) {
+        FirstName += " ";
+      }
+    }
+    var chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var PassWord = "";
+    for (var i = 0; i < 6; i++) {
+      // Chọn ngẫu nhiên một ký tự từ chuỗi chars
+      var randomIndex = Math.floor(Math.random() * chars.length);
+      PassWord += chars[randomIndex];
+    }
 
     if (req.user.Authorization != 0) {
       res.end("Unauthorized");
-    } else {
-      pool.query(
-        insertSql,
-        [
-          FirstName,
-          LastName,
-          BirthDate,
-          Gender,
-          Address,
-          Email,
-          Phone,
-          Authorization,
-        ],
-        function (error, results, fields) {
-          if (error) {
-            res.send({ message: error.sqlMessage, checked: false });
-          } else {
-            if (results) {
-              res.status(200).send({ checked: true });
+    }
+    bcrypt.hash(PassWord, saltRound, (err, hash) => {
+      if (err) {
+        res.status(200).send({ message: err, checked: false });
+      } else {
+        pool.query(
+          insertSql,
+          [Email, hash, LastName, FirstName],
+          async function (error, results, fields) {
+            if (error) {
+              res.send({ message: error, checked: false });
             } else {
-              res.status(200).send({ message: errorMsg, checked: false });
+              const myAccessTokenObject = await myOAuth2Client.getAccessToken();
+              const myAccessToken = myAccessTokenObject?.token;
+              const transport = nodemailer.createTransport({
+                service: "gmail",
+                auth: {
+                  type: "OAuth2",
+                  user: process.env.ADMIN_EMAIL_ADDRESS,
+                  clientId: process.env.GOOGLE_MAILER_CLIENT_ID,
+                  clientSecret: process.env.GOOGLE_MAILER_CLIENT_SECRET,
+                  refresh_token: process.env.GOOGLE_MAILER_REFRESH_TOKEN,
+                  accessToken: myAccessToken,
+                },
+              });
+              // mailOption là những thông tin gửi từ phía client lên thông qua API
+              const mailOptions = {
+                to: Email,
+                subject: "Cảm ơn bạn đã tham gia vào đội ngũ bác sĩ DocComing của chúng tôi!", // Tiêu đề email
+                html: newdoctoraccmail(PassWord), // Nội dung email
+              };
+              await transport.sendMail(mailOptions); // gửi email
+
+              res.send({ message: successMsg, checked: true });
             }
           }
-        }
-      );
-    }
+        );
+      }
+    });
   }
 
   //[PATCH] /api/admin/account/update

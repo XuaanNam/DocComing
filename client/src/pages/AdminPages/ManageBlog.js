@@ -3,7 +3,7 @@ import { Modal, Table, Button } from "flowbite-react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import { fetchPost,fetchDoctorPost, acceptPost,hidePost, fetchCategories, searchPostAdmin, postsFilter } from "../../redux-toolkit/postSlice";
+import { fetchPost,fetchDoctorPost, acceptPost,hidePost, fetchCategories, searchPostAdmin, postsFilter, searchDoctorPost } from "../../redux-toolkit/postSlice";
 import { TbFilterSearch  } from "react-icons/tb";
 import { DatePicker, Select } from "antd";
 import dayjs from "dayjs";
@@ -14,7 +14,7 @@ const { RangePicker } = DatePicker;
 const ManageBlog = () => {
   const dateFormat = "DD/MM/YYYY";
   const { currentUser } = useSelector((state) => state.user);
-  const {data, category,allSearchPostAdmin, filter} = useSelector((state) => state.post);
+  const {data, category,allSearchPostDoctor,allSearchPostAdmin, filter, loading} = useSelector((state) => state.post);
   const [confirmedPost, setConfirmPost] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [postId, setPostId] = useState();
@@ -83,7 +83,6 @@ const ManageBlog = () => {
     })
     setShowModal(false)
   }
-  console.log(isSearched)
   const handleDatePickerChange = (date, dateString) => {
     setDate(dateString);
   };
@@ -96,20 +95,18 @@ const ManageBlog = () => {
     setFiltering({})
     handleCloseModal()
     setKeywordUser("")
-    const data = {
-      filter: "DatePost",
-      orderby: "desc"
-    }
-    if(isSearched !== ""){
-      dispatch(fetchPost(data)).then(() =>{
-        setIsSearched("")
-      })
-    }
-      
+    setIsSearched("")      
   }
   const handleSearchPost = () => {
-    dispatch(searchPostAdmin({keywords: keywordUser}))
-    setIsSearched("search")
+    if(currentUser?.authentication == 2){
+      dispatch(searchDoctorPost({keywords: keywordUser}))
+      setIsSearched("searchDoctor")
+    }
+    else
+    {
+      dispatch(searchPostAdmin({keywords: keywordUser}))
+      setIsSearched("searchAdmin")
+    }
   }
   const handleFilterPosts = () => {
     let data = {};
@@ -140,8 +137,11 @@ const ManageBlog = () => {
       Navigate(`/blog/${postId}`)
   }
   let posts
-  if(isSearched == "search"){
+  if(isSearched == "searchAdmin"){
     posts = allSearchPostAdmin
+  }
+  else if(isSearched == "searchDoctor"){
+    posts = allSearchPostDoctor
   }
   else if(isSearched == "filter"){
     posts = filter
@@ -149,6 +149,7 @@ const ManageBlog = () => {
   else{
     posts = data
   }
+
   let post = [];
   for (let i = 0; i < posts?.length; i++) {
     if (posts[i].Status === confirmedPost)
@@ -158,179 +159,178 @@ const ManageBlog = () => {
   }
   const slice = post.slice(0,numberElement)
   return (
-    <div className="lg:pt-[70px] h-screen table-auto md:mx-auto md:p-6 max-md:px-5 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-      <div className="pt-4 grid grid-cols-4 items-center md:w-[80%] max-md:w-full gap-3 mb-3 font-medium text-base text-gray-500">
-        <div
-          onClick={() => setConfirmPost(1)}
-          className={` ${
-            confirmedPost === 1 ? "bg-gray-100" : "bg-white"
-          } h-11 drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
-        >
-          Bài viết đã được duyệt
+    <div className="lg:pt-[70px] w-full table-auto md:mx-auto md:p-6 max-md:px-5 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
+      {loading ?
+        <div className="spinner mt-12 mx-auto">
         </div>
-        <div
-          onClick={() => setConfirmPost(0)}
-          className={` ${
-            confirmedPost === 0 ? "bg-gray-100" : "bg-white"
-          } h-11 drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
-        >
-          Bài viết đang chờ duyệt
-        </div>
-        <div className="flex gap-2 items-center col-start-3 col-span-2">
-          <div className="bg-slate-100 flex gap-2 items-center h-11 lg:w-[70%] max-lg:w-[70%] rounded-lg hover:ring-1 hover:ring-teal-400">
-            <input
-              className="bg-slate-100 p-3 h-full w-full font-normal rounded-lg outline-none text-base"
-              placeholder="Tìm theo tên..."
-              value={keywordUser}
-              onChange={(e)=>{setKeywordUser(e.target.value)}}
-              onKeyDown={(e) => { 
-                if (e.key === "Enter") 
-                  handleSearchPost(); 
-              }} />
-            <FiSearch className="mr-4 h-[24px] w-[24px] text-teal-300"></FiSearch>          
+      :
+        <div className="h-screen pb-24">
+          <div className="pt-4 grid grid-cols-4 items-center md:w-[80%] max-md:w-full gap-3 mb-3 font-medium text-base text-gray-500">
+            <div
+              onClick={() => setConfirmPost(1)}
+              className={` ${
+                confirmedPost === 1 ? "bg-gray-100" : "bg-white"
+              } h-11 drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
+            >
+              Bài viết đã được duyệt
+            </div>
+            <div
+              onClick={() => setConfirmPost(0)}
+              className={` ${
+                confirmedPost === 0 ? "bg-gray-100" : "bg-white"
+              } h-11 drop-shadow-md flex items-center justify-center w-full rounded-lg cursor-pointer hover:bg-gray-100`}
+            >
+              Bài viết đang chờ duyệt
+            </div>
+            <div className="flex gap-2 items-center col-start-3 col-span-2">
+              <div className="bg-slate-100 flex gap-2 items-center h-11 lg:w-[70%] max-lg:w-[70%] rounded-lg hover:ring-1 hover:ring-teal-400">
+                <input
+                  className="bg-slate-100 p-3 h-full w-full font-normal rounded-lg outline-none text-base"
+                  placeholder="Tìm theo tên..."
+                  value={keywordUser}
+                  onChange={(e)=>{setKeywordUser(e.target.value)}}
+                  onKeyDown={(e) => { 
+                    if (e.key === "Enter") 
+                      handleSearchPost(); 
+                  }} />
+                <FiSearch className="mr-4 h-[24px] w-[24px] text-teal-300"></FiSearch>
+              </div>
+              {(isSearched) && <IoIosCloseCircleOutline className="h-6 w-6 text-rose-600 cursor-pointer" onClick={handleClose}/>}
+              {!showFilterModal && currentUser?.authentication == 0 &&
+                <TbFilterSearch className="h-6 w-6 text-white cursor-pointer transition-transform duration-500 hover:scale-110"
+                                onClick={()=>setShowFilterModal(true)}
+                />
+              }
+            </div>
+            
           </div>
-          {(isSearched) && <IoIosCloseCircleOutline className="h-6 w-6 text-rose-500 cursor-pointer" onClick={handleClose}/>}
-          {!showFilterModal &&
-            <TbFilterSearch className="h-6 w-6 text-teal-500 cursor-pointer transition-transform duration-500 hover:scale-110"
-                            onClick={()=>setShowFilterModal(true)}
-            />
-          }
-        </div>
-        
-      </div>
-      <div className="overflow-auto h-[83.5%] bg-white rounded-lg shadow-lg shadow-violet-200 ">
-        <Table hoverable className="">
-          <Table.Head>
-            <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Ngày đăng</Table.HeadCell>
-            <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Ảnh</Table.HeadCell>
-            <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Tiêu đề</Table.HeadCell>
-            <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Chuyên mục</Table.HeadCell>
-            {currentUser.authentication === 0 &&
-            <>
-            <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Tác giả</Table.HeadCell>
-            <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Trạng thái</Table.HeadCell>
-            </>
-            }
-            <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs"></Table.HeadCell>
-            {confirmedPost === 0 && (
-              <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs"></Table.HeadCell>
-            )}
-          </Table.Head>
-          {slice?.map((post) => (
-            <Table.Body className="divide-y">
-              <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800 cursor-pointer">
-                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs ">
-                  {new Date(post?.DatePost).toLocaleDateString()}
-                </Table.Cell>
-                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
-                  <div onClick={()=>{handleNavigate(post.id)}}>
-                    <img
-                      src={post.FeaturedImage}
-                      alt={post.Title}
-                      className="min-w-20 h-10 object-cover bg-gray-500"
-                    />
-                  </div>
-                </Table.Cell>
-                <Table.Cell className="md:p-3 max-md:p-2 max-md:text-xs">
-                  <div className="">
-                  <div
-                    className="font-medium text-gray-900 dark:text-white"
-                    onClick={()=>{handleNavigate(post.id)}}
-                  >
-                    {post.Title}
-                  </div>
-                  </div>
-                </Table.Cell>
-                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">{post.Similar}</Table.Cell>
-                {currentUser.authentication === 0 && 
-                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">{post.FirstName + " " + post.LastName}</Table.Cell>
-                }
+          <div className="overflow-auto h-[83.5%] bg-white rounded-lg shadow-lg">
+            <Table hoverable className="">
+              <Table.Head>
+                <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Ngày đăng</Table.HeadCell>
+                <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Ảnh</Table.HeadCell>
+                <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Tiêu đề</Table.HeadCell>
+                <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Chuyên mục</Table.HeadCell>
                 {currentUser.authentication === 0 &&
-                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
-                  {post.Status == 0 && (
-                  <div
-                    className="font-medium text-teal-500"
-                  >
-                    Chờ duyệt
-                  </div>
-                  )}
-                  {post.Status == 1 && (
-                  <div
-                    onClick={() => {
-                      setShowModal(true);
-                      setPostId(post.id);
-                    }}
-                    className="font-medium text-red-500 hover:underline cursor-pointer"
-                  >
-                    Ẩn bài viết
-                  </div>
-                  )}
-                  {post.Status == 2 && (
-                  <div
-                    onClick={() => {
-                      handleHidePost(post.id);
-                    }}
-                    className="font-medium text-green-500 hover:underline cursor-pointer"
-                  >
-                    Hiện bài viết
-                  </div>
-                  )}
-                </Table.Cell>
-                }
-                {confirmedPost === 1 &&
-                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
-                  {currentUser.authentication == 2 ? 
-                  <Link
-                    className="font-medium text-teal-500 hover:underline cursor-pointer"
-                    to={`/doctor/update-post/${post.id}`}
-                  >
-                    Chỉnh sửa 
-                  </Link>
-                  :
-                  <Link
-                    className="font-medium text-teal-500 hover:underline cursor-pointer"
-                    to={`/admin/update-post/${post.id}`}
-                  >
-                    Chỉnh sửa 
-                  </Link>
-                  }
-                </Table.Cell>
-                }
-                {confirmedPost === 0 && currentUser.authentication == 0 &&
-                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
-                  <div
-                    className="font-medium text-emerald-500 hover:underline cursor-pointer"
-                    onClick={() => {handleAcceptPost(post.id)}}
-                  >
-                    Duyệt
-                  </div>
-                </Table.Cell>}
-                {currentUser.authentication == 2 &&
                 <>
-                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
-                </Table.Cell>
-                <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
-                </Table.Cell>
+                <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Tác giả</Table.HeadCell>
+                <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs">Trạng thái</Table.HeadCell>
                 </>
                 }
-              </Table.Row>
-            </Table.Body>
-          ))}
-        </Table>
-      </div>
-      {post.length > 8 && numberElement < post.length &&
-      <Button
-        className="mt-3 w-32 mx-auto rounded-lg h-10"
-        outline gradientDuoTone="tealToLime"
-        onClick={()=>{setNumberElement(numberElement+numberElement)}}
-      >
-        Xem thêm
-      </Button>
+                <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs"></Table.HeadCell>
+                {confirmedPost === 0 && (
+                  <Table.HeadCell className="md:p-3 max-md:p-2 truncate max-md:text-xs"></Table.HeadCell>
+                )}
+              </Table.Head>
+              {slice?.map((post) => (
+                <Table.Body className="divide-y">
+                  <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800 cursor-pointer">
+                    <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs ">
+                      {new Date(post?.DatePost).toLocaleDateString()}
+                    </Table.Cell>
+                    <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs" onClick={()=>{handleNavigate(post.id)}}>
+                        <img
+                          src={post.FeaturedImage}
+                          alt={post.Title}
+                          className="min-w-20 h-10 object-cover bg-gray-500"
+                        />
+                    </Table.Cell>
+                    <Table.Cell className="md:p-3 max-md:p-2 max-md:text-xs" onClick={()=>{handleNavigate(post.id)}}>
+                      <div
+                        className="font-medium text-gray-900 dark:text-white"
+                        
+                      >
+                        {post.Title}
+                      </div>
+                    </Table.Cell>
+                    <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">{post.Similar}</Table.Cell>
+                    {currentUser.authentication === 0 && 
+                    <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">{post.FirstName + " " + post.LastName}</Table.Cell>
+                    }
+                    {currentUser.authentication === 0 &&
+                    <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
+                      {post.Status == 0 && (
+                      <div
+                        className="font-medium text-teal-500"
+                      >
+                        Chờ duyệt
+                      </div>
+                      )}
+                      {post.Status == 1 && (
+                      <div
+                        onClick={() => {
+                          setShowModal(true);
+                          setPostId(post.id);
+                        }}
+                        className="font-medium text-red-500 hover:underline cursor-pointer"
+                      >
+                        Ẩn bài viết
+                      </div>
+                      )}
+                      {post.Status == 2 && (
+                      <div
+                        onClick={() => {
+                          handleHidePost(post.id);
+                        }}
+                        className="font-medium text-green-500 hover:underline cursor-pointer"
+                      >
+                        Hiện bài viết
+                      </div>
+                      )}
+                    </Table.Cell>
+                    }
+                    {confirmedPost === 1 &&
+                    <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
+                      {currentUser.authentication == 2 ? 
+                      <Link
+                        className="font-medium text-teal-500 hover:underline cursor-pointer"
+                        to={`/doctor/update-post/${post.id}`}
+                      >
+                        Chỉnh sửa 
+                      </Link>
+                      :
+                      <Link
+                        className="font-medium text-teal-500 hover:underline cursor-pointer"
+                        to={`/admin/update-post/${post.id}`}
+                      >
+                        Chỉnh sửa 
+                      </Link>
+                      }
+                    </Table.Cell>
+                    }
+                    {confirmedPost === 0 && currentUser.authentication == 0 &&
+                    <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
+                      <div
+                        className="font-medium text-emerald-500 hover:underline cursor-pointer"
+                        onClick={() => {handleAcceptPost(post.id)}}
+                      >
+                        Duyệt
+                      </div>
+                    </Table.Cell>}
+                    {currentUser.authentication == 2 &&
+                    <>
+                    <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
+                    </Table.Cell>
+                    <Table.Cell className="md:p-3 max-md:p-2 truncate max-md:text-xs">
+                    </Table.Cell>
+                    </>
+                    }
+                  </Table.Row>
+                </Table.Body>
+              ))}
+            </Table>
+          </div>
+          {post.length > 8 && numberElement < post.length &&
+          <Button
+            className="mt-3 w-32 mx-auto rounded-lg h-10"
+            outline gradientDuoTone="tealToLime"
+            onClick={()=>{setNumberElement(numberElement+numberElement)}}
+          >
+            Xem thêm
+          </Button>
+        }
+        </div>
       }
-      {/* </>
-      ) : (
-        <p>You have no posts yet!</p>
-      )} */}
       <Modal
         show={showModal}
         onClose={() => setShowModal(false)}

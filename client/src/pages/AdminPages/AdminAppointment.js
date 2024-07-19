@@ -64,9 +64,13 @@ const AdminAppointment = () => {
   else
     slice = appointment
   return (
-    <div className="lg:pt-[70px] bg-gray-50 px-10 h-screen">
+    <div className="lg:pt-[70px] px-10 h-screen">
+      {loading ?
+      <div className="spinner mt-12 mx-auto">
+      </div>
+      :
       <div className="max-lg:px-4 h-full text-gray-700 lg:flex lg:flex-col lg:gap-10">
-        <div className="md:my-7 lg:max-xl:w-full h-[94%] max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-200 py-5 lg:px-8">
+        <div className="md:my-7 lg:max-xl:w-full h-[94%] max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg  py-5 lg:px-8">
           <div className="lg:mb-2 max-lg:my-5 lg:h-10 max-lg:h-auto grid lg:grid-cols-6 max-lg:grid-cols-12 lg:gap-3 max-lg:gap-1 font-semibold">
             <p className="max-md:mb-3 md:text-2xl max-md:text-3xl lg:col-span-2 max-lg:col-start-1 max-lg:col-span-12">Lịch khám</p>
             <div className = "lg:w-full lg:flex lg:justify-end lg:col-start-3 lg:col-span-2">
@@ -246,7 +250,7 @@ const AdminAppointment = () => {
                         }
                         <div className="grid grid-cols-2 gap-5">
                           {appointment.ReExaminationDate !== null &&
-                            <div className="flex flex-col col-start-1 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                            <div className="flex flex-col col-start-1 gap-3 h-full w-full p-4 bg-white shadow-md  rounded-lg">
                               <div className="flex items-center">
                                 <p className="font-medium text-black text-lg w-1/2">Lịch hẹn tái khám</p>
                                 {appointment.NoteStatus === 0 && 
@@ -269,7 +273,7 @@ const AdminAppointment = () => {
                             </div>
                           }
                           {appointment.NoteRecord !== null &&
-                            <div className="flex flex-col col-start-2 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                            <div className="flex flex-col col-start-2 gap-3 h-full w-full p-4 bg-white shadow-md  rounded-lg">
                                 <p className="font-medium text-black text-lg w-1/2">Bệnh án</p>   
                                 <div className="flex gap-3">
                                 <div className="flex flex-col gap-1 w-full">
@@ -302,6 +306,7 @@ const AdminAppointment = () => {
           </div>         
         </div>
       </div>
+      }
     </div>
   );
 };

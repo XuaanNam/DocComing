@@ -137,12 +137,12 @@ const Header = () => {
         <div className="max-sm:col-start-7 sm:max-lg:col-start-8 max-sm:col-span-5 sm:max-lg:col-span-4 relative flex lg:gap-3 w-full items-center lg:col-start-4">
           <div className="w-[1px] lg:h-[34px] max-sm:h-10 bg-gray-200"></div>
           {currentUser ? (
-            <div className="flex gap-1 items-center w-full">
+            <div className="flex sm:gap-1 items-center w-full">
               <div
-                className="flex lg:gap-3 items-center justify-center cursor-pointer lg:w-[81%] max-lg:w-full"
+                className="flex lg:gap-3 max-sm:w-[87%] items-center justify-center cursor-pointer lg:w-[81%] sm:max-lg:w-full"
                 onClick={() => {setActived(!actived); setNoti(false)}}
               >
-                <div className="rounded-full h-[38px] w-[38px] max-sm:h-6 max-sm:w-6 bg-white flex items-center justify-center">
+                <div className="rounded-full  h-[38px] w-[38px] max-sm:h-5 max-sm:w-5 bg-white flex items-center justify-center">
                   <img
                     className="rounded-full h-[34px] w-[34px] max-sm:h-4 max-sm:w-4 object-cover"
                     alt=""
@@ -158,7 +158,7 @@ const Header = () => {
                 <IoMdArrowDropdown
                   className={`${
                     actived === true && " rotate-180 transition-all"
-                  } text-gray-100 h-5 w-5`}
+                  } text-gray-100 h-5 w-5 max-sm:h-4 max-sm:w-4`}
                 ></IoMdArrowDropdown>
               </div>
               <div className="relative cursor-pointer"
@@ -170,40 +170,40 @@ const Header = () => {
                 </GoBellFill>
               {parseInt(allNoti?.Unread) > 0 &&
                 <div>
-                  <div class="animate-ping absolute top-0 right-1 inline-flex h-[10px] w-[10px] rounded-full bg-rose-500 transition-transform duration-700"></div>
-                  <span class="absolute top-0 right-1 inline-flex rounded-full h-[10px] w-[10px] bg-rose-600"></span>
+                  <div className="animate-ping absolute top-0 right-1 inline-flex h-[10px] w-[10px] rounded-full bg-rose-500 transition-transform duration-700"></div>
+                  <span className="absolute top-0 right-1 inline-flex rounded-full h-[10px] w-[10px] bg-rose-600"></span>
                 </div>
               }
               </div>
               {noti && (
-                <div className={`flex flex-col gap-2 h-[600px] max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:top-[62px] lg:w-full py-3 px-5 font-medium text-teal-800 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition ease-in-out duration-500 z-50`}>
-                  <p className="">Thông báo</p>
+                <div className={`flex flex-col gap-2 h-[600px] max-sm:text-sm max-sm:w-[200px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:top-[62px] lg:w-full py-3 sm:px-5 max-sm:px-2 font-medium text-teal-800 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition ease-in-out duration-500 z-50`}>
+                  <p className="max-sm:px-3 text-center">Thông báo</p>
                   <hr className="w-full"></hr>
                   <div className="h-[90%] overflow-auto">
                   {slice?.map((noti) =>(
                     <div className="flex flex-col gap-2">
-                      <div className="hover:bg-slate-100 w-full p-2 cursor-pointer rounded-lg flex flex-col gap-2"
+                      <div className="hover:bg-slate-100 w-full sm:p-2 cursor-pointer rounded-lg flex flex-col gap-2"
                           onClick={() => {handleNavigate(noti.Type);setNoti(false);handleRead(noti.id)}}
                       >
-                        <div className="flex gap-3 items-center">
-                          <div className={`w-[90%] ${noti.Status === 1 && "opacity-75"} `}>
-                            <div className="text-sm mb-1 text-black">
+                        <div className="flex sm:gap-3 max-sm:gap-[2px] items-center">
+                          <div className={`w-[90%] max-sm:w-full ${noti.Status === 1 && "opacity-75"} `}>
+                            <div className="sm:text-sm max-sm:text-[11.5px] mb-1 text-black">
                               {noti.Notification}
                             </div>
-                            <p className="text-xs font-normal self-start text-teal-700">{noti.NotiTime.slice(11,16)} {noti.NotiTime.slice(8,10)}/{noti.NotiTime.slice(5,7)}/{noti.NotiTime.slice(0,4)}</p>
+                            <p className="text-xs max-sm:text-[10px] font-normal self-start text-teal-700">{noti.NotiTime.slice(11,16)} {noti.NotiTime.slice(8,10)}/{noti.NotiTime.slice(5,7)}/{noti.NotiTime.slice(0,4)}</p>
                           </div>  
                           {noti.Status === 0 &&
-                            <GoDotFill className="text-sky-600 h-4 w-4"/>
+                            <GoDotFill className="text-sky-600 h-4 w-4 max-sm:h-2 max-sm:w-2"/>
                           }
                         </div>
                       </div>
-                      <hr className="w-[95%]"></hr>
+                      <hr className="w-[95%] max-sm:pb-2"></hr>
                     </div>
                   ))}
                   </div>
                   {allNoti?.notification?.length > 6 &&
                     <Button
-                        className="my-3 w-32 rounded-2xl mx-auto h-9 text-slate-700"
+                        className="my-3 w-32 max-sm:w-28 max-sm:text-xs rounded-2xl mx-auto h-9 text-slate-700"
                         gradientDuoTone="tealToLime"
                         onClick={()=>{setNumberElement(numberElement+numberElement)}}
                     >
@@ -215,7 +215,7 @@ const Header = () => {
 
               {actived && (
                 <div
-                  className={`max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute lg:left-8 lg:top-[62px] lg:w-64 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-50`}
+                  className={`max-sm:text-sm max-sm:w-[165px] max-sm:right-[0px] max-sm:top-[65px] absolute sm:max-lg:left-8 sm:max-lg:top-[62px] sm:max-lg:w-64 lg:left-8 lg:top-[62px] lg:w-64 lg:text-base bg-white rounded-lg shadow-lg drop-shadow-lg transition-all duration-500 z-50`}
                 >
                   {authentication == 2 && (
                     <>
@@ -390,7 +390,7 @@ const Header = () => {
                   Đăng nhập
                 </Link>
               </div>
-              <div className="w-1/2 flex justify-center">
+              <div className="w-1/2  flex justify-center">
                 <Link
                   to="/register"
                   className="max-sm:text-xs sm:max-lg:h-[40px] flex justify-center items-center sm:max-lg:w-[90%] max-sm:h-[40px] max-sm:w-[80px] max-sm:p-1 lg:h-[38px] lg:w-[120px] text-center border-[1.5px] text-white bg-teal-400 lg:p-1.5 hover:bg-teal-500 transition-transform hover:duration-1000 rounded-lg cursor-pointer"

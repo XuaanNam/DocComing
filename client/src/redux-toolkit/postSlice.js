@@ -18,13 +18,14 @@ const initialState = {
   post: [],
   allPost: [],
   allSearchPost: [],
+  allSearchPostDoctor: [],
   allSearchPostAdmin:[],
   allSearchData: [],
   comment: []
 };
 
- const SERVER_URL =  "https://server.doccoming.online"
-// const SERVER_URL =  "http://localhost:5001"
+//  const SERVER_URL =  "https://server.doccoming.online"
+const SERVER_URL =  "http://localhost:5001"
 
 //admin
 export const createPost = createAsyncThunk("createPost", async (body) => {
@@ -241,6 +242,20 @@ export const searchPost = createAsyncThunk(
     return await res.json();
   }
 );
+export const searchDoctorPost = createAsyncThunk(
+  "searchDoctorPost",
+  async (body) => {
+    const res = await fetch(SERVER_URL + "/api/doctor/post/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: localStorage.getItem("token"),
+      },
+      body: JSON.stringify(body),
+    });
+    return await res.json();
+  }
+);
 export const searchPostAdmin = createAsyncThunk(
   "searchPostAdmin",
   async (body) => {
@@ -311,6 +326,7 @@ const postSlice = createSlice({
         if (action.payload.checked === false) {
           state.message = action.payload.message;
         }
+        state.loading = false;
       })
       .addCase(createPost.rejected, (state, action) => {
         state.loading = true;
@@ -327,6 +343,7 @@ const postSlice = createSlice({
         if (action.payload.checked === false) {
           state.message = action.payload.message;
         }
+        state.loading = false;
       })
       .addCase(updatePost.rejected, (state, action) => {
         state.loading = true;
@@ -337,6 +354,7 @@ const postSlice = createSlice({
       })
       .addCase(fetchMajor.fulfilled, (state, action) => {
         state.major = action.payload.data;
+        state.loading = false;
       })
       .addCase(fetchMajor.rejected, (state, action) => {
         state.loading = true;
@@ -347,6 +365,7 @@ const postSlice = createSlice({
       })
       .addCase(fetchCategories.fulfilled, (state, action) => {
         state.category = action.payload.data;
+        state.loading = false;
       })
       .addCase(fetchCategories.rejected, (state, action) => {
         state.loading = true;
@@ -358,6 +377,7 @@ const postSlice = createSlice({
       .addCase(fetchPost.fulfilled, (state, action) => {
         state.data = action.payload.data;
         state.countPost = action.payload.count
+        state.loading = false;
       })
       .addCase(fetchPost.rejected, (state, action) => {
         state.loading = true;
@@ -369,6 +389,7 @@ const postSlice = createSlice({
       .addCase(postsFilter.fulfilled, (state, action) => {
         state.filter = action.payload.data;
         state.countPost = action.payload.count
+        state.loading = false;
       })
       .addCase(postsFilter.rejected, (state, action) => {
         state.loading = true;
@@ -379,6 +400,7 @@ const postSlice = createSlice({
       })
       .addCase(fetchDoctorPost.fulfilled, (state, action) => {
         state.data = action.payload.data;
+        state.loading = false;
       })
       .addCase(fetchDoctorPost.rejected, (state, action) => {
         state.loading = true;
@@ -516,12 +538,22 @@ const postSlice = createSlice({
       .addCase(searchPost.rejected, (state, action) => {
         state.loading = true;
       })
-      //searchPost
+      //searchPostDoctor
+      .addCase(searchDoctorPost.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(searchDoctorPost.fulfilled, (state, action) => {
+        state.allSearchPostDoctor = action.payload.data;
+        state.loading = false;
+      })
+      .addCase(searchDoctorPost.rejected, (state, action) => {
+        state.loading = true;
+      })
+      //searchPostAdmin
       .addCase(searchPostAdmin.pending, (state, action) => {
         state.loading = true;
       })
       .addCase(searchPostAdmin.fulfilled, (state, action) => {
-        console.log(action.payload.data)
         state.allSearchPostAdmin = action.payload.data;
         state.loading = false;
       })

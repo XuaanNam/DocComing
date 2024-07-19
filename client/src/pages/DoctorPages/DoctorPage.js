@@ -30,14 +30,12 @@ const DoctorPage = () => {
       {currentUser?.authentication == 2 ? (
         <div className="lg:flex ">
           <DoctorSidebar param={doctorpage}></DoctorSidebar>
-          <div className="w-full flex flex-col h-screen">
-            <div className="overflow-auto w-full">
+          <div className="w-full flex flex-col">
               {doctorpage === "profile" && <DoctorProfile />}
               {doctorpage === "create-post" && <CreateBlog />}
               {doctorpage === "manage-post" && <ManageBlog />}
               {doctorpage === "schedule" && <DoctorSchedule />}
               {doctorpage === "appointment" && <DoctorAppointment />}
-            </div>
           </div>
         </div>
       ) : (

@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-module.exports = function emailBody(linkFP, email){
+module.exports = function emailBody(PassWord){
     return  `
         <body style="background-color: rgb(255,255,255);">
 
@@ -27,10 +27,10 @@ module.exports = function emailBody(linkFP, email){
                                         </td>
                                         <td style="padding: 0;font-weight: 400;margin: 0;text-align: right;">
                                             <span style="font-weight: 600; font-size: 14px; position: relative; top: -2px;">
-                                                Tài khoản bệnh nhân DocComing
+                                                Tài khoản bác sĩ DocComing
                                             </span>
                                             <br/>
-                                            <span style="font-size: 14px; position: relative; top:2px;">Đặt lại mật khẩu</span>
+                                            <span style="font-size: 14px; position: relative; top:2px;">Mật khẩu mới</span>
                                         </td>
                                     </tr>
                                 </table>
@@ -43,11 +43,9 @@ module.exports = function emailBody(linkFP, email){
                             <div style="padding: 0 20px;max-width: 600px;font-weight: 400;margin:0 auto;text-align: left;">
                                 <div style="padding: 30.0px 0 20px;font-weight: 400;background-color: rgb(255,255,255);">
 
-                                    Bạn đã gửi yêu cầu đặt lại mật khẩu cho tài khoản DocComing!<br><br>
-                                    Hãy nhấp vào đường link dưới đây để đặt lại mật khẩu cho tài khoản ${email}:<br><br>
-                                    <a href="${linkFP}">Đặt lại mật khẩu cho tài khoản của bạn!</a>
-                                    <br><br>
-                                    Nếu như bạn không gửi yêu cầu đặt lại mật khẩu cho tài khoản của mình, vui lòng bỏ qua email này và đổi lại mật khẩu DocComing để bảo vệ tài khoản khỏi các mối đe dọa!
+                                    Bạn đã là một thành viên trong đội ngũ bác sĩ uy tín của DocComing.<br><br>
+                                    Vui lòng đăng nhập vào tài khoản của mình bằng mật khẩu này:<br><br>
+                                    <h2 style="font-weight: bold">${PassWord}</h2>
                                     <br>
                                     Nếu bạn cần hỗ trợ, vui lòng liên hệ chúng tôi qua email 
                                     <a style="text-decoration: none;" href="mailto:doccoming@gmail.com?subject= Reset Password">
@@ -73,5 +71,6 @@ module.exports = function emailBody(linkFP, email){
                     </tr>
                 </table>
             </div>
-        </body> `
+        </body> 
+    `
 }

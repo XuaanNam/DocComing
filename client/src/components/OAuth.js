@@ -13,16 +13,25 @@ export default function OAuth() {
   const handleGoogleClick = async () => {
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({ prompt: "select_account" });
-
-    const resultsFromGoogle = await signInWithPopup(auth, provider);
-    const body = {
-      name: resultsFromGoogle.user.displayName,
-      email: resultsFromGoogle.user.email,
-      googlePhotoUrl: resultsFromGoogle.user.photoURL,
-    };
-    dispatch(loginGoogle(body)).then(() => {
-      navigate("/");
-    });
+    try {
+      const resultsFromGoogle = await signInWithPopup(auth, provider);
+      const body = {
+        name: resultsFromGoogle.user.displayName,
+        email: resultsFromGoogle.user.email,
+        googlePhotoUrl: resultsFromGoogle.user.photoURL,
+      };
+      dispatch(loginGoogle(body)).then(() => {
+        navigate("/");
+      });
+    } catch (error) {
+      if (error.code === 'auth/popup-closed-by-user') {
+        console.log("The popup was closed by the user before completing the sign-in.");
+        alert("Cửa sổ đăng nhập đã đóng trước khi đăng nhập hoàn tất. Vui lòng đăng nhập lại.");
+      } else {
+        console.log("Error during sign-in: ", error.message);
+        alert("Error during sign-in: " + error.message);
+      }
+    }
   };
   return (
     <div

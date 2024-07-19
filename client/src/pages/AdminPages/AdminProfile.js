@@ -119,10 +119,10 @@ const AdminProfile = () => {
     setShowModal(false)
   }
   return (
-    <div className="min-h-screen bg-gray-50 lg:pt-[70px] flex flex-col justify-center items-center">
+    <div className="min-h-screen lg:pt-[70px] flex flex-col justify-center items-center">
       {currentUser?.authentication == 0 ? (
         <div className="lg:mx-16 max-lg:px-3 lg:w-[80%] lg:h-[600px] text-gray-700 lg:flex lg:gap-10">
-          <div className="my-7 w-full rounded-xl bg-white shadow-lg shadow-violet-200 py-5 max-lg:px-6 lg:px-8">
+          <div className="my-7 w-full rounded-xl bg-white shadow-lg py-5 max-lg:px-6 lg:px-8">
             <div className="mb-5 grid grid-cols-5 items-center">
               <p className="font-semibold text-2xl max-lg:col-start-1 max-lg:col-span-2 col-span-1">Hồ sơ</p>
               {edit === false && (

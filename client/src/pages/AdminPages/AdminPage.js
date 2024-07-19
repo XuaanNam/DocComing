@@ -29,9 +29,9 @@ const AdminPage = () => {
       {currentUser?.authentication === 0 ? (
         <div className="lg:flex">
           <DashSidebar param={adminpage}></DashSidebar>
-          <div className="w-full flex flex-col h-screen">
+          <div className="w-full flex flex-col">
             <div
-              className="w-full"
+              className="w-full min-h-screen"
               onClick={() => setActived(false)}
             >
               {adminpage === "profile" && <AdminProfile />}

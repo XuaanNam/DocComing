@@ -35,7 +35,6 @@ const DoctorProfile = () => {
   const dispatch = useDispatch();
   const Navigate = useNavigate();
 
-  console.log(user?.data, data)
   useEffect(() => {
     dispatch(fetchProfile());
   }, [dispatch]);
@@ -221,10 +220,10 @@ const DoctorProfile = () => {
     },
   ]
   return (
-    <div className="lg:pt-[70px] lg:min-h-screen">
+    <div className="lg:pt-[70px] h-screen lg:h-screen">
       {currentUser?.authentication == 2 ? (
-        <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
-          <div className="my-7 w-full rounded-xl bg-white shadow-lg shadow-violet-200 py-5 max-lg:px-6 lg:px-8">
+        <div className="lg:mx-16 max-lg:px-4 h-[97%] text-gray-700 lg:flex lg:gap-10">
+          <div className="my-7 w-full rounded-xl h-[97%] overflow-auto bg-white shadow-lg  py-5 max-lg:px-6 lg:px-8">
             <div className="mb-5 grid grid-cols-5 items-center">
               <p className="font-semibold text-2xl max-lg:col-start-1 max-lg:col-span-2 col-span-1">Hồ sơ</p>
               {edit === false && (

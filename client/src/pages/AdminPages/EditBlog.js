@@ -83,9 +83,9 @@ const EditBlog = () => {
         {currentUser?.authentication == 0 ? (
         <div className="min-h-screen flex">
             <DashSidebar param="manage-post"></DashSidebar>
-            <div className="overflow-auto pt-[70px] bg-gray-50 w-full">
+            <div className="overflow-auto pt-[70px] w-full">
               <div className="md:flex md:items-center md:justify-center">
-                  <div className="lg:my-5 max-lg:my-5 bg-white flex flex-col items-center justify-center md:w-3/4 max-md:md:w-[90%] max-md:w-full md:p-4 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200">
+                  <div className="lg:my-5 max-lg:my-5 bg-white flex flex-col items-center justify-center md:w-3/4 max-md:md:w-[90%] max-md:w-full md:p-4 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl">
                       <div className="text-2xl font-bold opacity-70 mb-5">Chỉnh sửa bài viết</div>
                       <div className="h-11 md:w-[90%] max-md:w-full border rounded-md mb-4 bg-white">
                       <Input

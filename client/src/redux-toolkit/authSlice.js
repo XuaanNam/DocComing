@@ -37,6 +37,17 @@ export const userRegister = createAsyncThunk("userRegister", async (body) => {
   });
   return await res.json();
 });
+export const doctorRegister = createAsyncThunk("doctorRegister", async (body) => {
+  const res = await fetch(SERVER_URL + "/api/admin/account/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: localStorage.getItem("token"),
+    },
+    body: JSON.stringify(body),
+  });
+  return await res.json();
+});
 export const loginGoogle = createAsyncThunk("loginGoogle", async (body) => {
   const res = await fetch(SERVER_URL + "/api/auth/google/check", {
     method: "POST",
@@ -89,12 +100,12 @@ export const resetPassword = createAsyncThunk("resetPassword", async (body) => {
   });
   return await res.json();
 });
-export const authentication = createAsyncThunk("authentication", async () => {
+export const authentication = createAsyncThunk("authentication", async (body) => {
   const res = await fetch(SERVER_URL + "/api/isauth", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      Authorization: localStorage.getItem("token"),
+      Authorization: body,
     },
   });
   return await res.json();
@@ -245,9 +256,10 @@ const authSlice = createSlice({
         localStorage.setItem("token", action.payload?.token);
       })
       .addCase(loginGoogle.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
         state.error = action.payload;
       })
+
       .addCase(login.pending, (state, action) => {
         state.loading = true;
         state.error = null;
@@ -265,8 +277,9 @@ const authSlice = createSlice({
         }
       })
       .addCase(login.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
+
       .addCase(sendMail.pending, (state, action) => {
         state.loading = true;
       })
@@ -286,6 +299,7 @@ const authSlice = createSlice({
       .addCase(sendMail.rejected, (state, action) => {
         state.loading = true;
       })
+
       .addCase(resetPassword.pending, (state, action) => {
         state.loading = true;
       })
@@ -301,6 +315,7 @@ const authSlice = createSlice({
       .addCase(resetPassword.rejected, (state, action) => {
         state.loading = true;
       })
+
       .addCase(changePassword.pending, (state, action) => {
         state.loading = true;
       })
@@ -316,15 +331,18 @@ const authSlice = createSlice({
       .addCase(changePassword.rejected, (state, action) => {
         state.loading = true;
       })
+
       .addCase(authentication.pending, (state, action) => {
         state.loading = true;
       })
       .addCase(authentication.fulfilled, (state, { payload }) => {
         state.auth = payload.authentication;
+        state.loading = false;
       })
       .addCase(authentication.rejected, (state, action) => {
         state.loading = true;
       })
+
       .addCase(fetchUsers.pending, (state, action) => {
         state.loading = true;
         state.error = false;
@@ -336,7 +354,7 @@ const authSlice = createSlice({
         state.updated = true;
       })
       .addCase(fetchUsers.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
         state.error = action.payload;
       })
       
@@ -349,7 +367,7 @@ const authSlice = createSlice({
         state.filter = action.payload.data;
       })
       .addCase(usersFilter.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
         state.error = action.payload;
       })
 
@@ -363,15 +381,17 @@ const authSlice = createSlice({
         state.updated = true;
       })
       .addCase(searchUser.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
         state.error = false;
       })
+
       .addCase(deleteAccount.pending, (state, action) => {
         state.loading = true;
       })
       .addCase(deleteAccount.fulfilled, (state, action) => {
         state.loading = false;
         state.checked = action.payload.checked;
+        state.message = action.payload.message;
         if (action.payload.checked) {
           toast.success("Đã xóa người dùng", {
             position: "top-right",
@@ -379,27 +399,32 @@ const authSlice = createSlice({
         }
       })
       .addCase(deleteAccount.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
+
       .addCase(updateProfile.pending, (state, action) => {
         state.loading = true;
       })
       .addCase(updateProfile.fulfilled, (state, { payload }) => {
         state.checked = payload.checked;
         state.message = payload.message;
+        state.loading = false;
       })
       .addCase(updateProfile.rejected, (state, action) => {
         state.loading = true;
       })
+
       .addCase(fetchProfile.pending, (state, action) => {
         state.loading = true;
       })
       .addCase(fetchProfile.fulfilled, (state, { payload }) => {
         state.user = payload;
+        state.loading = false;
       })
       .addCase(fetchProfile.rejected, (state, action) => {
         state.loading = true;
       })
+
       .addCase(userRegister.pending, (state, action) => {
         state.loading = true;
       })
@@ -413,12 +438,35 @@ const authSlice = createSlice({
           toast.error(action.payload.message.sqlMessage, {
             position: "top-right",
           });
-          state.message = action.payload.message;
+          state.message = action.payload.message.sqlMessage;
         }
+        state.loading = false;
       })
       .addCase(userRegister.rejected, (state, action) => {
         state.loading = true;
       })
+      //doctorRegister
+      .addCase(doctorRegister.pending, (state, action) => {
+        state.loading = true;
+      })
+      .addCase(doctorRegister.fulfilled, (state, action) => {
+        state.checked = action.payload.checked;
+        state.loading = false;
+        if (action.payload.checked) {
+          toast.success("Tạo tài khoản thành công", {
+            position: "top-right",
+          });
+        } else {
+          toast.error(action.payload.message.sqlMessage, {
+            position: "top-right",
+          });
+          state.message = action.payload.message.sqlMessage;
+        }
+      })
+      .addCase(doctorRegister.rejected, (state, action) => {
+        state.loading = true;
+      })
+
       .addCase(getAllDoctors.pending, (state, action) => {
         state.loading = true;
       })
@@ -429,6 +477,7 @@ const authSlice = createSlice({
       .addCase(getAllDoctors.rejected, (state, action) => {
         state.loading = true;
       })
+
       .addCase(getDetailDoctor.pending, (state, action) => {
         state.loading = true;
       })
@@ -439,6 +488,7 @@ const authSlice = createSlice({
       .addCase(getDetailDoctor.rejected, (state, action) => {
         state.loading = true;
       })
+
       .addCase(getAllNotification.pending, (state, action) => {
         state.loading = true;
       })
@@ -449,6 +499,7 @@ const authSlice = createSlice({
       .addCase(getAllNotification.rejected, (state, action) => {
         state.loading = true;
       })
+
       .addCase(readNotification.pending, (state, action) => {
         state.loading = true;
       })
@@ -459,6 +510,7 @@ const authSlice = createSlice({
       .addCase(readNotification.rejected, (state, action) => {
         state.loading = true;
       })
+
       .addCase(getTotalDashboard.pending, (state, action) => {
         state.loading = true;
       })

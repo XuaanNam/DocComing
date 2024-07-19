@@ -5,7 +5,7 @@ import { GiSunrise, GiSun, GiSunset } from "react-icons/gi";
 import { Button } from "flowbite-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { DatePicker, Rate } from "antd";
+import { DatePicker, Rate, Select } from "antd";
 import dayjs from "dayjs";
 import {
   fetchSchedule,
@@ -29,16 +29,10 @@ const BookingDoctor = () => {
   const { service, ScheduleData, AppointmentData,ratingDoctor, error, loading, updated } =
     useSelector((state) => state.appointment);
   const { currentUser, detailDoctor } = useSelector((state) => state.user);
-  console.log(currentUser)
-  const [index, setIndex] = useState("");
+  const loadingDoctor = useSelector((state) => state.user.loading)
+  const loadingSchedule = useSelector((state) => state.appointment.loading)
+  const [index, setIndex] = useState(0);
   const [estimatedTime, setEstimatedTime] = useState("");
-  const [step, setStep] = useState(0);
-  const [step1, setStep1] = useState(0);
-  const [step2, setStep2] = useState(0);
-  const [step3, setStep3] = useState(0);
-  const [currenTime1, setCurrenTime1] = useState("");
-  const [currenTime2, setCurrenTime2] = useState("");
-  const [currenTime3, setCurrenTime3] = useState("");
   const [time1, setTime1] = useState([]);
   const [time2, setTime2] = useState([]);
   const [time3, setTime3] = useState([]);
@@ -72,282 +66,120 @@ const BookingDoctor = () => {
     return getHour + ":" + getMinute;
   };
   const parse = (time) => {
-    const split = time.split(":");
+    const split = time?.split(":");
     let curr = parseInt(split[0]) + parseInt(split[1]) / 60;
     return curr;
   };
+
+  const renderTimeBooking = (estimatedTime,ScheduleData) =>{
+    if (ScheduleData.FirstShiftEnd != null) {
+      let currentTime1 = ScheduleData.FirstShiftStart?.slice(0,5)
+      let time1 = []
+      let step1 = 0
+      while(parse(currentTime1) <= parse(ScheduleData.FirstShiftEnd)){
+        time1.push({value: currentTime1})
+        if(AppointmentData?.length > 0){
+          for (let i = 0; i < AppointmentData?.length; i++) {
+            if (
+              parse(currentTime1) > parse(AppointmentData[i].TimeBooking) - parse(estimatedTime)
+              && parse(currentTime1) < parse(AppointmentData[i].TimeBooking) + parse(AppointmentData[i].EstimatedTime)
+            ) {
+              time1[step1] = {...time1[step1], booked: 1 }            
+            }
+          }
+        }
+        step1++
+        currentTime1 = addTime(currentTime1,estimatedTime)
+      }
+      setTime1(time1)
+    }
+    if (ScheduleData.SecondShiftEnd != null) {
+      let currentTime2 = ScheduleData.SecondShiftStart?.slice(0,5)
+      let time2 = []
+      let step2 = 0
+      while(parse(currentTime2) <= parse(ScheduleData.SecondShiftEnd)){
+        time2.push({value: currentTime2})
+        if(AppointmentData?.length > 0){
+          for (let i = 0; i < AppointmentData.length; i++) {
+            if (
+              parse(currentTime2) > parse(AppointmentData[i].TimeBooking) - parse(estimatedTime)
+              && parse(currentTime2) < parse(AppointmentData[i].TimeBooking) + parse(AppointmentData[i].EstimatedTime)
+            ) {
+              time2[step2] = {...time2[step2], booked: 1 }            
+            }
+          }
+        }
+        step2++
+        currentTime2 = addTime(currentTime2,estimatedTime)
+      }
+      setTime2(time2)
+    }
+    if (ScheduleData.ThirdShiftEnd != null) {
+      let currentTime3 = ScheduleData.ThirdShiftStart?.slice(0,5)
+      let time3 = []
+      let step3 = 0
+      while(parse(currentTime3) <= parse(ScheduleData.ThirdShiftEnd)){
+        time3.push({value: currentTime3})
+        if(AppointmentData?.length > 0){
+          for (let i = 0; i < AppointmentData.length; i++) {
+            if (
+              parse(currentTime3) > parse(AppointmentData[i].TimeBooking) - parse(estimatedTime)
+              && parse(currentTime3) < parse(AppointmentData[i].TimeBooking) + parse(AppointmentData[i].EstimatedTime)
+            ) {
+              time3[step3] = {...time3[step3], booked: 1 }            
+            }
+          }
+        }
+        step3++
+        currentTime3 = addTime(currentTime3,estimatedTime)
+      }
+      setTime3(time3)
+    }
+  }
   useEffect(() => {
     if(check !== null){
-      dispatch(fetchProfile())
       localStorage.removeItem('check')
     }
   },[check])
   useEffect(() => {
-    dispatch(fetchSchedule(body));
-    dispatch(fetchService({ idDoctor: Id }));
-    dispatch(getRatingDoctor(Id))
-    setData({ ...data, DateBooking: tomorrow });
+    dispatch(fetchSchedule(body))
+    dispatch(fetchService({ idDoctor: Id })).then((res) =>{
+      setData({ ...data,DateBooking: tomorrow, Service: res.payload.data[0].id})
+      setEstimatedTime(res.payload?.data[0]?.EstimatedTime)
+    });;
+    dispatch(getRatingDoctor(Id)).then(()=>{
+      let rate = [];
+      let count = 0;
+      if(ratingDoctor){
+        for(let i=ratingDoctor.length-1;i>=0;i--){
+          rate.push(ratingDoctor[i].Rate.length);
+          count += ratingDoctor[i].Rate.length
+          if(i === ratingDoctor.length - 1){
+            setRating(rate)
+            setCount(count)
+          }
+        }
+      }
+    })
   }, []);
   useEffect(() => {
-    if (!data?.Service && ScheduleData && service.length > 0) {
-      if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
-        let first = parse(currenTime1) + parse(service[0]?.EstimatedTime);
-        if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
-          setTime1([...time1, { id: step1, value: currenTime1 }]);
-          setStep1(step1 + 1);
-          setTimeout(
-            setCurrenTime1(addTime(currenTime1, service[0]?.EstimatedTime)),
-            0
-          );
-          if (
-            AppointmentData[step]?.TimeBooking != null &&
-            AppointmentData[step]?.EstimatedTime != null
-          ) {
-            if (
-              parse(currenTime1) >
-                parse(AppointmentData[step]?.TimeBooking) -
-                  parse(service[0]?.EstimatedTime) &&
-              parse(currenTime1) <
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-            ) {
-              setTime1([
-                ...time1,
-                { id: step1, value: currenTime1, booked: 1 },
-              ]);
-              if (
-                first >=
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-              ) {
-                setStep(step + 1);
-              }
-            }
-          }
-        }
-      }
-      if (
-        ScheduleData[0]?.SecondShiftEnd != null &&
-        currenTime2 !== undefined
-      ) {
-        let second = parse(currenTime2) + parse(service[0]?.EstimatedTime);
-
-        if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
-          setTime2([...time2, { id: step2, value: currenTime2 }]);
-          setStep2(step2 + 1);
-          setTimeout(
-            setCurrenTime2(addTime(currenTime2, service[0]?.EstimatedTime)),
-            0
-          );
-          if (
-            AppointmentData[step]?.TimeBooking != null &&
-            AppointmentData[step]?.EstimatedTime != null
-          ) {
-            if (
-              parse(currenTime2) >
-                parse(AppointmentData[step]?.TimeBooking) -
-                  parse(service[0]?.EstimatedTime) &&
-              parse(currenTime2) <
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-            ) {
-              setTime2([
-                ...time2,
-                { id: step2, value: currenTime2, booked: 1 },
-              ]);
-              if (
-                second >=
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-              ) {
-                setStep(step + 1);
-              }
-            }
-          }
-        }
-      }
-      if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 !== undefined) {
-        let third = parse(currenTime3) + parse(service[0]?.EstimatedTime);
-        if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
-          setTime3([...time3, { id: step3, value: currenTime3 }]);
-          setStep3(step3 + 1);
-          setTimeout(
-            setCurrenTime3(addTime(currenTime3, service[0]?.EstimatedTime)),
-            0
-          );
-          if (
-            AppointmentData[step]?.TimeBooking != null &&
-            AppointmentData[step]?.EstimatedTime != null
-          ) {
-            if (
-              parse(currenTime3) >
-                parse(AppointmentData[step]?.TimeBooking) -
-                  parse(service[0]?.EstimatedTime) &&
-              parse(currenTime3) <
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-            ) {
-              setTime3([
-                ...time3,
-                { id: step3, value: currenTime3, booked: 1 },
-              ]);
-              if (
-                third >=
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-              ) {
-                setStep(step + 1);
-              }
-            }
-          }
-        }
-      }
-    } else if (data?.Service && ScheduleData && service.length > 0) {
-      if (ScheduleData[0]?.FirstShiftEnd != null && currenTime1 !== undefined) {
-        let first = parse(currenTime1) + parse(estimatedTime);
-        if (first <= parse(ScheduleData[0]?.FirstShiftEnd)) {
-          setTime1([...time1, { id: step1, value: currenTime1 }]);
-          setStep1(step1 + 1);
-          setTimeout(setCurrenTime1(addTime(currenTime1, estimatedTime)), 0);
-          if (
-            AppointmentData[step]?.TimeBooking != null &&
-            AppointmentData[step]?.EstimatedTime != null
-          ) {
-            if (
-              parse(currenTime1) >
-                parse(AppointmentData[step]?.TimeBooking) -
-                  parse(estimatedTime) &&
-              parse(currenTime1) <
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-            ) {
-              setTime1([
-                ...time1,
-                { id: step1, value: currenTime1, booked: 1 },
-              ]);
-              if (
-                first >=
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-              ) {
-                setStep(step + 1);
-              }
-            }
-          }
-        }
-      }
-      if (
-        ScheduleData[0]?.SecondShiftEnd !== null &&
-        currenTime2 !== undefined
-      ) {
-        let second = parse(currenTime2) + parse(estimatedTime);
-        if (second <= parse(ScheduleData[0]?.SecondShiftEnd)) {
-          setTime2([...time2, { id: step2, value: currenTime2 }]);
-          setStep2(step2 + 1);
-          setTimeout(setCurrenTime2(addTime(currenTime2, estimatedTime)), 0);
-          if (
-            AppointmentData[step]?.TimeBooking != null &&
-            AppointmentData[step]?.EstimatedTime != null
-          ) {
-            if (
-              parse(currenTime2) >
-                parse(AppointmentData[step]?.TimeBooking) -
-                  parse(estimatedTime) &&
-              parse(currenTime2) <
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-            ) {
-              setTime2([
-                ...time2,
-                { id: step2, value: currenTime2, booked: 1 },
-              ]);
-              if (
-                second >=
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-              ) {
-                setStep(step + 1);
-              }
-            }
-          }
-        }
-      }
-      if (ScheduleData[0]?.ThirdShiftEnd != null && currenTime3 !== undefined) {
-        let third = parse(currenTime3) + parse(estimatedTime);
-
-        if (third <= parse(ScheduleData[0]?.ThirdShiftEnd)) {
-          setTime3([...time3, { id: step3, value: currenTime3 }]);
-          setStep3(step3 + 1);
-          setTimeout(setCurrenTime3(addTime(currenTime3, estimatedTime)), 0);
-          if (
-            AppointmentData[step]?.TimeBooking != null &&
-            AppointmentData[step]?.EstimatedTime != null
-          ) {
-            if (
-              parse(currenTime3) >
-                parse(AppointmentData[step]?.TimeBooking) -
-                  parse(estimatedTime) &&
-              parse(currenTime3) <
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-            ) {
-              setTime3([
-                ...time3,
-                { id: step3, value: currenTime3, booked: 1 },
-              ]);
-              if (
-                third >=
-                parse(AppointmentData[step]?.TimeBooking) +
-                  parse(AppointmentData[step]?.EstimatedTime)
-              ) {
-                setStep(step + 1);
-              }
-            }
-          }
-        }
-      }
+    if(estimatedTime !== "" && ScheduleData?.length > 0 && loadingSchedule === false)
+    {
+      renderTimeBooking(estimatedTime,ScheduleData[0])
     }
-  }, [service, currenTime1, currenTime2, currenTime3, data.Service]);
+  }, [estimatedTime, ScheduleData, index]);
   const changeData = () => {
-    setTime1([]);
-    setTime2([]);
-    setTime3([]);
-    setStep(0);
-    setStep1(0);
-    setStep2(0);
-    setStep3(0);
-    setCurrenTime1(ScheduleData[0]?.FirstShiftStart?.slice(0, 5));
-    setCurrenTime2(ScheduleData[0]?.SecondShiftStart?.slice(0, 5));
-    setCurrenTime3(ScheduleData[0]?.ThirdShiftStart?.slice(0, 5));
+    setTime1([])
+    setTime2([])
+    setTime3([])
   };
-  const handleChange = (e) => {
-    setData({ ...data, [e.target.id]: e.target.value });
-    for (let i = 0; i < service.length; i++) {
-      if (service[i].id === parseInt(e.target.value)) {
-        setEstimatedTime(service[i].EstimatedTime);
-        setIndex(i);
-      }
-    }
-    changeData();
+  const handleChange = (value,index) => {
+    setData({ ...data, Service: value });
+    setEstimatedTime(service[index].EstimatedTime)
+    setIndex(index)
+    changeData()
   };
-  useEffect(() => {
-    changeData();
-  }, [ScheduleData]);
-
-  useEffect(()=>{
-    let rate = [];
-    let count = 0;
-    if(ratingDoctor){
-      for(let i=ratingDoctor.length-1;i>=0;i--){
-        rate.push(ratingDoctor[i].Rate.length);
-        count += ratingDoctor[i].Rate.length
-        if(i === ratingDoctor.length - 1){
-          setRating(rate)
-          setCount(count)
-        }
-      }
-    }
-  },[ratingDoctor, Id]);
+  
   const handleDatePickerChange = (date, dateString) => {
     setActived()
     setData({ ...data, DateBooking: dateString });
@@ -364,6 +196,7 @@ const BookingDoctor = () => {
       Price: data.Service ? service[index].Price : service[0].Price,
       DateBooking: data.DateBooking ? data.DateBooking : tomorrow,
       TimeBooking: data.timePicker,
+      Status: 4
     };
     localStorage.setItem("appointment", JSON.stringify(body));
     Navigate("/booking/confirm");
@@ -397,26 +230,38 @@ const BookingDoctor = () => {
     return res;
   }
   return (
-    <div className="bg-lime-50 max-lg:pt-[80px] pt-[90px]">
+    <div className="max-lg:pt-[80px] pt-[90px]">
+      {loadingSchedule ?
+      <div className="h-screen">
+        <div className="spinner mt-12 mx-auto">
+        </div>
+      </div>
+      :
       <div className="lg:mx-10 max-lg:px-6 lg:flex lg:gap-5 pb-20">
         <div className="lg:w-[60%] flex flex-col gap-y-5">
           <div className="w-full bg-white rounded-lg shadow-lg p-6">
-            <div className="grid grid-cols-4 gap-5 w-full mb-5">
+            <div className="grid grid-cols-4 gap-5 max-sm:gap-1 w-full mb-5">
               <img
                 className="h-44 w-36 object-cover shadow-lg rounded-lg"
                 src={detailDoctor[0]?.Avt}
                 alt="avt"
               ></img>
               <div className="col-span-3 ">
-                <p className="text-2xl font-medium text-slate-700 mb-4"> {TransferDegree(detailDoctor[0]?.Degree)} {detailDoctor[0]?.FullName} - Chuyên khoa {detailDoctor[0]?.Major}</p>
-                <div className="min-h-11 w-[65%] px-5 py-3 rounded-3xl bg-white bg-opacity-90 shadow-lg text-slate-700 flex gap-3 items-center justify-center">
-                  <Rate className="w-52 flex gap-2"
+                <p className="text-2xl max-sm:text-xl max-sm:text-center font-medium text-slate-700 mb-4"> {TransferDegree(detailDoctor[0]?.Degree)} {detailDoctor[0]?.FullName} - Chuyên khoa {detailDoctor[0]?.Major}</p>
+                <div className="min-h-11 w-[65%] max-sm:w-auto max-sm:mx-3 px-5 py-3 rounded-3xl bg-white bg-opacity-90 shadow-lg text-slate-700 flex gap-3 max-sm:flex-col max-sm:gap-1 items-center justify-center">
+                  <Rate className="w-52 flex gap-2 max-sm:hidden"
                         value={parseFloat(detailDoctor[0]?.Star)}
                         allowHalf
                         style={{ fontSize: 28}}
                         disabled={true}
                   ></Rate>
-                  <div className="w-36 flex gap-2 items-center">
+                  <Rate className="w-auto flex gap-2 sm:hidden"
+                        value={parseFloat(detailDoctor[0]?.Star)}
+                        allowHalf
+                        style={{ fontSize: 20}}
+                        disabled={true}
+                  ></Rate>
+                  <div className="w-36 max-sm:w-auto flex gap-2 items-center">
                     <p className="font-medium text-xl text-teal-600">{detailDoctor[0]?.Star?.slice(0,3)}</p>
                     <p className=" text-lg">({ratingDoctor?.length} đánh giá)</p>
                   </div>
@@ -425,13 +270,13 @@ const BookingDoctor = () => {
             </div>
            
             <div className="flex flex-wrap gap-3 mb-2">
-              <div className="flex gap-3 items-center text-lg mb-2 lg:h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+              <div className="flex max-sm:h-auto gap-3 items-center text-lg mb-2 lg:h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
                 <FaRegAddressBook className="text-teal-600" />
                 <div className="text-slate-600">
                   {detailDoctor[0]?.Degree}
                 </div>
               </div>
-              <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+              <div className="flex max-sm:h-auto gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
                 <LuStethoscope className="text-teal-600" />
                 <div className="text-slate-600">
                   Chuyên khoa: {detailDoctor[0]?.Major}
@@ -439,11 +284,11 @@ const BookingDoctor = () => {
               </div>
             </div> 
             <div className="flex flex-wrap gap-3">
-              <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+              <div className="flex gap-3 items-center max-sm:h-auto text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
                 <FaHome className="text-teal-600" />
                 <div className="text-slate-600">Khám tại nhà</div>
               </div>
-              <div className="flex gap-3 items-center text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
+              <div className="flex gap-3 items-center  max-sm:h-auto text-lg mb-2 h-10 w-fit p-4 rounded-3xl bg-white shadow-md shadow-violet-400">
                 <LuStethoscope className="text-teal-600" />
                 <div className="text-slate-600">
                   Email: {detailDoctor[0]?.Email}
@@ -457,29 +302,33 @@ const BookingDoctor = () => {
               Giới thiệu
             </p>
             <div
-              className="text-gray-600"
+              className="text-gray-600 text-justify"
               dangerouslySetInnerHTML={{ __html: detailDoctor[0]?.Introduce }}
             ></div>
           </div>
           
-          <div className="text-base mb-8 text-slate-600 bg-white p-10 rounded-xl shadow-xl shadow-violet-200">
+          <div className="text-base mb-8 max-sm:px-3 text-slate-600 bg-white p-10 rounded-xl shadow-xl">
             <p className="text-3xl font-medium text-slate-700 mb-5">
               Phản hồi từ bệnh nhân
             </p>
             <p className="italic mb-5 text-slate-500">
-              Phản hồi từ bệnh nhân đã thực sự được khám từ bác sĩ
+              Phản hồi từ bệnh nhân từ các cuộc hẹn khám hoàn thành
             </p>
             <div className="w-[50%]">
             </div>
             {ratingDoctor.length > 0 &&
-              <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center gap-3 max-sm:gap-1 mb-8">
                 {rating.map((item,index) => (
-                <div className="flex gap-1 items-center justify-center w-20 h-8 bg-white hover:bg-slate-100 rounded-2xl shadow-md cursor-pointer"
-                    onClick={()=>{setStar(index+1)}}>
-                {index + 1}
-                <StarIcon className="text-[#fdd835] h-4" />
-                </div>
+                  <div className="flex gap-1 items-center justify-center w-20 h-8 bg-white hover:bg-slate-100 rounded-2xl shadow-md cursor-pointer"
+                      onClick={()=>{setStar(index+1)}}>
+                    {index + 1}
+                    <StarIcon className="text-[#fdd835] h-4" />
+                  </div>
                 ))}
+                <div className="flex gap-1 items-center justify-center w-20 h-8 bg-white hover:bg-slate-100 rounded-2xl shadow-md cursor-pointer"
+                    onClick={()=>{setStar(0)}}>
+                  Tất cả
+                </div>
               </div>
             }
             {star === 0 ?
@@ -571,10 +420,10 @@ const BookingDoctor = () => {
                   <div className="text-teal-800">Buổi sáng</div>
                 </div>
                 <div className="flex flex-wrap gap-y-4 gap-x-5 mb-3">
-                  {time1?.map((item) => (
+                  {time1?.map((item,index) => (
                     <div
                       id="timePicker"
-                      key={item.id}
+                      key={index}
                       className={`${
                         item.booked === 1 &&
                         " bg-gray-400 opacity-60 text-white border-none is-disabled"
@@ -608,9 +457,9 @@ const BookingDoctor = () => {
                   <div className="text-teal-800">Buổi chiều</div>
                 </div>
                 <div className="flex flex-wrap gap-y-4 gap-x-5 mb-3">
-                  {time2?.map((item) => (
+                  {time2?.map((item,index) => (
                     <div
-                      key={item.id}
+                      key={index}
                       className={`${
                         item.booked === 1 &&
                         " bg-gray-400 opacity-60 text-white border-none is-disabled"
@@ -644,9 +493,9 @@ const BookingDoctor = () => {
                   <div className="text-teal-800">Buổi tối</div>
                 </div>
                 <div className="flex flex-wrap gap-y-4 gap-x-5">
-                  {time3?.map((item) => (
+                  {time3?.map((item,index) => (
                     <div
-                      key={item.id}
+                      key={index}
                       className={`${
                         item.booked === 1 &&
                         " bg-gray-400 opacity-60 text-white border-none is-disabled"
@@ -675,23 +524,37 @@ const BookingDoctor = () => {
             )}
             <div className="w-full my-5">
               <p className="font-medium text-teal-800">Loại dịch vụ</p>
-              <select
-                className="bg-white mt-2 cursor-pointer border border-gray-300 text-gray-900 text-base rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+              <Select
+                className="w-full h-10 mt-2 cursor-pointer border border-gray-300 text-gray-900 text-base rounded-lg"
                 id="Service"
                 value={data?.Service}
-                onChange={handleChange}
+                onChange={(value) => {
+                  const index = service?.findIndex(option => option.id === value);
+                  handleChange(value,index)
+                }}
               >
-                {service?.map((item) => (
-                  <option value={item.id} key={item.id}>
-                    {item.Service}
-                  </option>
+                {service?.map((item,index) => (
+                  <Select
+                  id="Service"
+                  value={item.id}
+                  label={item.Service}
+                  key={item.id}
+                >
+                  {item.Service}
+                </Select>
                 ))}
-              </select>
+              </Select>
             </div>
-            <div className="flex gap-3 mb-5 items-center">
+            <div className="flex gap-3 mb-3 items-center">
               <p className=" text-teal-800">Phí dịch vụ: </p>
               <p className="font-medium text-emerald-500 text-lg">
-                {data?.Service ? TransferPricing(service[index]?.Price) : TransferPricing(service[0]?.Price)}
+                {TransferPricing(service[index]?.Price)}
+              </p>
+            </div>
+            <div className="flex gap-3 mb-5 items-center">
+              <p className=" text-teal-800">Thời gian khám ước tính:</p>
+              <p className="font-medium text-emerald-500">
+                Khoảng {service[index]?.EstimatedTime?.slice(1,2)} giờ {service[index]?.EstimatedTime?.slice(3,5) !== "00" && (service[index]?.EstimatedTime?.slice(3,5) + " phút")}
               </p>
             </div>
             <p className="italic text-sm text-teal-800 mb-5">
@@ -700,7 +563,7 @@ const BookingDoctor = () => {
               Vui lòng trao đổi với bác sĩ về các chi phí dịch vụ trước khi tiến
               hành thăm khám & chữa bệnh.
             </p>
-            {currentUser?.authentication == 1 &&
+            {(currentUser?.authentication != 0 && currentUser?.authentication != 2) &&
             <Button
               disabled={!actived}
               onClick={currentUser ? handleBooking : handleNavigate}
@@ -713,6 +576,7 @@ const BookingDoctor = () => {
           </div>
         </div>
       </div>
+      }
     </div>
   );
 };

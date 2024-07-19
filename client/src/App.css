@@ -293,3 +293,22 @@ a.more-link {
   margin-top: 50px;
   letter-spacing: 1px;
 }
+
+body {
+  background: linear-gradient(to bottom right, rgb(210, 113, 160), #36aa9a);
+}
+
+.spinner{
+  height: 60px;
+  width: 60px;
+  border: 6px solid;
+  border-color: white transparent white transparent;
+  border-radius: 50%;
+  animation: spin 1.3s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

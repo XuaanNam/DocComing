@@ -325,9 +325,13 @@ const DoctorAppointment = () => {
   else
     slice = appointment
   return (
-    <div className="lg:pt-[70px] min-h-screen">
-      <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
-        <div className="md:my-7 lg:max-xl:w-full max-lg:h-full max-lg:px-3 w-full rounded-xl bg-white text-slate-600 shadow-lg shadow-violet-200 py-5 lg:px-8">
+    <div className="lg:pt-[70px] h-screen">
+      {loading ?
+      <div className="spinner mt-12 mx-auto">
+      </div>
+      :
+      <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10 h-[97%]">
+        <div className="md:my-7 lg:max-xl:w-full max-lg:h-full max-lg:px-3 w-full rounded-xl h-[95%] overflow-auto bg-white text-slate-600 shadow-lg  py-5 lg:px-8">
           <div className="lg:mb-5 max-lg:my-5 lg:h-10 max-lg:h-auto grid lg:grid-cols-5 max-lg:grid-cols-12 lg:gap-3 max-lg:gap-1 font-semibold">
             <p className="max-md:mb-3 md:text-2xl max-md:text-3xl max-lg:col-start-1 max-lg:col-span-12">Lịch khám</p>
             <div
@@ -336,7 +340,7 @@ const DoctorAppointment = () => {
               }}
               className={` ${
                 passed === 0 && "bg-white shadow-md shadow-violet-300"
-              } col-start-2 max-lg:col-start-4 max-lg:col-span-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+              } col-start-2 max-sm:flex max-sm:items-center max-sm:text-sm max-sm:col-start-1 max-sm:col-span-3 sm:max-lg:col-start-1 sm:max-lg:col-span-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               TỔNG QUAN
             </div>
@@ -348,7 +352,7 @@ const DoctorAppointment = () => {
               }}
               className={` ${
                 passed === 4 && "bg-white shadow-md shadow-violet-300"
-              } first-letter:max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-3 max-lg:col-span-5 lg:col-start-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 max-lg:w-full w-full h-full`}
+              } first-letter:max-md:flex max-sm:text-sm max-sm:col-start-4 max-sm:col-span-3 max-md:justify-center max-md:items-center max-lg:text-sm sm:max-lg:col-start-4 sm:max-lg:col-span-3 lg:col-start-3 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 max-lg:w-full w-full h-full`}
             > 
               CHƯA XÁC NHẬN
             </div>
@@ -360,7 +364,7 @@ const DoctorAppointment = () => {
               }}
               className={` ${
                 passed === 1 && "bg-white shadow-md shadow-violet-300"
-              } max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-7 max-lg:col-span-3 col-start-4 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+              } max-md:flex max-sm:text-sm max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-7 max-lg:col-span-3 col-start-4 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               SẮP TỚI
             </div>
@@ -372,7 +376,7 @@ const DoctorAppointment = () => {
               }}
               className={` ${
                 passed === 2 && "bg-white shadow-md shadow-violet-300"
-              } max-md:flex max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-10 max-lg:col-span-3 col-start-5 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
+              } max-md:flex max-sm:text-sm max-md:justify-center max-md:items-center max-lg:text-sm max-lg:col-start-10 max-lg:col-span-3 col-start-5 rounded-lg text-center hover:bg-slate-50 cursor-pointer py-2 w-full h-full`}
             >
               ĐÃ QUA
             </div>
@@ -434,7 +438,7 @@ const DoctorAppointment = () => {
                         : appointment.Status == 3 && "Đã hủy"}
                     </div>
                   </div>
-                  <div className="p-5">
+                  <div className="p-5"> 
                     <div className="lg:flex lg:gap-5">
                       <div className="flex md:min-w-[6%] max-md:w-full">
                         <img
@@ -443,7 +447,7 @@ const DoctorAppointment = () => {
                           src={appointment.Avt || require("../../Images/pattientavt.png")}
                         ></img>
                       </div>
-                      <div className="w-[81%]">
+                      <div className="md:w-[81%] max-md:w-full">
                         <p className="font-medium lg:text-lg max-lg:mt-3 max-lg:text-base text-gray-600 mb-3">
                           {appointment.FirstName + " " + appointment.LastName}
                         </p>
@@ -461,7 +465,7 @@ const DoctorAppointment = () => {
                         </div>
 
                         <div className="lg:flex w-full gap-5 mb-3">
-                          <div className="flex gap-2 items-center lg:w-1/2">
+                          <div className="flex gap-2 items-center max-lg:mb-3 lg:w-1/2">
                             <FaPhoneAlt className="h-4 min-w-5 text-teal-600" />
                             <p className="min-w-24">Số điện thoại:</p>
                             <div className="font-medium text-teal-500">{appointment.Phone}</div>
@@ -494,36 +498,37 @@ const DoctorAppointment = () => {
                       {appointment.Status == 2 && (
                         <div className="w-[13%] mx-auto flex flex-col gap-2 place-items-center relative">   
                           {appointment.Record === null &&   
-                          <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowRecordModal(true);setIdAppointment(appointment.id);setDate(appointment.DateBooking)}}>
-                            Thêm bệnh án
-                          </Button>
+                            <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowRecordModal(true);setIdAppointment(appointment.id);setDate(appointment.DateBooking)}}>
+                              Thêm bệnh án
+                            </Button>
                           }
                           {appointment.ReExaminationDate === null &&
-                          <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowExaminationModal(true);setIdAppointment(appointment.id);setNote(appointment.Advice)}}>
-                            Hẹn tái khám
-                          </Button>
+                            <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowExaminationModal(true);setIdAppointment(appointment.id);setNote(appointment.Advice)}}>
+                              Hẹn tái khám
+                            </Button>
                           } 
                           {appointment.Advice === null ?
                             <Button className="w-32" size="sm" outline gradientDuoTone="tealToLime" onClick={()=>{setShowNoteModal(true);setIdAppointment(appointment.id);setReExaminationDate(appointment.ReExaminationDate)}}>
                               Ghi chú
                             </Button>
                           :
-                            <p className="absolute bottom-1 text-sm cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100"
-                              onClick={()=>{setEditNote(true);setShowNoteModal(true);setIdAppointment(appointment.id);setNote(appointment.Advice)}}>Chỉnh sửa
+                            <p className="absolute bottom-1 text-sm cursor-pointer text-center w-24 h-8 py-1 px-2 rounded-lg hover:bg-slate-100 max-sm:top-1 right-0"
+                              onClick={()=>{setEditNote(true);setShowNoteModal(true);setIdAppointment(appointment.id);setNote(appointment.Advice)}}>
+                                Chỉnh sửa
                             </p>
                           }
                         </div>
                       )}
                     </div>
-                    <div className="flex max-md:justify-center max-md:items-center mx-auto md:w-full max-md:w-full max-md:px-3 gap-10">
+                    <div className="flex maxmax-md:justify-center max-md:items-center mx-auto md:w-full max-md:w-full max-md:px-3 gap-10">
                       {appointment.Status === 2 && 
                         <div className="w-full flex flex-col gap-3">
                           {appointment.NoteRecord !== null && appointment.ReExaminationDate !== null &&
                             <hr className="w-[98%] mx-auto border-[1px] border-lime-50 rounded-lg"></hr>
                           }
-                          <div className="grid grid-cols-2 gap-5">
+                          <div className="grid max-sm:grid-rows-2 grid-cols-2 gap-5">
                             {appointment.NoteRecord !== null &&
-                              <div className="flex flex-col col-start-1 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                              <div className="flex flex-col col-start-1 gap-3 h-full w-full p-4 bg-white shadow-md  rounded-lg">
                                 <div className="flex items-center">                             
                                   <p className="font-medium text-black text-lg w-1/2">Bệnh án</p>   
                                   <div className="w-1/2 flex justify-end text-green-500 font-medium">
@@ -541,7 +546,7 @@ const DoctorAppointment = () => {
                               </div>
                             }
                             {appointment.ReExaminationDate !== null &&
-                              <div className="flex flex-col col-start-2 gap-3 h-full w-full p-4 bg-white shadow-md shadow-violet-200 rounded-lg">
+                              <div className="flex flex-col col-start-2 gap-3 h-full w-full p-4 bg-white shadow-md  rounded-lg">
                                 <div className="flex items-center">
                                   <p className="font-medium text-black text-lg w-1/2">Lịch hẹn tái khám</p>
                                   {appointment.NoteStatus === 0 && 
@@ -624,6 +629,7 @@ const DoctorAppointment = () => {
           }
         </div>
       </div>
+      }
       <Modal
         show={showModal}
         onClose={() => setShowModal(false)}

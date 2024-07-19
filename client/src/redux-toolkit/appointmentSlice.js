@@ -18,8 +18,8 @@ const initialState = {
   HealthRecordData: []
 };
 
-const SERVER_URL =  "https://server.doccoming.online"
-// const SERVER_URL =  "http://localhost:5001"
+// const SERVER_URL =  "https://server.doccoming.online"
+const SERVER_URL =  "http://localhost:5001"
 
 export const fetchService = createAsyncThunk("fetchService", async (body) => {
   const res = await fetch(SERVER_URL + "/api/doctor/service", {
@@ -341,7 +341,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchService.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       .addCase(fetchAllService.pending, (state, action) => {
         state.loading = true;
@@ -351,7 +351,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchAllService.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       .addCase(addService.pending, (state, action) => {
         state.loading = true;
@@ -364,7 +364,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(addService.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       .addCase(deleteService.pending, (state, action) => {
         state.loading = true;
@@ -374,7 +374,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(deleteService.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       .addCase(fetchSchedule.pending, (state, action) => {
         state.loading = true;
@@ -385,7 +385,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchSchedule.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       .addCase(fetchDoctorSchedule.pending, (state, action) => {
         state.loading = true;
@@ -395,7 +395,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchDoctorSchedule.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       .addCase(updateSchedule.pending, (state, action) => {
         state.loading = true;
@@ -408,7 +408,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(updateSchedule.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       .addCase(fetchAppointment.pending, (state, action) => {
         state.loading = true;
@@ -418,7 +418,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchAppointment.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
         state.error = action.payload;
       })
       .addCase(fetchAdminAppointment.pending, (state, action) => {
@@ -430,7 +430,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(fetchAdminAppointment.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
         state.error = action.payload;
       })
       .addCase(acceptAppointment.pending, (state, action) => {
@@ -441,7 +441,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(acceptAppointment.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       .addCase(completeAppointment.pending, (state, action) => {
         state.loading = true;
@@ -451,7 +451,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(completeAppointment.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       .addCase(cancelAppointment.pending, (state, action) => {
         state.loading = true;
@@ -461,7 +461,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(cancelAppointment.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       .addCase(createAppointment.pending, (state, action) => {
         state.loading = true;
@@ -471,7 +471,7 @@ const appointmentSlice = createSlice({
         state.loading = false;
       })
       .addCase(createAppointment.rejected, (state, action) => {
-        state.loading = false;
+        state.loading = true;
       })
       //ratingDoctor
       .addCase(ratingDoctor.pending, (state, action) => {

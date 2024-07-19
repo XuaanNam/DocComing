@@ -20,9 +20,9 @@ const PatientPage = () => {
   }, [currentUser]);
 
   return (
-    <div className="bg-white pt-[90px] max-lg:pt-[80px] min-h-screen">
+    <div className="pt-[70px] max-lg:pt-[80px] min-h-screen">
       {currentUser?.authentication == 1 ? (
-        <div className="lg:mx-16 max-lg:px-4 text-gray-700 lg:flex lg:gap-10">
+        <div className="lg:mx-8 max-lg:px-4 text-gray-700 lg:flex lg:gap-5">
           <SelectForm param={patientpage}></SelectForm>
           <div className="w-full">
               {patientpage === "appointment" && <Appointment />}

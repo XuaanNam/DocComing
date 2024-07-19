@@ -5,8 +5,8 @@ import "react-quill/dist/quill.snow.css";
 export default function Editor({ value, onChange, className,readOnly }) {
   const inputRef = useRef(null);
   const quillRef = useRef(null);
-  const SERVER_URL =  "https://server.doccoming.online"
-  // const SERVER_URL =  "http://localhost:5001"
+  // const SERVER_URL =  "https://server.doccoming.online"
+  const SERVER_URL =  "http://localhost:5001"
 
   const imageHandler = () => {
     const file = inputRef.current.files[0];

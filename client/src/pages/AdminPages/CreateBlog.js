@@ -81,8 +81,8 @@ const CreateBlog = () => {
   };
   console.log(majorId)
   return (
-    <div className="lg:pt-[70px] min-h-screen bg-gray-50 md:flex md:items-center md:justify-center ">
-      <div className="lg:my-5 max-lg:my-5 bg-white flex flex-col items-center justify-center md:w-3/4 max-md:w-[90%] md:p-4 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl shadow-violet-200">
+    <div className="lg:pt-[70px] min-h-screen md:flex md:items-center md:justify-center ">
+      <div className="lg:my-5 max-lg:my-5 bg-white flex flex-col items-center justify-center md:w-3/4 max-md:w-[90%] md:p-4 max-md:p-3 max-md:mx-5 rounded-lg shadow-xl">
         <div className="text-2xl font-bold opacity-70 mb-5">
           Thêm bài viết
         </div>

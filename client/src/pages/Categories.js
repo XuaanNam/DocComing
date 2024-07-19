@@ -154,6 +154,12 @@ const Categories = () => {
   // ];
   return (
     <div className="lg:pt-[70px] max-lg:pt-[80px]">
+      {loading ?
+      <div className="h-screen">
+        <div className="spinner mt-12 mx-auto">
+        </div>
+      </div>
+      :
       <div className="lg:mx-24 lg:mb-14 lg:p-5 max-lg:px-7 max-lg:pt-7 max-lg:pb-12">
         <p className="text-slate-700 font-medium text-2xl lg:my-7 max-lg:mb-7 text-center">
           Tất cả chuyên mục
@@ -173,6 +179,7 @@ const Categories = () => {
           ))}
         </div>
       </div>
+      }
     </div>
   );
 };

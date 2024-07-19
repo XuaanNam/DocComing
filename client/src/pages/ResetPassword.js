@@ -39,9 +39,9 @@ const ResetPassword = () => {
     if (formErrors?.confirmPassword && name === "confirmPassword")
       setFormErrors({ ...formErrors, [name]: "" });
   };
-  localStorage.setItem("token", "Bearer " + token);
+  // localStorage.setItem("token", "Bearer " + token);
   useEffect(()=>{
-    dispatch(authentication())
+    dispatch(authentication("Bearer " + token))
   },[])
   useEffect(()=>{
     if(checked === true){
@@ -62,12 +62,12 @@ const ResetPassword = () => {
     }
   }
   return (
-    <div className="pt-[70px] flex flex-col bg-lime-50 items-center justify-center min-h-screen">
+    <div className="pt-[70px] flex flex-col bg-lime-50 items-center justify-center min-h-screen max-sm:min-h-[70vh]">
       <script type="text/javascript">
         function disableBack() {window.history.forward()}
         setTimeout("disableBack()", 0); window.onunload = function () {null};
       </script>
-      <div className="w-1/2 min-h-80 rounded-xl bg-white shadow-lg shadow-violet-200 p-5">
+      <div className="w-1/2 max-sm:w-[84%] max-sm:mx-5 min-h-80 rounded-xl bg-white shadow-lg shadow-violet-200 p-5">
         <div className="w-full flex flex-col items-center justify-center">
             <img
                 src={auth?.Avt || require("../Images/pattientavt.png")}

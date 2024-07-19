@@ -50,6 +50,7 @@ router.post("/doctor/service/create", PassportCheck, api.createServiceDoctor); /
 router.post("/doctor/service/delete", PassportCheck, api.deleteServiceDoctor); //xóa service cho moi bac si -- gửi idService và token
 router.get("/doctor/service/avg", PassportCheck, api.avgPriceService);
 router.get("/doctor/post/get", PassportCheck, api.getDoctorPost); // token --> là đc
+router.post("/doctor/post/search", PassportCheck, api.searchDoctorPost);
 
 //notification
 router.get("/notification", PassportCheck, api.getNotification);

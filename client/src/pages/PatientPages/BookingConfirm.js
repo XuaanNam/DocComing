@@ -44,6 +44,7 @@ const BookingConfirm = () => {
       DateBooking: appointment.DateBooking,
       TimeBooking: appointment.TimeBooking,
       Information: information,
+      Status: 4
     };
     dispatch(createAppointment(body)).then(() => {
       Navigate("/booking/success");
@@ -79,7 +80,7 @@ const BookingConfirm = () => {
         function disableBack() {window.history.forward()}
         setTimeout("disableBack()", 0); window.onunload = function () {null};
       </script>
-      <div className="max-lg:px-5 max-lg:pb-5 max-lg:mx-5 max-lg:mb-5 lg:mx-auto lg:w-[80%] lg:mb-5 lg:p-6 grid lg:grid-cols-6 lg:gap-8 max-lg:grid-cols-12 bg-white shadow-md shadow-violet-300 rounded-lg">
+      <div className="max-lg:px-5 max-lg:pb-5 max-lg:mx-5 max-lg:mb-5 lg:mx-auto lg:w-[80%] lg:mb-5 lg:p-6 grid lg:grid-cols-6 lg:gap-8 max-lg:grid-cols-12 bg-white shadow-md  rounded-lg">
         <img
           className="h-48 w-40 object-cover border rounded-lg lg:col-span-1 max-lg:col-start-4 max-lg:col-span-6 max-lg:mb-3"
           src={detailDoctor[0]?.Avt}
@@ -99,7 +100,7 @@ const BookingConfirm = () => {
           </div>
         </div>
       </div>
-      <div className="max-lg:px-5 max-lg:pb-5 max-lg:mx-5 max-lg:mb-5 lg:mx-auto lg:w-[80%] lg:p-6 bg-white shadow-md shadow-violet-300 rounded-lg mb-10">
+      <div className="max-lg:px-5 max-lg:pb-5 max-lg:mx-5 max-lg:mb-5 lg:mx-auto lg:w-[80%] lg:p-6 bg-white shadow-md  rounded-lg mb-10">
         <div className="text-2xl font-medium text-slate-800 mb-5">
           Thông tin lịch hẹn
         </div>

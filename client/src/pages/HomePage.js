@@ -14,10 +14,10 @@ import { Input } from "antd";
 import { CiSearch } from "react-icons/ci";
 
 const HomePage = () => {
-  const { currentUser,doctors, auth, user, error, loading, updated } = useSelector(
+  const { currentUser,doctors, auth, user, error, updated } = useSelector(
     (state) => state.user
   );
-  const { allPost } = useSelector((state) => state.post);
+  const { allPost, loading} = useSelector((state) => state.post);
   const Navigate = useNavigate();
   const dispatch = useDispatch();
   const [search, setSearch] = useState("")
@@ -84,14 +84,15 @@ const HomePage = () => {
       Navigate(`/doctors/${path(fname + lname, id)}`)
   }
   const handleSearch = () => {
+    Navigate("/search")
     localStorage.setItem("keyword", JSON.stringify(search))
     dispatch(searchPost({keywords: search})).then(() => {
-      Navigate("/search")
       setSearch("")
     })
   }
   return (
     <div className="pt-[70px]">
+      
       <div className="max-w-[92%] h-[726px] w-full max-sm:h-[560px] max-sm:pt-16 m-auto pb-[40px] px-4 relative group drop-shadow-md">
         <div
           style={{ backgroundImage: `url(${slides[currentIndex].url})` }}
@@ -109,7 +110,7 @@ const HomePage = () => {
             ></div>
           ))}
         </div>
-        <div className="absolute top-[300px] max-sm:top-[300px] max-sm:left-[40px] h-[250px] lg:w-[420px] max-sm:h-[200px] max-sm:w-3/4 pt-8 bg-white bg-opacity-75 rounded-[32px] grid grid-rows-2 items-center justify-center">
+        <div className="absolute top-[300px] max-sm:top-[300px] max-sm:px-3 max-sm:left-[40px] h-[250px] lg:w-[420px] max-sm:h-[200px] max-sm:w-3/4 pt-8 bg-white bg-opacity-75 rounded-[32px] grid grid-rows-2 items-center justify-center">
           <img
             src={HearIcon}
             className="absolute left-[-14px] top-[-30px]"
@@ -123,282 +124,129 @@ const HomePage = () => {
           <div className="text-4xl max-sm:text-2xl font-medium w-[380px] max-sm:w-[280px] text-[#059669]">
             Lựa chọn thông minh cho sức khỏe gia đình
           </div>
-          <button className="w-[200px] h-[50px] rounded-3xl bg-gradient-to-r from-green-400 to-teal-500 text-white font-medium hover:drop-shadow-xl transition-transform duration-500 hover:scale-110">
+          <button className="w-[200px] h-[50px] rounded-3xl bg-gradient-to-r from-green-400 to-teal-500 text-white font-medium hover:drop-shadow-xl transition-transform duration-500 hover:scale-110"
+            onClick={() => {
+              Navigate("/doctors");
+            }}>
             Đặt hẹn khám
           </button>
         </div>
       </div>
-      <div className="lg:mx-12 max-sm:px-7 sm:px-7 mb-10">
-        <div className="flex gap-5 items-center mb-6">
-        <div className="h-11 w-36 flex items-center justify-center p-1 rounded-3xl bg-teal-50 text-teal-500 font-medium drop-shadow-lg">
-          Bài viết mới nhất
+      {loading ?
+        <div className="spinner my-12 mx-auto">
         </div>
-        <div className="relative w-96 flex lg:gap-3 items-center justify-center">
-          <Input 
-              placeholder="Tìm kiếm bài viết..." 
-              className="h-11 pl-14 rounded-lg border-gray-300 shadow-md shadow-violet-200" 
-              value={search}
-              onChange={(e)=>{setSearch(e.target.value)}}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") 
-                  handleSearch(); 
-              }} />
-          <CiSearch className="h-6 w-6 text-teal-300 sm:absolute sm:top-[10px] lg:left-4 max-sm:bg-slate-100 max-sm:rounded-lg"></CiSearch>
-        </div>
-        </div>
-        <div className="w-full lg:flex gap-x-3">
-          <div
-            className="lg:w-3/5 max-sm:w-full cursor-pointer"
-          >
-            <img
-              className="lg:h-[450px] max-sm:h-[230px] w-full rounded-xl object-cover drop-shadow-lg transition-transform duration-500 hover:scale-105 p-2"
-              src={allPost[0]?.FeaturedImage}
-              alt=""
-              onClick={() => Navigate(`/blog/${allPost[0].id}`)}
-            ></img>
-            <div className="text-teal-500 mb-2" onClick={()=>Navigate(`/categories/${allPost[0]?.Categories}/${allPost[0]?.Similar}`)}>{allPost[0]?.Similar}</div>
-            <div onClick={() => Navigate(`/blog/${allPost[0].id}`)}>
-              <div className="text-slate-800 text-ellipsis text-xl font-medium mb-2">
-                {allPost[0]?.Title}
-              </div>
-              <p className="h-[76px] text-slate-600 text-base text-justify text-ellipsis overflow-hidden mb-4">
-                {allPost[0]?.Brief}
-              </p>
-            </div>
-            <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(allPost[0].FirstName,allPost[0].LastName,allPost[0].idAuthor)}}>
-              <img
-                className="h-8 w-8 rounded-full object-cover drop-shadow-md"
-                src={allPost[0]?.Avt}
-                alt=""
-              ></img>
-              <div className="font-medium">
-                {allPost[0]?.FirstName + " " + allPost[0]?.LastName} 
-              </div>
-            </div>
-            <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {allPost[0]?.DatePost.slice(8,10)}/{allPost[0]?.DatePost.slice(5,7)}/{allPost[0]?.DatePost.slice(0,4)}</div>
+      :
+        <div className="lg:mx-12 max-sm:px-7 sm:px-7 mb-10">
+          <div className="flex gap-5 max-sm:gap-2 items-center mb-6">
+          <div className="h-11 w-36 max-sm:w-44 flex items-center justify-center p-1 rounded-3xl bg-teal-50 text-teal-700 font-medium drop-shadow-lg">
+            Bài viết mới nhất
           </div>
-          <div className="lg:grid max-sm:mt-5 max-sm:gap-3 lg:grid-rows-3 lg:w-2/5 max-sm:w-full">
-            <div className="row-span-2 cursor-pointer w-full pb-3 border-b-[1.5px]">
+          <div className="relative w-96 max-sm:w-52 flex lg:gap-3 items-center justify-center">
+            <Input 
+                placeholder="Tìm kiếm bài viết..." 
+                className="h-11 sm:pl-14 max-sm:mr-2 rounded-lg border-gray-300 shadow-md" 
+                value={search}
+                onChange={(e)=>{setSearch(e.target.value)}}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") 
+                    handleSearch(); 
+                }} />
+            <CiSearch className="h-6 w-6 text-teal-300 sm:absolute sm:top-[10px] lg:left-4 max-sm:bg-slate-100 max-sm:rounded-lg"></CiSearch>
+          </div>
+          </div>
+          <div className="w-full lg:flex gap-x-3">
+            <div
+              className="lg:w-3/5 max-sm:w-full cursor-pointer"
+            >
               <img
-                className="h-[280px] w-full rounded-xl object-cover drop-shadow-lg transition-transform duration-500 hover:scale-105 p-2"
-                src={allPost[1]?.FeaturedImage}
+                className="lg:h-[450px] max-sm:h-[230px] w-full rounded-xl object-cover drop-shadow-lg transition-transform duration-500 hover:scale-105 p-2"
+                src={allPost[0]?.FeaturedImage}
                 alt=""
-                onClick={() => Navigate(`/blog/${allPost[1].id}`)}
+                onClick={() => Navigate(`/blog/${allPost[0].id}`)}
               ></img>
-              <div className="text-teal-500 mb-4" onClick={()=>Navigate(`/categories/${allPost[1]?.Categories}/${allPost[1]?.Similar}`)}>{allPost[1]?.Similar}</div>
-              <div className="text-slate-800 text-lg text-ellipsis font-medium mb-4"
-                   onClick={() => Navigate(`/blog/${allPost[1].id}`)}>
-                {allPost[1]?.Title}
+              <div className="text-teal-700 mb-2" onClick={()=>Navigate(`/categories/${allPost[0]?.Categories}/${allPost[0]?.Similar}`)}>{allPost[0]?.Similar}</div>
+              <div onClick={() => Navigate(`/blog/${allPost[0].id}`)}>
+                <div className="text-slate-900 text-ellipsis text-xl font-medium mb-2">
+                  {allPost[0]?.Title}
+                </div>
+                <p className="h-[76px] text-gray-800 text-base text-justify text-ellipsis overflow-hidden mb-4">
+                  {allPost[0]?.Brief}
+                </p>
               </div>
-              <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(allPost[1].FirstName,allPost[1].LastName,allPost[1].idAuthor)}}>
+              <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(allPost[0].FirstName,allPost[0].LastName,allPost[0].idAuthor)}}>
                 <img
                   className="h-8 w-8 rounded-full object-cover drop-shadow-md"
-                  src={allPost[1]?.Avt}
+                  src={allPost[0]?.Avt}
                   alt=""
                 ></img>
                 <div className="font-medium">
-                  {allPost[1]?.FirstName + " " + allPost[1]?.LastName}  
+                  {allPost[0]?.FirstName + " " + allPost[0]?.LastName} 
                 </div>
               </div>
-              <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {allPost[1]?.DatePost.slice(8,10)}/{allPost[1]?.DatePost.slice(5,7)}/{allPost[1]?.DatePost.slice(0,4)}</div>
-
+              <div className="ml-10 text-gray-800 text-sm">Ngày đăng: {allPost[0]?.DatePost.slice(8,10)}/{allPost[0]?.DatePost.slice(5,7)}/{allPost[0]?.DatePost.slice(0,4)}</div>
             </div>
-
-            <div className="cursor-pointer w-full pt-5">
-              <div className=" flex gap-3">
-                <div className="w-3/5">
-                  <div className="text-teal-500 mb-4" onClick={()=>Navigate(`/categories/${allPost[2]?.Categories}/${allPost[2]?.Similar}`)}>
-                    {allPost[2]?.Similar}
-                  </div>
-                  <div className="text-slate-800 text-lg max-sm:mb-3 font-medium lg:mb-8 text-ellipsis overflow-hidden" onClick={() => Navigate(`/blog/${allPost[2].id}`)}>
-                    {allPost[2]?.Title}
-                  </div>
-                  <div className="flex gap-2 text-base items-center mb-1 self-end" onClick={()=>{handleNavigate(allPost[2].FirstName,allPost[2].LastName,allPost[2].idAuthor)}}>
-                    <img
-                      className="h-8 w-8 rounded-full object-cover drop-shadow-md"
-                      src={allPost[2]?.Avt}
-                      alt=""
-                    ></img>
-                    <div className="overflow-hidden text-ellipsis font-medium">
-                      {allPost[2]?.FirstName + " " + allPost[2]?.LastName}  
-                    </div>
-                  </div>
-                  <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {allPost[2]?.DatePost.slice(8,10)}/{allPost[2]?.DatePost.slice(5,7)}/{allPost[2]?.DatePost.slice(0,4)}</div>
-                </div>
+            <div className="lg:grid max-sm:mt-5 max-sm:gap-3 lg:grid-rows-3 lg:w-2/5 max-sm:w-full">
+              <div className="row-span-2 cursor-pointer w-full pb-3 border-b-[1.5px]">
                 <img
-                  className="h-[140px] w-2/5 rounded-xl object-cover drop-shadow-lg transition-transform duration-500 hover:scale-105 p-2"
-                  src={allPost[2]?.FeaturedImage}
+                  className="h-[280px] w-full rounded-xl object-cover drop-shadow-lg transition-transform duration-500 hover:scale-105 p-2"
+                  src={allPost[1]?.FeaturedImage}
                   alt=""
-                  onClick={() => Navigate(`/blog/${allPost[2].id}`)}
+                  onClick={() => Navigate(`/blog/${allPost[1].id}`)}
                 ></img>
-              </div>
-            </div>
-          </div>
-        </div>
-        <hr className="w-full mt-5 mb-7"></hr>
-        <Slider {...settings}>
-          {allPost?.slice(3).map((disease) => 
-          <div className="md:!flex gap-7 max-sm:mb-7 w-[775px] p-2 rounded-xl" key={disease.id}>
-            <img
-              className="h-[200px] w-[280px] max-sm:w-full rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
-              src={disease.FeaturedImage}
-              alt=""
-              onClick={() => Navigate(`/blog/${disease.id}`)}
-            ></img>
-            <div className="max-w-[700px]">
-              <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/${disease.Categories}/${disease.Similar}`)}>{disease.Similar}</div>
-              <div className="cursor-pointer">
-                <div className="text-slate-800 text-lg font-medium mb-2">
-                  {disease.Title}
+                <div className="text-teal-700 mb-4" onClick={()=>Navigate(`/categories/${allPost[1]?.Categories}/${allPost[1]?.Similar}`)}>{allPost[1]?.Similar}</div>
+                <div className="text-slate-900 text-lg text-ellipsis font-medium mb-4"
+                    onClick={() => Navigate(`/blog/${allPost[1].id}`)}>
+                  {allPost[1]?.Title}
                 </div>
-                <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                  {disease.Brief}
-                </div>
-                <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
+                <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(allPost[1].FirstName,allPost[1].LastName,allPost[1].idAuthor)}}>
                   <img
                     className="h-8 w-8 rounded-full object-cover drop-shadow-md"
-                    src={disease.Avt}
+                    src={allPost[1]?.Avt}
                     alt=""
                   ></img>
                   <div className="font-medium">
-                    {disease.FirstName + " " + disease.LastName}  
+                    {allPost[1]?.FirstName + " " + allPost[1]?.LastName}  
                   </div>
                 </div>
-                <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
+                <div className="ml-10 text-gray-800 text-sm">Ngày đăng: {allPost[1]?.DatePost.slice(8,10)}/{allPost[1]?.DatePost.slice(5,7)}/{allPost[1]?.DatePost.slice(0,4)}</div>
+
               </div>
-            </div>
-          </div>
-          )}
-        </Slider>
-        <div className="text-2xl font-medium text-slate-800 mb-3 mt-10">
-          Đội ngũ chuyên gia của Doctor Coming
-        </div>
-        <div className="md:flex gap-x-7 mb-15">
-          <div className="w-[58%] max-sm:w-full max-sm:pb-7">
-            <p className="block text-slate-600 text-[17px] mb-5 text-justify rounded-xl italic">
-              Đội ngũ cố vấn của Doctor Coming gồm các chuyên gia sức khỏe và y
-              bác sĩ từ nhiều chuyên khoa, với đầy đủ chứng nhận, chứng chỉ hành
-              nghề, hỗ trợ xây dựng và củng cố nội dung theo chuyên môn của
-              mình. Trách nhiệm của chuyên gia là bảo đảm tính chính xác về mặt
-              y học ở những nội dung đăng tải trên Doctor Coming, thường xuyên
-              cập nhật các thông tin mới về khoa học, nghiên cứu và sức khỏe.
-              Đội ngũ của chúng tôi làm việc không mệt mỏi để những thông tin
-              hữu ích có thể dễ dàng tiếp cận đến bạn đọc, giúp bạn chủ động hơn
-              trong các quyết định chăm sóc sức khỏe.
-            </p>
-            <div className="h-[50px] w-[200px] flex items-center justify-center p-1 rounded-3xl bg-gradient-to-r from-green-400 to-teal-500 text-white font-medium hover:drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105"
-                 onClick={() => Navigate("/doctors")}>
-              Xem thêm chuyên gia
-            </div>
-          </div>
-          <div className="flex gap-4 w-[42%] max-sm:w-full max-sm:mb-7">
-            {doctors?.slice(0,2).map((doctor) =>
-            <div onClick={()=>Navigate(`/doctors/${path(doctor.FirstName + doctor.LastName, doctor.id)}`)} 
-                 className="w-1/2 grid grid-rows-1 gap-2 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105">
-              <div className="relative w-[100%] flex justify-center mb-3">
-                <img
-                  className="rounded-3xl w-full h-[150px] rol-start-1 shadow-lg"
-                  src={require("../Images/backgroundDoctor.jpg")}
-                  alt=""
-                ></img>
-                <img
-                  className="absolute top-0 h-[150px] mx-auto object-contain"
-                  src={doctor.Avt}
-                  alt=""
-                ></img>
-              </div>
-              <div className="w-full">
-                <p className="font-medium text-base text-slate-800 mb-4 text-center">
-                  ThS. BS. {doctor.FirstName + " " + doctor.LastName}
-                </p>
-                <div className="max-h-42 mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
-                  <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
-                    <img
-                      src={HospitalIcon}
-                      className="w-5 h-5"
-                      alt="HeartIcon"
-                    />
-                  </div>
-                  <p className="w-[85%]">
-                    <p className="text-sm">Chuyên khoa</p>
-                    <p className="font-medium">{doctor.Major}</p>
-                  </p>
-                </div>
-                <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
-                  <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
-                    <img
-                      src={SpecialtiesIcon}
-                      className="w-5 h-5"
-                      alt="SpecialtiesIcon"
-                    />
-                  </div>
-                  <p className="w-[85%] gap-1">
-                    <span className="font-medium">{doctor.Experience}</span> năm kinh nghiệm
-                  </p>
-                </div>
-              </div>
-            </div>
-             )}
-          </div>
-        </div>
-        <div className="mb-[50px]">
-          <div className="flex gap-x-7 mb-3">
-            <div className="text-2xl w-44 font-medium text-slate-800 flex items-center">
-              Bệnh tim mạch
-            </div>
-            <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("/categories/Bệnh tim mạch")}>
-              <span className="text-base text-blue-500">Xem thêm </span>
-              <IoIosArrowForward className="text-blue-500 mt-1 h-[15px] w-[15px]"></IoIosArrowForward>
-            </div>
-          </div>
-          <Slider {...settings}>
-            {heartDiseases.length > 0 && heartDiseases.map((disease) => 
-            <div className="md:!flex gap-7 max-sm:mb-7 w-[590px] p-2 rounded-xl">
-              <img
-                className="h-[200px] max-sm:w-full w-[280px] rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
-                src={disease.FeaturedImage}
-                alt=""
-                onClick={() => Navigate(`/blog/${disease.id}`)}
-              ></img>
-              <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Bệnh tim mạch/${disease.Similar}`)}>{disease.Similar}</div>
-                <div className="cursor-pointer">
-                  <div className="text-slate-800 text-lg font-medium mb-2">
-                    {disease.Title}
-                  </div>
-                  <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-5">
-                    {disease.Brief}
-                  </div>
-                  <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
-                    <img
-                      className="h-8 w-8 rounded-full object-cover drop-shadow-md"
-                      src={disease.Avt}
-                      alt=""
-                    ></img>
-                    <div className="font-medium">
-                      {disease.FirstName + " " + disease.LastName}  
+
+              <div className="cursor-pointer w-full pt-5">
+                <div className=" flex gap-3">
+                  <div className="w-3/5">
+                    <div className="text-teal-700 mb-4" onClick={()=>Navigate(`/categories/${allPost[2]?.Categories}/${allPost[2]?.Similar}`)}>
+                      {allPost[2]?.Similar}
                     </div>
+                    <div className="text-slate-900 text-lg max-sm:mb-3 font-medium lg:mb-8 text-ellipsis overflow-hidden" onClick={() => Navigate(`/blog/${allPost[2].id}`)}>
+                      {allPost[2]?.Title}
+                    </div>
+                    <div className="flex gap-2 text-base items-center mb-1 self-end" onClick={()=>{handleNavigate(allPost[2].FirstName,allPost[2].LastName,allPost[2].idAuthor)}}>
+                      <img
+                        className="h-8 w-8 rounded-full object-cover drop-shadow-md"
+                        src={allPost[2]?.Avt}
+                        alt=""
+                      ></img>
+                      <div className="overflow-hidden text-ellipsis font-medium">
+                        {allPost[2]?.FirstName + " " + allPost[2]?.LastName}  
+                      </div>
+                    </div>
+                    <div className="ml-10 text-gray-800 text-sm">Ngày đăng: {allPost[2]?.DatePost.slice(8,10)}/{allPost[2]?.DatePost.slice(5,7)}/{allPost[2]?.DatePost.slice(0,4)}</div>
                   </div>
-                  <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
+                  <img
+                    className="h-[140px] w-2/5 rounded-xl object-cover drop-shadow-lg transition-transform duration-500 hover:scale-105 p-2"
+                    src={allPost[2]?.FeaturedImage}
+                    alt=""
+                    onClick={() => Navigate(`/blog/${allPost[2].id}`)}
+                  ></img>
                 </div>
               </div>
             </div>
-            )}
-          </Slider>
-        </div>
-        <div className="mb-[50px]">
-          <div className="flex gap-x-7 mb-3">
-            <div className="text-2xl w-44 font-medium text-slate-800 flex items-center">
-              Bệnh tiêu hóa
-            </div>
-            <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("/categories/Bệnh tiêu hóa")}>
-              <span className="text-base text-blue-500">Xem thêm </span>
-              <IoIosArrowForward className="text-blue-500 mt-1 h-[15px] w-[15px]"></IoIosArrowForward>
-            </div>
           </div>
+          <hr className="w-full mt-5 mb-7"></hr>
           <Slider {...settings}>
-            {digestiveDiseases.length > 0 && digestiveDiseases.map((disease) => 
-            <div className="md:!flex gap-7 max-sm:mb-7 w-[590px] p-2 rounded-xl">
+            {allPost?.slice(3).map((disease) => 
+            <div className="md:!flex gap-7 max-sm:mb-7 w-[775px] p-2 rounded-xl" key={disease.id}>
               <img
                 className="h-[200px] w-[280px] max-sm:w-full rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
                 src={disease.FeaturedImage}
@@ -406,9 +254,9 @@ const HomePage = () => {
                 onClick={() => Navigate(`/blog/${disease.id}`)}
               ></img>
               <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Bệnh tiêu hóa/${disease.Similar}`)}>{disease.Similar}</div>
+                <div className="text-teal-700 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/${disease.Categories}/${disease.Similar}`)}>{disease.Similar}</div>
                 <div className="cursor-pointer">
-                  <div className="text-slate-800 text-lg font-medium mb-2">
+                  <div className="text-slate-900 text-lg font-medium mb-2">
                     {disease.Title}
                   </div>
                   <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
@@ -424,127 +272,288 @@ const HomePage = () => {
                       {disease.FirstName + " " + disease.LastName}  
                     </div>
                   </div>
-                  <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
+                  <div className="ml-10 text-gray-800 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
                 </div>
               </div>
             </div>
             )}
           </Slider>
-        </div>
-        <div className="mb-[50px]">
-          <div className="flex gap-x-7 mb-3">
-            <div className="text-2xl w-44 font-medium text-slate-800 flex items-center">
-              Tiểu đường
-            </div>
-            <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("/categories/Tiểu đường")}>
-              <span className="text-base text-blue-500">Xem thêm </span>
-              <IoIosArrowForward className="text-blue-500 mt-1 h-[15px] w-[15px]"></IoIosArrowForward>
-            </div>
+          <div className="text-2xl font-medium text-slate-900 mb-3 mt-10">
+            Đội ngũ chuyên gia của Doctor Coming
           </div>
-          <Slider {...settings}>
-            {diabetesDiseases.length > 0 && diabetesDiseases.map((disease) => 
-            <div className="md:!flex gap-7 max-sm:mb-7 w-[590px] p-2 rounded-xl">
-              <img
-                className="h-[200px] w-[280px] max-sm:w-full rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
-                src={disease.FeaturedImage}
-                alt=""
-                onClick={() => Navigate(`/blog/${disease.id}`)}
-              ></img>
-              <div className="max-w-[700px]">
-                <div className="text-teal-500 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Tiểu đường/${disease.Similar}`)}>{disease.Similar}</div>
-                <div className="cursor-pointer">
-                  <div className="text-slate-800 text-lg font-medium mb-2">
-                    {disease.Title}
-                  </div>
-                  <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
-                    {disease.Brief}
-                  </div>
-                  <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
-                    <img
-                      className="h-8 w-8 rounded-full object-cover drop-shadow-md"
-                      src={disease.Avt}
-                      alt=""
-                    ></img>
-                    <div className="font-medium">
-                      {disease.FirstName + " " + disease.LastName}  
+          <div className="md:flex gap-x-7 mb-15">
+            <div className="w-[58%] max-sm:w-full max-sm:pb-7">
+              <p className="block text-gray-800 text-[17px] mb-5 text-justify rounded-xl italic">
+                Đội ngũ cố vấn của Doctor Coming gồm các chuyên gia sức khỏe và y
+                bác sĩ từ nhiều chuyên khoa, với đầy đủ chứng nhận, chứng chỉ hành
+                nghề, hỗ trợ xây dựng và củng cố nội dung theo chuyên môn của
+                mình. Trách nhiệm của chuyên gia là bảo đảm tính chính xác về mặt
+                y học ở những nội dung đăng tải trên Doctor Coming, thường xuyên
+                cập nhật các thông tin mới về khoa học, nghiên cứu và sức khỏe.
+                Đội ngũ của chúng tôi làm việc không mệt mỏi để những thông tin
+                hữu ích có thể dễ dàng tiếp cận đến bạn đọc, giúp bạn chủ động hơn
+                trong các quyết định chăm sóc sức khỏe.
+              </p>
+              <div className="h-[50px] w-[200px] flex items-center justify-center p-1 rounded-3xl bg-gradient-to-r from-green-400 to-teal-500 text-white font-medium hover:drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105"
+                  onClick={() => Navigate("/doctors")}>
+                Xem thêm chuyên gia
+              </div>
+            </div>
+            <div className="flex gap-4 w-[42%] max-sm:w-full max-sm:mb-7">
+              {doctors?.slice(0,2).map((doctor) =>
+              <div onClick={()=>Navigate(`/doctors/${path(doctor.FirstName + doctor.LastName, doctor.id)}`)} 
+                  className="w-1/2 grid grid-rows-1 gap-2 text-sm bg-white rounded-3xl justify-items-center drop-shadow-xl cursor-pointer transition-transform duration-500 hover:scale-105">
+                <div className="relative w-[100%] flex justify-center mb-3">
+                  <img
+                    className="rounded-3xl w-full h-[150px] rol-start-1 shadow-lg"
+                    src={require("../Images/backgroundDoctor.jpg")}
+                    alt=""
+                  ></img>
+                  <img
+                    className="absolute top-0 h-[150px] mx-auto object-contain"
+                    src={doctor.Avt}
+                    alt=""
+                  ></img>
+                </div>
+                <div className="w-full">
+                  <p className="font-medium text-base text-slate-900 mb-4 text-center">
+                    ThS. BS. {doctor.FirstName + " " + doctor.LastName}
+                  </p>
+                  <div className="max-h-42 mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
+                    <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
+                      <img
+                        src={HospitalIcon}
+                        className="w-5 h-5"
+                        alt="HeartIcon"
+                      />
                     </div>
+                    <p className="w-[85%]">
+                      <p className="text-sm">Chuyên khoa</p>
+                      <p className="font-medium">{doctor.Major}</p>
+                    </p>
                   </div>
-                  <div className="ml-10 text-gray-400 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
+                  <div className="min-h-[50px] mx-3 p-4 mb-3 rounded-xl bg-teal-50 flex gap-3 items-center">
+                    <div className="w-7 h-7 rounded-full bg-white drop-shadow-lg flex items-center justify-center">
+                      <img
+                        src={SpecialtiesIcon}
+                        className="w-5 h-5"
+                        alt="SpecialtiesIcon"
+                      />
+                    </div>
+                    <p className="w-[85%] gap-1">
+                      <span className="font-medium">{doctor.Experience}</span> năm kinh nghiệm
+                    </p>
+                  </div>
                 </div>
               </div>
+              )}
             </div>
-            )}
-          </Slider>
+          </div>
+          <div className="mb-[50px]">
+            <div className="flex gap-x-7 mb-3">
+              <div className="text-2xl w-44 font-medium text-slate-900 flex items-center">
+                Bệnh tim mạch
+              </div>
+              <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("/categories/Bệnh tim mạch")}>
+                <span className="text-base text-teal-600">Xem thêm </span>
+                <IoIosArrowForward className="text-teal-600 mt-1 h-[15px] w-[15px]"></IoIosArrowForward>
+              </div>
+            </div>
+            <Slider {...settings}>
+              {heartDiseases.length > 0 && heartDiseases.map((disease) => 
+              <div className="md:!flex gap-7 max-sm:mb-7 w-[590px] p-2 rounded-xl">
+                <img
+                  className="h-[200px] max-sm:w-full w-[280px] rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
+                  src={disease.FeaturedImage}
+                  alt=""
+                  onClick={() => Navigate(`/blog/${disease.id}`)}
+                ></img>
+                <div className="max-w-[700px]">
+                  <div className="text-teal-700 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Bệnh tim mạch/${disease.Similar}`)}>{disease.Similar}</div>
+                  <div className="cursor-pointer">
+                    <div className="text-slate-900 text-lg font-medium mb-2">
+                      {disease.Title}
+                    </div>
+                    <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-5">
+                      {disease.Brief}
+                    </div>
+                    <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
+                      <img
+                        className="h-8 w-8 rounded-full object-cover drop-shadow-md"
+                        src={disease.Avt}
+                        alt=""
+                      ></img>
+                      <div className="font-medium">
+                        {disease.FirstName + " " + disease.LastName}  
+                      </div>
+                    </div>
+                    <div className="ml-10 text-gray-800 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
+                  </div>
+                </div>
+              </div>
+              )}
+            </Slider>
+          </div>
+          <div className="mb-[50px]">
+            <div className="flex gap-x-7 mb-3">
+              <div className="text-2xl w-44 font-medium text-slate-900 flex items-center">
+                Bệnh tiêu hóa
+              </div>
+              <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("/categories/Bệnh tiêu hóa")}>
+                <span className="text-base text-teal-600">Xem thêm </span>
+                <IoIosArrowForward className="text-teal-600 mt-1 h-[15px] w-[15px]"></IoIosArrowForward>
+              </div>
+            </div>
+            <Slider {...settings}>
+              {digestiveDiseases.length > 0 && digestiveDiseases.map((disease) => 
+              <div className="md:!flex gap-7 max-sm:mb-7 w-[590px] p-2 rounded-xl">
+                <img
+                  className="h-[200px] w-[280px] max-sm:w-full rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
+                  src={disease.FeaturedImage}
+                  alt=""
+                  onClick={() => Navigate(`/blog/${disease.id}`)}
+                ></img>
+                <div className="max-w-[700px]">
+                  <div className="text-teal-700 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Bệnh tiêu hóa/${disease.Similar}`)}>{disease.Similar}</div>
+                  <div className="cursor-pointer">
+                    <div className="text-slate-900 text-lg font-medium mb-2">
+                      {disease.Title}
+                    </div>
+                    <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
+                      {disease.Brief}
+                    </div>
+                    <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
+                      <img
+                        className="h-8 w-8 rounded-full object-cover drop-shadow-md"
+                        src={disease.Avt}
+                        alt=""
+                      ></img>
+                      <div className="font-medium">
+                        {disease.FirstName + " " + disease.LastName}  
+                      </div>
+                    </div>
+                    <div className="ml-10 text-gray-800 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
+                  </div>
+                </div>
+              </div>
+              )}
+            </Slider>
+          </div>
+          <div className="mb-[50px]">
+            <div className="flex gap-x-7 mb-3">
+              <div className="text-2xl w-44 font-medium text-slate-900 flex items-center">
+                Tiểu đường
+              </div>
+              <div className=" flex items-center cursor-pointer" onClick={()=>Navigate("/categories/Tiểu đường")}>
+                <span className="text-base text-teal-600">Xem thêm </span>
+                <IoIosArrowForward className="text-teal-600 mt-1 h-[15px] w-[15px]"></IoIosArrowForward>
+              </div>
+            </div>
+            <Slider {...settings}>
+              {diabetesDiseases.length > 0 && diabetesDiseases.map((disease) => 
+              <div className="md:!flex gap-7 max-sm:mb-7 w-[590px] p-2 rounded-xl">
+                <img
+                  className="h-[200px] w-[280px] max-sm:w-full rounded-xl object-cover drop-shadow-lg cursor-pointer transition-transform duration-500 hover:scale-105"
+                  src={disease.FeaturedImage}
+                  alt=""
+                  onClick={() => Navigate(`/blog/${disease.id}`)}
+                ></img>
+                <div className="max-w-[700px]">
+                  <div className="text-teal-700 mb-2 cursor-pointer" onClick={()=>Navigate(`/categories/Tiểu đường/${disease.Similar}`)}>{disease.Similar}</div>
+                  <div className="cursor-pointer">
+                    <div className="text-slate-900 text-lg font-medium mb-2">
+                      {disease.Title}
+                    </div>
+                    <div className="h-[65px] text-[15px] text-ellipsis overflow-hidden mb-3">
+                      {disease.Brief}
+                    </div>
+                    <div className="flex gap-2 text-base items-center mb-1" onClick={()=>{handleNavigate(disease.FirstName,disease.LastName,disease.idAuthor)}}>
+                      <img
+                        className="h-8 w-8 rounded-full object-cover drop-shadow-md"
+                        src={disease.Avt}
+                        alt=""
+                      ></img>
+                      <div className="font-medium">
+                        {disease.FirstName + " " + disease.LastName}  
+                      </div>
+                    </div>
+                    <div className="ml-10 text-gray-800 text-sm">Ngày đăng: {disease.DatePost.slice(8,10)}/{disease.DatePost.slice(5,7)}/{disease.DatePost.slice(0,4)}</div>
+                  </div>
+                </div>
+              </div>
+              )}
+            </Slider>
+          </div>
+
+          <div className="flex items-center justify-center text-2xl text-slate-900 font-medium py-10 ">
+            Doctor Coming đem đến thông tin sức khỏe mà bạn cần
+          </div>
+          <div className="grid md:grid-cols-4 max-sm:grid-rows-4 gap-4 justify-items-center">
+            <div className="bg-gray-50 rounded-xl drop-shadow-xl">
+              <img
+                className="mb-3"
+                src={require("../Images/Research.webp")}
+                alt=""
+              ></img>
+              <div className="px-5 mb-3 h-14 font-medium text-lg flex items-center text-center text-slate-900">
+                Dựa trên nguồn thông tin xác thực
+              </div>
+              <p className="px-5 mb-3 text-justify text-base text-gray-800">
+                Tất cả bài viết của Doctor Coming đều được viết dựa trên những tin
+                tức y khoa, nghiên cứu và báo cáo khoa học đến từ các tổ chức giáo
+                dục, y tế hàng đầu.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl drop-shadow-xl">
+              <img
+                className="mb-3"
+                src={require("../Images/Reviewed.webp")}
+                alt=""
+              ></img>
+              <div className="px-5 mb-3 h-14 font-medium text-lg flex items-center justify-center text-slate-900">
+                Được tham vấn y khoa
+              </div>
+              <p className="px-5 mb-3 text-justify text-base text-gray-800">
+                Bài viết trên trang Doctor Coming được đội ngũ bác sĩ và chuyên
+                gia y tế của chúng tôi cẩn trọng tư vấn và kiểm duyệt.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl drop-shadow-xl">
+              <img
+                className="mb-3"
+                src={require("../Images/Monitored.webp")}
+                alt=""
+              ></img>
+              <div className="px-5 mb-3 h-14 font-medium text-lg flex items-center justify-center text-slate-900">
+                Được cập nhật thường xuyên
+              </div>
+              <p className="px-5 mb-3 text-justify text-base text-gray-800">
+                Chúng tôi làm việc với các bác sĩ và chuyên gia y tế để liên tục
+                cập nhật các bài viết đảm bảo độ chính xác.
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl drop-shadow-xl">
+              <img
+                className="mb-3"
+                src={require("../Images/Trustworthy.webp")}
+                alt=""
+              ></img>
+              <div className="px-5 mb-3 h-14 font-medium text-lg flex items-center justify-center text-slate-900">
+                Đáng tin cậy
+              </div>
+              <p className="px-5 mb-3 text-justify text-base text-gray-800">
+                Tại Doctor Coming, trang thông tin y tế, sức khỏe hàng đầu thị
+                trường, chúng tôi cam kết đem đến những bài viết chính xác, dễ
+                dàng tiếp cận và cập nhật nhất, giúp bạn đọc có thể đưa ra quyết
+                định đúng đắn nhất cho sức khỏe của bản thân và gia đình.
+              </p>
+            </div>
+          </div>
         </div>
-
-        <div className="flex items-center justify-center text-2xl text-slate-800 font-medium py-10 ">
-          Doctor Coming đem đến thông tin sức khỏe mà bạn cần
-        </div>
-        <div className="grid md:grid-cols-4 max-sm:grid-rows-4 gap-4 justify-items-center">
-          <div className="bg-lime-50 rounded-xl drop-shadow-xl">
-            <img
-              className="mb-3"
-              src={require("../Images/Research.webp")}
-              alt=""
-            ></img>
-            <div className="px-5 mb-3 h-14 font-medium text-lg flex items-center text-center text-slate-800">
-              Dựa trên nguồn thông tin xác thực
-            </div>
-            <p className="px-5 mb-3 text-justify text-base text-slate-600">
-              Tất cả bài viết của Doctor Coming đều được viết dựa trên những tin
-              tức y khoa, nghiên cứu và báo cáo khoa học đến từ các tổ chức giáo
-              dục, y tế hàng đầu.
-            </p>
-          </div>
-
-          <div className="bg-lime-50 rounded-xl drop-shadow-xl">
-            <img
-              className="mb-3"
-              src={require("../Images/Reviewed.webp")}
-              alt=""
-            ></img>
-            <div className="px-5 mb-3 h-14 font-medium text-lg flex items-center justify-center text-slate-800">
-              Được tham vấn y khoa
-            </div>
-            <p className="px-5 mb-3 text-justify text-base text-slate-600">
-              Bài viết trên trang Doctor Coming được đội ngũ bác sĩ và chuyên
-              gia y tế của chúng tôi cẩn trọng tư vấn và kiểm duyệt.
-            </p>
-          </div>
-
-          <div className="bg-lime-50 rounded-xl drop-shadow-xl">
-            <img
-              className="mb-3"
-              src={require("../Images/Monitored.webp")}
-              alt=""
-            ></img>
-            <div className="px-5 mb-3 h-14 font-medium text-lg flex items-center justify-center text-slate-800">
-              Được cập nhật thường xuyên
-            </div>
-            <p className="px-5 mb-3 text-justify text-base text-slate-600">
-              Chúng tôi làm việc với các bác sĩ và chuyên gia y tế để liên tục
-              cập nhật các bài viết đảm bảo độ chính xác.
-            </p>
-          </div>
-
-          <div className="bg-lime-50 rounded-xl drop-shadow-xl">
-            <img
-              className="mb-3"
-              src={require("../Images/Trustworthy.webp")}
-              alt=""
-            ></img>
-            <div className="px-5 mb-3 h-14 font-medium text-lg flex items-center justify-center text-slate-800">
-              Đáng tin cậy
-            </div>
-            <p className="px-5 mb-3 text-justify text-base text-slate-600">
-              Tại Doctor Coming, trang thông tin y tế, sức khỏe hàng đầu thị
-              trường, chúng tôi cam kết đem đến những bài viết chính xác, dễ
-              dàng tiếp cận và cập nhật nhất, giúp bạn đọc có thể đưa ra quyết
-              định đúng đắn nhất cho sức khỏe của bản thân và gia đình.
-            </p>
-          </div>
-        </div>
-      </div>
+      }
     </div>
   );
 };
