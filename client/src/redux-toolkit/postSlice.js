@@ -24,8 +24,8 @@ const initialState = {
   comment: []
 };
 
-//  const SERVER_URL =  "https://server.doccoming.online"
-const SERVER_URL =  "http://localhost:5001"
+ const SERVER_URL =  "https://server.doccoming.online"
+// const SERVER_URL =  "http://localhost:5001"
 
 //admin
 export const createPost = createAsyncThunk("createPost", async (body) => {
