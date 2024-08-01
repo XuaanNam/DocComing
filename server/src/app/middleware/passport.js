@@ -9,7 +9,7 @@ opts.jwtFromRequest = ExtractJwt.fromExtractors([
   ExtractJwt.fromUrlQueryParameter('auth_token')
 ]);
 opts.secretOrKey = secret_key.secret_key;
-opts.iss = "Doccoming";
+opts.iss = secret_key.iss;
 
 module.exports =  passport => {
   passport.use(
